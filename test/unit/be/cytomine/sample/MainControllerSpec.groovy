@@ -15,6 +15,11 @@ class MainControllerSpec extends Specification {
     def cleanup() {
     }
 
-    void "test something"() {
+    void "test a custom method"() {
+		when:
+		controller.aMethod()
+		
+		then:
+		response.text == "The answer to the life, the universe and everything is 42!"
 	}
 }
