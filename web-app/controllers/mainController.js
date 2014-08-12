@@ -1,4 +1,4 @@
-angular.module("sampleApp")
+angular.module("irisApp")
     .constant("welcomeUrl", "/api/welcome.json")
     .config(function ($logProvider) {
         $logProvider.debugEnabled(true);

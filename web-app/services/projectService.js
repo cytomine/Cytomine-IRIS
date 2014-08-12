@@ -1,7 +1,7 @@
 /**
  * Created by lrollus on 7/14/14.
  */
-angular.module("sampleApp")
+angular.module("irisApp")
     .constant("projectUrl", "/api/project.json")
     .factory("projectService",function($http,projectUrl,cytomineService) {
 /*

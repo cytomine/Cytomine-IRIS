@@ -1,7 +1,7 @@
 /**
  * Created by lrollus on 05/05/14.
  */
-angular.module("sampleApp")
+angular.module("irisApp")
     .filter('camelcase', function() {
         return function(input) {
             return input.charAt(0).toUpperCase() + input.substr(1).toLowerCase();

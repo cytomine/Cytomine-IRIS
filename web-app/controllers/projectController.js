@@ -1,4 +1,4 @@
-angular.module("sampleApp")
+angular.module("irisApp")
     .config(function ($logProvider) {
         $logProvider.debugEnabled(true);
     })

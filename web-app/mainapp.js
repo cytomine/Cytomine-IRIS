@@ -1,4 +1,4 @@
-angular.module("sampleApp", ["ngRoute","ngResource","ngTable"])
+angular.module("irisApp", ["ngRoute","ngResource","ngTable"])
     .config(function($routeProvider, $locationProvider) {
         $routeProvider.when("/home", {
             templateUrl: "views/projects.html"

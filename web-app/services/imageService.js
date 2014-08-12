@@ -1,7 +1,7 @@
 /**
  * Created by lrollus on 7/14/14.
  */
-angular.module("sampleApp")
+angular.module("irisApp")
     .constant("imageUrl", "/api/project/{id}/image.json")
     .factory("imageService",function($http,imageUrl,cytomineService) {
 
