@@ -17,6 +17,7 @@ class UrlMappings {
         "/api/project.$fomat"(controller:"cytomine"){
             action = [GET: "projects"]
         }
+		
         "/api/project/$idProject/image.$fomat"(controller:"cytomine"){
             action = [GET: "images"]
         }

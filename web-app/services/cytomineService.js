@@ -9,19 +9,25 @@ angular.module("sampleApp")
 
         return {
 
+        	// returns the public key
             getPublicKey : function() {
                 return publicKey;
             },
+            
+            // returns the private key
             getPrivateKey : function() {
                 return privateKey;
             },
 
+            // sets the keys
             setKeys : function(publicK,privateK) {
                 console.log("set key="+publicK + " " + privateK);
                 publicKey = publicK;
                 privateKey = privateK;
             },
 
+            // add the keys to the end of an existing URL and return 
+            // the concatenated URL
             addKeys : function(url) {
                 url = url + ((url.indexOf("?")==-1)? "?" : "&");
                 url = url + "publicKey={publicKey}&privateKey={privateKey}";

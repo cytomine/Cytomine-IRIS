@@ -19,6 +19,8 @@ angular.module("sampleApp")
         };
 
         $scope.loading = true;
+        
+        console.log("fetching all projects...");
         $scope.getAllProjects(
             function(data) {
                 $scope.project.error.retrieve = null;
@@ -49,5 +51,6 @@ angular.module("sampleApp")
                 });
 
             });
-
+        // debug 
+        // console.debug($scope);
     });
