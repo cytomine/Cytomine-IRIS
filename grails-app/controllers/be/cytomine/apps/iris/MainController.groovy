@@ -1,4 +1,4 @@
-package be.cytomine.sample
+package be.cytomine.apps.iris
 
 class MainController {
 
@@ -9,6 +9,6 @@ class MainController {
     }
 	
 	def aMethod() {
-		render "The answer to the life, the universe and everything is 42!"
+		render "The answer to life, the universe and everything is 42!"
 	}
 }

@@ -1,5 +1,6 @@
-package be.cytomine.sample
+package be.cytomine.apps.iris
 
+import be.cytomine.apps.iris.MainController;
 import grails.test.mixin.TestFor
 import spock.lang.Specification
 
@@ -20,6 +21,6 @@ class MainControllerSpec extends Specification {
 		controller.aMethod()
 		
 		then:
-		response.text == "The answer to the life, the universe and everything is 42!"
+		response.text == "The answer to life, the universe and everything is 42!"
 	}
 }

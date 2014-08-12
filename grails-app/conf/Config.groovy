@@ -11,7 +11,7 @@
 //    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
 // }
 
-grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
+grails.project.groupId = be.cytomine.apps.iris // change this to alter the default package name and Maven publishing destination
 
 //grails.cytomine.host = "http://localhost:8080"
 grails.cytomine.host = "http://beta.cytomine.be"

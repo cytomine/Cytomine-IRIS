@@ -13,7 +13,7 @@ class SecurityFilters {
                 String publicKey = params.get("publicKey")
                 String privateKey = params.get("privateKey")
 
-				log.debug "running filter"
+				//log.debug "running filter"
 				
                 if(publicKey || privateKey) {
 					// store a new cytomine instance (from the client-JAR) 

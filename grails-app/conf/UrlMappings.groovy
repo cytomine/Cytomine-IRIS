@@ -7,7 +7,7 @@ class UrlMappings {
             }
         }
 
-        "/"(view:"/index")
+        "/"(view:"/iris")
         "500"(view:'/error')
 
         "/api/welcome.$fomat"(controller:"main"){
