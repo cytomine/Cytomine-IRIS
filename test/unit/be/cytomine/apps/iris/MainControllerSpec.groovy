@@ -15,12 +15,20 @@ class MainControllerSpec extends Specification {
 
     def cleanup() {
     }
-
-    void "test a custom method"() {
-		when:
-		controller.aMethod()
+	
+	void "test app name"() {
+		when: 
+		controller.appName()
 		
 		then:
-		response.text == "The answer to life, the universe and everything is 42!"
+		response.text == "${grailsApplication.metadata.'app.name'}"
+	}
+	
+	void "test app version"() {
+		when:
+		controller.appVersion()
+		
+		then:
+		response.text == "${grailsApplication.metadata.'app.version'}"
 	}
 }

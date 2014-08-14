@@ -15,6 +15,7 @@ grails.project.groupId = be.cytomine.apps.iris // change this to alter the defau
 
 //grails.cytomine.host = "http://localhost:8080"
 grails.cytomine.host = "http://beta.cytomine.be"
+grails.cytomine.web = "http://www.cytomine.be"
 
 // The ACCEPT header will not be used for content negotiation for user agents containing the following strings (defaults to the 4 major rendering engines)
 grails.mime.disable.accept.header.userAgents = ['Gecko', 'WebKit', 'Presto', 'Trident']

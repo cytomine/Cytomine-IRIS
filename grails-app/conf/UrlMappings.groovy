@@ -1,3 +1,5 @@
+import java.awt.Desktop.Action;
+
 class UrlMappings {
 
 	static mappings = {
@@ -21,5 +23,21 @@ class UrlMappings {
         "/api/project/$idProject/image.$fomat"(controller:"cytomine"){
             action = [GET: "images"]
         }
+		
+		"/api/appName.$format"(controller:"main"){
+			action = [GET: "appName"]
+		}
+		
+		"/api/appVersion.$format"(controller:"main"){
+			action = [GET: "appVersion"]
+		}
+		
+		"/api/cytomineHost.$format"(controller:"cytomine"){
+			action = [GET: "getHostAddress"]
+		}
+		
+		"/api/cytomineWeb.$format"(controller:"cytomine"){
+			action = [GET: "getWebAddress"]
+		}
 	}
 }

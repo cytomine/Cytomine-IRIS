@@ -1,14 +1,24 @@
 package be.cytomine.apps.iris
 
+/**
+ * This is the main controller of the IRIS application.
+ * 
+ * @author Philipp Kainz, 2014-08-13
+ *
+ */
 class MainController {
 
     def grailsApplication
 
     def welcome() {
-        render "Welcome in ${grailsApplication.metadata.'app.name'} (${grailsApplication.metadata.'app.version'})"
+        render "Welcome to Cytomine ${grailsApplication.metadata.'app.name'}"
     }
 	
-	def aMethod() {
-		render "The answer to life, the universe and everything is 42!"
+	def appName() {
+		render "${grailsApplication.metadata.'app.name'}"
+	}
+	
+	def appVersion(){
+		render "${grailsApplication.metadata.'app.version'}"
 	}
 }

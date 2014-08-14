@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="irisApp">
 <head>
-<title>Interobserver Reliability Study Module</title>
+<title>Cytomine IRIS Module</title>
 
 <script src="lib/angular.js"></script>
 <script src="ngmodules/angular-route.js"></script>
@@ -20,7 +20,6 @@
 <script type="text/javascript" src="services/imageService.js"></script>
 <script type="text/javascript" src="controllers/projectController.js"></script>
 <script type="text/javascript" src="controllers/imageController.js"></script>
-<!--<script src="services/projectService.js"></script>-->
 
 </head>
 <body ng-controller="mainCtrl">
@@ -28,32 +27,30 @@
 	<div class="navbar navbar-inverse">
 
 		<div class="navbar-header">
-			<a class="navbar-brand" href="#">IRIS</a>
+			<a class="navbar-brand" href="#">Cytomine
+				{{main.appName}} (v{{main.appVersion}})</a>
 		</div>
 		<div class="navbar-collapse collapse">
 
 			<div class="navbar-right">
 				<ul class="nav navbar-nav">
-					<!--<li><a id="user-nav-button" href="#/keys"><i class="glyphicon glyphicon-user"></i> Change keys</a></li>-->
+					<li><a id="user-nav-button" href="#/projects"><i
+							class="glyphicon glyphicon-list-alt"></i> Projects</a></li>
+					<li><a id="user-nav-button" href ng-click="images()"><i
+							class="glyphicon glyphicon-picture"></i> Images</a></li>
+					<li><a id="user-nav-button" href ng-click="labeling()"><i
+							class="glyphicon glyphicon-tag"></i> Labeling</a></li>
+					<li><a id="user-nav-button" href ng-click="labeling()"><i
+							class="glyphicon glyphicon-th"></i> Annotations</a></li>
 					<li><a id="user-nav-button" href="#" ng-click="changeKeys()"><i
 							class="glyphicon glyphicon-user"></i> Change keys</a></li>
 				</ul>
 			</div>
 		</div>
 	</div>
-
+	Current project ID: {{main.projectID}}, current image ID: {{main.imageID}}
 
 	<div class="container theme-showcase" role="main">
-
-		<div class="jumbotron">
-			<h1>{{main.welcome}}</h1>
-			<p><b>I</b>nterobserver <b>R</b>el<b>I</b>ability <b>S</b>tudy Module</p>
-			<p>
-				<a href="http://www.cytomine.be" class="btn btn-primary btn-lg"
-					role="button">Learn more on cytomine.be &raquo;</a>
-			</p>
-		</div>
-
 		<!--<p>Check your <a class="btn btn-lg" href="#/home">Projects</a></p>-->
 		<div ng-show="publicKey">
 			<ng-view></ng-view>

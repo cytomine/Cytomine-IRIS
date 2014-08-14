@@ -13,13 +13,27 @@ angular.module("irisApp")
         var projects=[];
 
         return {
+        	
+        	// retrieve the currently active project ID
+        	getProjectID : function() {
+				return localStorage.getItem("projectID");
+			},
+			
+			// set the currently active project ID
+			setProjectID : function(idProject) {
+				localStorage.setItem("projectID", idProject);
+			},
+			
+			// remove the current project ID
+			removeProjectID : function() {
+				localStorage.removeItem("projectID");
+			},
 
         	// list the retrieved project as an array
             allProjects : function() {
                 return projects;
             },
 
-            
             // gets all projects from the Cytomine core instance
             getAllProjects : function(callbackSuccess, callbackError) {
                 if(projects.length==0) {
@@ -34,7 +48,7 @@ angular.module("irisApp")
             refreshAllProjects : function(callbackSuccess, callbackError) {
                 $http.get(foo = cytomineService.addKeys(projectUrl))
                     .success(function (data) {
-                    	console.log("success on $http.get(" + foo + ")");
+                    	//console.log("success on $http.get(" + foo + ")");
                     	// on success, assign the data to the projects array
                         projects = data;
                         if(callbackSuccess) {

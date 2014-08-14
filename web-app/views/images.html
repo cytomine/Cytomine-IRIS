@@ -5,17 +5,31 @@
     </div>
 
     <div ng-show="loading"><img class="img-responsive center-block" src="images/ajax-loader.gif"/></div>
-
-    <div>
-        This project has {{data.length}} images.
-    </div>
+    
     <div class="row" ng-hide="loading">
-        <div class="col-6 col-sm-6 col-lg-4" ng-repeat="item in data">
+	    <div ng-hide="image.error.retrieve">
+	        This project has {{data.length}} images.
+	    </div>
+	    <table ng-table="tableParams" show-filter="true" class="table table-striped table-bordered">
+	        <tr ng-repeat="item in data">
+	            <td data-title="'id'" sortable="'id'">{{item.id}}</td>
+	            <td data-title="'preview'" class="text-center"><img class="img-thumbnail" src="{{item.macroURL}}" width="100px"/></td>
+	            <td data-title="'name'" sortable="'originalFilename'" filter="{ 'originalFilename': 'text' }">{{item.originalFilename}}</td>
+	            <!-- <td data-title="'created'" sortable="'created'">{{item.created | longToDate | dateToFuzzyTime}}</td>  -->
+	            <td data-title="'# Annotations'" sortable="'numberOfAnnotations'">{{item.numberOfAnnotations}}</td>
+	            <td data-title="'action'" class="text-center">
+	                <a class="btn btn-xs btn-primary" ng-click="setImageID(item.id)" target="_blank" href="{{item.goToURL}}">View in Cytomine</a>
+	            </td>
+	        </tr>
+	    </table>
+	    
+	    
+<!--         <div class="col-6 col-sm-6 col-lg-4" ng-repeat="item in data">
             <h3>{{item.originalFilename}}</h3>
             <p><img class="img-thumbnail" src="{{item.thumb}}"/></p>
             <td data-title="'action'"  class="text-center">
-                <a class="btn btn-xs btn-primary" target="_self" href="{{item.goToURL}}">Open in cytomine</a>
+                <a class="btn btn-xs btn-primary" target="_blank" href="{{item.goToURL}}">Open in cytomine</a>
             </td>
-        </div><!--/span-->
+        </div> -->
     </div>
 </div>
