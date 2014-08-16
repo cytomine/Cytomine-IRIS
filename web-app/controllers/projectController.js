@@ -7,8 +7,12 @@ angular.module("irisApp").config(function($logProvider) {
 			console.log("projectCtrl");
 
 			$scope.project = {
+				stillNew : ((365/6)*24*60*60*1000), // last 2 months
 				error : {}
 			};
+			
+			// create the today variable
+			$scope.today = new Date().getTime();
 
 			// gets all projects 
 			$scope.getAllProjects = function(callbackSuccess) {
@@ -33,8 +37,9 @@ angular.module("irisApp").config(function($logProvider) {
 				$scope.tableParams = new ngTableParams({
 					page : 1, // show first page
 					count : 10, // count per page
+					// leave this blank for no sorting at all
 					sorting : {
-						name : 'asc' // initial sorting
+						created : 'desc' // initial sorting
 					},
 					filter : {
 						name : '' // initial filter

@@ -2,16 +2,20 @@
 <html ng-app="irisApp">
 <head>
 <title>Cytomine IRIS Module</title>
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
 
+<!-- ANGULAR JS Framework files -->
 <script src="lib/angular.js"></script>
 <script src="ngmodules/angular-route.js"></script>
 <script src="ngmodules/angular-resource.js"></script>
 <script src="ngmodules/ng-table.js"></script>
 <link href="ngmodules/ng-table.css" rel="stylesheet" />
-<!--<script src="lib/bootstrap/js/bootstrap.min.js"/>-->
+
+<!-- Bootstrap files for CSS -->
 <link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
 <link href="lib/bootstrap/css/bootstrap-theme.css" rel="stylesheet" />
 
+<!-- Cytomine IRIS files -->
 <script type="text/javascript" src="mainapp.js"></script>
 <script type="text/javascript" src="filters/stringFilters.js"></script>
 <script type="text/javascript" src="controllers/mainController.js"></script>
@@ -44,6 +48,8 @@
 							class="glyphicon glyphicon-th"></i> Annotations</a></li>
 					<li><a id="user-nav-button" href="#" ng-click="changeKeys()"><i
 							class="glyphicon glyphicon-user"></i> Change keys</a></li>
+					<li><a id="user-nav-button" href="{{main.cytomineHost}}" target="_blank"><i
+							class="glyphicon glyphicon-user"></i> Login</a></li>
 				</ul>
 			</div>
 		</div>

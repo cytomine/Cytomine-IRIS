@@ -1,4 +1,6 @@
-angular.module("irisApp", ["ngRoute","ngResource","ngTable"])
+angular.module("irisApp", ["ngRoute","ngResource","ngTable"
+                           //,"ui.bootstrap"
+                           ])
     .config(function($routeProvider, $locationProvider) {
         $routeProvider.when("/", {
             templateUrl: "views/welcome.html"
@@ -6,7 +8,7 @@ angular.module("irisApp", ["ngRoute","ngResource","ngTable"])
         $routeProvider.when("/keys", {
             templateUrl: "views/keys.html"
         });
-        $routeProvider.when("/project/:idProject/image", {
+        $routeProvider.when("/project/:idProject/images", {
             templateUrl: "views/images.html"
         });
         $routeProvider.when("/projects", {

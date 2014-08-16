@@ -113,7 +113,7 @@ angular
 					$scope.images = function() {
 						$scope.main.projectID = projectService.getProjectID();
 						$location.url("/project/" + $scope.main.projectID + 
-								"/image");
+								"/images");
 					};
 					
 					$scope.$on('currentProjectID', function(event, data){

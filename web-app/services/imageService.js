@@ -2,7 +2,7 @@
  * Created by lrollus on 7/14/14.
  */
 angular.module("irisApp")
-    .constant("imageUrl", "/api/project/{id}/image.json")
+    .constant("imageUrl", "/api/project/{id}/images.json")
     .factory("imageService",function($http,imageUrl,cytomineService) {
 
         var images=[];

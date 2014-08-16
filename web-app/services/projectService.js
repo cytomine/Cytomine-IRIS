@@ -2,7 +2,7 @@
  * Created by lrollus on 7/14/14.
  */
 angular.module("irisApp")
-    .constant("projectUrl", "/api/project.json")
+    .constant("projectUrl", "/api/projects.json")
     .factory("projectService",function($http,projectUrl,cytomineService) {
 /*
  static String publickey = "29f51819-3dc6-468c-8aa7-9c81b9bc236b";
@@ -13,6 +13,27 @@ angular.module("irisApp")
         var projects=[];
 
         return {
+        	
+//        	// retrieve one specific project
+//        	getProject : function(projectID){
+//        		var tmpUrl = projectUrl + "&projectID=" + projectID;
+//        		$http.get(cytomineService.addKeys(tmpUrl))
+//	                .success(function (data) {
+//	                	//console.log("success on $http.get(" + tmpUrl + ")");
+//	                	// on success, assign the data to the projects array
+//	                    project = data;
+//	                    if(callbackSuccess) {
+//	                        callbackSuccess(data);
+//	                    }
+//	                })
+//	                .error(function (data, status, headers, config) {
+//	                	// on error log the error
+//	                	// console.log(callbackError)
+//	                    if(callbackError) {
+//	                        callbackError(data,status);
+//	                    }
+//	                })
+//        	},
         	
         	// retrieve the currently active project ID
         	getProjectID : function() {
@@ -31,12 +52,12 @@ angular.module("irisApp")
 
         	// list the retrieved project as an array
             allProjects : function() {
-                return projects;
+            	return projects;
             },
 
             // gets all projects from the Cytomine core instance
             getAllProjects : function(callbackSuccess, callbackError) {
-                if(projects.length==0) {
+                if(projects.length == 0) {
                     this.refreshAllProjects(callbackSuccess,callbackError);
                 } else {
                     callbackSuccess(projects);
@@ -46,9 +67,9 @@ angular.module("irisApp")
             // refresh all projects (fetch the entire collection freshly from the 
             // Cytomine core server
             refreshAllProjects : function(callbackSuccess, callbackError) {
-                $http.get(foo = cytomineService.addKeys(projectUrl))
+                $http.get(tmpUrl = cytomineService.addKeys(projectUrl))
                     .success(function (data) {
-                    	//console.log("success on $http.get(" + foo + ")");
+                    	//console.log("success on $http.get(" + tmpUrl + ")");
                     	// on success, assign the data to the projects array
                         projects = data;
                         if(callbackSuccess) {

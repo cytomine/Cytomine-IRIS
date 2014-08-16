@@ -16,11 +16,11 @@ class UrlMappings {
             action = [GET: "welcome"]
         }
 
-        "/api/project.$fomat"(controller:"cytomine"){
+        "/api/projects.$fomat"(controller:"cytomine"){
             action = [GET: "projects"]
         }
 		
-        "/api/project/$idProject/image.$fomat"(controller:"cytomine"){
+        "/api/project/$idProject/images.$fomat"(controller:"cytomine"){
             action = [GET: "images"]
         }
 		
