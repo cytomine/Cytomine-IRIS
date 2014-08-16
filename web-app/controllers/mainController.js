@@ -65,7 +65,7 @@ angular
 					$scope.getCytomineHost = function() {
 						cytomineService.getCytomineHost(function(cytomineHost) {
 							$scope.main.cytomineHost = cytomineHost;
-							console.log("Cytomine Host: " + $scope.main.cytomineHost)
+							//console.log("Cytomine Host: " + $scope.main.cytomineHost)
 						})
 					};
 					$scope.getCytomineHost();
@@ -74,7 +74,7 @@ angular
 					$scope.getCytomineWeb = function() {
 						cytomineService.getCytomineWeb(function(cytomineWeb) {
 							$scope.main.cytomineWeb = cytomineWeb;
-							console.log("Cytomine Web: " + $scope.main.cytomineWeb)
+							//console.log("Cytomine Web: " + $scope.main.cytomineWeb)
 						})
 					};
 					$scope.getCytomineWeb();
@@ -85,6 +85,7 @@ angular
 						}
 					}
 
+					// save the keys in the local storage
 					$scope.saveKeys = function() {
 						localStorage.setItem("publicKey",
 								$scope.publicKeyCurrent);
