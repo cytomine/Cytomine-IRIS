@@ -1,6 +1,4 @@
-angular.module("irisApp", ["ngRoute","ngResource","ngTable"
-                           //,"ui.bootstrap"
-                           ])
+angular.module("irisApp", ["ngRoute","ngResource","ngTable","ui.bootstrap"])
     .config(function($routeProvider, $locationProvider) {
         $routeProvider.when("/", {
             templateUrl: "views/welcome.html"
