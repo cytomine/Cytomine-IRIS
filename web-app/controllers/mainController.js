@@ -9,7 +9,7 @@ angular
 		.controller(
 				"mainCtrl",
 				function($scope, $http, $route, $location, welcomeUrl,
-						appNameUrl, appVersionUrl, cytomineService, projectService) {
+						appNameUrl, appVersionUrl, cytomineService, projectService, imageService) {
 					console.log("mainCtrl");
 
 					// declare variables for expression 
@@ -123,4 +123,12 @@ angular
 					$scope.$on('currentImageID', function(event, data){
 						$scope.main.imageID = data;
 					});
-				});
+					
+					// TODO just for DEBUG
+					$scope.main.imageID = imageService.getImageID();
+					$scope.main.projectID = projectService.getProjectID();
+					
+//					var lF = document.getElementById("lf");
+//					var btn = document.getElementById("#submit-login");
+//					console.log(btn);
+			});
