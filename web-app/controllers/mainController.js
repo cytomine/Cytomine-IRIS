@@ -31,7 +31,7 @@ angular
 
 					// retrieve the welcome text
 					$scope.getWelcome = function() {
-						$http.get(welcomeUrl).success(function(data) {
+						$http.get(welcomeUrl).success(function(data, status, headers, config) {
 							//console.log(data);
 							$scope.main.welcome = data;
 						}).error(function(data, status, headers, config) {

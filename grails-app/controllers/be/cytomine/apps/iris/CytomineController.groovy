@@ -8,7 +8,7 @@ class CytomineController {
 
 	// create a JSON object and send it back to the client
 	def projects() {
-		// get the cytomine instance from the request (injected by the security filter!)
+		// get the Cytomine instance from the request (injected by the security filter!)
 		render request['cytomine'].getProjects().list as JSON
 	}
 
@@ -23,7 +23,7 @@ class CytomineController {
 		list.each {
 			//for each image, add a goToURL property containing the full URL to open the image in the core Cytomine instance
 			it.goToURL = grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + params.long('idProject') + "-" + it.id + "-"
-			}
+			}		
 		render list as JSON
 	}
 

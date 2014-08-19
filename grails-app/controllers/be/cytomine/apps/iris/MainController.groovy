@@ -1,5 +1,7 @@
 package be.cytomine.apps.iris
 
+import be.cytomine.client.Cytomine;
+
 /**
  * This is the main controller of the IRIS application.
  * 

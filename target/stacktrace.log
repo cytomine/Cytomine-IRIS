@@ -10951,3 +10951,1109 @@ Caused by: java.lang.Error: Lexical Error: Unmatched Input.
 	at be.cytomine.client.Cytomine.getProjects(Cytomine.java:547)
 	at be.cytomine.apps.iris.CytomineController.projects(CytomineController.groovy:12)
 	... 5 more
+2014-08-19 13:48:19,682 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingMethodException: No signature of method: be.cytomine.client.HttpClient.execute() is applicable for argument types: (org.apache.http.client.methods.HttpGet, org.apache.http.impl.client.BasicResponseHandler) values: [GET http://beta.cytomine.be/api/user/current.json HTTP/1.1, ...]
+Possible solutions: delete()
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:56)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 13:48:19,761 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingMethodException: No signature of method: be.cytomine.client.HttpClient.execute() is applicable for argument types: (org.apache.http.client.methods.HttpGet, org.apache.http.impl.client.BasicResponseHandler) values: [GET http://beta.cytomine.be/api/user/current.json HTTP/1.1, ...]
+Possible solutions: delete()
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:56)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 13:48:19,845 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingMethodException: No signature of method: be.cytomine.client.HttpClient.execute() is applicable for argument types: (org.apache.http.client.methods.HttpGet, org.apache.http.impl.client.BasicResponseHandler) values: [GET http://beta.cytomine.be/api/user/current.json HTTP/1.1, ...]
+Possible solutions: delete()
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:56)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 13:48:19,871 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingMethodException: No signature of method: be.cytomine.client.HttpClient.execute() is applicable for argument types: (org.apache.http.client.methods.HttpGet, org.apache.http.impl.client.BasicResponseHandler) values: [GET http://beta.cytomine.be/api/user/current.json HTTP/1.1, ...]
+Possible solutions: delete()
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:56)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 13:48:20,142 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingMethodException: No signature of method: be.cytomine.client.HttpClient.execute() is applicable for argument types: (org.apache.http.client.methods.HttpGet, org.apache.http.impl.client.BasicResponseHandler) values: [GET http://beta.cytomine.be/api/user/current.json HTTP/1.1, ...]
+Possible solutions: delete()
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:56)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 13:48:20,177 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingMethodException: No signature of method: be.cytomine.client.HttpClient.execute() is applicable for argument types: (org.apache.http.client.methods.HttpGet, org.apache.http.impl.client.BasicResponseHandler) values: [GET http://beta.cytomine.be/api/user/current.json HTTP/1.1, ...]
+Possible solutions: delete()
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:56)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:01:14,081 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingMethodException: No signature of method: org.apache.http.impl.client.DefaultHttpClient.execute() is applicable for argument types: (java.lang.String, org.apache.http.impl.client.BasicResponseHandler, null) values: [http://beta.cytomine.be/api/user/current.json, ...]
+Possible solutions: execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler), execute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.client.ResponseHandler), execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler, org.apache.http.protocol.HttpContext), execute(org.apache.http.client.methods.HttpUriRequest), execute(org.apache.http.HttpHost, org.apache.http.HttpRequest), execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.protocol.HttpContext)
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:01:14,170 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingMethodException: No signature of method: org.apache.http.impl.client.DefaultHttpClient.execute() is applicable for argument types: (java.lang.String, org.apache.http.impl.client.BasicResponseHandler, null) values: [http://beta.cytomine.be/api/user/current.json, ...]
+Possible solutions: execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler), execute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.client.ResponseHandler), execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler, org.apache.http.protocol.HttpContext), execute(org.apache.http.client.methods.HttpUriRequest), execute(org.apache.http.HttpHost, org.apache.http.HttpRequest), execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.protocol.HttpContext)
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:01:14,343 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingMethodException: No signature of method: org.apache.http.impl.client.DefaultHttpClient.execute() is applicable for argument types: (java.lang.String, org.apache.http.impl.client.BasicResponseHandler, null) values: [http://beta.cytomine.be/api/user/current.json, ...]
+Possible solutions: execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler), execute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.client.ResponseHandler), execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler, org.apache.http.protocol.HttpContext), execute(org.apache.http.client.methods.HttpUriRequest), execute(org.apache.http.HttpHost, org.apache.http.HttpRequest), execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.protocol.HttpContext)
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:01:14,484 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingMethodException: No signature of method: org.apache.http.impl.client.DefaultHttpClient.execute() is applicable for argument types: (java.lang.String, org.apache.http.impl.client.BasicResponseHandler, null) values: [http://beta.cytomine.be/api/user/current.json, ...]
+Possible solutions: execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler), execute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.client.ResponseHandler), execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler, org.apache.http.protocol.HttpContext), execute(org.apache.http.client.methods.HttpUriRequest), execute(org.apache.http.HttpHost, org.apache.http.HttpRequest), execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.protocol.HttpContext)
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:01:14,858 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingMethodException: No signature of method: org.apache.http.impl.client.DefaultHttpClient.execute() is applicable for argument types: (java.lang.String, org.apache.http.impl.client.BasicResponseHandler, null) values: [http://beta.cytomine.be/api/user/current.json, ...]
+Possible solutions: execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler), execute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.client.ResponseHandler), execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler, org.apache.http.protocol.HttpContext), execute(org.apache.http.client.methods.HttpUriRequest), execute(org.apache.http.HttpHost, org.apache.http.HttpRequest), execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.protocol.HttpContext)
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:01:14,930 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingMethodException: No signature of method: org.apache.http.impl.client.DefaultHttpClient.execute() is applicable for argument types: (java.lang.String, org.apache.http.impl.client.BasicResponseHandler, null) values: [http://beta.cytomine.be/api/user/current.json, ...]
+Possible solutions: execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler), execute(org.apache.http.HttpHost, org.apache.http.HttpRequest, org.apache.http.client.ResponseHandler), execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.client.ResponseHandler, org.apache.http.protocol.HttpContext), execute(org.apache.http.client.methods.HttpUriRequest), execute(org.apache.http.HttpHost, org.apache.http.HttpRequest), execute(org.apache.http.client.methods.HttpUriRequest, org.apache.http.protocol.HttpContext)
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:04:45,026 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingPropertyException: No such property: url for class: be.cytomine.apps.iris.CytomineController
+	at org.codehaus.groovy.grails.plugins.web.api.ControllerTagLibraryApi.propertyMissing(ControllerTagLibraryApi.java:115)
+	at org.springsource.loaded.ri.ReflectiveInterceptor.jlrMethodInvoke(ReflectiveInterceptor.java:1254)
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:04:45,044 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingPropertyException: No such property: url for class: be.cytomine.apps.iris.CytomineController
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:04:45,065 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingPropertyException: No such property: url for class: be.cytomine.apps.iris.CytomineController
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:04:45,069 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingPropertyException: No such property: url for class: be.cytomine.apps.iris.CytomineController
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:04:45,235 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingPropertyException: No such property: url for class: be.cytomine.apps.iris.CytomineController
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:04:45,248 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingPropertyException: No such property: url for class: be.cytomine.apps.iris.CytomineController
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:06:37,545 [main] ERROR StackTrace  - Full Stack Trace:
+org.codehaus.groovy.runtime.typehandling.GroovyCastException: Cannot cast object '
+
+
+<!DOCTYPE html>
+<!--
+ ______     __  __     ______   ______     __    __     __     __   __     ______
+/\  ___\   /\ \_\ \   /\__  _\ /\  __ \   /\ "-./  \   /\ \   /\ "-.\ \   /\  ___\
+\ \ \____  \ \____ \  \/_/\ \/ \ \ \/\ \  \ \ \-./\ \  \ \ \  \ \ \-.  \  \ \  __\
+ \ \_____\  \/\_____\    \ \_\  \ \_____\  \ \_\ \ \_\  \ \_\  \ \_\\"\_\  \ \_____\
+  \/_____/   \/_____/     \/_/   \/_____/   \/_/  \/_/   \/_/   \/_/ \/_/   \/_____/
+
+-->
+<html>
+<head>
+<title>Cytomine</title>
+<meta charset="UTF-8"/>
+<!-- Of course it is advisable to have touch icons ready for each device -->
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<link rel="apple-touch-icon" href="images/logoGIGA.gif" />
+<link rel="apple-touch-icon" sizes="72x72" href="images/logoGIGA.gif" />
+<link rel="apple-touch-icon" sizes="114x114" href="images/logoGIGA.gif" />
+
+<link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css"/>
+<link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
+<link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
+<link rel='stylesheet' href='lib/OpenLayers-2.13.1/theme/default/style.css' type='text/css'/>
+<link rel="stylesheet" href="lib/bootstrap-3.2.0/css/bootstrap.min.css"/>
+
+
+<style type="text/css">
+body {
+    padding-top: 50px;
+}
+</style>
+
+<link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
+<link rel='stylesheet' href='lib/fileupload-8.8.3/css/jquery.fileupload-ui.css' type='text/css'/>
+<link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.css"/>
+
+<script type="text/javascript" src="lib/mousetrap.min.js"></script>
+
+
+
+    <script type="text/javascript" src ="lib/jquery-2.0.3.min.js"></script>
+    <script src="lib/nvd3-1.1/lib/d3.v2.min.js"></script>
+    <script src="lib/nvd3-1.1/nv.d3.min.js"></script>
+
+
+<script type="text/javascript" src="lib/jquery-ui-bootstrap/js/jquery-ui-1.9.2.custom.min.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery-ui-1.9.2.custom.css" />
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery.ui.1.9.2.ie.css" />
+
+
+
+
+<script type="text/javascript" src="lib/bowser/bowser.min.js"></script>
+
+
+<link rel="stylesheet" href="lib/nvd3-1.1/nv.d3.css" /> <!-- bug with svg style in nb.d3.min.css -->
+
+
+<script type="text/javascript" src="lib/OpenLayers-2.13.1/OpenLayers.js"></script>
+
+<!-- fileupload -->
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.fileupload.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/cors/jquery.xdr-transport.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/cors/jquery.postmessage-transport.js"></script>
+
+
+
+<script type="text/javascript" src="lib/cookie/jquery.cookie.js"></script>
+
+
+
+<!-- Datatables -->
+<script src="lib/DataTables-1.9.4/media/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="lib/pick-a-color-master/build/1.2.2/js/pick-a-color-1.2.2.min.js"></script>
+<script type="text/javascript" src="lib/TinyColor-master/dist/tinycolor-min.js"></script>
+<link rel="stylesheet" href="lib/pick-a-color-master/build/1.2.2/css/pick-a-color-1.2.2.min.css"/>
+
+<!-- RequireJS -->
+<script type="text/javascript" src="lib/requirejs/require.js"></script>
+
+<!-- Twitter bootstrap -->
+<script type="text/javascript" src="lib/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="lib/typeahead.js/typeahead.js"></script>
+
+
+<script src="lib/ckeditor/ckeditor.js"></script>
+
+<link href="lib/magicsuggest2//magicsuggest-min.css" rel="stylesheet"/>
+<script type="text/javascript" src="lib/magicsuggest2/magicsuggest-min.js"></script>
+
+
+
+
+
+
+</head>
+<body>
+
+<div id="modals">
+</div>
+<div id="hotkeys">
+</div>
+<div id="similarannotationmodal">
+</div>
+<div id='dialogs'>
+</div>
+<div id="alerts"></div>
+<div id="phono-messages"></div>
+
+
+<script type="text/javascript">
+    function showClassicWidget() {
+        /*		FreshWidget.show();
+         return false;*/
+        alert("what?");
+    }
+</script>
+
+</body>
+
+
+    <script type="text/javascript" src="http://assets.freshdesk.com/widget/freshwidget.js"></script>
+    <script type="text/javascript">
+
+        FreshWidget.init("", {"queryString": "&amp;widgetType=popup", "widgetType": "popup", "buttonType": "text", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#0064eb", "alignment": "4", "offset": "-1500px", "formHeight": "500px", "url": "https://cytomine.freshdesk.com"} );
+
+    </script>
+
+    <script type="text/javascript" src="lib.js?version=20140818" ></script>
+    <script type="text/javascript" src="application.js?version=20140818" ></script>
+
+
+
+
+
+
+    <script type="text/javascript">
+        $(function() {
+            require(
+                    { urlArgs: "bust=20140818" }
+            );
+            window.app = new ApplicationController();
+            window.app.uploadServer =  "http://upload.cytomine.be"
+
+        });
+    </script>
+
+
+
+
+
+
+
+
+</html>
+' with class 'java.lang.String' to class 'org.apache.http.HttpResponse'
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:06:37,549 [main] ERROR StackTrace  - Full Stack Trace:
+org.codehaus.groovy.runtime.typehandling.GroovyCastException: Cannot cast object '
+
+
+<!DOCTYPE html>
+<!--
+ ______     __  __     ______   ______     __    __     __     __   __     ______
+/\  ___\   /\ \_\ \   /\__  _\ /\  __ \   /\ "-./  \   /\ \   /\ "-.\ \   /\  ___\
+\ \ \____  \ \____ \  \/_/\ \/ \ \ \/\ \  \ \ \-./\ \  \ \ \  \ \ \-.  \  \ \  __\
+ \ \_____\  \/\_____\    \ \_\  \ \_____\  \ \_\ \ \_\  \ \_\  \ \_\\"\_\  \ \_____\
+  \/_____/   \/_____/     \/_/   \/_____/   \/_/  \/_/   \/_/   \/_/ \/_/   \/_____/
+
+-->
+<html>
+<head>
+<title>Cytomine</title>
+<meta charset="UTF-8"/>
+<!-- Of course it is advisable to have touch icons ready for each device -->
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<link rel="apple-touch-icon" href="images/logoGIGA.gif" />
+<link rel="apple-touch-icon" sizes="72x72" href="images/logoGIGA.gif" />
+<link rel="apple-touch-icon" sizes="114x114" href="images/logoGIGA.gif" />
+
+<link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css"/>
+<link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
+<link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
+<link rel='stylesheet' href='lib/OpenLayers-2.13.1/theme/default/style.css' type='text/css'/>
+<link rel="stylesheet" href="lib/bootstrap-3.2.0/css/bootstrap.min.css"/>
+
+
+<style type="text/css">
+body {
+    padding-top: 50px;
+}
+</style>
+
+<link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
+<link rel='stylesheet' href='lib/fileupload-8.8.3/css/jquery.fileupload-ui.css' type='text/css'/>
+<link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.css"/>
+
+<script type="text/javascript" src="lib/mousetrap.min.js"></script>
+
+
+
+    <script type="text/javascript" src ="lib/jquery-2.0.3.min.js"></script>
+    <script src="lib/nvd3-1.1/lib/d3.v2.min.js"></script>
+    <script src="lib/nvd3-1.1/nv.d3.min.js"></script>
+
+
+<script type="text/javascript" src="lib/jquery-ui-bootstrap/js/jquery-ui-1.9.2.custom.min.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery-ui-1.9.2.custom.css" />
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery.ui.1.9.2.ie.css" />
+
+
+
+
+<script type="text/javascript" src="lib/bowser/bowser.min.js"></script>
+
+
+<link rel="stylesheet" href="lib/nvd3-1.1/nv.d3.css" /> <!-- bug with svg style in nb.d3.min.css -->
+
+
+<script type="text/javascript" src="lib/OpenLayers-2.13.1/OpenLayers.js"></script>
+
+<!-- fileupload -->
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.fileupload.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/cors/jquery.xdr-transport.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/cors/jquery.postmessage-transport.js"></script>
+
+
+
+<script type="text/javascript" src="lib/cookie/jquery.cookie.js"></script>
+
+
+
+<!-- Datatables -->
+<script src="lib/DataTables-1.9.4/media/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="lib/pick-a-color-master/build/1.2.2/js/pick-a-color-1.2.2.min.js"></script>
+<script type="text/javascript" src="lib/TinyColor-master/dist/tinycolor-min.js"></script>
+<link rel="stylesheet" href="lib/pick-a-color-master/build/1.2.2/css/pick-a-color-1.2.2.min.css"/>
+
+<!-- RequireJS -->
+<script type="text/javascript" src="lib/requirejs/require.js"></script>
+
+<!-- Twitter bootstrap -->
+<script type="text/javascript" src="lib/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="lib/typeahead.js/typeahead.js"></script>
+
+
+<script src="lib/ckeditor/ckeditor.js"></script>
+
+<link href="lib/magicsuggest2//magicsuggest-min.css" rel="stylesheet"/>
+<script type="text/javascript" src="lib/magicsuggest2/magicsuggest-min.js"></script>
+
+
+
+
+
+
+</head>
+<body>
+
+<div id="modals">
+</div>
+<div id="hotkeys">
+</div>
+<div id="similarannotationmodal">
+</div>
+<div id='dialogs'>
+</div>
+<div id="alerts"></div>
+<div id="phono-messages"></div>
+
+
+<script type="text/javascript">
+    function showClassicWidget() {
+        /*		FreshWidget.show();
+         return false;*/
+        alert("what?");
+    }
+</script>
+
+</body>
+
+
+    <script type="text/javascript" src="http://assets.freshdesk.com/widget/freshwidget.js"></script>
+    <script type="text/javascript">
+
+        FreshWidget.init("", {"queryString": "&amp;widgetType=popup", "widgetType": "popup", "buttonType": "text", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#0064eb", "alignment": "4", "offset": "-1500px", "formHeight": "500px", "url": "https://cytomine.freshdesk.com"} );
+
+    </script>
+
+    <script type="text/javascript" src="lib.js?version=20140818" ></script>
+    <script type="text/javascript" src="application.js?version=20140818" ></script>
+
+
+
+
+
+
+    <script type="text/javascript">
+        $(function() {
+            require(
+                    { urlArgs: "bust=20140818" }
+            );
+            window.app = new ApplicationController();
+            window.app.uploadServer =  "http://upload.cytomine.be"
+
+        });
+    </script>
+
+
+
+
+
+
+
+
+</html>
+' with class 'java.lang.String' to class 'org.apache.http.HttpResponse'
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:06:37,563 [main] ERROR StackTrace  - Full Stack Trace:
+org.codehaus.groovy.runtime.typehandling.GroovyCastException: Cannot cast object '
+
+
+<!DOCTYPE html>
+<!--
+ ______     __  __     ______   ______     __    __     __     __   __     ______
+/\  ___\   /\ \_\ \   /\__  _\ /\  __ \   /\ "-./  \   /\ \   /\ "-.\ \   /\  ___\
+\ \ \____  \ \____ \  \/_/\ \/ \ \ \/\ \  \ \ \-./\ \  \ \ \  \ \ \-.  \  \ \  __\
+ \ \_____\  \/\_____\    \ \_\  \ \_____\  \ \_\ \ \_\  \ \_\  \ \_\\"\_\  \ \_____\
+  \/_____/   \/_____/     \/_/   \/_____/   \/_/  \/_/   \/_/   \/_/ \/_/   \/_____/
+
+-->
+<html>
+<head>
+<title>Cytomine</title>
+<meta charset="UTF-8"/>
+<!-- Of course it is advisable to have touch icons ready for each device -->
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<link rel="apple-touch-icon" href="images/logoGIGA.gif" />
+<link rel="apple-touch-icon" sizes="72x72" href="images/logoGIGA.gif" />
+<link rel="apple-touch-icon" sizes="114x114" href="images/logoGIGA.gif" />
+
+<link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css"/>
+<link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
+<link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
+<link rel='stylesheet' href='lib/OpenLayers-2.13.1/theme/default/style.css' type='text/css'/>
+<link rel="stylesheet" href="lib/bootstrap-3.2.0/css/bootstrap.min.css"/>
+
+
+<style type="text/css">
+body {
+    padding-top: 50px;
+}
+</style>
+
+<link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
+<link rel='stylesheet' href='lib/fileupload-8.8.3/css/jquery.fileupload-ui.css' type='text/css'/>
+<link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.css"/>
+
+<script type="text/javascript" src="lib/mousetrap.min.js"></script>
+
+
+
+    <script type="text/javascript" src ="lib/jquery-2.0.3.min.js"></script>
+    <script src="lib/nvd3-1.1/lib/d3.v2.min.js"></script>
+    <script src="lib/nvd3-1.1/nv.d3.min.js"></script>
+
+
+<script type="text/javascript" src="lib/jquery-ui-bootstrap/js/jquery-ui-1.9.2.custom.min.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery-ui-1.9.2.custom.css" />
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery.ui.1.9.2.ie.css" />
+
+
+
+
+<script type="text/javascript" src="lib/bowser/bowser.min.js"></script>
+
+
+<link rel="stylesheet" href="lib/nvd3-1.1/nv.d3.css" /> <!-- bug with svg style in nb.d3.min.css -->
+
+
+<script type="text/javascript" src="lib/OpenLayers-2.13.1/OpenLayers.js"></script>
+
+<!-- fileupload -->
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.fileupload.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/cors/jquery.xdr-transport.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/cors/jquery.postmessage-transport.js"></script>
+
+
+
+<script type="text/javascript" src="lib/cookie/jquery.cookie.js"></script>
+
+
+
+<!-- Datatables -->
+<script src="lib/DataTables-1.9.4/media/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="lib/pick-a-color-master/build/1.2.2/js/pick-a-color-1.2.2.min.js"></script>
+<script type="text/javascript" src="lib/TinyColor-master/dist/tinycolor-min.js"></script>
+<link rel="stylesheet" href="lib/pick-a-color-master/build/1.2.2/css/pick-a-color-1.2.2.min.css"/>
+
+<!-- RequireJS -->
+<script type="text/javascript" src="lib/requirejs/require.js"></script>
+
+<!-- Twitter bootstrap -->
+<script type="text/javascript" src="lib/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="lib/typeahead.js/typeahead.js"></script>
+
+
+<script src="lib/ckeditor/ckeditor.js"></script>
+
+<link href="lib/magicsuggest2//magicsuggest-min.css" rel="stylesheet"/>
+<script type="text/javascript" src="lib/magicsuggest2/magicsuggest-min.js"></script>
+
+
+
+
+
+
+</head>
+<body>
+
+<div id="modals">
+</div>
+<div id="hotkeys">
+</div>
+<div id="similarannotationmodal">
+</div>
+<div id='dialogs'>
+</div>
+<div id="alerts"></div>
+<div id="phono-messages"></div>
+
+
+<script type="text/javascript">
+    function showClassicWidget() {
+        /*		FreshWidget.show();
+         return false;*/
+        alert("what?");
+    }
+</script>
+
+</body>
+
+
+    <script type="text/javascript" src="http://assets.freshdesk.com/widget/freshwidget.js"></script>
+    <script type="text/javascript">
+
+        FreshWidget.init("", {"queryString": "&amp;widgetType=popup", "widgetType": "popup", "buttonType": "text", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#0064eb", "alignment": "4", "offset": "-1500px", "formHeight": "500px", "url": "https://cytomine.freshdesk.com"} );
+
+    </script>
+
+    <script type="text/javascript" src="lib.js?version=20140818" ></script>
+    <script type="text/javascript" src="application.js?version=20140818" ></script>
+
+
+
+
+
+
+    <script type="text/javascript">
+        $(function() {
+            require(
+                    { urlArgs: "bust=20140818" }
+            );
+            window.app = new ApplicationController();
+            window.app.uploadServer =  "http://upload.cytomine.be"
+
+        });
+    </script>
+
+
+
+
+
+
+
+
+</html>
+' with class 'java.lang.String' to class 'org.apache.http.HttpResponse'
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:06:37,565 [main] ERROR StackTrace  - Full Stack Trace:
+org.codehaus.groovy.runtime.typehandling.GroovyCastException: Cannot cast object '
+
+
+<!DOCTYPE html>
+<!--
+ ______     __  __     ______   ______     __    __     __     __   __     ______
+/\  ___\   /\ \_\ \   /\__  _\ /\  __ \   /\ "-./  \   /\ \   /\ "-.\ \   /\  ___\
+\ \ \____  \ \____ \  \/_/\ \/ \ \ \/\ \  \ \ \-./\ \  \ \ \  \ \ \-.  \  \ \  __\
+ \ \_____\  \/\_____\    \ \_\  \ \_____\  \ \_\ \ \_\  \ \_\  \ \_\\"\_\  \ \_____\
+  \/_____/   \/_____/     \/_/   \/_____/   \/_/  \/_/   \/_/   \/_/ \/_/   \/_____/
+
+-->
+<html>
+<head>
+<title>Cytomine</title>
+<meta charset="UTF-8"/>
+<!-- Of course it is advisable to have touch icons ready for each device -->
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<link rel="apple-touch-icon" href="images/logoGIGA.gif" />
+<link rel="apple-touch-icon" sizes="72x72" href="images/logoGIGA.gif" />
+<link rel="apple-touch-icon" sizes="114x114" href="images/logoGIGA.gif" />
+
+<link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css"/>
+<link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
+<link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
+<link rel='stylesheet' href='lib/OpenLayers-2.13.1/theme/default/style.css' type='text/css'/>
+<link rel="stylesheet" href="lib/bootstrap-3.2.0/css/bootstrap.min.css"/>
+
+
+<style type="text/css">
+body {
+    padding-top: 50px;
+}
+</style>
+
+<link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
+<link rel='stylesheet' href='lib/fileupload-8.8.3/css/jquery.fileupload-ui.css' type='text/css'/>
+<link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.css"/>
+
+<script type="text/javascript" src="lib/mousetrap.min.js"></script>
+
+
+
+    <script type="text/javascript" src ="lib/jquery-2.0.3.min.js"></script>
+    <script src="lib/nvd3-1.1/lib/d3.v2.min.js"></script>
+    <script src="lib/nvd3-1.1/nv.d3.min.js"></script>
+
+
+<script type="text/javascript" src="lib/jquery-ui-bootstrap/js/jquery-ui-1.9.2.custom.min.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery-ui-1.9.2.custom.css" />
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery.ui.1.9.2.ie.css" />
+
+
+
+
+<script type="text/javascript" src="lib/bowser/bowser.min.js"></script>
+
+
+<link rel="stylesheet" href="lib/nvd3-1.1/nv.d3.css" /> <!-- bug with svg style in nb.d3.min.css -->
+
+
+<script type="text/javascript" src="lib/OpenLayers-2.13.1/OpenLayers.js"></script>
+
+<!-- fileupload -->
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.fileupload.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/cors/jquery.xdr-transport.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/cors/jquery.postmessage-transport.js"></script>
+
+
+
+<script type="text/javascript" src="lib/cookie/jquery.cookie.js"></script>
+
+
+
+<!-- Datatables -->
+<script src="lib/DataTables-1.9.4/media/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="lib/pick-a-color-master/build/1.2.2/js/pick-a-color-1.2.2.min.js"></script>
+<script type="text/javascript" src="lib/TinyColor-master/dist/tinycolor-min.js"></script>
+<link rel="stylesheet" href="lib/pick-a-color-master/build/1.2.2/css/pick-a-color-1.2.2.min.css"/>
+
+<!-- RequireJS -->
+<script type="text/javascript" src="lib/requirejs/require.js"></script>
+
+<!-- Twitter bootstrap -->
+<script type="text/javascript" src="lib/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="lib/typeahead.js/typeahead.js"></script>
+
+
+<script src="lib/ckeditor/ckeditor.js"></script>
+
+<link href="lib/magicsuggest2//magicsuggest-min.css" rel="stylesheet"/>
+<script type="text/javascript" src="lib/magicsuggest2/magicsuggest-min.js"></script>
+
+
+
+
+
+
+</head>
+<body>
+
+<div id="modals">
+</div>
+<div id="hotkeys">
+</div>
+<div id="similarannotationmodal">
+</div>
+<div id='dialogs'>
+</div>
+<div id="alerts"></div>
+<div id="phono-messages"></div>
+
+
+<script type="text/javascript">
+    function showClassicWidget() {
+        /*		FreshWidget.show();
+         return false;*/
+        alert("what?");
+    }
+</script>
+
+</body>
+
+
+    <script type="text/javascript" src="http://assets.freshdesk.com/widget/freshwidget.js"></script>
+    <script type="text/javascript">
+
+        FreshWidget.init("", {"queryString": "&amp;widgetType=popup", "widgetType": "popup", "buttonType": "text", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#0064eb", "alignment": "4", "offset": "-1500px", "formHeight": "500px", "url": "https://cytomine.freshdesk.com"} );
+
+    </script>
+
+    <script type="text/javascript" src="lib.js?version=20140818" ></script>
+    <script type="text/javascript" src="application.js?version=20140818" ></script>
+
+
+
+
+
+
+    <script type="text/javascript">
+        $(function() {
+            require(
+                    { urlArgs: "bust=20140818" }
+            );
+            window.app = new ApplicationController();
+            window.app.uploadServer =  "http://upload.cytomine.be"
+
+        });
+    </script>
+
+
+
+
+
+
+
+
+</html>
+' with class 'java.lang.String' to class 'org.apache.http.HttpResponse'
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:06:37,592 [main] ERROR StackTrace  - Full Stack Trace:
+org.codehaus.groovy.runtime.typehandling.GroovyCastException: Cannot cast object '
+
+
+<!DOCTYPE html>
+<!--
+ ______     __  __     ______   ______     __    __     __     __   __     ______
+/\  ___\   /\ \_\ \   /\__  _\ /\  __ \   /\ "-./  \   /\ \   /\ "-.\ \   /\  ___\
+\ \ \____  \ \____ \  \/_/\ \/ \ \ \/\ \  \ \ \-./\ \  \ \ \  \ \ \-.  \  \ \  __\
+ \ \_____\  \/\_____\    \ \_\  \ \_____\  \ \_\ \ \_\  \ \_\  \ \_\\"\_\  \ \_____\
+  \/_____/   \/_____/     \/_/   \/_____/   \/_/  \/_/   \/_/   \/_/ \/_/   \/_____/
+
+-->
+<html>
+<head>
+<title>Cytomine</title>
+<meta charset="UTF-8"/>
+<!-- Of course it is advisable to have touch icons ready for each device -->
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<link rel="apple-touch-icon" href="images/logoGIGA.gif" />
+<link rel="apple-touch-icon" sizes="72x72" href="images/logoGIGA.gif" />
+<link rel="apple-touch-icon" sizes="114x114" href="images/logoGIGA.gif" />
+
+<link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css"/>
+<link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
+<link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
+<link rel='stylesheet' href='lib/OpenLayers-2.13.1/theme/default/style.css' type='text/css'/>
+<link rel="stylesheet" href="lib/bootstrap-3.2.0/css/bootstrap.min.css"/>
+
+
+<style type="text/css">
+body {
+    padding-top: 50px;
+}
+</style>
+
+<link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
+<link rel='stylesheet' href='lib/fileupload-8.8.3/css/jquery.fileupload-ui.css' type='text/css'/>
+<link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.css"/>
+
+<script type="text/javascript" src="lib/mousetrap.min.js"></script>
+
+
+
+    <script type="text/javascript" src ="lib/jquery-2.0.3.min.js"></script>
+    <script src="lib/nvd3-1.1/lib/d3.v2.min.js"></script>
+    <script src="lib/nvd3-1.1/nv.d3.min.js"></script>
+
+
+<script type="text/javascript" src="lib/jquery-ui-bootstrap/js/jquery-ui-1.9.2.custom.min.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery-ui-1.9.2.custom.css" />
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery.ui.1.9.2.ie.css" />
+
+
+
+
+<script type="text/javascript" src="lib/bowser/bowser.min.js"></script>
+
+
+<link rel="stylesheet" href="lib/nvd3-1.1/nv.d3.css" /> <!-- bug with svg style in nb.d3.min.css -->
+
+
+<script type="text/javascript" src="lib/OpenLayers-2.13.1/OpenLayers.js"></script>
+
+<!-- fileupload -->
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.fileupload.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/cors/jquery.xdr-transport.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/cors/jquery.postmessage-transport.js"></script>
+
+
+
+<script type="text/javascript" src="lib/cookie/jquery.cookie.js"></script>
+
+
+
+<!-- Datatables -->
+<script src="lib/DataTables-1.9.4/media/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="lib/pick-a-color-master/build/1.2.2/js/pick-a-color-1.2.2.min.js"></script>
+<script type="text/javascript" src="lib/TinyColor-master/dist/tinycolor-min.js"></script>
+<link rel="stylesheet" href="lib/pick-a-color-master/build/1.2.2/css/pick-a-color-1.2.2.min.css"/>
+
+<!-- RequireJS -->
+<script type="text/javascript" src="lib/requirejs/require.js"></script>
+
+<!-- Twitter bootstrap -->
+<script type="text/javascript" src="lib/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="lib/typeahead.js/typeahead.js"></script>
+
+
+<script src="lib/ckeditor/ckeditor.js"></script>
+
+<link href="lib/magicsuggest2//magicsuggest-min.css" rel="stylesheet"/>
+<script type="text/javascript" src="lib/magicsuggest2/magicsuggest-min.js"></script>
+
+
+
+
+
+
+</head>
+<body>
+
+<div id="modals">
+</div>
+<div id="hotkeys">
+</div>
+<div id="similarannotationmodal">
+</div>
+<div id='dialogs'>
+</div>
+<div id="alerts"></div>
+<div id="phono-messages"></div>
+
+
+<script type="text/javascript">
+    function showClassicWidget() {
+        /*		FreshWidget.show();
+         return false;*/
+        alert("what?");
+    }
+</script>
+
+</body>
+
+
+    <script type="text/javascript" src="http://assets.freshdesk.com/widget/freshwidget.js"></script>
+    <script type="text/javascript">
+
+        FreshWidget.init("", {"queryString": "&amp;widgetType=popup", "widgetType": "popup", "buttonType": "text", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#0064eb", "alignment": "4", "offset": "-1500px", "formHeight": "500px", "url": "https://cytomine.freshdesk.com"} );
+
+    </script>
+
+    <script type="text/javascript" src="lib.js?version=20140818" ></script>
+    <script type="text/javascript" src="application.js?version=20140818" ></script>
+
+
+
+
+
+
+    <script type="text/javascript">
+        $(function() {
+            require(
+                    { urlArgs: "bust=20140818" }
+            );
+            window.app = new ApplicationController();
+            window.app.uploadServer =  "http://upload.cytomine.be"
+
+        });
+    </script>
+
+
+
+
+
+
+
+
+</html>
+' with class 'java.lang.String' to class 'org.apache.http.HttpResponse'
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:06:37,595 [main] ERROR StackTrace  - Full Stack Trace:
+org.codehaus.groovy.runtime.typehandling.GroovyCastException: Cannot cast object '
+
+
+<!DOCTYPE html>
+<!--
+ ______     __  __     ______   ______     __    __     __     __   __     ______
+/\  ___\   /\ \_\ \   /\__  _\ /\  __ \   /\ "-./  \   /\ \   /\ "-.\ \   /\  ___\
+\ \ \____  \ \____ \  \/_/\ \/ \ \ \/\ \  \ \ \-./\ \  \ \ \  \ \ \-.  \  \ \  __\
+ \ \_____\  \/\_____\    \ \_\  \ \_____\  \ \_\ \ \_\  \ \_\  \ \_\\"\_\  \ \_____\
+  \/_____/   \/_____/     \/_/   \/_____/   \/_/  \/_/   \/_/   \/_/ \/_/   \/_____/
+
+-->
+<html>
+<head>
+<title>Cytomine</title>
+<meta charset="UTF-8"/>
+<!-- Of course it is advisable to have touch icons ready for each device -->
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<link rel="apple-touch-icon" href="images/logoGIGA.gif" />
+<link rel="apple-touch-icon" sizes="72x72" href="images/logoGIGA.gif" />
+<link rel="apple-touch-icon" sizes="114x114" href="images/logoGIGA.gif" />
+
+<link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css"/>
+<link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
+<link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
+<link rel='stylesheet' href='lib/OpenLayers-2.13.1/theme/default/style.css' type='text/css'/>
+<link rel="stylesheet" href="lib/bootstrap-3.2.0/css/bootstrap.min.css"/>
+
+
+<style type="text/css">
+body {
+    padding-top: 50px;
+}
+</style>
+
+<link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
+<link rel='stylesheet' href='lib/fileupload-8.8.3/css/jquery.fileupload-ui.css' type='text/css'/>
+<link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.css"/>
+
+<script type="text/javascript" src="lib/mousetrap.min.js"></script>
+
+
+
+    <script type="text/javascript" src ="lib/jquery-2.0.3.min.js"></script>
+    <script src="lib/nvd3-1.1/lib/d3.v2.min.js"></script>
+    <script src="lib/nvd3-1.1/nv.d3.min.js"></script>
+
+
+<script type="text/javascript" src="lib/jquery-ui-bootstrap/js/jquery-ui-1.9.2.custom.min.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery-ui-1.9.2.custom.css" />
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery.ui.1.9.2.ie.css" />
+
+
+
+
+<script type="text/javascript" src="lib/bowser/bowser.min.js"></script>
+
+
+<link rel="stylesheet" href="lib/nvd3-1.1/nv.d3.css" /> <!-- bug with svg style in nb.d3.min.css -->
+
+
+<script type="text/javascript" src="lib/OpenLayers-2.13.1/OpenLayers.js"></script>
+
+<!-- fileupload -->
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.fileupload.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/cors/jquery.xdr-transport.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/cors/jquery.postmessage-transport.js"></script>
+
+
+
+<script type="text/javascript" src="lib/cookie/jquery.cookie.js"></script>
+
+
+
+<!-- Datatables -->
+<script src="lib/DataTables-1.9.4/media/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="lib/pick-a-color-master/build/1.2.2/js/pick-a-color-1.2.2.min.js"></script>
+<script type="text/javascript" src="lib/TinyColor-master/dist/tinycolor-min.js"></script>
+<link rel="stylesheet" href="lib/pick-a-color-master/build/1.2.2/css/pick-a-color-1.2.2.min.css"/>
+
+<!-- RequireJS -->
+<script type="text/javascript" src="lib/requirejs/require.js"></script>
+
+<!-- Twitter bootstrap -->
+<script type="text/javascript" src="lib/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="lib/typeahead.js/typeahead.js"></script>
+
+
+<script src="lib/ckeditor/ckeditor.js"></script>
+
+<link href="lib/magicsuggest2//magicsuggest-min.css" rel="stylesheet"/>
+<script type="text/javascript" src="lib/magicsuggest2/magicsuggest-min.js"></script>
+
+
+
+
+
+
+</head>
+<body>
+
+<div id="modals">
+</div>
+<div id="hotkeys">
+</div>
+<div id="similarannotationmodal">
+</div>
+<div id='dialogs'>
+</div>
+<div id="alerts"></div>
+<div id="phono-messages"></div>
+
+
+<script type="text/javascript">
+    function showClassicWidget() {
+        /*		FreshWidget.show();
+         return false;*/
+        alert("what?");
+    }
+</script>
+
+</body>
+
+
+    <script type="text/javascript" src="http://assets.freshdesk.com/widget/freshwidget.js"></script>
+    <script type="text/javascript">
+
+        FreshWidget.init("", {"queryString": "&amp;widgetType=popup", "widgetType": "popup", "buttonType": "text", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#0064eb", "alignment": "4", "offset": "-1500px", "formHeight": "500px", "url": "https://cytomine.freshdesk.com"} );
+
+    </script>
+
+    <script type="text/javascript" src="lib.js?version=20140818" ></script>
+    <script type="text/javascript" src="application.js?version=20140818" ></script>
+
+
+
+
+
+
+    <script type="text/javascript">
+        $(function() {
+            require(
+                    { urlArgs: "bust=20140818" }
+            );
+            window.app = new ApplicationController();
+            window.app.uploadServer =  "http://upload.cytomine.be"
+
+        });
+    </script>
+
+
+
+
+
+
+
+
+</html>
+' with class 'java.lang.String' to class 'org.apache.http.HttpResponse'
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:10:51,728 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingPropertyException: No such property: resp for class: be.cytomine.apps.iris.CytomineController
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:10:51,742 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingPropertyException: No such property: resp for class: be.cytomine.apps.iris.CytomineController
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:10:51,754 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingPropertyException: No such property: resp for class: be.cytomine.apps.iris.CytomineController
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:10:51,758 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingPropertyException: No such property: resp for class: be.cytomine.apps.iris.CytomineController
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:10:51,837 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingPropertyException: No such property: resp for class: be.cytomine.apps.iris.CytomineController
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
+2014-08-19 14:10:51,842 [main] ERROR StackTrace  - Full Stack Trace:
+groovy.lang.MissingPropertyException: No such property: resp for class: be.cytomine.apps.iris.CytomineController
+	at be.cytomine.apps.iris.CytomineController.getCurrentUser(CytomineController.groovy:58)
+	at be.cytomine.apps.iris.CytomineControllerSpec.query current user(CytomineControllerSpec.groovy:21)
