@@ -5,7 +5,14 @@
         <p><a href="#/projects">Please open a project first.</a></p>
     </div>
 
-    <div ng-show="loading"><img class="img-responsive center-block" src="images/ajax-loader.gif"/></div>
+    <div ng-show="loading">
+	    <p class="text-center">
+    		<p class="text-center">
+    		Loading images of selected project...
+    		</p>
+   			<img class="img-responsive center-block" src="images/ajax-loader.gif"/>
+   		</p>	
+   	</div>
     
     <div class="row" ng-hide="loading">
 	    <div ng-hide="image.error.retrieve">
@@ -20,7 +27,7 @@
 		            <td data-title="'Preview'" class="text-center"><img class="img-rounded" src="{{item.macroURL}}" height="50px"/></td>
 		            <td data-title="'Name'" sortable="'fileName'" filter="{ 'fileName': 'text' }">
 		            	 {{item.fileName}}
-		            	 <p style="color:#777">{{item.width}} x {{item.height}} px</p></td>
+		            	 <p style="color:#777">{{item.width | number}} x {{item.height | number}} px</p></td>
 		            <td data-title="'Magnification'">{{item.magnification}} X</td>
 		            <!-- <td data-title="'created'" sortable="'created'">{{item.created | longToDate | dateToFuzzyTime}}</td>  -->
 		            <td data-title="'# Annotations'" sortable="'numberOfAnnotations'">{{item.numberOfAnnotations}}</td>

@@ -15,55 +15,96 @@
 <link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
 <link href="lib/bootstrap/css/bootstrap-theme.css" rel="stylesheet" />
 
-<script type="text/javascript" src="lib/bootstrap/js/ui-bootstrap-tpls-0.11.0.min.js"></script>
+<script type="text/javascript"
+	src="lib/bootstrap/js/ui-bootstrap-tpls-0.11.0.min.js"></script>
 
 <!-- Cytomine IRIS files -->
 <script type="text/javascript" src="mainapp.js"></script>
 <script type="text/javascript" src="filters/stringFilters.js"></script>
-<script type="text/javascript" src="controllers/mainController.js"></script>
+
+<!-- Services -->
+<script type="text/javascript" src="services/sharedService.js"></script>
 <script type="text/javascript" src="services/cytomineService.js"></script>
 <script type="text/javascript" src="services/projectService.js"></script>
 <script type="text/javascript" src="services/imageService.js"></script>
+
+<!-- Controllers -->
+<script type="text/javascript" src="controllers/mainController.js"></script>
 <script type="text/javascript" src="controllers/projectController.js"></script>
 <script type="text/javascript" src="controllers/imageController.js"></script>
+<script type="text/javascript" src="controllers/helpController.js"></script>
 
 </head>
 <body ng-controller="mainCtrl">
 
-	<div class="navbar navbar-inverse">
+	<div class="navbar navbar-inverse" role="navigation">
 
 		<div class="navbar-header">
-			<a class="navbar-brand" href="#">Cytomine
-				{{main.appName}} (v{{main.appVersion}})</a>
+			<a class="navbar-brand" href="#">Cytomine {{main.appName}}
+				(v{{main.appVersion}})</a>
 		</div>
 		<div class="navbar-collapse collapse">
+			<ul class="nav navbar-nav navbar-left">
+				<li ng-class="{ active: isActive('/projects')}"><a
+					id="user-nav-button" href="#/projects"><span
+						class="glyphicon glyphicon-list-alt"></span> Projects</a></li>
+				<li ng-class="{ active: isActive('/images')}"><a
+					id="user-nav-button" href ng-click="images()"><span
+						class="glyphicon glyphicon-picture"></span> Images</a></li>
+				<li ng-class="{ active: isActive('/labeling')}"><a
+					id="user-nav-button" href ng-click="labeling()"><span
+						class="glyphicon glyphicon-tag"></span> Labeling</a></li>
+				<li ng-class="{ active: isActive('/annotations')}"><a
+					id="user-nav-button" href ng-click="annotations()"><span
+						class="glyphicon glyphicon-th"></span> Annotations</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li ng-controller="helpCtrl"><a id="help-button" href
+					ng-click="showHelp('lg','helpTemplate.html')"> <span
+						class="glyphicon glyphicon-question-sign"></span> Help
+				</a></li>
 
-			<div class="navbar-right">
-				<ul class="nav navbar-nav">
-					<li><a id="user-nav-button" href="#/projects"><i
-							class="glyphicon glyphicon-list-alt"></i> Projects</a></li>
-					<li><a id="user-nav-button" href ng-click="images()"><i
-							class="glyphicon glyphicon-picture"></i> Images</a></li>
-					<li><a id="user-nav-button" href ng-click="labeling()"><i
-							class="glyphicon glyphicon-tag"></i> Labeling</a></li>
-					<li><a id="user-nav-button" href ng-click="labeling()"><i
-							class="glyphicon glyphicon-th"></i> Annotations</a></li>
-					<li><a id="user-nav-button" href="#" ng-click="changeKeys()"><i
-							class="glyphicon glyphicon-user"></i> Change keys</a></li>
-					<li><a id="user-nav-button" href="{{main.cytomineHost}}" target="_blank"><i
-							class="glyphicon glyphicon-user"></i> Login</a></li>
-				</ul>
-			</div>
+				<!-- USER DROPDOWN MENU -->
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle"
+					data-toggle="dropdown"> <span class="glyphicon glyphicon-user"></span>
+						{{main.userName}} <span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu" role="menu">
+						<li><a id="user-nav-button"
+							href="{{main.cytomineHost}}" target="_blank"><span
+								class="glyphicon glyphicon-user"></span> Login</a></li>
+						<li><a id="user-nav-button" href="#" ng-click="changeKeys()">
+								<span class="glyphicon glyphicon-random"></span> Change keys</a></li>
+					</ul>
+				</li>
+			</ul>
 		</div>
 	</div>
-	Current project ID: {{main.projectID}}, current image ID: {{main.imageID}}
-
+	<!-- Current project ID: {{main.projectID}}, current image ID:
+	{{main.imageID}}
+ -->
 	<div class="container theme-showcase" role="main">
-		<!--<p>Check your <a class="btn btn-lg" href="#/home">Projects</a></p>-->
 		<div ng-show="publicKey">
 			<ng-view></ng-view>
 		</div>
 		<div ng-hide="publicKey" ng-include src="'views/keys.html'"></div>
+	</div>
+
+	<!-- Templates -->
+	<div ng-controller="helpCtrl">
+		<script type="text/ng-template" id="helpTemplate.html">
+        <div class="modal-header">
+            <h3 class="modal-title">This is the help page!</h3>
+        </div>
+        <div class="modal-body">
+			Here goes your description.
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+		</script>
 	</div>
 
 	<!-- <iframe id="lf" src="http://beta.cytomine.be" width="400px" height="400px"></iframe> -->

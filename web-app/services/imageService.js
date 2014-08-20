@@ -1,9 +1,11 @@
 /**
  * Created by lrollus on 7/14/14.
  */
-angular.module("irisApp")
-    .constant("imageUrl", "/api/project/{id}/images.json")
-    .factory("imageService",function($http,imageUrl,cytomineService) {
+var iris = angular.module("irisApp");
+
+iris.constant("imageUrl", "/api/project/{id}/images.json");
+
+iris.factory("imageService",function($http,imageUrl,cytomineService) {
 
         var images=[];
 

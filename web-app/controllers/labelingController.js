@@ -1,8 +1,11 @@
-angular.module("irisApp")
-    .config(function ($logProvider) {
+var iris = angular.module("irisApp");
+
+iris.config(function ($logProvider) {
         $logProvider.debugEnabled(true);
-    })
-    .controller("labelingCtrl", function ($scope, $http,$filter, $location,annotationService,$routeParams) {
+    });
+
+iris.controller("labelingCtrl", function ($scope, $http, $filter, $location, $routeParams, 
+		annotationService, sharedService) {
         console.log("labelingCtrl");
 
         $scope.annotation = {error:{}};

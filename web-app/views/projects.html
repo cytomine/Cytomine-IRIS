@@ -4,7 +4,14 @@
         Error. Cannot get project list. {{project.error.retrieve.message}} ({{project.error.retrieve.status}}).
     </div>
 
-    <div ng-show="loading" ng-hide="project.error.retrieve"><img class="img-responsive center-block" src="images/ajax-loader.gif"/></div>
+    <div ng-show="loading" ng-hide="project.error.retrieve">
+    	<p class="text-center">
+    		<p class="text-center">
+    		Loading projects...
+    		</p>
+    		<img class="img-responsive center-block" src="images/ajax-loader.gif" alt="" />
+    	</p>
+    </div>
 	
 	<div ng-hide="loading">
 		<div ng-hide="project.error.retrieve">
@@ -14,9 +21,16 @@
 		    <table ng-table="tableParams"  show-filter="true" class="table table-striped table-bordered">
 		        <tr ng-repeat="item in data">
 		            <td data-title="'ID'" sortable="'id'">{{item.id}}</td>
-		            <td data-title="'Name'" sortable="'name'" filter="{ 'name': 'text' }">{{item.name}}</td>
+		            <td data-title="'Name'" sortable="'name'" filter="{ 'name': 'text' }">
+		            	{{item.name}} 
+		            	<span ng-show="{{item.isClosed}}" 
+		            		  class="label label-warning pull-right" 
+		            		  tooltip-placement="top" 
+		            		  tooltip="This project is locked, you cannot edit the contents.">Locked
+		            	</span>
+		            </td>
 		            <td data-title="'Created'" sortable="'created'">{{item.created | longToDate | dateToFuzzyTime}}&nbsp;&nbsp;
-		            	<div ng-show="({{today}} - {{item.created}}) <= {{project.stillNew}}" class="label label-success">New!</div>
+		            	<span ng-show="({{today}} - {{item.created}}) <= {{project.stillNew}}" class="label label-success pull-right">New!</span>
 		            </td>
 		            <td data-title="'# Images'" sortable="'numberOfImages'" class="text-center">{{item.numberOfImages}}</td>
 		            <td data-title="'Mode'" sortable="'blindMode'" class="text-center">
@@ -31,7 +45,7 @@
 		                	 	<a class="btn btn-xs btn-primary" ng-click="setProjectID(item.id)" href="#/project/{{item.id}}/images">Open</a>
 		                	</div>
 		                	<div ng-switch-default>
-		                		<a class="btn btn-xs btn-primary" disabled="disabled" href>Open</a>
+		                		<a class="btn btn-xs btn-primary" disabled="disabled" href tooltip-placement="top" tooltip="This project is closed.">Open</a>
 		            		</div>
 		            	</div>
 		            </td>

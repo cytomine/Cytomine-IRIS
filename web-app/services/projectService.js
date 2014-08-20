@@ -37,17 +37,17 @@ angular.module("irisApp")
         	
         	// retrieve the currently active project ID
         	getProjectID : function() {
-				return localStorage.getItem("projectID");
+				return localStorage.getItem("currentProjectID");
 			},
 			
 			// set the currently active project ID
 			setProjectID : function(idProject) {
-				localStorage.setItem("projectID", idProject);
+				localStorage.setItem("currentProjectID", idProject);
 			},
 			
 			// remove the current project ID
 			removeProjectID : function() {
-				localStorage.removeItem("projectID");
+				localStorage.removeItem("currentProjectID");
 			},
 
         	// list the retrieved project as an array

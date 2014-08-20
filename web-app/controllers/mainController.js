@@ -1,134 +1,144 @@
-angular
-		.module("irisApp")
-		.constant("welcomeUrl", "/api/welcome.json")
-		.constant("appNameUrl", "/api/appName.json")
-		.constant("appVersionUrl", "/api/appVersion.json")
-		.config(function($logProvider) {
-			$logProvider.debugEnabled(true);
+var iris = angular.module("irisApp");
+
+iris.constant("welcomeUrl", "/api/welcome.json");
+iris.constant("appNameUrl", "/api/appName.json");
+iris.constant("appVersionUrl", "/api/appVersion.json");
+iris.config(function($logProvider) {
+	$logProvider.debugEnabled(true);
+});
+
+iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
+		$log, welcomeUrl, appNameUrl, appVersionUrl, cytomineService,
+		projectService, imageService, sharedService) {
+	console.log("mainCtrl");
+
+	// declare variables for expression
+	$scope.main = {
+		userName : "DOE John (jdoe)",
+		error : {}
+	};
+
+	// get the key from the local HTML5 storage
+	$scope.publicKey = (localStorage.getItem("publicKey") ? localStorage
+			.getItem("publicKey") : "");
+	$scope.privateKey = (localStorage.getItem("privateKey") ? localStorage
+			.getItem("privateKey") : "");
+	$scope.publicKeyCurrent = $scope.publicKey;
+	$scope.privateKeyCurrent = $scope.privateKey;
+	cytomineService.setKeys($scope.publicKey, $scope.privateKey);
+
+	// retrieve the welcome text
+	$scope.getWelcome = function() {
+		$http.get(welcomeUrl).success(function(data, status, headers, config) {
+			// console.log(data);
+			$scope.main.welcome = data;
+		}).error(function(data, status, headers, config) {
+			$scope.main.error.retrieve = {
+				status : status,
+				message : data.errors
+			};
 		})
-		.controller(
-				"mainCtrl",
-				function($scope, $http, $route, $location, welcomeUrl,
-						appNameUrl, appVersionUrl, cytomineService, projectService, imageService) {
-					console.log("mainCtrl");
+	};
+	$scope.getWelcome();
 
-					// declare variables for expression 
-					$scope.main = {
-						error : {}
-					};
+	// retrieve the application name
+	$scope.getAppName = function() {
+		cytomineService.getAppName(appNameUrl, function(appName) {
+			$scope.main.appName = appName;
+		});
+	}
+	$scope.getAppName();
 
-					// get the key from the local HTML5 storage
-					$scope.publicKey = (localStorage.getItem("publicKey") ? localStorage
-							.getItem("publicKey")
-							: "");
-					$scope.privateKey = (localStorage.getItem("privateKey") ? localStorage
-							.getItem("privateKey")
-							: "");
-					$scope.publicKeyCurrent = $scope.publicKey;
-					$scope.privateKeyCurrent = $scope.privateKey;
-					cytomineService
-							.setKeys($scope.publicKey, $scope.privateKey);
+	// retrieve the application version
+	$scope.getAppVersion = function() {
+		cytomineService.getAppVersion(appVersionUrl, function(appVersion) {
+			$scope.main.appVersion = appVersion;
+		});
+	}
+	$scope.getAppVersion();
 
-					// retrieve the welcome text
-					$scope.getWelcome = function() {
-						$http.get(welcomeUrl).success(function(data, status, headers, config) {
-							//console.log(data);
-							$scope.main.welcome = data;
-						}).error(function(data, status, headers, config) {
-							$scope.main.error.retrieve = {
-								status : status,
-								message : data.errors
-							};
-						})
-					};
-					$scope.getWelcome();
+	// retrieve the Cytomine host address
+	$scope.getCytomineHost = function() {
+		cytomineService.getCytomineHost(function(cytomineHost) {
+			$scope.main.cytomineHost = cytomineHost;
+			// console.log("Cytomine Host: " + $scope.main.cytomineHost)
+		})
+	};
+	$scope.getCytomineHost();
 
-					// retrieve the application name
-					$scope.getAppName = function() {
-						cytomineService.getAppName(appNameUrl,
-								function(appName) {
-									$scope.main.appName = appName;
-								});
-					}
-					$scope.getAppName();
+	// retrieve the Cytomine web address
+	$scope.getCytomineWeb = function() {
+		cytomineService.getCytomineWeb(function(cytomineWeb) {
+			$scope.main.cytomineWeb = cytomineWeb;
+			// console.log("Cytomine Web: " + $scope.main.cytomineWeb)
+		})
+	};
+	$scope.getCytomineWeb();
 
-					// retrieve the application version
-					$scope.getAppVersion = function() {
-						cytomineService.getAppVersion(appVersionUrl, function(
-								appVersion) {
-							$scope.main.appVersion = appVersion;
-						});
-					}
-					$scope.getAppVersion();
+	$scope.throwEx = function() {
+		throw {
+			message : 'error occurred!'
+		}
+	}
 
-					// retrieve the Cytomine host address
-					$scope.getCytomineHost = function() {
-						cytomineService.getCytomineHost(function(cytomineHost) {
-							$scope.main.cytomineHost = cytomineHost;
-							//console.log("Cytomine Host: " + $scope.main.cytomineHost)
-						})
-					};
-					$scope.getCytomineHost();
-					
-					// retrieve the Cytomine web address
-					$scope.getCytomineWeb = function() {
-						cytomineService.getCytomineWeb(function(cytomineWeb) {
-							$scope.main.cytomineWeb = cytomineWeb;
-							//console.log("Cytomine Web: " + $scope.main.cytomineWeb)
-						})
-					};
-					$scope.getCytomineWeb();
-				
-					$scope.throwEx = function() {
-						throw {
-							message : 'error occurred!'
-						}
-					}
+	// save the keys in the local storage
+	$scope.saveKeys = function() {
+		localStorage.setItem("publicKey", $scope.publicKeyCurrent);
+		localStorage.setItem("privateKey", $scope.privateKeyCurrent);
+		$scope.publicKey = $scope.publicKeyCurrent;
+		$scope.privateKey = $scope.privateKeyCurrent;
+		cytomineService.setKeys($scope.publicKey, $scope.privateKey);
+		window.location.reload();
+	}
 
-					// save the keys in the local storage
-					$scope.saveKeys = function() {
-						localStorage.setItem("publicKey",
-								$scope.publicKeyCurrent);
-						localStorage.setItem("privateKey",
-								$scope.privateKeyCurrent);
-						$scope.publicKey = $scope.publicKeyCurrent;
-						$scope.privateKey = $scope.privateKeyCurrent;
-						cytomineService.setKeys($scope.publicKey,
-								$scope.privateKey);
-						window.location.reload();
-					}
+	$scope.changeKeys = function() {
+		$scope.$broadcast('clearKeys', []);
+	}
 
-					$scope.changeKeys = function() {
-						$scope.$broadcast('clearKeys', []);
-					}
+	$scope.$on('clearKeys', function(event, mass) {
+		$scope.publicKey = "";
+		$scope.privateKey = "";
+		$scope.publicKeyCurrent = "";
+		$scope.privateKeyCurrent = "";
+		localStorage.removeItem("publicKey");
+		localStorage.removeItem("privateKey");
+	});
 
-					$scope.$on('clearKeys', function(event, mass) {
-						$scope.publicKey = "";
-						$scope.privateKey = "";
-						$scope.publicKeyCurrent = "";
-						$scope.privateKeyCurrent = "";
-						localStorage.removeItem("publicKey");
-						localStorage.removeItem("privateKey");
-					});
-					
-					$scope.images = function() {
-						$scope.main.projectID = projectService.getProjectID();
-						$location.url("/project/" + $scope.main.projectID + 
-								"/images");
-					};
-					
-					$scope.$on('currentProjectID', function(event, data){
-						$scope.main.projectID = data;
-					});
-					$scope.$on('currentImageID', function(event, data){
-						$scope.main.imageID = data;
-					});
-					
-					// TODO just for DEBUG
-					$scope.main.imageID = imageService.getImageID();
-					$scope.main.projectID = projectService.getProjectID();
-					
-//					var lF = document.getElementById("lf");
-//					var btn = document.getElementById("#submit-login");
-//					console.log(btn);
-			});
+	$scope.images = function() {
+		$scope.main.projectID = projectService.getProjectID();
+		$location.url("/project/" + $scope.main.projectID + "/images");
+	};
+
+	$scope.$on('currentProjectID', function(event, data) {
+		$scope.main.projectID = data;
+	});
+	$scope.$on('currentImageID', function(event, data) {
+		$scope.main.imageID = data;
+	});
+
+	// TODO just for DEBUG
+	$scope.main.imageID = imageService.getImageID();
+	$scope.main.projectID = projectService.getProjectID();
+
+	// navigation active tab controller
+	$scope.isActive = function(viewLocation) {
+		// console.log($location.path())
+
+		// full match
+		if ($location.path() === viewLocation) {
+			return true;
+		}
+		// partial (suffix) match
+		else if (sharedService.strEndsWith($location.path(), viewLocation)) {
+			return true;
+		}
+		// no match
+		else {
+			return false;
+		}
+	};
+
+	// var lF = document.getElementById("lf");
+	// var btn = document.getElementById("#submit-login");
+	// console.log(btn);
+});

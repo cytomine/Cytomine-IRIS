@@ -1,6 +1,10 @@
-angular.module("irisApp").config(function($logProvider) {
+var iris = angular.module("irisApp");
+
+iris.config(function($logProvider) {
 	$logProvider.debugEnabled(true);
-}).controller(
+});
+
+iris.controller(
 		"imageCtrl",
 		function($scope, $http, $filter, $location, imageService, $routeParams,
 				projectService, ngTableParams) {
