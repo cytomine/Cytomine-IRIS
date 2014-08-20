@@ -9,21 +9,27 @@ class UrlMappings {
             }
         }
 
+		/*
+		 * ###########################
+		 * Global redirects (to views)
+		 */
         "/"(view:"/iris")
         "500"(view:'/error')
 
-        "/api/welcome.$fomat"(controller:"main"){
+		
+		/*
+		 * ###########################
+		 * Action mapping (to controllers)
+		 * 
+		 * 
+		 * 
+		 * mainController
+		 * - handles information about the IRIS application
+		 */
+        "/api/welcome.$format"(controller:"main"){
             action = [GET: "welcome"]
         }
 
-        "/api/projects.$fomat"(controller:"cytomine"){
-            action = [GET: "projects"]
-        }
-		
-        "/api/project/$idProject/images.$fomat"(controller:"cytomine"){
-            action = [GET: "images"]
-        }
-		
 		"/api/appName.$format"(controller:"main"){
 			action = [GET: "appName"]
 		}
@@ -32,12 +38,30 @@ class UrlMappings {
 			action = [GET: "appVersion"]
 		}
 		
-		"/api/cytomineHost.$format"(controller:"cytomine"){
+		"/api/cytomineHost.$format"(controller:"main"){
 			action = [GET: "getHostAddress"]
 		}
 		
-		"/api/cytomineWeb.$format"(controller:"cytomine"){
+		"/api/cytomineWeb.$format"(controller:"main"){
 			action = [GET: "getWebAddress"]
 		}
+		
+		
+		/*
+		 * cytomineController
+		 * - handles the communication to the core via the Java client
+		 */
+		"/api/projects.$format"(controller:"cytomine"){
+			action = [GET: "getProjects"]
+		}
+		
+		"/api/project/$idProject/images.$format"(controller:"cytomine"){
+			action = [GET: "getImages"]
+		}
+		
+		"/api/project/$idProject/description.$format"(controller:"cytomine"){
+			action = [GET: "getProjectDescription"]
+		}
+		
 	}
 }

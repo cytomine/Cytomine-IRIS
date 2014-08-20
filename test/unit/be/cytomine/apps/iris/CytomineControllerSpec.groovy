@@ -1,5 +1,9 @@
 package be.cytomine.apps.iris
 
+import javax.management.InstanceOfQueryExp;
+import javax.sound.midi.ControllerEventListener;
+
+import be.cytomine.client.Cytomine;
 import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
 import spock.lang.Specification
@@ -9,14 +13,18 @@ import spock.lang.Specification
  */
 @TestMixin(GrailsUnitTestMixin)
 class CytomineControllerSpec extends Specification {
+	
+	def setup() {
+	}
 
-    def setup() {
-    }
+	def cleanup() {
+	}
 
-    def cleanup() {
-    }
-
-    void "test something"() {
-		
-    }
+	void "test project description retrieval"() {
+//		when:
+//		controller.getProjectDescription()
+//		
+//		then:
+//		response.data instanceof String
+	}
 }

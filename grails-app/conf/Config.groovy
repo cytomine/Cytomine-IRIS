@@ -116,7 +116,7 @@ log4j = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
-    info 'be.cytomine.client'
+    debug  'be.cytomine.client'
 }
 
 

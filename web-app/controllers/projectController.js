@@ -5,7 +5,7 @@ iris.config(function($logProvider) {
 });
 
 iris.controller("projectCtrl", function($scope, $http, $filter, $location,
-		projectService, ngTableParams) {
+		$modal, $log, projectService, ngTableParams) {
 	console.log("projectCtrl");
 
 	$scope.project = {
@@ -70,10 +70,10 @@ iris.controller("projectCtrl", function($scope, $http, $filter, $location,
 	// console.debug($scope);
 
 	// set the current project ID
-	$scope.setProjectID = function(idProject) {
-		projectService.setProjectID(idProject);
-		$scope.$emit("currentProjectID", idProject);
-		$scope.$broadcast("currentProjectID", idProject);
+	$scope.setProjectID = function(projectID) {
+		projectService.setProjectID(projectID);
+		$scope.$emit("currentProjectID", projectID);
+		$scope.$broadcast("currentProjectID", projectID);
 	}
 
 	// retrieve the current project ID
@@ -92,4 +92,56 @@ iris.controller("projectCtrl", function($scope, $http, $filter, $location,
 	$scope.printProjectID = function() {
 		alert("The current project ID is: " + projectService.getProjectID());
 	}
+
+	// retrieve the information for a given project
+	$scope.retrieveInfo = function(projectID) {
+		projectService.getDescription(projectID, 
+		function(jsonDescription) {
+			$scope.showInfoDialog('lg', projectID, jsonDescription.attr);
+		}, function() {
+			$scope.showInfoDialog('lg', projectID, {data : "This project does not have any information."});
+		});
+	}
+
+	// open the modal project information dialog
+	$scope.showInfoDialog = function(size, projectID, dsc) {
+		var modalInstance = $modal.open({
+			templateUrl : 'projectDescription.html',
+			controller : projectDescriptorCtrl,
+			//size : size,
+			resolve : {
+				description : function() {
+					return dsc.data;
+				},
+				id : function() {
+					return projectID;
+				}
+			}
+		});
+
+		modalInstance.result.then(function(result) {
+			// callbackSuccess branch
+			$log.debug('Project Description Modal: ' + result);
+		}, function(result) {
+			// callbackError branch
+			$log.debug('Project Description Modal: ' + result);
+		});
+	};
+
+	// controller for the project descriptor modal dialog
+	var projectDescriptorCtrl = function($scope, $modalInstance, description,
+			id) {
+
+		$scope.description = description;
+		$scope.id = id;
+
+		$scope.ok = function() {
+			$modalInstance.close('OK');
+		};
+
+		$scope.cancel = function() {
+			$modalInstance.dismiss('cancel');
+		};
+	};
+
 });

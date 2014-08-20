@@ -12,15 +12,43 @@ class MainController {
 
     def grailsApplication
 
+	/**
+	 * Renders a welcome text for the start page.
+	 * @return
+	 */
     def welcome() {
         render "Welcome to Cytomine ${grailsApplication.metadata.'app.name'}"
     }
 	
+	/**
+	 * Gets the application name
+	 * @return the name of the application
+	 */
 	def appName() {
 		render "${grailsApplication.metadata.'app.name'}"
 	}
 	
+	/**
+	 * Gets the version of the IRIS module.
+	 * @return the version as string
+	 */
 	def appVersion(){
 		render "${grailsApplication.metadata.'app.version'}"
+	}
+	
+	/**
+	 * Gets the Cytomine host URL from the configuration.
+	 * @return the URL of the host in Config.groovy
+	 */
+	def getHostAddress(){
+		render grailsApplication.config.grails.cytomine.host
+	}
+	
+	/**
+	 * Gets the Cytomine web URL from the configuration.
+	 * @return the URL of the web page in Config.groovy
+	 */
+	def getWebAddress(){
+		render grailsApplication.config.grails.cytomine.web
 	}
 }

@@ -1,9 +1,11 @@
 /**
  * Created by lrollus on 7/14/14.
  */
-angular.module("irisApp")
-    .constant("projectUrl", "/api/projects.json")
-    .factory("projectService",function($http,projectUrl,cytomineService) {
+var iris = angular.module("irisApp");
+
+iris.constant("projectUrl", "/api/projects.json");
+iris.constant("projectDescrUrl", "/api/project/{id}/description.json");
+iris.factory("projectService",function($http, projectUrl, projectDescrUrl, cytomineService) {
 /*
  static String publickey = "29f51819-3dc6-468c-8aa7-9c81b9bc236b";
  static String privatekey = "db214699-0384-498c-823f-801654238a67";
@@ -34,6 +36,24 @@ angular.module("irisApp")
 //	                    }
 //	                })
 //        	},
+        	
+        	// retrieve one specific project
+        	getDescription : function(projectID, callbackSuccess, callbackError){
+        		var tmpUrl = projectDescrUrl.replace("{id}", projectID);
+        		$http.get(cytomineService.addKeys(tmpUrl))
+	                .success(function (data) {
+	                	//console.log("success on $http.get(" + tmpUrl + ")");
+	                    if(callbackSuccess) {
+	                        callbackSuccess(data);
+	                    }
+	                })
+	                .error(function (data, status, headers, config) {
+	                	// console.log(callbackError)
+	                    if(callbackError) {
+	                        callbackError(data, status, headers, config);
+	                    }
+	                })
+        	},
         	
         	// retrieve the currently active project ID
         	getProjectID : function() {
@@ -80,7 +100,7 @@ angular.module("irisApp")
                     	// on error log the error
                     	// console.log(callbackError)
                         if(callbackError) {
-                            callbackError(data,status);
+                            callbackError(data,status,headers,config);
                         }
                     })
             }
