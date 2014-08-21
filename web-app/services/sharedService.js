@@ -1,5 +1,8 @@
 var iris = angular.module("irisApp");
 
+/**
+ * This service provides common (shared) functionality for the client.
+ */
 iris.factory("sharedService",function() {
 		
 		return {

@@ -7,9 +7,12 @@ iris.config(function($logProvider) {
 iris.controller(
 		"imageCtrl",
 		function($scope, $http, $filter, $location, imageService, $routeParams,
-				projectService, ngTableParams) {
+				projectService, helpService, ngTableParams) {
 			console.log("imageCtrl");
 
+			// set the help page for this controller
+			helpService.setContentUrl("content/help/imageHelp.html");
+			
 			$scope.image = {
 				error : {}
 			};

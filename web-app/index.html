@@ -23,16 +23,20 @@
 <script type="text/javascript" src="filters/stringFilters.js"></script>
 
 <!-- Services -->
+<script type="text/javascript" src="services/helpService.js"></script>
 <script type="text/javascript" src="services/sharedService.js"></script>
 <script type="text/javascript" src="services/cytomineService.js"></script>
 <script type="text/javascript" src="services/projectService.js"></script>
 <script type="text/javascript" src="services/imageService.js"></script>
 
 <!-- Controllers -->
+<script type="text/javascript" src="controllers/helpController.js"></script>
 <script type="text/javascript" src="controllers/mainController.js"></script>
+<script type="text/javascript" src="controllers/navController.js"></script> 
+<script type="text/javascript" src="controllers/welcomeController.js"></script>
 <script type="text/javascript" src="controllers/projectController.js"></script>
 <script type="text/javascript" src="controllers/imageController.js"></script>
-<script type="text/javascript" src="controllers/helpController.js"></script>
+
 
 </head>
 <body ng-controller="mainCtrl">
@@ -43,7 +47,8 @@
 			<a class="navbar-brand" href="#">Cytomine {{main.appName}}
 				(v{{main.appVersion}})</a>
 		</div>
-		<div class="navbar-collapse collapse">
+		
+		<div class="navbar-collapse collapse" ng-controller="navCtrl">
 			<ul class="nav navbar-nav navbar-left">
 				<li ng-class="{ active: isActive('/projects')}"><a
 					id="user-nav-button" href="#/projects"><span
@@ -60,7 +65,7 @@
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li ng-controller="helpCtrl"><a id="help-button" href
-					ng-click="showHelp('lg','helpTemplate.html')"> <span
+					ng-click="showHelp('lg','helpModal.html')"> <span
 						class="glyphicon glyphicon-question-sign"></span> Help
 				</a></li>
 
@@ -91,22 +96,8 @@
 		<div ng-hide="publicKey" ng-include src="'views/keys.html'"></div>
 	</div>
 
-	<!-- Templates -->
-	<div ng-controller="helpCtrl">
-		<script type="text/ng-template" id="helpTemplate.html">
-        <div class="modal-header">
-            <h3 class="modal-title">This is the help page!</h3>
-        </div>
-        <div class="modal-body">
-			Here goes your description.
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="ok()">OK</button>
-            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-        </div>
-		</script>
-	</div>
-
+	<!-- INCLUDE Templates -->
+	<div ng-include="'templates/html/helpModal.html'" ng-controller="helpCtrl"></div>
 	<!-- <iframe id="lf" src="http://beta.cytomine.be" width="400px" height="400px"></iframe> -->
 
 </body>

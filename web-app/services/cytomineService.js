@@ -1,10 +1,15 @@
 /**
  * Created by lrollus on 7/14/14.
  */
-angular.module("irisApp")
-		.constant("cytomineHostUrl", "/api/cytomineHost.json")
-		.constant("cytomineWebUrl", "/api/cytomineWeb.json")
-		.factory("cytomineService", function($http, cytomineHostUrl, cytomineWebUrl) {
+var iris = angular.module("irisApp");
+
+iris.constant("cytomineHostUrl", "/api/cytomineHost.json");
+iris.constant("cytomineWebUrl", "/api/cytomineWeb.json");
+
+/**
+ * This service is responsible for communicating HTTP requests to the IRIS server. 
+ */
+iris.factory("cytomineService", function($http, cytomineHostUrl, cytomineWebUrl) {
 
 	var publicKey;
 	var privateKey;

@@ -1,32 +1,27 @@
 var iris = angular.module("irisApp");
 
-iris.controller("helpCtrl", function($scope, $modal, $log) {
+iris.controller("helpCtrl", function($scope, $modal, $log, helpService) {
 
+	// shared object of the help controller and the modal dialog
+	// which will display the help page
 	$scope.help = {
-		errors : {},
+      contentUrl : helpService.getContentUrl(),
+		  errors : {},
 	};
-
+	
 	// open the help dialog
-	$scope.showHelp = function(size, templateUrl) {
+	$scope.showHelp = function(size, templateID) {
 
-		// $log.info(templateUrl);
+		// refresh the current content url for inclusion
+		$scope.help.contentUrl = helpService.getContentUrl();
 
 		var modalInstance = $modal.open({
-			templateUrl : templateUrl,
-			controller : function($scope, $modalInstance) {
-
-				$scope.ok = function() {
-					$modalInstance.close('here goes the result');
-				};
-
-				$scope.cancel = function() {
-					$modalInstance.dismiss('cancel');
-				};
-			},
+			templateUrl : templateID,
+			controller : modalHelpCtrl,
 			size : size,
 			resolve : {
-				items : function() {
-					return $scope.items;
+				help : function() {
+					return $scope.help;
 				}
 			}
 		});
@@ -34,9 +29,27 @@ iris.controller("helpCtrl", function($scope, $modal, $log) {
 		modalInstance.result.then(function(result) {
 			// callbackSuccess
 			$log.info(result);
-		}, function() {
+		}, function(result) {
 			// callbackError
-			$log.warn('Modal dismissed.');
+			$log.info(result);
 		});
 	};
+	
+	// controller for the modal instance
+	var modalHelpCtrl = function($scope, $modalInstance, help) {
+		
+		$scope.help = help;
+
+		$scope.ok = function() {
+			$modalInstance.close('ok');
+		};
+
+		$scope.cancel = function() {
+			$modalInstance.dismiss('cancel');
+		};
+	}
 });
+		
+
+		
+	

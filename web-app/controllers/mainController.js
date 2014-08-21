@@ -1,8 +1,8 @@
 var iris = angular.module("irisApp");
 
-iris.constant("welcomeUrl", "/api/welcome.json");
 iris.constant("appNameUrl", "/api/appName.json");
 iris.constant("appVersionUrl", "/api/appVersion.json");
+
 iris.config(function($logProvider) {
 	$logProvider.debugEnabled(true);
 });
@@ -11,7 +11,7 @@ iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
 		$log, welcomeUrl, appNameUrl, appVersionUrl, cytomineService,
 		projectService, imageService, sharedService) {
 	console.log("mainCtrl");
-
+	
 	// declare variables for expression
 	$scope.main = {
 		userName : "DOE John (jdoe)",
@@ -25,21 +25,9 @@ iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
 			.getItem("privateKey") : "");
 	$scope.publicKeyCurrent = $scope.publicKey;
 	$scope.privateKeyCurrent = $scope.privateKey;
+	
+	// set the keys each time the main controller loads
 	cytomineService.setKeys($scope.publicKey, $scope.privateKey);
-
-	// retrieve the welcome text
-	$scope.getWelcome = function() {
-		$http.get(welcomeUrl).success(function(data, status, headers, config) {
-			// console.log(data);
-			$scope.main.welcome = data;
-		}).error(function(data, status, headers, config) {
-			$scope.main.error.retrieve = {
-				status : status,
-				message : data.errors
-			};
-		})
-	};
-	$scope.getWelcome();
 
 	// retrieve the application name
 	$scope.getAppName = function() {
@@ -57,29 +45,7 @@ iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
 	}
 	$scope.getAppVersion();
 
-	// retrieve the Cytomine host address
-	$scope.getCytomineHost = function() {
-		cytomineService.getCytomineHost(function(cytomineHost) {
-			$scope.main.cytomineHost = cytomineHost;
-			// console.log("Cytomine Host: " + $scope.main.cytomineHost)
-		})
-	};
-	$scope.getCytomineHost();
-
-	// retrieve the Cytomine web address
-	$scope.getCytomineWeb = function() {
-		cytomineService.getCytomineWeb(function(cytomineWeb) {
-			$scope.main.cytomineWeb = cytomineWeb;
-			// console.log("Cytomine Web: " + $scope.main.cytomineWeb)
-		})
-	};
-	$scope.getCytomineWeb();
-
-	$scope.throwEx = function() {
-		throw {
-			message : 'error occurred!'
-		}
-	}
+	
 
 	// save the keys in the local storage
 	$scope.saveKeys = function() {
@@ -119,26 +85,10 @@ iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
 	// TODO just for DEBUG
 	$scope.main.imageID = imageService.getImageID();
 	$scope.main.projectID = projectService.getProjectID();
-
-	// navigation active tab controller
-	$scope.isActive = function(viewLocation) {
-		// console.log($location.path())
-
-		// full match
-		if ($location.path() === viewLocation) {
-			return true;
+	
+	$scope.throwEx = function() {
+		throw {
+			message : 'error occurred!'
 		}
-		// partial (suffix) match
-		else if (sharedService.strEndsWith($location.path(), viewLocation)) {
-			return true;
-		}
-		// no match
-		else {
-			return false;
-		}
-	};
-
-	// var lF = document.getElementById("lf");
-	// var btn = document.getElementById("#submit-login");
-	// console.log(btn);
+	}
 });

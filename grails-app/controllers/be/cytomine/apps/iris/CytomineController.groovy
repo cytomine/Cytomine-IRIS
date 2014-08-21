@@ -6,9 +6,13 @@ import be.cytomine.client.CytomineException;
 import be.cytomine.client.models.Description;
 import grails.converters.JSON
 
+/**
+ * 
+ * 
+ * @author Loic Rollus, Philipp Kainz
+ *
+ */
 class CytomineController {
-
-
 
 	/**
 	 * Get all projects from Cytomine host, which are associated with the user executing this query.

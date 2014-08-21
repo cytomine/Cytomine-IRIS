@@ -40,7 +40,7 @@ class MainController {
 	 * Gets the Cytomine host URL from the configuration.
 	 * @return the URL of the host in Config.groovy
 	 */
-	def getHostAddress(){
+	def hostAddress(){
 		render grailsApplication.config.grails.cytomine.host
 	}
 	
@@ -48,7 +48,7 @@ class MainController {
 	 * Gets the Cytomine web URL from the configuration.
 	 * @return the URL of the web page in Config.groovy
 	 */
-	def getWebAddress(){
+	def webAddress(){
 		render grailsApplication.config.grails.cytomine.web
 	}
 }

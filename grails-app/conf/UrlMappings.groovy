@@ -39,11 +39,11 @@ class UrlMappings {
 		}
 		
 		"/api/cytomineHost.$format"(controller:"main"){
-			action = [GET: "getHostAddress"]
+			action = [GET: "hostAddress"]
 		}
 		
 		"/api/cytomineWeb.$format"(controller:"main"){
-			action = [GET: "getWebAddress"]
+			action = [GET: "webAddress"]
 		}
 		
 		

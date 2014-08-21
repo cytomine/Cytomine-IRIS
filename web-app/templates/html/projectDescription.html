@@ -1,0 +1,20 @@
+<script type="text/ng-template" id="projectDescription.html">
+	<div class="modal-header">
+        <h4 class="modal-title">
+			<span class="glyphicon glyphicon-list"></span> Project Description ({{project.name}})</h4>
+    </div>
+        
+	<div class="modal-body">
+		<div ng-hide="error.show">
+			{{ description }}
+		</div>
+		<div ng-show="error.show" class="alert alert-danger" >
+       		Error: {{error.message}} ({{error.status}}).
+    	</div>
+    </div>
+      
+	<div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">Close</button>
+        <!--<button class="btn btn-warning" ng-click="cancel()">Cancel</button>-->
+    </div>
+</script>

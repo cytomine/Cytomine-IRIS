@@ -4,17 +4,21 @@ iris.config(function($logProvider) {
 	$logProvider.debugEnabled(true);
 });
 
-iris.controller("projectCtrl", function($scope, $http, $filter, $location,
-		$modal, $log, projectService, ngTableParams) {
+iris.controller("projectCtrl", function($scope, $http, $filter, $location, $document,
+		$modal, $log, projectService, helpService, ngTableParams) {
 	console.log("projectCtrl");
 
 	$scope.project = {
 		stillNew : ((365 / 6) * 24 * 60 * 60 * 1000), // last 2 months
 		error : {}
 	};
-
+	
 	// create the today variable
 	$scope.today = new Date().getTime();
+	
+	// set the help variable for this page 
+	//$log.debug("Setting help content url for project ctrl");
+	helpService.setContentUrl("content/help/projectHelp.html");
 
 	// gets all projects
 	$scope.getAllProjects = function(callbackSuccess) {
@@ -93,28 +97,61 @@ iris.controller("projectCtrl", function($scope, $http, $filter, $location,
 		alert("The current project ID is: " + projectService.getProjectID());
 	}
 
+	
+	// ###############################################################
+	// PROJECT DESCRIPTION MODAL DIALOG
 	// retrieve the information for a given project
-	$scope.retrieveInfo = function(projectID) {
-		projectService.getDescription(projectID, 
+	$scope.retrieveInfo = function(project) {
+		projectService.getDescription(project.id, 
+		
+		// successCallback
 		function(jsonDescription) {
-			$scope.showInfoDialog('lg', projectID, jsonDescription.attr);
-		}, function() {
-			$scope.showInfoDialog('lg', projectID, {data : "This project does not have any information."});
+			// open the dialog
+			$scope.showInfoDialog(project, jsonDescription.attr);
+		}, 
+		
+		// error callback
+		function(data, status) {
+
+			// react to specific status codes
+			if (status === 404){
+				dlgData = { data : "This project does not have any information.",
+						error : {
+							message : "No object found.",
+							status : status,
+							show : false
+						}
+				};
+			} else {
+				dlgData = { data : {},
+						error : {
+							message : "The project information cannot be retrieved.",
+							status : status,
+							show : true
+						}
+					}
+			}
+			
+			// open the dialog
+			$scope.showInfoDialog(project, dlgData);
 		});
 	}
 
 	// open the modal project information dialog
-	$scope.showInfoDialog = function(size, projectID, dsc) {
+	$scope.showInfoDialog = function(project, dlgData) {
 		var modalInstance = $modal.open({
 			templateUrl : 'projectDescription.html',
 			controller : projectDescriptorCtrl,
-			//size : size,
+			//size : 'lg',
 			resolve : {
-				description : function() {
-					return dsc.data;
+				data : function() {
+					return dlgData.data;
 				},
-				id : function() {
-					return projectID;
+				project : function() {
+					return project;
+				},
+				error : function() {
+					return dlgData.error;
 				}
 			}
 		});
@@ -129,11 +166,12 @@ iris.controller("projectCtrl", function($scope, $http, $filter, $location,
 	};
 
 	// controller for the project descriptor modal dialog
-	var projectDescriptorCtrl = function($scope, $modalInstance, description,
-			id) {
+	var projectDescriptorCtrl = function($scope, $modalInstance, data,
+			project, error) {
 
-		$scope.description = description;
-		$scope.id = id;
+		$scope.description = data;
+		$scope.project = project;
+		$scope.error = error;
 
 		$scope.ok = function() {
 			$modalInstance.close('OK');
@@ -143,5 +181,8 @@ iris.controller("projectCtrl", function($scope, $http, $filter, $location,
 			$modalInstance.dismiss('cancel');
 		};
 	};
+	// END PROJECT DESCRIPTION MODAL DIALOG
+	// ###############################################################
 
+	
 });

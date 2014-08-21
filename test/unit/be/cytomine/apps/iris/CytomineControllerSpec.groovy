@@ -20,11 +20,7 @@ class CytomineControllerSpec extends Specification {
 	def cleanup() {
 	}
 
-	void "test project description retrieval"() {
-//		when:
-//		controller.getProjectDescription()
-//		
-//		then:
-//		response.data instanceof String
+	void "test something"() {
+
 	}
 }
