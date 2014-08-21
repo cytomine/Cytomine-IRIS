@@ -1,13 +1,6 @@
 /RemoteSystemsTempFiles/
 
-target/classes/
-target/test-classes/
-target/test-reports/
-target/work/plugin-build-classes/
-target/work/plugin-classes/
-target/work/resources/
-target/work/scriptCache/
-target/work/tomcat/work/Tomcat/localhost/_/grails-resources/images/
+target/
 
 ######################
 # Eclipse IDE Files ##
