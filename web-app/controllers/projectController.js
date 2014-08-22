@@ -5,7 +5,7 @@ iris.config(function($logProvider) {
 });
 
 iris.controller("projectCtrl", function($scope, $http, $filter, $location, $document,
-		$modal, $log, projectService, helpService, ngTableParams) {
+		$modal, $log, projectService, helpService, sharedService, ngTableParams) {
 	console.log("projectCtrl");
 
 	$scope.project = {
@@ -13,8 +13,8 @@ iris.controller("projectCtrl", function($scope, $http, $filter, $location, $docu
 		error : {}
 	};
 	
-	// create the today variable
-	$scope.today = new Date().getTime();
+	// get the current day as long
+	$scope.today = sharedService.today;
 	
 	// set the help variable for this page 
 	//$log.debug("Setting help content url for project ctrl");

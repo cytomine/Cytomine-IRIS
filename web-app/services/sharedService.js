@@ -3,9 +3,32 @@ var iris = angular.module("irisApp");
 /**
  * This service provides common (shared) functionality for the client.
  */
-iris.factory("sharedService",function() {
-		
+iris.factory("sharedService",function($http, $log) {
+	
 		return {
+			
+			/////////////////////////////////
+			// JUST FOR DEBUG!!!
+			getCurrentUser : function(callbackSuccess, callbackError){
+				$http.get("http://beta.cytomine.be/api/user/current.json")
+				.success(function(data){
+					$log.debug(data);
+					if (callbackSuccess){
+						callbackSuccess(data);
+					}
+				})
+				.error(function(data, error, header, config){
+					$log.error(error)
+					if (callbackError){
+						callbackError(error);
+					}
+				});
+			},
+			/////////////////////////////////
+			
+			// create the today variable
+			today : new Date().getTime(),
+			
 			// string function for start with
 			strStartsWith : function(string, prefix) {
 				  return string.indexOf(prefix) == 0;

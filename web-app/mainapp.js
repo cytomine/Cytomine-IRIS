@@ -8,13 +8,13 @@ iris.config(function($routeProvider, $locationProvider) {
 	$routeProvider.when("/keys", {
 		templateUrl : "views/keys.html"
 	});
-	$routeProvider.when("/project/:idProject/images", {
-		templateUrl : "views/images.html"
-	});
 	$routeProvider.when("/projects", {
 		templateUrl : "views/projects.html"
 	});
-	$routeProvider.when("/labeling", {
+	$routeProvider.when("/project/:projectID/images", {
+		templateUrl : "views/images.html"
+	});
+	$routeProvider.when("/project/:projectID/image/:imageID/label", {
 		templateUrl : "views/labeling.html"
 	});
 	$routeProvider.when("/annotation", {

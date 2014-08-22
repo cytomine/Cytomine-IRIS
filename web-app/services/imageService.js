@@ -5,7 +5,7 @@ var iris = angular.module("irisApp");
 
 iris.constant("imageUrl", "/api/project/{id}/images.json");
 
-iris.factory("imageService",function($http,imageUrl,cytomineService) {
+iris.factory("imageService",function($http, $log, imageUrl, cytomineService) {
 
         var images=[];
 
@@ -32,8 +32,10 @@ iris.factory("imageService",function($http,imageUrl,cytomineService) {
             },
 
             // get the images
-            getImagesFromProject : function(idProject,callbackSuccess, callbackError) {
-                $http.get(cytomineService.addKeys(imageUrl).replace("{id}",idProject))
+            getImagesFromProject : function(idProject, callbackSuccess, callbackError) {
+            	var url = cytomineService.addKeys(imageUrl).replace("{id}", idProject);
+            	
+                $http.get(url)
                     .success(function (data) {
                         images = data;
                         if(callbackSuccess) {

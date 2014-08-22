@@ -6,19 +6,23 @@ iris.config(function($logProvider) {
 
 iris.controller(
 		"imageCtrl",
-		function($scope, $http, $filter, $location, imageService, $routeParams,
-				projectService, helpService, ngTableParams) {
+		function($scope, $http, $filter, $location, imageService, $routeParams, $log, 
+				projectService, helpService, sharedService, annotationService, ngTableParams) {
 			console.log("imageCtrl");
 
 			// set the help page for this controller
 			helpService.setContentUrl("content/help/imageHelp.html");
 			
 			$scope.image = {
+				stillNew : (21 * (24 * 60 * 60 * 1000)), // last 21 days
 				error : {}
 			};
 			
+			// get the current date as long
+			$scope.today = sharedService.today;
+			
 			// retrieve the parameter from the URL
-			$scope.idProject = $routeParams["idProject"];
+			$scope.idProject = $routeParams["projectID"];
 			
 			// get all the images for a project ID
 			$scope.getAllImages = function(projectID, callbackSuccess) {
@@ -48,7 +52,7 @@ iris.controller(
 					page : 1, // show first page
 					count : 10, // count per page
 					sorting : {
-						numberOfAnnotations : 'desc' // initial sorting
+						userProgress : 'asc' // initial sorting
 					},
 					filter : {
 						// applies filter to the "data" object before sorting
@@ -68,8 +72,7 @@ iris.controller(
 						$scope.data = newData.slice((params.page() - 1)
 								* params.count(), params.page()
 								* params.count());
-						params.total(newData.length); // set total for recalc
-						// pagination
+						params.total(newData.length); // set total for recalc pagination
 						
 						$defer.resolve($scope.data);
 						$scope.loading = false;
@@ -95,9 +98,8 @@ iris.controller(
 						}
 					});
 				},function(header, error){
-					console.log("damn, error blinding names :(")
+					$log.error("Damn, error blinding names :(")
 				});
-				
 			}
 
 			// //////////////////////////////////////////
@@ -121,5 +123,20 @@ iris.controller(
 				$scope.setImageID(null);
 				imageService.removeImageID();
 			}
-
+			// progress bar type
+			$scope.rowClass = function(progress) {
+//				if (progress < 50){
+//					return "danger";
+//				}
+//				else if (progress >= 50 && progress < 75){
+//					return "warning";
+//				}
+//				else if (progress >= 75 && progress < 95){
+//					return "info";
+//				}
+//				else 
+					if (progress >= 95){
+					return "success";
+				}
+			}
 		});

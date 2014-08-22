@@ -2,6 +2,7 @@ package be.cytomine.apps.iris
 
 import org.json.simple.JSONObject;
 
+import be.cytomine.client.Cytomine;
 import be.cytomine.client.CytomineException;
 import be.cytomine.client.models.Description;
 import grails.converters.JSON
@@ -29,11 +30,22 @@ class CytomineController {
 	 * @return the list of images for a given project ID
 	 */
 	def getImages() {
-		//		request['cytomine'].setMax(5); //max 5 images
-		def imageList = request['cytomine'].getImageInstances(params.long('idProject')).list
+		Cytomine cytomine = request['cytomine']
+		
+		long userID = cytomine.getUser(params.get("publicKey")).getId();
+		long projectID = params.long("projectID");
+		
+		//cytomine.setMax(5); //max 5 images
+		def imageList = cytomine.getImageInstances(params.long('projectID')).list
 		imageList.each {
 			//for each image, add a goToURL property containing the full URL to open the image in the core Cytomine instance
-			it.goToURL = grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + params.long('idProject') + "-" + it.id + "-"
+			it.goToURL = grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + projectID + "-" + it.id + "-"
+
+			// retrieve the user's progress on each image and return it in the object
+			JSONObject annInfo = new Utils().getUserProgress(cytomine, projectID, it.id, userID);
+			// resolving the values from the JSONObject to each image as property
+			it.labeledAnnotations = annInfo.get("labeledAnnotations")
+			it.userProgress = annInfo.get("userProgress")
 		}
 		render imageList as JSON
 	}
@@ -46,7 +58,7 @@ class CytomineController {
 		def d;
 		try {
 			//println "request arrived: " + params
-			d = request['cytomine'].getDescription(params.long('idProject'), 'be.cytomine.project.Project')
+			d = request['cytomine'].getDescription(params.long('projectID'), 'be.cytomine.project.Project')
 
 			//println d as JSON
 			render (d as JSON)

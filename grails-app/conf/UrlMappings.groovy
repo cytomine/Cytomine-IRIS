@@ -49,19 +49,25 @@ class UrlMappings {
 		
 		/*
 		 * cytomineController
-		 * - handles the communication to the core via the Java client
+		 * - handles the general communication to the core via the Java client
 		 */
 		"/api/projects.$format"(controller:"cytomine"){
 			action = [GET: "getProjects"]
 		}
 		
-		"/api/project/$idProject/images.$format"(controller:"cytomine"){
+		"/api/project/$projectID/images.$format"(controller:"cytomine"){
 			action = [GET: "getImages"]
 		}
 		
-		"/api/project/$idProject/description.$format"(controller:"cytomine"){
+		"/api/project/$projectID/description.$format"(controller:"cytomine"){
 			action = [GET: "getProjectDescription"]
 		}
+		
+		
+		/*
+		 * annotationController
+		 * - communicates annotation CRUD operations to the core via the Java client
+		 */
 		
 	}
 }

@@ -22,16 +22,22 @@
         	<p><strong>Count per page:</strong> {{tableParams.count()}}</p> -->
 	    
 		    <table ng-table="tableParams" show-filter="true" class="table table-striped table-bordered">
-		        <tr ng-repeat="item in data">
+		        <tr ng-repeat="item in data" class="{{rowClass(item.userProgress)}}">
 		            <td data-title="'ID'" sortable="'id'">{{item.id}}</td>
 		            <td data-title="'Preview'" class="text-center"><img class="img-rounded" src="{{item.macroURL}}" height="50px"/></td>
 		            <td data-title="'Name'" sortable="'fileName'" filter="{ 'fileName': 'text' }">
-		            	 {{item.fileName}}
-		            	 <p style="color:#777">{{item.width | number}} x {{item.height | number}} px</p></td>
+		            	 {{item.fileName}} 
+		            	 <span ng-show="({{today}} - {{item.created}}) <= {{image.stillNew}}" class="label label-success pull-right">New!</span>
+		            	 <p class="text-muted">{{item.width | number}} x {{item.height | number}} px</p>
+		            	 </td>
 		            <td data-title="'Magnification'">{{item.magnification}} X</td>
-		            <!-- <td data-title="'created'" sortable="'created'">{{item.created | longToDate | dateToFuzzyTime}}</td>  -->
-		            <td data-title="'# Annotations'" sortable="'numberOfAnnotations'">{{item.numberOfAnnotations}}</td>
-		            <td data-title="'action'" class="text-center">
+		            <td data-title="'Progress'" sortable="'userProgress'" class="text-center">
+		            	<div ng-switch="{{item.numberOfAnnotations}}">
+		            		<div ng-switch-when="0" class="label label-info">No Annotations!</div>
+		            		<div ng-switch-default><div ng-include="'templates/html/progressPanel.html'"></div></div>
+		            	</div>
+		            </td>
+		            <td data-title="'Actions'" class="text-center">
 		                <a class="btn btn-xs btn-primary" ng-click="setImageID(item.id)" target="_blank" href="{{item.goToURL}}">View in Cytomine</a>
 		            </td>
 		        </tr>
