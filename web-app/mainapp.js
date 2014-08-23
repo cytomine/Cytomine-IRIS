@@ -21,7 +21,7 @@ iris.config(function($routeProvider, $locationProvider) {
 		templateUrl : "views/annotationGallery.html"
 	});
 	// default route
-	$routeProvider.otherwise({
-		templateUrl : "views/welcome.html"
-	});
+//	$routeProvider.otherwise({
+//		templateUrl : "views/welcome.html"
+//	});
 });

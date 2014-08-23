@@ -7,6 +7,7 @@ iris.constant("imageUrl", "/api/project/{id}/images.json");
 
 iris.factory("imageService",function($http, $log, imageUrl, cytomineService) {
 
+		// cached object for the images
         var images=[];
 
         return {
@@ -27,14 +28,15 @@ iris.factory("imageService",function($http, $log, imageUrl, cytomineService) {
 			},
 			
 			// get all cached images
-            allImages : function() {
+            getAllImages : function() {
                 return images;
             },
 
             // get the images
-            getImagesFromProject : function(idProject, callbackSuccess, callbackError) {
-            	var url = cytomineService.addKeys(imageUrl).replace("{id}", idProject);
+            fetchImages : function(projectID, callbackSuccess, callbackError) {
+            	var url = cytomineService.addKeys(imageUrl).replace("{id}", projectID);
             	
+            	// execute the get request to the server
                 $http.get(url)
                     .success(function (data) {
                         images = data;

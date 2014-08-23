@@ -26,7 +26,7 @@ iris.factory("sharedService",function($http, $log) {
 			},
 			/////////////////////////////////
 			
-			// create the today variable
+			// create the today variable in "long" format
 			today : new Date().getTime(),
 			
 			// string function for start with

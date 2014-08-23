@@ -1,6 +1,8 @@
 var iris = angular.module("irisApp");
 
-iris.controller("navCtrl", function($scope, $location, $log, sharedService) {
+iris.constant("labelUrl", "/project/{projectID}/image/{imageID}/label");
+
+iris.controller("navCtrl", function($scope, $location, $log, sharedService, projectService, imageService, labelUrl) {
 	console.log("navCtrl");
 	
 	// navigation active tab controller
@@ -21,5 +23,13 @@ iris.controller("navCtrl", function($scope, $location, $log, sharedService) {
 		}
 	};
 	
+	// navigate to the current image for labeling
+	$scope.labeling = function(){
+		var pID = projectService.getProjectID();
+		var iID = imageService.getImageID();
+		var url = labelUrl.replace("{projectID}", pID).replace("{imageID}",iID);
+		
+		$location.url(url)
+	};
 	
 });

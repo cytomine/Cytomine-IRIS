@@ -1,1 +1,5 @@
 .noPadding { padding: 0px;}
+
+.container-fluid.rounded-corners {
+	border-radius: 10px;
+}

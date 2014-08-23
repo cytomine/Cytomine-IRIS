@@ -22,7 +22,7 @@ iris.controller("projectCtrl", function($scope, $http, $filter, $location, $docu
 
 	// gets all projects
 	$scope.getAllProjects = function(callbackSuccess) {
-		projectService.getAllProjects(function(data) {
+		projectService.fetchProjects(function(data) {
 			callbackSuccess(data);
 		}, function(data, status) {
 			$scope.project.error.retrieve = {
@@ -33,46 +33,50 @@ iris.controller("projectCtrl", function($scope, $http, $filter, $location, $docu
 		});
 	};
 
-	// execute project loading
-	$scope.loading = true;
-	$scope.getAllProjects(function(data) {
-		$scope.project.error.retrieve = null;
-		$scope.project.projects = data;
-
-		// build the data table
-		$scope.tableParams = new ngTableParams({
-			page : 1, // show first page
-			count : 10, // count per page
-			// leave this blank for no sorting at all
-			sorting : {
-				created : 'desc' // initial sorting
-			},
-			filter : {
-				name : '' // initial filter
-			}
-		}, {
-			total : $scope.project.projects.length, // number of projects
-			getData : function($defer, params) {
-				// use build-in angular filter
-				var newData = $scope.project.projects;
-				// use build-in angular filter
-				newData = params.filter() ? $filter('filter')(newData,
-						params.filter()) : newData;
-				newData = params.sorting() ? $filter('orderBy')(newData,
-						params.orderBy()) : newData;
-				$scope.data = newData.slice((params.page() - 1)
-						* params.count(), params.page() * params.count());
-				params.total(newData.length); // set total for recalc
-				// pagination
-				$defer.resolve($scope.data);
-				$scope.loading = false;
-			}
+	// refresh the page
+	$scope.refreshPage = function() {
+		$scope.loading = true;
+		console.log("loading: " + $scope.loading)
+		
+		$scope.getAllProjects(function(data) {
+			$scope.project.error.retrieve = null;
+			$scope.project.projects = data;
+			
+			// build the data table
+			$scope.tableParams = new ngTableParams({
+				page : 1, // show first page
+				count : 10, // count per page
+				// leave this blank for no sorting at all
+				sorting : {
+					created : 'desc' // initial sorting
+				},
+				filter : {
+					// applies filter to the "data" object before sorting
+				}
+			}, {
+				total : $scope.project.projects.length, // number of projects
+				getData : function($defer, params) {
+					// use build-in angular filter
+					var newData = $scope.project.projects;
+					// use build-in angular filter
+					newData = params.filter() ? $filter('filter')(newData,
+							params.filter()) : newData;
+					newData = params.sorting() ? $filter('orderBy')(newData,
+							params.orderBy()) : newData;
+					$scope.data = newData.slice((params.page() - 1)
+							* params.count(), params.page() * params.count());
+					params.total(newData.length); // set total for recalc pagination
+					
+					$defer.resolve($scope.data);
+				},
+			});
+			$scope.loading = false;
 		});
-
-	});
-	// debug
-	// console.debug($scope);
-
+	};
+	
+	// execute project loading
+	$scope.refreshPage();
+	
 	// set the current project ID
 	$scope.setProjectID = function(projectID) {
 		projectService.setProjectID(projectID);
@@ -115,8 +119,8 @@ iris.controller("projectCtrl", function($scope, $http, $filter, $location, $docu
 
 			// react to specific status codes
 			if (status === 404){
-				dlgData = { data : "This project does not have any information.",
-						error : {
+				dlgData = { data : "This project does not have any description.",
+							error : {
 							message : "No object found.",
 							status : status,
 							show : false

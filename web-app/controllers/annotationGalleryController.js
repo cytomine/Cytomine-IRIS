@@ -11,7 +11,7 @@ iris.controller("annotationGalleryCtrl", function($scope, $http, $filter,
 	$scope.annotation = {
 		error : {}
 	};
-	$scope.idProject = $routeParams["idProject"];
+	$scope.projectID = $routeParams["projectID"];
 
 	// TODO
 });
