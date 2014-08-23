@@ -5,21 +5,30 @@ iris.config(function($logProvider) {
 });
 
 iris.controller("projectCtrl", function($scope, $http, $filter, $location, $document,
-		$modal, $log, projectService, helpService, sharedService, ngTableParams) {
+		$modal, $log, hotkeys, projectService, helpService, sharedService, ngTableParams) {
 	console.log("projectCtrl");
+	
+	// set content url for the help page
+	helpService.setContentUrl("content/help/projectHelp.html");
 
 	$scope.project = {
 		stillNew : ((365 / 6) * 24 * 60 * 60 * 1000), // last 2 months
 		error : {}
 	};
 	
+	// put all valid shortcuts for this page here
+	hotkeys.bindTo($scope)
+	.add({
+		combo : 'h',
+		description : 'Show help for this page',
+		callback : function() {
+			helpService.showHelp();
+		}
+	});
+	
 	// get the current day as long
 	$scope.today = sharedService.today;
 	
-	// set the help variable for this page 
-	//$log.debug("Setting help content url for project ctrl");
-	helpService.setContentUrl("content/help/projectHelp.html");
-
 	// gets all projects
 	$scope.getAllProjects = function(callbackSuccess) {
 		projectService.fetchProjects(function(data) {
@@ -36,7 +45,6 @@ iris.controller("projectCtrl", function($scope, $http, $filter, $location, $docu
 	// refresh the page
 	$scope.refreshPage = function() {
 		$scope.loading = true;
-		console.log("loading: " + $scope.loading)
 		
 		$scope.getAllProjects(function(data) {
 			$scope.project.error.retrieve = null;

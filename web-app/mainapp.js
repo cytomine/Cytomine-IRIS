@@ -1,9 +1,14 @@
 var iris = angular.module("irisApp", [ "ngRoute", "ngResource", "ngTable",
-		"ui.bootstrap" ]);
+		"ui.bootstrap", "cfp.hotkeys" ]);
+
+// include application wide route-specific cheat sheets
+iris.config(function(hotkeysProvider) {
+    hotkeysProvider.includeCheatSheet = true;
+  });
 
 iris.config(function($routeProvider, $locationProvider) {
 	$routeProvider.when("/", {
-		templateUrl : "views/welcome.html"
+		templateUrl : "views/welcome.html",
 	});
 	$routeProvider.when("/keys", {
 		templateUrl : "views/keys.html"

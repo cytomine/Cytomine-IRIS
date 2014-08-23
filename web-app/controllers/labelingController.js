@@ -5,12 +5,26 @@ iris.config(function($logProvider) {
 });
 
 iris.controller("labelingCtrl", function($scope, $http, $filter, $location,
-		$routeParams, $log, annotationService, sharedService) {
+		$routeParams, $log, hotkeys, helpService, annotationService, sharedService) {
 	console.log("labelingCtrl");
+
+	// set content url for the help page
+	helpService.setContentUrl("content/help/labelingHelp.html");
 
 	$scope.labeling = {
 		error : {}
 	};
+	
+	// put all valid shortcuts for this page here
+	hotkeys.bindTo($scope)
+	.add({
+		combo : 'h',
+		description : 'Show help for this page',
+		callback : function() {
+			helpService.showHelp();
+		}
+	});
+	
 	$scope.projectID = $routeParams["projectID"];
 
 	// TODO
@@ -19,5 +33,5 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location,
 	$scope.totalItems = 64;
 	$scope.currentPage = 4;
 	$scope.numPages = 2;
-
+	
 });

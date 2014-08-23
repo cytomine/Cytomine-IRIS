@@ -15,10 +15,17 @@
 <!-- <link rel="stylesheet" href="lib/openlayers/theme/default/style.css" type="text/css"> -->
 <!-- <script type="text/javascript" src="lib/openlayers/OpenLayers.js"></script> -->
 
+<!-- Keyboard Shortcuts -->
+<link rel="stylesheet" href="lib/hotkeys/hotkeys.min.css"></link>
+<script type="text/javascript" src="lib/mousetrap/mousetrap.min.js"></script>
+<script type="text/javascript" src="lib/hotkeys/hotkeys.min.js"></script>
+
+
 <!-- Bootstrap files for CSS -->
 <link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
 <link href="lib/bootstrap/css/bootstrap-theme.css" rel="stylesheet" />
 
+<!-- Custom UI bootstrap components for AngularJS -->
 <script type="text/javascript"
 	src="lib/bootstrap/js/ui-bootstrap-tpls-0.11.0.min.js"></script>
 
@@ -44,6 +51,7 @@
 <script type="text/javascript" src="controllers/projectController.js"></script>
 <script type="text/javascript" src="controllers/imageController.js"></script>
 <script type="text/javascript" src="controllers/labelingController.js"></script>
+
 
 </head>
 <body ng-controller="mainCtrl">
@@ -71,8 +79,8 @@
 						class="glyphicon glyphicon-th"></span> Annotations</a></li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<li ng-controller="helpCtrl"><a id="help-button" href
-					ng-click="showHelp('lg','helpModal.html')"> <span
+				<li><a id="help-button" href
+					ng-click="showHelp()"> <span
 						class="glyphicon glyphicon-question-sign"></span> Help
 				</a></li>
 

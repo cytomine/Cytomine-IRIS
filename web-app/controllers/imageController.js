@@ -6,17 +6,27 @@ iris.config(function($logProvider) {
 
 iris.controller(
 		"imageCtrl",
-		function($scope, $http, $filter, $location, imageService, $routeParams, $log, 
+		function($scope, $http, $filter, $location, imageService, $routeParams, $log, hotkeys,
 				projectService, helpService, sharedService, annotationService, ngTableParams) {
 			console.log("imageCtrl");
-
-			// set the help page for this controller
-			helpService.setContentUrl("content/help/imageHelp.html");
 			
+			// set content url for the help page
+			helpService.setContentUrl("content/help/imageHelp.html");
+
 			$scope.image = {
 				stillNew : (21 * (24 * 60 * 60 * 1000)), // last 21 days
 				error : {}
 			};
+			
+			// put all valid shortcuts for this page here
+			hotkeys.bindTo($scope)
+			.add({
+				combo : 'h',
+				description : 'Show help for this page',
+				callback : function() {
+					helpService.showHelp();
+				}
+			});
 			
 			// get the current date as long
 			$scope.today = sharedService.today;

@@ -1,16 +1,29 @@
 var iris = angular.module("irisApp");
 
-iris.controller("helpCtrl", function($scope, $modal, $log, helpService) {
+iris.controller("helpCtrl", function($rootScope, $scope, $modal, $log, helpService) {
 
 	// shared object of the help controller and the modal dialog
 	// which will display the help page
 	$scope.help = {
-      contentUrl : helpService.getContentUrl(),
 		  errors : {},
 	};
 	
+	// catch the help event and show the modal
+	$scope.$on("showPageHelp", function(event, mass) {
+		$scope.showPageHelp();
+	});
+	
+	$scope.isVisible = false;
+	
+	// shows the help function, if the modal is not visible
+	$scope.showPageHelp = function(){
+		if (!$scope.isVisible){
+			$scope.display('lg','helpModal.html');
+		}
+	};
+	
 	// open the help dialog
-	$scope.showHelp = function(size, templateID) {
+	$scope.display = function(size, templateID) {
 
 		// refresh the current content url for inclusion
 		$scope.help.contentUrl = helpService.getContentUrl();
@@ -25,13 +38,16 @@ iris.controller("helpCtrl", function($scope, $modal, $log, helpService) {
 				}
 			}
 		});
+		$scope.isVisible = true;
 
 		modalInstance.result.then(function(result) {
 			// callbackSuccess
 			$log.info(result);
+			$scope.isVisible = false;
 		}, function(result) {
 			// callbackError
 			$log.info(result);
+			$scope.isVisible = false;
 		});
 	};
 	

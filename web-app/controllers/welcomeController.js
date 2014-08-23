@@ -2,15 +2,33 @@ var iris = angular.module("irisApp");
 
 iris.constant("welcomeUrl", "/api/welcome.json");
 
-iris.controller("welcomeCtrl", function($scope, $log, $http, helpService, cytomineService, welcomeUrl){
+iris.controller("welcomeCtrl", function($rootScope, $scope, $log, $http, $location,
+		helpService, cytomineService, welcomeUrl, hotkeys) {
 	console.log("welcomeCtrl");
-	
-	// set the help variable for this page 
+
+	// set the help variable for this page
 	helpService.setContentUrl("content/help/welcomeHelp.html");
-	
+
 	$scope.welcome = {
-			errors : {}
+		errors : {}
 	}
+
+	// put all valid shortcuts for this page here
+	hotkeys.bindTo($scope)
+	.add({
+		combo : 'h',
+		description : 'Show help for this page',
+		callback : function() {
+			helpService.showHelp();
+		}
+	})
+//	.add({
+//		combo : '*',
+//		description : 'Navigate to the available projects',
+//		callback : function() {
+//			$location.url("/projects");
+//		}
+//	});
 
 	// retrieve the welcome text
 	$scope.getWelcome = function() {
@@ -25,7 +43,7 @@ iris.controller("welcomeCtrl", function($scope, $log, $http, helpService, cytomi
 		})
 	};
 	$scope.getWelcome();
-	
+
 	// retrieve the Cytomine host address
 	$scope.getCytomineHost = function() {
 		cytomineService.getCytomineHost(function(cytomineHost) {
@@ -43,5 +61,5 @@ iris.controller("welcomeCtrl", function($scope, $log, $http, helpService, cytomi
 		})
 	};
 	$scope.getCytomineWeb();
-	
+
 });

@@ -9,6 +9,7 @@ iris.factory("imageService",function($http, $log, imageUrl, cytomineService) {
 
 		// cached object for the images
         var images=[];
+        var currentImage;
 
         return {
         	

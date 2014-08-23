@@ -1,11 +1,10 @@
 var iris = angular.module("irisApp");
 
-iris.factory("helpService", function($modal, $log) {
+iris.factory("helpService", function($rootScope, $modal, $log) {
 	var defaultUrl = "content/help/defaultHelp.html";
 	var contentUrl = defaultUrl;
 	
 	return {
-		
 		getContentUrl : function() {
 			return contentUrl;
 		},
@@ -15,6 +14,11 @@ iris.factory("helpService", function($modal, $log) {
 				url = defaultUrl;
 			}
 			contentUrl = url;
+		},
+		
+		// broadcasts the "show help" property to all children
+		showHelp : function() {
+			$rootScope.$broadcast("showPageHelp");
 		}
 	}
 });

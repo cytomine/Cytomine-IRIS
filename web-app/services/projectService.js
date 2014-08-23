@@ -13,6 +13,7 @@ iris.factory("projectService", function($http, projectUrl, projectDescrUrl,
 	 * 
 	 */
 	var projects = [];
+	var currentProject;
 
 	return {
 
