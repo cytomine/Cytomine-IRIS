@@ -1,14 +1,24 @@
-<div ng-controller="labelingCtrl">
-	<div class="well col-xs-6">
+<div ng-controller="labelingCtrl" class="container col-sm-8">
+	<!-- TODO remove container class -->
+	<p class="well">
 		<img
 			src="http://beta.cytomine.be/api/annotation/136334701/crop.png?&increaseArea=8&maxSize=256&draw=true"
 			alt="" />
+			<br/>
+		<a href="#"><span class="btn btn-primary" disabled>View in Cytomine</span></a>
+	</p>
+	<p class="well">Terms</p>
+	
+	<div class="row">
+	<div class="col-sm-6">
+	<div ng-controller="progressCtrl"
+		ng-include="'templates/html/progressPanel.html'">
 	</div>
-	<div class="well col-xs-6">Terms</div>
-	<div class="col-xs-12">
-		<pagination total-items="totalItems" ng-model="currentPage"
-			max-size="maxSize" class="pagination-sm" boundary-links="true"
-			direction-links="true" num-pages="numPages"></pagination>
-		<!-- <pager total-items="totalItems" ng-model="currentPage"></pager> -->
+	</div>
+	
+	<div class="class-sm-6"><pagination total-items="totalItems" ng-model="currentPage"
+		max-size="maxSize" class="pagination-sm" boundary-links="true"
+		direction-links="true" num-pages="numPages"></pagination>
+	<!-- <pager total-items="totalItems" ng-model="currentPage"></pager> --></div>
 	</div>
 </div>

@@ -21,7 +21,20 @@ class CytomineController {
 	 */
 	def getProjects() {
 		// get the Cytomine instance from the request (injected by the security filter!)
-		render request['cytomine'].getProjects().list as JSON
+		Cytomine cytomine = request['cytomine']
+		def projectList = cytomine.getProjects().list
+		
+		// optionally resolve the ontology and inject it in the 
+		if (params['resolveOntology'].equals("true")){
+			// get the ontology object for each project
+			projectList.each {
+				println it.get("ontology")
+				long oID = it.get("ontology")
+				def ontology = cytomine.getOntology(oID);
+				it.resolvedOntology = ontology;
+			}
+		}
+		render (projectList as JSON)
 	}
 
 	/**
@@ -77,5 +90,18 @@ class CytomineController {
 			// do not send any response, since the Grails server automatically sends a 404 code
 			// and triggers the callbackError method
 		}
+	}
+	
+	/**
+	 * Gets an ontology by ID.
+	 * @return the ontology as JSON object
+	 */
+	def getOntology(){
+		Cytomine cytomine = request['cytomine']
+		long oID = params.long('ontologyID')
+		
+		def ontology = cytomine.getOntology(oID)
+		
+		render (ontology as JSON)
 	}
 }

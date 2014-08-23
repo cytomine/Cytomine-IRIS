@@ -5,6 +5,7 @@ var iris = angular.module("irisApp");
 
 iris.constant("projectUrl", "/api/projects.json");
 iris.constant("projectDescrUrl", "/api/project/{id}/description.json");
+iris.constant("ontologyUrl", "/api/ontology/{ontologyID}.json");
 iris.factory("projectService", function($http, projectUrl, projectDescrUrl,
 		cytomineService) {
 	/*
@@ -12,8 +13,10 @@ iris.factory("projectService", function($http, projectUrl, projectDescrUrl,
 	 * String privatekey = "db214699-0384-498c-823f-801654238a67";
 	 * 
 	 */
+	// cached variables
 	var projects = [];
 	var currentProject;
+	var currentOntology;
 
 	return {
 
@@ -57,6 +60,26 @@ iris.factory("projectService", function($http, projectUrl, projectDescrUrl,
 		// Cytomine core server
 		fetchProjects : function(callbackSuccess, callbackError) {
 			var url = cytomineService.addKeys(projectUrl);
+
+			$http.get(url).success(function(data) {
+				// console.log("success on $http.get(" + url + ")");
+				// on success, assign the data to the projects array
+				projects = data;
+				if (callbackSuccess) {
+					callbackSuccess(data);
+				}
+			}).error(function(data, status, headers, config) {
+				// on error log the error
+				// console.log(callbackError)
+				if (callbackError) {
+					callbackError(data, status, headers, config);
+				}
+			})
+		},
+		
+		// get the associated ontology for a project
+		fetchOntology : function(ontologyID, callbackSuccess, callbackError) {
+			var url = cytomineService.addKeys(ontologyUrl).replace("{ontologyID}", ontologyID);
 
 			$http.get(url).success(function(data) {
 				// console.log("success on $http.get(" + url + ")");

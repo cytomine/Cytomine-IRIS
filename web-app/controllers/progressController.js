@@ -2,6 +2,7 @@ var iris = angular.module("irisApp");
 
 // controller for the progress bar functionality
 iris.controller("progressCtrl", function($scope){
+	
 	// determine the type of the progress bar (color)
 	$scope.type = function(progress) {
 		if (progress < 50){

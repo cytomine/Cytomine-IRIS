@@ -195,6 +195,4 @@ iris.controller("projectCtrl", function($scope, $http, $filter, $location, $docu
 	};
 	// END PROJECT DESCRIPTION MODAL DIALOG
 	// ###############################################################
-
-	
 });

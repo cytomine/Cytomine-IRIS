@@ -36,7 +36,7 @@
 		            <td data-title="'Progress'" sortable="'userProgress'" class="text-center">
 		            	<div ng-switch="{{item.numberOfAnnotations}}">
 		            		<div ng-switch-when="0" class="label label-info">No Annotations!</div>
-		            		<div ng-switch-default><div ng-include="'templates/html/progressPanel.html'"></div></div>
+		            		<div ng-switch-default><div ng-controller="progressCtrl" ng-include="'templates/html/progressPanel.html'"></div></div>
 		            	</div>
 		            </td>
 		            <td data-title="'Actions'" class="text-center">

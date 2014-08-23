@@ -63,6 +63,9 @@ class UrlMappings {
 			action = [GET: "getProjectDescription"]
 		}
 		
+		"/api/ontology/$ontologyID.$format"(controller:"cytomine"){
+			action = [GET: "getOntology"]
+		}
 		
 		/*
 		 * annotationController
