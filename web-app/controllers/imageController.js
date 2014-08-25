@@ -51,22 +51,20 @@ iris.controller(
 			
 			// blind the image name
 			$scope.blindNames = function(projectID, data){
-				// get the project list
-				projectService.getAllProjects(function(pList){
-					// modify the original file name
-					pList.forEach(function(p){
-						if (p.id == projectID){
-							data.forEach(function(item){
-								if (p.blindMode === true){
-									item.fileName = "[BLIND]" + item.id;
-								} else {
-									item.fileName = item.originalFilename;
-								}
-							});
-						}
-					});
-				},function(header, error){
-					$log.error("Damn, error blinding names :(")
+				// get the (cached) project list
+				var pList = projectService.getAllProjects();
+
+				// modify the original file name
+				pList.forEach(function(p){
+					if (p.id == projectID){
+						data.forEach(function(item){
+							if (p.blindMode === true){
+								item.fileName = "[BLIND]" + item.id;
+							} else {
+								item.fileName = item.originalFilename;
+							}
+						});
+					}
 				});
 			};
 			
