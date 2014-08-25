@@ -45,10 +45,10 @@
 		            <td data-title="'Action'" class="text-center">
 		                <span ng-switch="{{item.isClosed}}">
 		                	<span ng-switch-when="false">
-		                	 	<a class="btn btn-xs btn-primary" ng-click="setProjectID(item.id)" href="#/project/{{item.id}}/images">Open</a>
+		                	 	<a class="btn btn-sm btn-primary" ng-click="setProjectID(item.id)" href="#/project/{{item.id}}/images">Open</a>
 		                	</span>
 		                	<span ng-switch-default>
-		                		<a class="btn btn-xs btn-primary" disabled="disabled" href tooltip-placement="top" tooltip="This project is closed.">Open</a>
+		                		<a class="btn btn-sm btn-primary" disabled="disabled" href tooltip-placement="top" tooltip="This project is closed.">Open</a>
 		            		</span>
 		            	</span>
 		            </td>

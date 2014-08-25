@@ -20,7 +20,6 @@
 <script type="text/javascript" src="lib/mousetrap/mousetrap.min.js"></script>
 <script type="text/javascript" src="lib/hotkeys/hotkeys.min.js"></script>
 
-
 <!-- Bootstrap files for CSS -->
 <link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
 <link href="lib/bootstrap/css/bootstrap-theme.css" rel="stylesheet" />
@@ -101,10 +100,9 @@
 			</ul>
 		</div>
 	</div>
-	<!-- Current project ID: {{main.projectID}}, current image ID:
-	{{main.imageID}}
- -->
-	<div class="container-fluid" role="main">
+	
+<!--  In order to use full width use the div class .container-fluid -->
+	<div class="container" role="main">
 		<div ng-show="publicKey">
 			<ng-view></ng-view>
 		</div>

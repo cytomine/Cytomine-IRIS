@@ -1,24 +1,34 @@
-<div ng-controller="labelingCtrl" class="container col-sm-8">
+<div ng-controller="labelingCtrl" class="row col-sm-8">
 	<!-- TODO remove container class -->
 	<p class="well">
 		<img
 			src="http://beta.cytomine.be/api/annotation/136334701/crop.png?&increaseArea=8&maxSize=256&draw=true"
-			alt="" />
-			<br/>
-		<a href="#"><span class="btn btn-primary" disabled>View in Cytomine</span></a>
+			alt="" /> <br /> <a href="#"><span class="btn btn-primary"
+			disabled="disabled">View in Cytomine</span></a>
 	</p>
-	<p class="well">Terms</p>
-	
+	<p class="well">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title">Select a term</h4>
+		</div>
+		<div class="panel-body">
+			Here we place the terms
+		</div>
+	</div>
+	</p>
+
+
 	<div class="row">
-	<div class="col-sm-6">
-	<div ng-controller="progressCtrl"
-		ng-include="'templates/html/progressPanel.html'">
-	</div>
-	</div>
-	
-	<div class="class-sm-6"><pagination total-items="totalItems" ng-model="currentPage"
-		max-size="maxSize" class="pagination-sm" boundary-links="true"
-		direction-links="true" num-pages="numPages"></pagination>
-	<!-- <pager total-items="totalItems" ng-model="currentPage"></pager> --></div>
+		<div class="col-sm-6">
+			<div ng-controller="progressCtrl"
+				ng-include="'templates/html/progressPanel.html'"></div>
+		</div>
+
+		<div class="class-sm-6">
+			<pagination total-items="totalItems" ng-model="currentPage"
+				max-size="maxSize" class="pagination-sm" boundary-links="true"
+				direction-links="true" num-pages="numPages"></pagination>
+			<!-- <pager total-items="totalItems" ng-model="currentPage"></pager> -->
+		</div>
 	</div>
 </div>
