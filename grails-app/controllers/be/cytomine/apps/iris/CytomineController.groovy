@@ -1,11 +1,12 @@
 package be.cytomine.apps.iris
 
-import org.json.simple.JSONObject;
-
-import be.cytomine.client.Cytomine;
-import be.cytomine.client.CytomineException;
-import be.cytomine.client.models.Description;
 import grails.converters.JSON
+
+import org.json.simple.JSONObject
+
+import be.cytomine.client.Cytomine
+import be.cytomine.client.CytomineException
+import be.cytomine.client.models.Ontology
 
 /**
  * 
@@ -100,8 +101,14 @@ class CytomineController {
 		Cytomine cytomine = request['cytomine']
 		long oID = params.long('ontologyID')
 		
-		def ontology = cytomine.getOntology(oID)
+		Ontology ontology = cytomine.getOntology(oID);
 		
-		render (ontology as JSON)
+		if (params["flat"].equals("true")){
+			List<JSONObject> json = new Utils().flattenOntology(ontology);
+			render (json as JSON)
+		} else {
+			render (ontology as JSON)
+		}
 	}
+	
 }

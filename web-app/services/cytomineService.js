@@ -11,9 +11,9 @@ iris.constant("cytomineWebUrl", "/api/cytomineWeb.json");
  */
 iris.factory("cytomineService", function($http, cytomineHostUrl, cytomineWebUrl) {
 
-	var publicKey;
-	var privateKey;
-
+	var publicKey; 
+	var privateKey; 
+	
 	return {
 
 		// returns the public key

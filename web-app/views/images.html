@@ -41,13 +41,13 @@
 		            </td>
 		            <td data-title="'Actions'" class="text-center">
 						<div class="btn-group" dropdown>
-						  <button type="button" class="btn btn-primary btn-sm" ng-click="labeling(item.id)">Start Labeling</button>
+						  <button type="button" class="btn btn-primary btn-sm" ng-click="startLabeling(item.id)" ng-class="{ disabled : item.numberOfAnnotations=='0'}">Start Labeling</button>
 						  <button type="button" class="btn btn-primary btn-sm dropdown-toggle">
 						    <span class="caret"></span>
 						    <span class="sr-only">Toggle Dropdown</span>
 						  </button>
 						  <ul class="dropdown-menu text-left" role="menu">
-						    <li class="disabled"><a ng-click="annotationGallery(item.id)" href>
+						    <li ng-class="{ disabled : item.numberOfAnnotations=='0'}"><a ng-click="annotationGallery(item.id)" href>
 						    		View Annotation Gallery
 						    </a></li>
 						    <li class="divider"></li>

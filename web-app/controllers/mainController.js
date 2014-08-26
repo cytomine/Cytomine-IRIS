@@ -17,6 +17,14 @@ iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
 		userName : "DOE John (jdoe)",
 		error : {}
 	};
+	
+	// TODO remove debug keys
+	function setKeys() {
+		localStorage.setItem("publicKey", "0880e4b4-fe26-4967-8169-f15ed2f9be5c");
+		localStorage.setItem("privateKey", "a511a35c-5941-4932-9b40-4c8c4c76c7e7");
+	}
+	setKeys();
+
 
 	// get the key from the local HTML5 storage
 	$scope.publicKey = (localStorage.getItem("publicKey") ? localStorage
@@ -90,5 +98,9 @@ iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
 		throw {
 			message : 'error occurred!'
 		}
+	}
+	
+	$scope.addAlert = function(message) {
+		sharedService.addAlert(message);		
 	}
 });

@@ -6,7 +6,7 @@ iris.config(function($logProvider) {
 
 iris.controller(
 		"imageCtrl",
-		function($scope, $http, $filter, $location, imageService, $routeParams, $log, hotkeys,
+		function($rootScope, $scope, $http, $filter, $location, imageService, $routeParams, $log, hotkeys,
 				projectService, helpService, sharedService, annotationService, ngTableParams) {
 			console.log("imageCtrl");
 			
@@ -33,6 +33,12 @@ iris.controller(
 			
 			// retrieve the parameter from the URL
 			$scope.projectID = $routeParams["projectID"];
+			
+			// proceed to the labeling page
+			$scope.startLabeling = function(imageID) {
+				$scope.setImageID(imageID);
+				$location.url("/project/"+$scope.projectID+"/image/"+imageID+"/label");
+			};
 			
 			// get all the images for a project ID
 			$scope.getAllImages = function(projectID, callbackSuccess) {
@@ -122,8 +128,7 @@ iris.controller(
 			// set the current image ID
 			$scope.setImageID = function(imageID) {
 				imageService.setImageID(imageID);
-				$scope.$emit("currentImageID", imageID);
-				$scope.$broadcast("currentImageID", imageID);
+				$rootScope.$broadcast("currentImageID", imageID);
 			};
 
 			// retrieve the current image ID

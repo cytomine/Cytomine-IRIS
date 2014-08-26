@@ -3,9 +3,13 @@ var iris = angular.module("irisApp");
 /**
  * This service provides common (shared) functionality for the client.
  */
-iris.factory("sharedService",function($http, $log) {
+iris.factory("sharedService",function($http, $rootScope, $log) {
 	
 		return {
+			// firing an alert which will be handled by the alertCtrl
+			addAlert : function(message, alertType){
+				$rootScope.$broadcast("addAlert", { msg : message, type : alertType });
+			},
 			
 			/////////////////////////////////
 			// JUST FOR DEBUG!!!

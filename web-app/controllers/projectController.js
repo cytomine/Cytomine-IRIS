@@ -4,7 +4,7 @@ iris.config(function($logProvider) {
 	$logProvider.debugEnabled(true);
 });
 
-iris.controller("projectCtrl", function($scope, $http, $filter, $location, $document,
+iris.controller("projectCtrl", function($rootScope, $scope, $http, $filter, $location, $document,
 		$modal, $log, hotkeys, projectService, helpService, sharedService, ngTableParams) {
 	console.log("projectCtrl");
 	
@@ -88,8 +88,7 @@ iris.controller("projectCtrl", function($scope, $http, $filter, $location, $docu
 	// set the current project ID
 	$scope.setProjectID = function(projectID) {
 		projectService.setProjectID(projectID);
-		$scope.$emit("currentProjectID", projectID);
-		$scope.$broadcast("currentProjectID", projectID);
+		$rootScope.$broadcast("currentProjectID", projectID);
 	}
 
 	// retrieve the current project ID
