@@ -22,4 +22,7 @@ target-eclipse
 ehthumbs.db
 Thumbs.db
 
-
+######################
+# IntelliJ files #####
+######################
+*.iml
