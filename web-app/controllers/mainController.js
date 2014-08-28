@@ -109,6 +109,7 @@ iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
 			$log.error(status + ": " + data);
 		});
 	}, 
+	// TODO 
 	$scope.getUser(cytomineService.getPublicKey());
 	
 	// TODO debug fetching the URLs for the openlayers

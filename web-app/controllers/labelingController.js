@@ -117,6 +117,7 @@ iris.controller("termCtrl", function($scope, $log, $filter, $routeParams, shared
 												// pagination
 				$defer.resolve($scope.data);
 			},
+			filterDelay : 0,
 		});
 	});
 

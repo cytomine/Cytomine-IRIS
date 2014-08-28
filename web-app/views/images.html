@@ -33,7 +33,7 @@
 		            	 <p class="text-muted">{{item.width | number}} x {{item.height | number}} px</p>
 		            	 </td>
 		            <td data-title="'Magnification'">{{item.magnification}} X</td>
-		            <td data-title="'Progress'" sortable="'userProgress'" class="text-center">
+		            <td data-title="'Progress'" sortable="'userProgress'" class="text-center" filter="{ 'userProgress' : 'userProgressFilter' }">
 		            	<div ng-switch="{{item.numberOfAnnotations}}">
 		            		<div ng-switch-when="0" class="label label-info">No Annotations!</div>
 		            		<div ng-switch-default><div ng-controller="progressCtrl" ng-include="'templates/html/progressPanel.html'"></div></div>
@@ -59,7 +59,15 @@
 		            </td>
 		        </tr>
 		    </table>
+		    <script type="text/ng-template" id="ng-table/filters/userProgressFilter.html">
+				<div class="btn btn-xs" ng-class="{ 'active' : !userProgressFiltered, 'btn-info' : !userProgressFiltered, 'btn-default' : userProgressFiltered}" ng-click="filterProgresses(false)">Show all</div>
+				<div class="btn btn-xs" ng-class="{ 'active' : userProgressFiltered, 'btn-info' : userProgressFiltered, 'btn-default' : !userProgressFiltered}" ng-click="filterProgresses(true)">Hide completed</div>
+				<input id="allProgresses" type="radio" ng-model="params.filter()[name]" name="filter-userProgress" value="" style="display: none;"/>
+				<input id="hideFinishedProgresses" type="radio" ng-model="params.filter()[name]" name="filter-userProgress" value="!100" style="display: none;"/>
+    		</script>
 	    </div>
+	    
+	    
 	    
 <!--         <div class="col-6 col-sm-6 col-lg-4" ng-repeat="item in data">
             <h3>{{item.originalFilename}}</h3>

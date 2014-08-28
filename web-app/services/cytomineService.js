@@ -97,7 +97,7 @@ iris.factory("cytomineService", function($http, cytomineHostUrl, cytomineWebUrl,
 			var url = this.addKeys(userPublicKeyUrl.replace("{pubKey}", publicKey));
 			
 			$http.get(url).success(function(data) {
-				console.log(data)
+				//console.log(data)
 				if (callbackSuccess){
 					callbackSuccess(data);
 				}

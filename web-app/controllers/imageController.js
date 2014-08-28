@@ -6,7 +6,7 @@ iris.config(function($logProvider) {
 
 iris.controller(
 		"imageCtrl",
-		function($rootScope, $scope, $http, $filter, $location, imageService, $routeParams, $log, hotkeys,
+		function($rootScope, $scope, $http, $filter, $document, $timeout, $location, imageService, $routeParams, $log, hotkeys,
 				projectService, helpService, sharedService, annotationService, ngTableParams) {
 			console.log("imageCtrl");
 			
@@ -94,7 +94,7 @@ iris.controller(
 						},
 						filter : {
 							// applies filter to the "data" object before sorting
-						}
+						}						
 					}, {
 						// compute the pagination view
 						total : $scope.image.images.length, // number of images
@@ -113,7 +113,9 @@ iris.controller(
 							params.total(newData.length); // set total for recalc pagination
 							
 							$defer.resolve($scope.data);
-						}
+						},
+						filterDelay : 0,
+						
 					});
 					$scope.loading = false;
 				});
@@ -147,6 +149,32 @@ iris.controller(
 			$scope.rowClass = function(progress) {
 				if (progress == 100){
 					return "success";
+				}
+			};
+			
+
+			// TODO get user progress from server
+			$scope.userProgressFiltered = false;
+			
+			getBtnAllProgresses = function() {
+				return document.getElementById("allProgresses");
+			};
+			
+			getBtnHideFinishedProgresses = function() {
+				return document.getElementById("hideFinishedProgresses");
+			};
+			
+			$scope.filterProgresses = function(userProgressFiltered){
+				if (!userProgressFiltered){
+					$timeout(function() {
+						getBtnAllProgresses().click();
+						$scope.userProgressFiltered = userProgressFiltered;
+						},1);
+				}else {
+					$timeout(function() {
+						getBtnHideFinishedProgresses().click();
+						$scope.userProgressFiltered = userProgressFiltered
+						},1);
 				}
 			};
 		});

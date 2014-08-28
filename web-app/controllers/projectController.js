@@ -77,6 +77,7 @@ iris.controller("projectCtrl", function($rootScope, $scope, $http, $filter, $loc
 					
 					$defer.resolve($scope.data);
 				},
+				filterDelay : 0,
 			});
 			$scope.loading = false;
 		});
