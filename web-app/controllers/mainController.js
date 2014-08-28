@@ -14,17 +14,16 @@ iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
 	
 	// declare variables for expression
 	$scope.main = {
-		userName : "DOE John (jdoe)",
+		user : {},
 		error : {}
 	};
 	
 	// TODO remove debug keys
-	function setKeys() {
-		localStorage.setItem("publicKey", "0880e4b4-fe26-4967-8169-f15ed2f9be5c");
-		localStorage.setItem("privateKey", "a511a35c-5941-4932-9b40-4c8c4c76c7e7");
-	}
-	setKeys();
-
+//	function setKeys() {
+//		localStorage.setItem("publicKey", "0880e4b4-fe26-4967-8169-f15ed2f9be5c");
+//		localStorage.setItem("privateKey", "a511a35c-5941-4932-9b40-4c8c4c76c7e7");
+//	}
+	//setKeys();
 
 	// get the key from the local HTML5 storage
 	$scope.publicKey = (localStorage.getItem("publicKey") ? localStorage
@@ -89,18 +88,30 @@ iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
 	$scope.$on('currentImageID', function(event, data) {
 		$scope.main.imageID = data;
 	});
-
-	// TODO just for DEBUG
-	$scope.main.imageID = imageService.getImageID();
-	$scope.main.projectID = projectService.getProjectID();
 	
 	$scope.throwEx = function() {
 		throw {
 			message : 'error occurred!'
 		}
-	}
+	};
 	
+	// add an alert to the 
 	$scope.addAlert = function(message) {
 		sharedService.addAlert(message);		
-	}
+	};
+	
+	// update the current user information according to the public key
+	$scope.getUser = function(publicKey){
+		cytomineService.getUserByPublicKey(publicKey,function(data){
+			// user callback was successful
+			$scope.main.user = data;
+		},function(data, status){
+			$log.error(status + ": " + data);
+		});
+	}, 
+	$scope.getUser(cytomineService.getPublicKey());
+	
+	// TODO debug fetching the URLs for the openlayers
+	//imageService.fetchImageServerURLs(94255014,94255021);
+	
 });

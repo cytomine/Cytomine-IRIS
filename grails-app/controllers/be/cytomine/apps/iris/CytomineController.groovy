@@ -2,11 +2,13 @@ package be.cytomine.apps.iris
 
 import grails.converters.JSON
 
+import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 
 import be.cytomine.client.Cytomine
 import be.cytomine.client.CytomineException
 import be.cytomine.client.models.Ontology
+import be.cytomine.client.models.User
 
 /**
  * 
@@ -24,12 +26,12 @@ class CytomineController {
 		// get the Cytomine instance from the request (injected by the security filter!)
 		Cytomine cytomine = request['cytomine']
 		def projectList = cytomine.getProjects().list
-		
-		// optionally resolve the ontology and inject it in the 
+
+		// optionally resolve the ontology and inject it in the project
 		if (params['resolveOntology'].equals("true")){
 			// get the ontology object for each project
 			projectList.each {
-				println it.get("ontology")
+				//println it.get("ontology")
 				long oID = it.get("ontology")
 				def ontology = cytomine.getOntology(oID);
 				it.resolvedOntology = ontology;
@@ -45,10 +47,10 @@ class CytomineController {
 	 */
 	def getImages() {
 		Cytomine cytomine = request['cytomine']
-		
+
 		long userID = cytomine.getUser(params.get("publicKey")).getId();
 		long projectID = params.long("projectID");
-		
+
 		//cytomine.setMax(5); //max 5 images
 		def imageList = cytomine.getImageInstances(params.long('projectID')).list
 		imageList.each {
@@ -92,7 +94,7 @@ class CytomineController {
 			// and triggers the callbackError method
 		}
 	}
-	
+
 	/**
 	 * Gets an ontology by ID.
 	 * @return the ontology as JSON object
@@ -100,9 +102,9 @@ class CytomineController {
 	def getOntology(){
 		Cytomine cytomine = request['cytomine']
 		long oID = params.long('ontologyID')
-		
+
 		Ontology ontology = cytomine.getOntology(oID);
-		
+
 		if (params["flat"].equals("true")){
 			List<JSONObject> json = new Utils().flattenOntology(ontology);
 			render (json as JSON)
@@ -110,5 +112,33 @@ class CytomineController {
 			render (ontology as JSON)
 		}
 	}
+
+	/**
+	 * Gets a user which is identified by public key.
+	 * @return the user as JSON object
+	 */
+	def getUserByPublicKey(){
+		Cytomine cytomine = request['cytomine']
+		String publicKey = params['pubKey']
+
+		User user = cytomine.getUser(publicKey);
+
+		render user.getAt("attr") as JSON
+	}
 	
+	/**
+	 * Gets the image server URLs for a given image
+	 */
+	def getImageServerURLs(){
+		Cytomine cytomine = request['cytomine']
+		long abstrImgID = params.long('abstractImageID')
+		long imgInstID = params.long('imageinstance')
+		
+		// perform a synchronous get request to the Cytomine host server
+		def urls = cytomine.doGet("/api/abstractimage/" + abstrImgID + "/imageservers.json?imageinstance=" + imgInstID)
+		urls.replace("\"", "\\\"")
+		response.setContentType("application/json")
+		response.setCharacterEncoding("UTF-8")
+		render urls;
+	}
 }

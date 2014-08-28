@@ -5,7 +5,7 @@
 	<tbody>
 		<tr ng-repeat="term in data">
 			<td data-title="''" class="text-center"><span style="background : {{term.color}};">&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
-			<td data-title="'Name'" sortable="'name'" filter="{ 'name': 'text' }"><span class="btn btn-xs btn-default" ng-click="assign(term)">{{term.name}}</span></td>
+			<td data-title="'Name'" sortable="'name'" filter="{ 'name': 'text' }"><span name="buttonGroup" class="btn btn-xs btn-default" ng-click="assign(term)">{{term.name}}</span></td>
 			<td data-title="'Category/Class'" sortable="'parentName'" filter="{ 'parentName': 'text' }">{{term.parentName}}</td>
 		</tr>
 	</tbody>

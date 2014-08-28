@@ -6,8 +6,7 @@ var iris = angular.module("irisApp");
 iris.constant("projectUrl", "/api/projects.json?resolveOntology=true");
 iris.constant("projectDescrUrl", "/api/project/{id}/description.json");
 iris.constant("ontologyUrl", "/api/ontology/{ontologyID}.json");
-iris.factory("projectService", function($http, projectUrl, projectDescrUrl, ontologyUrl,
-		cytomineService) {
+iris.factory("projectService", function($http, projectUrl, projectDescrUrl, ontologyUrl, cytomineService) {
 	/*
 	 * static String publickey = "29f51819-3dc6-468c-8aa7-9c81b9bc236b"; static
 	 * String privatekey = "db214699-0384-498c-823f-801654238a67";
@@ -81,7 +80,6 @@ iris.factory("projectService", function($http, projectUrl, projectDescrUrl, onto
 		fetchOntology : function(ontologyID, params, callbackSuccess, callbackError) {
 			var url = cytomineService.addKeys(ontologyUrl).replace("{ontologyID}", ontologyID);
 			if (params.flat == true) {
-				console.log("appending flat")
 				url += "&flat=true";
 			}			
 
@@ -99,6 +97,6 @@ iris.factory("projectService", function($http, projectUrl, projectDescrUrl, onto
 					callbackError(data, status, headers, config);
 				}
 			})
-		}
+		},
 	};
 });

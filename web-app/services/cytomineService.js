@@ -5,11 +5,12 @@ var iris = angular.module("irisApp");
 
 iris.constant("cytomineHostUrl", "/api/cytomineHost.json");
 iris.constant("cytomineWebUrl", "/api/cytomineWeb.json");
+iris.constant("userPublicKeyUrl", "/api/user/publicKey/{pubKey}.json");
 
 /**
  * This service is responsible for communicating HTTP requests to the IRIS server. 
  */
-iris.factory("cytomineService", function($http, cytomineHostUrl, cytomineWebUrl) {
+iris.factory("cytomineService", function($http, cytomineHostUrl, cytomineWebUrl, userPublicKeyUrl) {
 
 	var publicKey; 
 	var privateKey; 
@@ -89,6 +90,22 @@ iris.factory("cytomineService", function($http, cytomineHostUrl, cytomineWebUrl)
 					message : data.errors
 				});
 			})
-		}
+		}, 
+		
+		// get the user by the public key
+		getUserByPublicKey : function(publicKey, callbackSuccess, callbackError){
+			var url = this.addKeys(userPublicKeyUrl.replace("{pubKey}", publicKey));
+			
+			$http.get(url).success(function(data) {
+				console.log(data)
+				if (callbackSuccess){
+					callbackSuccess(data);
+				}
+			}).error(function(data, status, headers, config){
+				if (callbackError){
+					callbackError(data, status);
+				}
+			});
+		},
 	};
 });

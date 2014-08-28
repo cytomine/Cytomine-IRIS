@@ -10,6 +10,9 @@ iris.config(function($routeProvider, $locationProvider) {
 	$routeProvider.when("/", {
 		templateUrl : "views/welcome.html",
 	});
+	$routeProvider.when("/login", {
+		templateUrl : "views/login.html",
+	});
 	$routeProvider.when("/keys", {
 		templateUrl : "views/keys.html"
 	});
@@ -22,7 +25,7 @@ iris.config(function($routeProvider, $locationProvider) {
 	$routeProvider.when("/project/:projectID/image/:imageID/label", {
 		templateUrl : "views/labeling.html"
 	});
-	$routeProvider.when("/annotation", {
+	$routeProvider.when("/project/:projectID/gallery", {
 		templateUrl : "views/annotationGallery.html"
 	});
 	// default route

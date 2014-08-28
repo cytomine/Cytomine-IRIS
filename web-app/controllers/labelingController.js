@@ -56,9 +56,7 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location,
 		description : 'print debug info on the project',
 		callback : function() {
 			// TODO
-			var project = projectService.getAllProjects()[0];
-			ontology = project.resolvedOntology.attr;
-			console.log(project.resolvedOntology.attr);
+			
 		}
 	});
 
@@ -80,13 +78,15 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location,
 
 });
 
-iris.controller("termCtrl", function($scope, $log, $filter, sharedService, projectService, ngTableParams) {
+iris.controller("termCtrl", function($scope, $log, $filter, $routeParams, sharedService, projectService, ngTableParams) {
 	console.log("termCtrl")
 
 	// this corresponds to resolvedOntology.attr
 	// 136435754 (2x hierarchical)
 	// 95190197 (BM-01) 1x hierarchical
 	// 585609 (ALCIAN BLUE) // flat
+	
+	// TODO get the ontologyID from the current project
 	projectService.fetchOntology(95190197, { flat : true }, function(data) {
 		$scope.ontology = data;
 		

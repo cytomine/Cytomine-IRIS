@@ -51,6 +51,11 @@ class UrlMappings {
 		 * cytomineController
 		 * - handles the general communication to the core via the Java client
 		 */
+		
+		/*
+		 *  optional parameters:
+		 *  	resolveOntology={true|false}
+		 */
 		"/api/projects.$format"(controller:"cytomine"){
 			action = [GET: "getProjects"]
 		}
@@ -63,14 +68,32 @@ class UrlMappings {
 			action = [GET: "getProjectDescription"]
 		}
 		
+		/*
+		 *  optional parameters: 
+		 *  	flat={true|false}
+		 */
 		"/api/ontology/$ontologyID.$format"(controller:"cytomine"){
 			action = [GET: "getOntology"]
+		}
+		
+		"/api/user/publicKey/$pubKey.$format"(controller:"cytomine"){
+			action = [GET: "getUserByPublicKey"]
+		}
+		
+		"/api/abstractimage/$abstractImageID/imageservers.json"(controller:"cytomine"){
+			action = [GET: "getImageServerURLs"]
 		}
 		
 		/*
 		 * annotationController
 		 * - communicates annotation CRUD operations to the core via the Java client
 		 */
+		"/api/annotation/$annID.$format"(controller:"annotation"){
+			action = [GET: "getAnnotation"]
+		}
 		
+		"/api/image/$imageID/annotations.$format"(controller:"annotation"){
+			action = [GET: "getAnnotations"]
+		}
 	}
 }
