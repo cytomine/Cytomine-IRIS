@@ -17,8 +17,9 @@ class SessionController {
 	 * @return a JSON object
 	 */
 	def getAll(){
-		// fetch all sessions from the database
+		// fetch all sessions from the database where the user is owner
 		List<Session> allSessions = Session.getAll()
+		
 		//print allSessions as JSON
 		render allSessions as JSON
 	}
@@ -26,15 +27,15 @@ class SessionController {
 	/**
 	 * Gets a session object for a user. If the querying user does not have a session, 
 	 * a new one will be created. 
-	 * @return
+	 * @return the Session as deeply resolved JSON object
 	 */
-	def getUserSession(){
+	def getSession(){
 		long userID = params.long('userID')
 		String pubKey = params['publicKey']
 
 		// TODO how to handle changed publicKeys??
-
-
+		User u;
+		
 		// try to fetch a user session from the database
 		List<Session> userSession = Session.getAll()
 
@@ -45,16 +46,16 @@ class SessionController {
 	 * Create a new session for a given user identified by publicKey
 	 * @return
 	 */
-	def createUserSession(){
+	def createSession(){
 		Cytomine cytomine = request['cytomine']
 		String publicKey = params['publicKey']
 		long cm_userID = params.long('userID')
 
 		// try to fetch a user session from the database
 		Session userSession = new Session(
-//			lastActivity: new Date().getTime(), 
-//			key: "fooooo::" + new Random().nextInt()
-			);
+				//			lastActivity: new Date().getTime(),
+				//			key: "fooooo::" + new Random().nextInt()
+				);
 
 		// pull the user details from the client
 		be.cytomine.client.models.User cm_user = cytomine.getUser(cm_userID)
@@ -69,14 +70,13 @@ class SessionController {
 		render userSession as JSON
 	}
 
-	def deleteUserSession(){
+	def deleteSession(){
 		long userID = params.long('userID')
 		User user = User.findById(userID)
-		user.delete(failOnError:true)
-		render "ok"
+		// TODO
 	}
 	
-	def resume(){
-		
+	def updateSession(){
+		// TODO
 	}
 }

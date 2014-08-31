@@ -1,3 +1,5 @@
+import grails.converters.JSON;
+
 import java.nio.file.attribute.UserDefinedFileAttributeView;
 
 import org.codehaus.groovy.grails.commons.GrailsApplication;
@@ -13,11 +15,17 @@ import be.cytomine.client.Cytomine
 class BootStrap {
 
     def init = { servletContext ->
+		// return each JSON date format in long
+		JSON.registerObjectMarshaller(Date){
+			return it.getTime() 
+		}
+		
+		
+		///////////////////////////////////////
 		Session testSession = new Session();
 		
 		Cytomine cm = new Cytomine("http://beta.cytomine.be", "0880e4b4-fe26-4967-8169-f15ed2f9be5c", "a511a35c-5941-4932-9b40-4c8c4c76c7e7", "./");
 		be.cytomine.client.models.User cmUser = cm.getUser("0880e4b4-fe26-4967-8169-f15ed2f9be5c");
-		//be.cytomine.client.models.User cmMartin = cm.getUser("9024a776-a288-46f2-83c5-fc0267806908");
 		DomainMapper dm = new DomainMapper()
 
 		// find the user by the cytomine ID
@@ -45,17 +53,13 @@ class BootStrap {
 		}		
 		irisUser.save(flush:true,failOnError:true)
 		
-		//println irisUser.getSession().getProjects().first().getImages().last().getAnnotations().last();
+		////////////////////////
+		be.cytomine.client.models.User cmMartin = cm.getUser("9024a776-a288-46f2-83c5-fc0267806908");
+		User martin = dm.mapUser(cmMartin, null)
 		
-//		phil.save(failOnError:true)
+		martin.setSession(new Session())
 		
-		//User martin = dm.mapUser(cmMartin)
-		//martin.save(failOnError:true)
-			
-//		testSession.setUser(u)
-//		phil.setSession(testSession);
-				
-//		testSession.save(failOnError:true)
+		martin.save(flush:true,failOnError:true)
 
     }
     def destroy = {

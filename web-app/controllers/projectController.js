@@ -106,7 +106,6 @@ iris.controller("projectCtrl", function($rootScope, $scope, $http, $filter, $loc
 	$scope.printProjectID = function() {
 		alert("The current project ID is: " + projectService.getCurrentProject().id);
 	}
-
 	
 	// ###############################################################
 	// PROJECT DESCRIPTION MODAL DIALOG

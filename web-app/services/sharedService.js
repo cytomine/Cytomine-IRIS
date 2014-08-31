@@ -3,7 +3,7 @@ var iris = angular.module("irisApp");
 /**
  * This service provides common (shared) functionality for the client.
  */
-iris.factory("sharedService",function($http, $rootScope, $log) {
+iris.factory("sharedService",function($http, $rootScope, $log, cytomineService) {
 	
 		return {
 			// firing an alert which will be handled by the alertCtrl
@@ -47,6 +47,7 @@ iris.factory("sharedService",function($http, $rootScope, $log) {
 			strContains : function(string, substr) {
 				  return string.indexOf(substr) != -1;
 			},
+			
 			
 		};
 		

@@ -67,8 +67,12 @@ grails {
         }
     }
 }
- 
+
+// grails converter configuration
 grails.converters.encoding = "UTF-8"
+grails.converters.json.default.deep = true
+//grails.converters.default.pretty.print = true
+
 // scaffolding templates configuration
 grails.scaffolding.templates.domainSuffix = 'Instance'
 
