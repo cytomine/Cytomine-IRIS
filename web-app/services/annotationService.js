@@ -6,7 +6,7 @@ iris.service("annotationService", function($http, $log, cytomineService, userAnn
 	
 	return {
 		// get the annotations for a given project and image
-		foo : function(projectID, imageID, userID, callbackSuccess, callbackError){
+		getUserAnnotations : function(projectID, imageID, userID, callbackSuccess, callbackError){
 			$log.debug(projectID + " - " + imageID + " - " + userID)
 			
 			// modify the parameters
@@ -17,7 +17,7 @@ iris.service("annotationService", function($http, $log, cytomineService, userAnn
 			// execute the http get request to the IRIS server
 			$http.get(tmpUrl = cytomineService.addKeys(userAnnUrl))
             .success(function (data) {
-            	console.log("success on $http.get(" + tmpUrl + ")");
+            	//console.log("success on $http.get(" + tmpUrl + ")");
             	$log.debug(data)
             	// on success, assign the data to the projects array
 //              TODO  if(callbackSuccess) {

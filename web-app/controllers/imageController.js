@@ -12,6 +12,12 @@ iris.controller(
 			
 			// set content url for the help page
 			helpService.setContentUrl("content/help/imageHelp.html");
+			
+			// get the current date as long
+			$scope.today = sharedService.today;
+			
+			// retrieve the parameter from the URL
+			$scope.projectID = $routeParams["projectID"];
 
 			$scope.image = {
 				stillNew : (21 * (24 * 60 * 60 * 1000)), // last 21 days
@@ -28,23 +34,17 @@ iris.controller(
 				}
 			});
 			
-			// get the current date as long
-			$scope.today = sharedService.today;
-			
-			// retrieve the parameter from the URL
-			$scope.projectID = $routeParams["projectID"];
-			
 			// proceed to the labeling page
-			$scope.startLabeling = function(imageID) {
-				$scope.setImageID(imageID);
-				$location.url("/project/"+$scope.projectID+"/image/"+imageID+"/label");
+			$scope.startLabeling = function(image) {
+				$scope.setCurrentImage(image);
+				$location.url("/project/"+$scope.projectID+"/image/"+image.id+"/label/136334701");
 			};
 			
-			// get all the images for a project ID
-			$scope.getAllImages = function(projectID, callbackSuccess) {
-				imageService.fetchImages(projectID, function(data) {
+			// get all the images for the current project 
+			$scope.getAllImages = function(callbackSuccess) {
+				imageService.fetchImages($scope.projectID, function(data) {
 					// change the image names if the project is in blind mode
-					$scope.blindNames(projectID, data);
+					$scope.blindNames(data);
 					callbackSuccess(data);
 				}, function(data, status) {
 					$scope.image.error.retrieve = {
@@ -56,20 +56,16 @@ iris.controller(
 			};
 			
 			// blind the image name
-			$scope.blindNames = function(projectID, data){
-				// get the (cached) project list
-				var pList = projectService.getAllProjects();
+			$scope.blindNames = function(data){
+				// get the current project 
+				var p = projectService.getCurrentProject();
 
 				// modify the original file name
-				pList.forEach(function(p){
-					if (p.id == projectID){
-						data.forEach(function(item){
-							if (p.blindMode === true){
-								item.fileName = "[BLIND]" + item.id;
-							} else {
-								item.fileName = item.originalFilename;
-							}
-						});
+				data.forEach(function(item){
+					if (p.blindMode === true){
+						item.fileName = "[BLIND]" + item.id;
+					} else {
+						item.fileName = item.originalFilename;
 					}
 				});
 			};
@@ -78,7 +74,7 @@ iris.controller(
 			$scope.refreshPage = function(){
 				$scope.loading = true;
 				
-				$scope.getAllImages($scope.projectID, function(data) {
+				$scope.getAllImages(function(data) {
 					$scope.image.error.retrieve = null;
 					$scope.image.images = data;
 					$log.info("image refresh successful");
@@ -127,21 +123,21 @@ iris.controller(
 			// //////////////////////////////////////////
 			// declare additional methods
 			// //////////////////////////////////////////
-			// set the current image ID
-			$scope.setImageID = function(imageID) {
-				imageService.setImageID(imageID);
-				$rootScope.$broadcast("currentImageID", imageID);
+			// set the current image
+			$scope.setCurrentImage = function(image) {
+				imageService.setCurrentImage(image);
+				$rootScope.$broadcast("currentImage", image);
 			};
 
 			// retrieve the current image ID
-			$scope.getImageID = function() {
-				return imageService.getImageD();
+			$scope.getCurrentImage = function() {
+				return imageService.getCurrentImage();
 			};
 			
-			// removes the current image ID
-			$scope.removeImageID = function() {
-				$scope.setImageID(null);
-				imageService.removeImageID();
+			// removes the current image
+			$scope.removeCurrentImage = function() {
+				$scope.setCurrentImage(null);
+				imageService.removeCurrentImage();
 			};
 
 			// Determine the row's background color class according 

@@ -41,7 +41,7 @@
 		            </td>
 		            <td data-title="'Actions'" class="text-center">
 						<div class="btn-group" dropdown>
-						  <button type="button" class="btn btn-primary btn-sm" ng-click="startLabeling(item.id)" ng-class="{ disabled : item.numberOfAnnotations=='0'}">Start Labeling</button>
+						  <button type="button" class="btn btn-primary btn-sm" ng-click="startLabeling(item)" ng-class="{ disabled : item.numberOfAnnotations=='0'}">Start Labeling</button>
 						  <button type="button" class="btn btn-primary btn-sm dropdown-toggle">
 						    <span class="caret"></span>
 						    <span class="sr-only">Toggle Dropdown</span>
@@ -51,7 +51,7 @@
 						    		View Annotation Gallery
 						    </a></li>
 						    <li class="divider"></li>
-						    <li><a ng-click="setImageID(item.id)" target="_blank" href="{{item.goToURL}}">
+						    <li><a ng-click="setCurrentImage(item)" target="_blank" href="{{item.goToURL}}">
 						    		Explore in Cytomine 
 						    </a></li>
 						  </ul>

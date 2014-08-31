@@ -119,5 +119,6 @@ log4j = {
     debug  'be.cytomine.client'
 }
 
-
-
+grails.gorm.default.constraints = {
+	'*'(nullable: true)
+}

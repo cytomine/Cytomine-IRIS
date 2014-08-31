@@ -13,7 +13,8 @@ class UrlMappings {
 		 * ###########################
 		 * Global redirects (to views)
 		 */
-        "/"(view:"/iris")
+        "/"(view:"/index")
+		"/iris"(view:"/iris")
         "500"(view:'/error')
 
 		
@@ -94,6 +95,23 @@ class UrlMappings {
 		
 		"/api/image/$imageID/annotations.$format"(controller:"annotation"){
 			action = [GET: "getAnnotations"]
+		}
+		
+		
+		/*
+		 * SessionController
+		 */
+		"/api/usersession/$userID.$format"(controller:"session"){
+			action = [
+					  GET: "getUserSession",
+					 POST: "createUserSession",
+					 PUT:  "updateUserSession",
+					 DELETE: "deleteUserSession"
+					 ]
+		}
+		
+		"/api/usersessions.$format"(controller:"session"){
+			action = [GET: "getAll"]
 		}
 	}
 }

@@ -6,17 +6,22 @@ iris.config(function($logProvider) {
 
 iris.controller("labelingCtrl", function($scope, $http, $filter, $location,
 		$routeParams, $log, hotkeys, helpService, annotationService,
-		projectService, sharedService) {
+		projectService, sharedService, imageService, cytomineService) {
 	console.log("labelingCtrl");
-
-	// set content url for the help page
-	helpService.setContentUrl("content/help/labelingHelp.html");
-
+	
+	// preallocate the objects
 	$scope.labeling = {
-		image : {},
+		annotation : {},
 		ontology : {},
 		error : {}
 	};
+
+	$scope.labeling.projectID = $routeParams["projectID"];
+	$scope.labeling.imageID = $routeParams["imageID"];
+	$scope.labeling.annotation.id = $routeParams["annID"];
+	
+	// set content url for the help page
+	helpService.setContentUrl("content/help/labelingHelp.html");
 	
 	$scope.saving = {
 		status : "",
@@ -59,12 +64,21 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location,
 			
 		}
 	});
-
-	$scope.projectID = $routeParams["projectID"];
-	$scope.imageID = $routeParams["imageID"];
+		
 	
+	// get the image URL for the crop view
+	cytomineService.getCytomineHost(function(host){
+			$scope.labeling.annotation.cropURL = host + "/api/annotation/" + $scope.labeling.annotation.id +
+					"/crop.png?&increaseArea=8&maxSize=256&draw=true";
+			
+			$scope.labeling.annotation.goToURL = imageService.getCurrentImage().goToURL + $scope.labeling.annotation.id
+			console.log($scope.labeling.annotation.goToURL)
+	});
+	
+
 	$scope.removeTerm = function(){
 		console.log("remove term");
+		// TODO
 		$scope.saving.status="saving"
 	};
 	
@@ -87,7 +101,7 @@ iris.controller("termCtrl", function($scope, $log, $filter, $routeParams, shared
 	// 585609 (ALCIAN BLUE) // flat
 	
 	// TODO get the ontologyID from the current project
-	projectService.fetchOntology(95190197, { flat : true }, function(data) {
+	projectService.fetchOntology(projectService.getCurrentProject().ontology, { flat : true }, function(data) {
 		$scope.ontology = data;
 		
 		// build the ontology table

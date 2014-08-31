@@ -77,18 +77,6 @@ iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
 		localStorage.removeItem("privateKey");
 	});
 
-	$scope.images = function() {
-		$scope.main.projectID = projectService.getProjectID();
-		$location.url("/project/" + $scope.main.projectID + "/images");
-	};
-
-	$scope.$on('currentProjectID', function(event, data) {
-		$scope.main.projectID = data;
-	});
-	$scope.$on('currentImageID', function(event, data) {
-		$scope.main.imageID = data;
-	});
-	
 	$scope.throwEx = function() {
 		throw {
 			message : 'error occurred!'

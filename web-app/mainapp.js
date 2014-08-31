@@ -22,7 +22,7 @@ iris.config(function($routeProvider, $locationProvider) {
 	$routeProvider.when("/project/:projectID/images", {
 		templateUrl : "views/images.html"
 	});
-	$routeProvider.when("/project/:projectID/image/:imageID/label", {
+	$routeProvider.when("/project/:projectID/image/:imageID/label/:annID", {
 		templateUrl : "views/labeling.html"
 	});
 	$routeProvider.when("/project/:projectID/gallery", {

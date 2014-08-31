@@ -86,27 +86,25 @@ iris.controller("projectCtrl", function($rootScope, $scope, $http, $filter, $loc
 	// execute project loading
 	$scope.refreshPage();
 	
-	// set the current project ID
-	$scope.setProjectID = function(projectID) {
-		projectService.setProjectID(projectID);
-		$rootScope.$broadcast("currentProjectID", projectID);
+	// set the current project
+	$scope.setCurrentProject = function(project) {
+		projectService.setCurrentProject(project);
+		$rootScope.$broadcast("currentProject", project);
 	}
 
-	// retrieve the current project ID
-	$scope.getProjectID = function() {
-		return projectService.getProjectID();
+	// retrieve the current project
+	$scope.getCurrentProject = function() {
+		return projectService.getCurrentProject();
 	}
 
-	// clear the project ID
-	$scope.removeProjectID = function() {
-		$scope.setProjectID(null);
-		projectService.removeProjectID();
+	// clear the project
+	$scope.removeCurrentProject = function() {
+		$scope.setCurrentProject(null);
+		projectService.removeCurrentProject();
 	}
-	// each time, the project controller gets loaded, clear the ID
-	// $scope.clearProjectID();
 
 	$scope.printProjectID = function() {
-		alert("The current project ID is: " + projectService.getProjectID());
+		alert("The current project ID is: " + projectService.getCurrentProject().id);
 	}
 
 	

@@ -14,23 +14,22 @@ iris.factory("imageService", function($http, $log, imageUrl, imageServerURLs,
 
 	// cached object for the images
 	var images = [];
-	var currentImage;
 
 	return {
 
-		// set the current image ID
-		setImageID : function(imageID) {
-			localStorage.setItem("imageID", imageID);
+		// set the current image
+		setCurrentImage : function(image) {
+			localStorage.setItem("currentImage", JSON.stringify(image));
 		},
 
-		// get the current image ID
-		getImageID : function() {
-			return localStorage.getItem("imageID");
+		// get the current image
+		getCurrentImage : function() {
+			return JSON.parse(localStorage.getItem("currentImage"));
 		},
 
-		// remove the current image ID
+		// remove the current image
 		removeImageID : function() {
-			localStorage.removeItem("imageID");
+			localStorage.removeItem("currentImage");
 		},
 
 		// get all cached images

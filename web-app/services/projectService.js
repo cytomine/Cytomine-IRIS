@@ -14,8 +14,6 @@ iris.factory("projectService", function($http, projectUrl, projectDescrUrl, onto
 	 */
 	// cached variables
 	var projects = [];
-	var currentProject;
-	var currentOntology;
 
 	return {
 
@@ -35,19 +33,19 @@ iris.factory("projectService", function($http, projectUrl, projectDescrUrl, onto
 			})
 		},
 
-		// retrieve the currently active project ID
-		getProjectID : function() {
-			return localStorage.getItem("currentProjectID");
+		// retrieve the currently active project
+		getCurrentProject : function() {
+			return JSON.parse(localStorage.getItem("currentProject"));
 		},
 
-		// set the currently active project ID
-		setProjectID : function(projectID) {
-			localStorage.setItem("currentProjectID", projectID);
+		// set the currently active project
+		setCurrentProject : function(project) {
+			localStorage.setItem("currentProject", JSON.stringify(project));
 		},
 
-		// remove the current project ID
-		removeProjectID : function() {
-			localStorage.removeItem("currentProjectID");
+		// remove the current project
+		removeCurrentProject : function() {
+			localStorage.removeItem("currentProject");
 		},
 
 		// list the retrieved project as an array
