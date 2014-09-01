@@ -70,7 +70,7 @@ grails {
 
 // grails converter configuration
 grails.converters.encoding = "UTF-8"
-grails.converters.json.default.deep = true
+grails.converters.json.default.deep = false
 //grails.converters.default.pretty.print = true
 
 // scaffolding templates configuration

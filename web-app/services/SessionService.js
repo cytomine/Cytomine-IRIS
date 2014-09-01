@@ -11,7 +11,7 @@ iris.service("sessionService", function($http, $log, $location, userSessionURL,
 		// SESSION MANAGEMENT
 
 		// retrieve the current session for a user
-		getSession : function(userID, callbackSuccess, callbackError) {
+		fetchSession : function(userID, callbackSuccess, callbackError) {
 			var url = cytomineService.addKeys(userSessionURL).replace(
 					"{userID}", userID);
 			$http.get(url).success(function(data) {

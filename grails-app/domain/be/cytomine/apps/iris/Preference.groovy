@@ -1,18 +1,18 @@
 package be.cytomine.apps.iris
 
-import java.util.Date;
-
 class Preference {
 	// GRAILS auto variables
 	Date dateCreated
 	Date lastUpdated
-	
-    static constraints = {
-    }
-	
-	Object key
-	Object value
-	
-	// we want to delete the preference if the image or project gets deleted
-	//static belongsTo = [project:Project,image:Image]
+
+	static constraints = {
+		key nullable:false, blank:false
+		value blank:true
+	}
+
+	String key
+	String value
+
+	// we want to delete the preference if the annotation, image, project or session gets deleted
+	static belongsTo = [session:Session,project:Project,image:Image,annotation:Annotation]
 }

@@ -1,7 +1,5 @@
 package be.cytomine.apps.iris
 
-import java.util.Date;
-
 /**
  * This domain model represents a single Cytomine 
  * user and has a reference to the current IRIS session.

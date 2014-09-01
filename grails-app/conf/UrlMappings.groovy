@@ -106,9 +106,21 @@ class UrlMappings {
 				//DELETE: "deleteSession"
 			]
 		}
+		
+		"/api/session/$userID/projects/$projectID.$format"(controller:"session"){
+			action = [POST: "updateProject"]
+		}
 
 		"/api/sessions.$format"(controller:"session"){
 			action = [GET: "getAll"]
+		}
+		
+		"/api/deleteproject.json"(controller:"session"){
+			action = [DELETE: "delProj"]
+		}
+		
+		"/api/dev.json"(controller:"session"){
+			action = [GET: "dev"]
 		}
 	}
 }

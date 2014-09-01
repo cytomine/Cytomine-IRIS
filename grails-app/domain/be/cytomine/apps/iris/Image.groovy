@@ -1,9 +1,5 @@
 package be.cytomine.apps.iris
 
-import java.util.Date;
-
-import org.json.simple.JSONObject;
-
 class Image implements Comparable<Image>, Updateable{
 	// GRAILS auto variables
 	Date dateCreated
@@ -32,7 +28,7 @@ class Image implements Comparable<Image>, Updateable{
 	
 	// an image can have annotations and preferences
 	Set<Annotation> annotations
-	Set<Preference> prefs
+	Collection prefs
 	static hasMany = [annotations:Annotation,prefs:Preference]
 
 			

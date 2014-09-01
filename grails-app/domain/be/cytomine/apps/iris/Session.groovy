@@ -1,5 +1,9 @@
 package be.cytomine.apps.iris
 
+import org.json.simple.JSONObject;
+
+import com.sun.org.apache.bcel.internal.generic.RETURN;
+
 class Session {
 	// GRAILS auto variables
 	Date dateCreated
@@ -22,16 +26,33 @@ class Session {
 	 */
 	// saving a session cascades saving the projects, but not deleting them, when the session is deleted!
 	// in order to delete a project, we need to add 'belongsTo' to the project!
-	
+
 	// proper method to add a project is Session.addToProjects(Project p)
 	SortedSet<Project> projects
-	static hasMany = [projects:Project]
+	Collection prefs
+	static hasMany = [projects:Project,prefs:Preference]
 	
+	// TODO transient objects which can be injected by controllers
+//	JSONObject currentProject
+//	JSONObject currentImage
+//	JSONObject currentAnnotation
+//	static transients = ['currentProject','currentImage','currentAnnotation']
+
+	// ###################################################
+	// CLASS METHODS
 	/**
 	 * Gets the most recent project.
-	 * @return
+	 * @return the most recent active project.
 	 */
-	Project getCurrentProject(){
-		return projects.last();
+	Project getCurrentIRISProject(){
+		return this.projects.last();
+	}
+
+	/**
+	 * Gets the most recent image of the most recent project. Delegate for the image.
+	 * @return the most recent active image from the last active project.
+	 */
+	Image getCurrentIRISImage(){
+		return this.getCurrentIRISProject().getCurrentIRISImage();
 	}
 }

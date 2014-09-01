@@ -86,18 +86,18 @@ iris.controller("projectCtrl", function($rootScope, $scope, $http, $filter, $loc
 	// execute project loading
 	$scope.refreshPage();
 	
-	// set the current project
+	// set the current project as JSON object
 	$scope.setCurrentProject = function(project) {
 		projectService.setCurrentProject(project);
 		$rootScope.$broadcast("currentProject", project);
 	}
 
-	// retrieve the current project
+	// retrieve the current project as JSON object
 	$scope.getCurrentProject = function() {
 		return projectService.getCurrentProject();
 	}
 
-	// clear the project
+	// clear the current project 
 	$scope.removeCurrentProject = function() {
 		$scope.setCurrentProject(null);
 		projectService.removeCurrentProject();
