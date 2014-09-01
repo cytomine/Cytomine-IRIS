@@ -4,7 +4,7 @@ class Project implements Comparable<Project>, Updateable{
 	// GRAILS auto variables
 	Date dateCreated
 	Date lastUpdated
-
+	
 	static constraints = {
 		cmID nullable:false, blank:false
 	}
@@ -17,7 +17,7 @@ class Project implements Comparable<Project>, Updateable{
 
 	// many projects in one session
 	Session session;
-
+	
 	// DELETE CASCADES
 	// in order to get deleted, when the parent session is deleted,
 	// we need to declare, that the project belongs to its session
@@ -25,9 +25,8 @@ class Project implements Comparable<Project>, Updateable{
 
 	// a project has many images and a list of preferences
 	SortedSet<Image> images
-	Set<Preference> prefs
-	static hasMany = [images:Image,prefs:Preference]
-
+	Map<String, String> prefs = [:]
+	static hasMany = [images:Image]
 
 	// ###################################################
 	// CLASS METHODS

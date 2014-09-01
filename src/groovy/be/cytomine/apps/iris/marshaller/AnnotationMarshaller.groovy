@@ -12,6 +12,7 @@ class AnnotationMarshaller implements IRISMarshaller {
 			def ann = [:]
 			ann['class'] = it.getClass()
 			ann['id'] = it.id
+			ann['prefs'] = it.prefs
 			// TODO marshal the image server URLs
 			return ann
 		}

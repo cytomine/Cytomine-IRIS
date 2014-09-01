@@ -1,5 +1,7 @@
 package be.cytomine.apps.iris
 
+import java.util.Map;
+
 import org.json.simple.JSONObject;
 
 import com.sun.org.apache.bcel.internal.generic.RETURN;
@@ -29,8 +31,8 @@ class Session {
 
 	// proper method to add a project is Session.addToProjects(Project p)
 	SortedSet<Project> projects
-	Set<Preference> prefs
-	static hasMany = [projects:Project,prefs:Preference]
+	Map<String, String> prefs = [:]
+	static hasMany = [projects:Project]
 
 	// ###################################################
 	// CLASS METHODS

@@ -1,5 +1,7 @@
 package be.cytomine.apps.iris
 
+import java.util.Map;
+
 /**
  * This domain model represents a single Cytomine 
  * user and has a reference to the current IRIS session.
@@ -59,6 +61,8 @@ class User implements Updateable{
 	Boolean cmGuest
 	Boolean cmUser = true
 	Boolean cmUserByNow = true
+	
+	Map<String, String> prefs = [:]
 	
 	@Override
 	public void updateLastActivity() {

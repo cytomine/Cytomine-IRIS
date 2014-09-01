@@ -5,7 +5,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils
 import be.cytomine.apps.iris.Annotation
 import be.cytomine.apps.iris.DomainMapper
 import be.cytomine.apps.iris.Image
-import be.cytomine.apps.iris.Preference
 import be.cytomine.apps.iris.Project
 import be.cytomine.apps.iris.Session
 import be.cytomine.apps.iris.User
@@ -37,18 +36,18 @@ class BootStrap {
 		Session sess = new Session()
 		(1..3).each {
 			Project p = new Project()
+			p.prefs.put("images.hideCompleted", String.valueOf(true))
+			p.prefs.put("projects.hideCompleted", String.valueOf(false))
 			(1..5).each {
 				Image img = new Image()
 				(1..20).each {
 					Annotation ann = new Annotation()
 					img.addToAnnotations(ann)
-					ann.addToPrefs(new Preference(key: "annotation.key", value: String.valueOf(new Random().nextInt(100)),  ))
+					ann.prefs.put("annotation.key", new Random().nextInt(100) + "")
 				}
 				p.addToImages(img)
-				img.addToPrefs(new Preference(key: "image.key", value: "a value", ))
-				p.addToPrefs(new Preference(key: "project.key", value: "a value", ))
+				img.prefs.put("image.pref", new Random().nextInt(100) + "")
 			}
-			sess.addToPrefs(new Preference(key: "session.key", value: "a value", ))
 			sess.addToProjects(p)
 		}
 

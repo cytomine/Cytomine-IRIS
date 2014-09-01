@@ -14,7 +14,7 @@ class ImageMarshaller implements IRISMarshaller{
 			img['id'] = it.id
 			img['lastActivity'] = it.lastActivity
 			img['cmID'] = it.cmID
-//			img['annotations'] = it.annotations
+			img['annotations'] = it.annotations
 			img['prefs'] = it.prefs
 			img['project'] = it.project.id
 			return img

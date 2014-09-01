@@ -1,5 +1,7 @@
 package be.cytomine.apps.iris
 
+import java.util.Map;
+
 class Annotation {
 	// GRAILS auto variables
 	Date dateCreated
@@ -8,8 +10,7 @@ class Annotation {
     static constraints = {
     }
 	
-	Set<Preference> prefs
-	static hasMany = [prefs:Preference]
+	Map<String, String> prefs = [:]
 	
 	Image image
 	static belongsTo = [image:Image]
