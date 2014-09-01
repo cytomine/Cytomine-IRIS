@@ -36,8 +36,6 @@ class BootStrap {
 		Session sess = new Session()
 		(1..3).each {
 			Project p = new Project()
-			p.prefs.put("images.hideCompleted", String.valueOf(true))
-			p.prefs.put("projects.hideCompleted", String.valueOf(false))
 			(1..5).each {
 				Image img = new Image()
 				(1..20).each {

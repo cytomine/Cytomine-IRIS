@@ -23,10 +23,14 @@ class Project implements Comparable<Project>, Updateable{
 	// we need to declare, that the project belongs to its session
 	static belongsTo = [session:Session]
 
-	// a project has many images and a list of preferences
+	// a project has many images 
 	SortedSet<Image> images
-	Map<String, String> prefs = [:]
 	static hasMany = [images:Image]
+	
+	// a project has a map of unique preferences
+	Map<String, String> prefs = [
+		"images.hideCompleted":String.valueOf(true), // hide the completed images in the image overview
+		]
 
 	// ###################################################
 	// CLASS METHODS
