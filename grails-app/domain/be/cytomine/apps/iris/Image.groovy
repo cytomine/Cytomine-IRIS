@@ -28,7 +28,7 @@ class Image implements Comparable<Image>, Updateable{
 	
 	// an image can have annotations and preferences
 	Set<Annotation> annotations
-	Collection prefs
+	Set<Preference> prefs
 	static hasMany = [annotations:Annotation,prefs:Preference]
 
 			

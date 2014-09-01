@@ -29,14 +29,8 @@ class Session {
 
 	// proper method to add a project is Session.addToProjects(Project p)
 	SortedSet<Project> projects
-	Collection prefs
+	Set<Preference> prefs
 	static hasMany = [projects:Project,prefs:Preference]
-	
-	// TODO transient objects which can be injected by controllers
-//	JSONObject currentProject
-//	JSONObject currentImage
-//	JSONObject currentAnnotation
-//	static transients = ['currentProject','currentImage','currentAnnotation']
 
 	// ###################################################
 	// CLASS METHODS
@@ -44,15 +38,19 @@ class Session {
 	 * Gets the most recent project.
 	 * @return the most recent active project.
 	 */
-	Project getCurrentIRISProject(){
-		return this.projects.last();
+	Project getCurrentProject(){
+		return this.projects.last()
 	}
 
 	/**
 	 * Gets the most recent image of the most recent project. Delegate for the image.
 	 * @return the most recent active image from the last active project.
 	 */
-	Image getCurrentIRISImage(){
-		return this.getCurrentIRISProject().getCurrentIRISImage();
+	Image getCurrentImage(){
+		try {
+			return this.getCurrentProject().getCurrentImage()
+		} catch(NullPointerException e){
+			return null
+		}
 	}
 }

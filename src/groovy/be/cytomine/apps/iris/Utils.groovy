@@ -3,6 +3,7 @@ package be.cytomine.apps.iris
 import grails.converters.JSON
 import groovy.json.JsonBuilder;
 
+import org.codehaus.groovy.grails.web.json.JSONElement;
 import org.json.simple.JSONObject
 
 import com.google.gson.Gson;
@@ -107,5 +108,9 @@ class Utils {
 				flatHierarchy.add(child);
 			}
 		}
+	}
+	
+	static JSONElement modelToJSON(def object){
+		return JSON.parse((object as JSON).toString())
 	}
 }

@@ -6,8 +6,8 @@ class Preference {
 	Date lastUpdated
 
 	static constraints = {
-		key nullable:false, blank:false
-		value blank:true
+		key size:0..500
+		value size:0..5000
 	}
 
 	String key

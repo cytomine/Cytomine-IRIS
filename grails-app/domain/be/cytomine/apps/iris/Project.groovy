@@ -7,13 +7,11 @@ class Project implements Comparable<Project>, Updateable{
 
 	static constraints = {
 		cmID nullable:false, blank:false
-		cmName nullable:false
-		cmBlindMode nullable:false
 	}
 
 	// class members
 	Long lastActivity = new Date().getTime()
-	String cmID = 0L
+	Long cmID = 0L
 	String cmName = "defaultProject"
 	Boolean cmBlindMode = false
 
@@ -27,7 +25,7 @@ class Project implements Comparable<Project>, Updateable{
 
 	// a project has many images and a list of preferences
 	SortedSet<Image> images
-	Collection prefs
+	Set<Preference> prefs
 	static hasMany = [images:Image,prefs:Preference]
 
 
@@ -49,7 +47,7 @@ class Project implements Comparable<Project>, Updateable{
 	 * Gets the most recent image.
 	 * @return the most recent image
 	 */
-	Image getCurrentIRISImage(){
+	Image getCurrentImage(){
 		return this.images.last();
 	}
 }

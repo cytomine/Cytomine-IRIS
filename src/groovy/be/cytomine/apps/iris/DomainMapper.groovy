@@ -2,6 +2,9 @@ package be.cytomine.apps.iris
 
 import org.apache.log4j.Logger;
 
+import be.cytomine.apps.iris.Image;
+import be.cytomine.apps.iris.Project;
+import be.cytomine.apps.iris.User;
 import grails.converters.JSON;
 
 /**

@@ -8,7 +8,7 @@ class Annotation {
     static constraints = {
     }
 	
-	Collection prefs
+	Set<Preference> prefs
 	static hasMany = [prefs:Preference]
 	
 	Image image
