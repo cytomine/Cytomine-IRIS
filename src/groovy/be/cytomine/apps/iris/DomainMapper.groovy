@@ -58,7 +58,6 @@ class DomainMapper {
 		irisProject.setCmBlindMode(cmProject.getBool("blindMode"))
 		
 		return irisProject
-		
 	}
 	
 	Project mapImage(be.cytomine.client.models.ImageInstance cmImage, Image irisImage){

@@ -5,6 +5,7 @@ import grails.converters.JSON
 import org.json.simple.JSONObject
 
 import be.cytomine.client.Cytomine
+import be.cytomine.client.CytomineException;
 
 /**
  * A SessionController handles the communication with the client and 
@@ -22,14 +23,14 @@ class SessionController {
 	 *  Injected SessionService instance for this controller. 
 	 */
 	def sessionService
-	
+
 	/**
 	 * Gets all sessions from the IRIS server.
 	 * 
 	 * @return a JSON array
 	 */
 	def getAll(){
-		// call the session service 
+		// call the session service
 		def allSessions = sessionService.getAll() as JSON
 		render allSessions
 	}
@@ -42,7 +43,7 @@ class SessionController {
 	 */
 	def getSession(){
 		def sessJSON = sessionService.get(request["cytomine"], params["publicKey"]) as JSON
-		render sessJSON 
+		render sessJSON
 	}
 
 	/**
@@ -72,23 +73,28 @@ class SessionController {
 	def updateSession(){
 		// TODO
 		def payload = request.JSON
-		
+
 		render payload
 	}
 
+	/**
+	 * Update a specific project in a session.
+	 * @return 
+	 */
 	def updateProject(){
-		Cytomine cytomine = request['cytomine']
-		String publicKey = params['publicKey']
-		long cm_userID = params.long('userID')
-		long cm_projectID = params.long('projectID')
+		try {
+			Cytomine cytomine = request['cytomine']
+			long sessionID = params.long('sessionID')
+			long cm_projectID = params.long('projectID')
 
-		User usr = User.findByCmID(cm_userID)
-		Session sess = usr.getSession()
-		// find the project by cm_projectID
-		Project projectForUpdate = sess.getProjects().find { it.cmID == cm_projectID }
-		projectForUpdate.updateLastActivity()
-		projectForUpdate.save(flush:true)
-		render sess as JSON
+			def updatedCMProject = sessionService.updateProject(cytomine, sessionID, cm_projectID)
+						
+			render updatedCMProject as JSON
+		}catch(CytomineException e){
+			// TODO redirect to an error page or send back 404 and message
+		}catch(Exception ex){
+			// TODO redirect to an error page or send back 400
+		}
 	}
 
 	def delProj(){

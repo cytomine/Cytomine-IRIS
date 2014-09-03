@@ -5,8 +5,11 @@ iris.config(function($logProvider) {
 });
 
 iris.controller("projectCtrl", function($rootScope, $scope, $http, $filter, $location, $document,
-		$modal, $log, hotkeys, projectService, helpService, sharedService, ngTableParams) {
+		$modal, $log, hotkeys, projectService, helpService, sharedService, sessionService, ngTableParams) {
 	console.log("projectCtrl");
+	
+	// fetch the session for the user
+	sessionService.fetchSession()
 	
 	// set content url for the help page
 	helpService.setContentUrl("content/help/projectHelp.html");
@@ -85,6 +88,15 @@ iris.controller("projectCtrl", function($rootScope, $scope, $http, $filter, $loc
 	
 	// execute project loading
 	$scope.refreshPage();
+	
+	// open a project
+	$scope.openProject = function(project){
+		// update the project in the session
+		sessionService.updateProject(project)
+		
+		// forward to the image overview table of this project
+		$location.url("/project/" + project.id + "/images")
+	}
 	
 	// set the current project as JSON object
 	$scope.setCurrentProject = function(project) {

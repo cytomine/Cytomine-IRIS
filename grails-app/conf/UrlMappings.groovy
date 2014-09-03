@@ -52,21 +52,8 @@ class UrlMappings {
 		 * cytomineController
 		 * - handles the general communication to the core via the Java client
 		 */
-
-		/*
-		 *  optional parameters:
-		 *  	resolveOntology={true|false}
-		 */
-		"/api/projects.$format"(controller:"cytomine"){
-			action = [GET: "getProjects"]
-		}
-
 		"/api/project/$projectID/images.$format"(controller:"cytomine"){
 			action = [GET: "getImages"]
-		}
-
-		"/api/project/$projectID/description.$format"(controller:"cytomine"){
-			action = [GET: "getProjectDescription"]
 		}
 
 		/*
@@ -126,5 +113,25 @@ class UrlMappings {
 		"/api/dev.json"(controller:"session"){
 			action = [GET: "dev"]
 		}
+		
+		/*
+		 * ProjectController
+		 */
+		"/api/project/$projectID/availability(.$format)"(controller:"project"){
+			action = [GET: "checkAvailability"]
+		}
+		
+		/*
+		 *  optional parameters:
+		 *  	resolveOntology={true|false}
+		 */
+		"/api/projects.$format"(controller:"project"){
+			action = [GET: "getProjects"]
+		}
+		
+		"/api/project/$projectID/description.$format"(controller:"project"){
+			action = [GET: "getProjectDescription"]
+		}
+
 	}
 }

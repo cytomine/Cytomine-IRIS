@@ -7,7 +7,7 @@ iris.controller("welcomeCtrl", function($rootScope, $scope, $log, $http, $locati
 	console.log("welcomeCtrl");
 	
 	// try to fetch a session for the user
-	sessionService.fetchSession();
+//	sessionService.fetchSession();
 
 	// set the help variable for this page
 	helpService.setContentUrl("content/help/welcomeHelp.html");

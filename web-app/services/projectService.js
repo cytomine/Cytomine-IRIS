@@ -3,17 +3,24 @@
  */
 var iris = angular.module("irisApp");
 
-iris.constant("projectUrl", "/api/projects.json?resolveOntology=true");
+iris.constant("projectUrl", "/api/projects.json");
 iris.constant("projectDescrUrl", "/api/project/{id}/description.json");
 iris.constant("ontologyUrl", "/api/ontology/{ontologyID}.json");
-iris.factory("projectService", function($http, projectUrl, projectDescrUrl, ontologyUrl, cytomineService) {
+iris.constant("projectAvailUrl", "/api/project/{projectID}/availability");
+
+iris.factory("projectService", function($http, $log,
+		projectUrl, 
+		projectDescrUrl, 
+		ontologyUrl, 
+		projectAvailUrl,
+		sessionService,
+		cytomineService) {
 	/*
 	 * static String publickey = "29f51819-3dc6-468c-8aa7-9c81b9bc236b"; static
 	 * String privatekey = "db214699-0384-498c-823f-801654238a67";
 	 * 
 	 */
 	// cached variables
-	var projects = [];
 
 	return {
 
@@ -33,26 +40,6 @@ iris.factory("projectService", function($http, projectUrl, projectDescrUrl, onto
 			})
 		},
 
-		// retrieve the currently active project
-		getCurrentProject : function() {
-			return JSON.parse(localStorage.getItem("currentProject"));
-		},
-
-		// set the currently active project
-		setCurrentProject : function(project) {
-			localStorage.setItem("currentProject", JSON.stringify(project));
-		},
-
-		// remove the current project
-		removeCurrentProject : function() {
-			localStorage.removeItem("currentProject");
-		},
-
-		// list the retrieved project as an array
-		getAllProjects : function() {
-			return projects;
-		},
-
 		// refresh all projects (fetch the entire collection freshly from the
 		// Cytomine core server
 		fetchProjects : function(callbackSuccess, callbackError) {
@@ -60,8 +47,6 @@ iris.factory("projectService", function($http, projectUrl, projectDescrUrl, onto
 
 			$http.get(url).success(function(data) {
 				// console.log("success on $http.get(" + url + ")");
-				// on success, assign the data to the projects array
-				projects = data;
 				if (callbackSuccess) {
 					callbackSuccess(data);
 				}
@@ -84,13 +69,29 @@ iris.factory("projectService", function($http, projectUrl, projectDescrUrl, onto
 			$http.get(url).success(function(data) {
 				// console.log("success on $http.get(" + url + ")");
 				// on success, assign the data to the projects array
-				projects = data;
 				if (callbackSuccess) {
 					callbackSuccess(data);
 				}
 			}).error(function(data, status, headers, config) {
 				// on error log the error
 				// console.log(callbackError)
+				if (callbackError) {
+					callbackError(data, status, headers, config);
+				}
+			})
+		},
+		
+		// check availability of a specific project for a user
+		checkAvailability : function(projectID,callbackSuccess,callbackError){
+			var url = cytomineService.addKeys(projectAvailUrl).replace("{projectID}", projectID);
+			
+			$http.get(url).success(function(data) {
+				console.log("success on $http.get(" + url + ")");
+				if (callbackSuccess) {
+					callbackSuccess(data);
+				}
+			}).error(function(data, status, headers, config) {
+				// on error log the error
 				if (callbackError) {
 					callbackError(data, status, headers, config);
 				}

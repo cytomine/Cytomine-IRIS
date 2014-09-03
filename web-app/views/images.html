@@ -27,8 +27,8 @@
 		        <tr ng-repeat="item in data" class="{{rowClass(item.userProgress)}}">
 		            <td data-title="'ID'" sortable="'id'">{{item.id}}</td>
 		            <td data-title="'Preview'" class="text-center"><img class="img-rounded" src="{{item.macroURL}}" height="50px"/></td>
-		            <td data-title="'Name'" sortable="'fileName'" filter="{ 'fileName': 'text' }">
-		            	 {{item.fileName}} 
+		            <td data-title="'Name'" sortable="'originalFilename'" filter="{ 'originalFilename': 'text' }">
+		            	 {{item.originalFilename}} 
 		            	 <span ng-show="({{today}} - {{item.created}}) <= {{image.stillNew}}" class="label label-success pull-right">New!</span>
 		            	 <p class="text-muted">{{item.width | number}} x {{item.height | number}} px</p>
 		            	 </td>

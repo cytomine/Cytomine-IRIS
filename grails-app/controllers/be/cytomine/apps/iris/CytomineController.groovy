@@ -24,19 +24,6 @@ class CytomineController {
 	def projectService
 
 	/**
-	 * Get all projects from Cytomine host, which are associated with the user executing this query.
-	 * 
-	 * @return a ProjectCollection as JSON object
-	 */
-	def getProjects() {
-		// get the Cytomine instance from the request (injected by the security filter!)
-		Cytomine cytomine = request['cytomine']
-		boolean resolveOntology = params['resolveOntology'].equals("true")
-		def projectList = projectService.getProjects(cytomine,resolveOntology)
-		render projectList as JSON
-	}
-
-	/**
 	 * Build the URLs for the images by adding the proper suffix to the Cytomine host URL.
 	 * The project ID is retrieved via the injected <code>params</code> property.
 	 * 
@@ -47,7 +34,28 @@ class CytomineController {
 
 		long userID = cytomine.getUser(params.get("publicKey")).getId()
 		long projectID = params.long("projectID");
+		
+		// important for blinding image names
+		boolean blindMode = false
+		
+		// try to search in local database
+		Project irisProject = Project.find { cmID == projectID }
+		
+		if (irisProject == null){
+			def cmProject = cytomine.getProject(projectID)
+			// update the project in the local database
+			irisProject = new DomainMapper().mapProject(cmProject, irisProject)
+			irisProject.save(failOnError:true)
+			
+			// get the blind mode
+			blindMode = cmProject.get("blindMode")
+		} else {
+			blindMode = irisProject.cmBlindMode
+		}
+		
+		println "######################" + blindMode
 
+		
 		// TODO implement paging using max and offset parameters from the request params
 		//int offset = params.long("offset")
 		//int max = params.long("max")
@@ -57,7 +65,12 @@ class CytomineController {
 		imageList.each {
 			//for each image, add a goToURL property containing the full URL to open the image in the core Cytomine instance
 			it.goToURL = grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + projectID + "-" + it.id + "-"
-
+			
+			// inject the blinded file name in each image, if required
+			if (blindMode){
+				it.originalFilename = "[BLIND]" + it.id
+			} 
+			
 			// retrieve the user's progress on each image and return it in the object
 			JSONObject annInfo = new Utils().getUserProgress(cytomine, projectID, it.id, userID)
 			// resolving the values from the JSONObject to each image as property
@@ -65,21 +78,6 @@ class CytomineController {
 			it.userProgress = annInfo.get("userProgress")
 		}
 		render imageList as JSON
-	}
-
-	/**
-	 * Gets the project description for a given ID.
-	 * @return the description of a project as JSON object
-	 */
-	def getProjectDescription(){
-		try {
-			def description = projectService.getProjectDescription(request['cytomine'], params.long('projectID'))
-			render description as JSON
-		} catch (CytomineException e){
-			response.setStatus(404)
-			response.setContentType("text/plain")
-			render e.toString()
-		}
 	}
 
 	/**

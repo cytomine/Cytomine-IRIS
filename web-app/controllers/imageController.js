@@ -6,9 +6,30 @@ iris.config(function($logProvider) {
 
 iris.controller(
 		"imageCtrl",
-		function($rootScope, $scope, $http, $filter, $document, $timeout, $location, imageService, $routeParams, $log, hotkeys,
-				projectService, helpService, sharedService, annotationService, ngTableParams) {
+		function($rootScope, $scope, $http, $filter, 
+				$document, $timeout, $location, 
+				$routeParams, $log, hotkeys,
+				projectService, imageService, sessionService, 
+				helpService, sharedService, annotationService, 
+				ngTableParams) {
 			console.log("imageCtrl");
+			
+			// retrieve the project parameter from the URL
+			$scope.projectID = $routeParams["projectID"];
+			
+			// TODO look up in IRIS, if the requested project is available
+			// for this user.
+			projectService.checkAvailability($scope.projectID, function(data){
+				// the success
+				$log.debug("project is available!");
+			}, function(data, status){
+				// the error
+				$log.error("project is not available!");
+			})
+			
+			// TODO try to fetch a session for the user
+//			sessionService.fetchSession();
+			
 			
 			// set content url for the help page
 			helpService.setContentUrl("content/help/imageHelp.html");
@@ -16,9 +37,6 @@ iris.controller(
 			// get the current date as long
 			$scope.today = sharedService.today;
 			
-			// retrieve the parameter from the URL
-			$scope.projectID = $routeParams["projectID"];
-
 			$scope.image = {
 				stillNew : (21 * (24 * 60 * 60 * 1000)), // last 21 days
 				error : {}
@@ -34,6 +52,14 @@ iris.controller(
 				}
 			});
 			
+			// proceed to the labeling page and resume labeling
+			$scope.resumeLabeling = function(image) {
+				$scope.setCurrentImage(image);
+				// TODO load the "next" annotation from the session and 
+				// append it to the URL
+				$location.url("/project/"+$scope.projectID+"/image/"+image.id+"/label");
+			};
+			
 			// proceed to the labeling page
 			$scope.startLabeling = function(image) {
 				$scope.setCurrentImage(image);
@@ -44,7 +70,7 @@ iris.controller(
 			$scope.getAllImages = function(callbackSuccess) {
 				imageService.fetchImages($scope.projectID, function(data) {
 					// change the image names if the project is in blind mode
-					$scope.blindNames(data);
+//					$scope.blindNames(data);
 					callbackSuccess(data);
 				}, function(data, status) {
 					$scope.image.error.retrieve = {
@@ -55,20 +81,20 @@ iris.controller(
 				});
 			};
 			
-			// blind the image name
-			$scope.blindNames = function(data){
-				// get the current project 
-				var p = projectService.getCurrentProject();
-
-				// modify the original file name
-				data.forEach(function(item){
-					if (p.blindMode === true){
-						item.fileName = "[BLIND]" + item.id;
-					} else {
-						item.fileName = item.originalFilename;
-					}
-				});
-			};
+//			// blind the image name
+//			$scope.blindNames = function(data){
+//				// get the current project 
+//				var p = sessionService.getCurrentProject();
+//
+//				// modify the original file name
+//				data.forEach(function(item){
+//					if (p.blindMode === true){
+//						item.fileName = "[BLIND]" + item.id;
+//					} else {
+//						item.fileName = item.originalFilename;
+//					}
+//				});
+//			};
 			
 			// refresh the page
 			$scope.refreshPage = function(){

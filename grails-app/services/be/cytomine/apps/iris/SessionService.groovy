@@ -1,7 +1,9 @@
 package be.cytomine.apps.iris
 
+import grails.converters.JSON;
 import grails.transaction.Transactional
 import be.cytomine.client.Cytomine
+import be.cytomine.client.CytomineException;
 
 /**
  * This service handles all CRUD operations of a Session object.
@@ -14,18 +16,18 @@ import be.cytomine.client.Cytomine
  */
 @Transactional
 class SessionService {
-	
+
 	@Transactional(readOnly = true)
 	List<Session> getAll(){
 		// fetch all sessions from the database where the user is owner
 		List<Session> allSessions = Session.getAll()
 		return allSessions
 	}
-	
+
 	def get(Cytomine cytomine, long sessID){
 		// TODO
 	}
-	
+
 	/**
 	 * Gets the Session for a user identified by public key. 
 	 * If the user has no Session yet, a new one will be created.
@@ -39,7 +41,7 @@ class SessionService {
 	def get(Cytomine cytomine, String publicKey){
 		be.cytomine.client.models.User cmUser = cytomine.getUser(publicKey)
 		User user = User.findByCmID(cmUser.getId())
-		
+
 		// generate a new user, if the user does not yet exist, otherwise update the
 		// user information from cytomine
 		user = new DomainMapper().mapUser(cmUser, user)
@@ -50,18 +52,18 @@ class SessionService {
 			userSession = new Session()
 			user.setSession(userSession)
 		}
-		
+
 		// save the user and the session
 		user.save(flush:true,failOnError:true)
-		
-		
+
+
 		// ############################################
 		// inject non-IRIS objects into the session
 		def sessJSON = new Utils().modelToJSON(userSession);
-		
+
 		// inject the user
 		sessJSON.user.cytomine = cmUser.getAttr()
-		
+
 		// inject current project
 		Project cP = userSession.getCurrentProject()
 
@@ -79,18 +81,50 @@ class SessionService {
 		//			def ann = cytomine.getAnnotation(aID).getAttr()
 		//			sessJSON.currentAnnotation.cytomine = ann
 		//		}
-		
+
 		// return the session as json object
 		return sessJSON
 	}
 
-	def update(Cytomine cytomine, long sessID){
-		// set the new timestamp and save the session
+	/**
+	 * Updates a project associated with an IRIS Session. 
+	 * Also fetches the current project settings from the Cytomine host 
+	 * and returns the updated project.
+	 * 
+	 * @param cytomine a Cytomine instance
+	 * @param sessionID the IRIS session ID where the project belongs to
+	 * @param projectID the Cytomine project ID for updating
+	 * @return the updated IRIS project instance
+	 * 
+	 * @throws CytomineException if the project is is not available for the 
+	 * querying user
+	 */
+	def updateProject(Cytomine cytomine, long sessionID, long projectID) throws CytomineException{
+		// find the project in the session
+		Session sess = Session.get(sessionID)
 		
+		// find the project by projectID
+		Project projectForUpdate = sess.getProjects().find { it.cmID == projectID }
+		
+		// fetch the Cytomine project instance
+		def cmProject = cytomine.getProject(projectID)
+		
+		projectForUpdate = new DomainMapper().mapProject(cmProject, projectForUpdate)
+		sess.addToProjects(projectForUpdate)
+				
+		// set the new timestamp on the project and save 
+		projectForUpdate.updateLastActivity()
+		sess.save(flush:true, failOnError:true)
+		
+		def projectJSON = new Utils().modelToJSON(projectForUpdate)
+		
+		projectJSON.currentProject = cmProject.getAttr()
+
+		return projectJSON
 	}
-	
+
 	def delete(Cytomine cytomine, long sessID){
-		
+
 	}
-		
+
 }
