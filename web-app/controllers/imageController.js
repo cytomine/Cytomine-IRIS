@@ -139,6 +139,7 @@ iris.controller(
 						filterDelay : 0,
 						
 					});
+					$scope.filterProgresses($scope.userProgressFiltered)
 					$scope.loading = false;
 				});
 			};
@@ -175,7 +176,7 @@ iris.controller(
 			};
 			
 
-			// TODO get user progress from server
+			// TODO get user preferences from server
 			$scope.userProgressFiltered = false;
 			
 			getBtnAllProgresses = function() {
