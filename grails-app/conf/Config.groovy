@@ -120,7 +120,7 @@ log4j = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
-    debug  'be.cytomine.client'
+    debug  'be.cytomine'	
 }
 
 grails.gorm.default.constraints = {

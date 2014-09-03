@@ -37,7 +37,7 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 			return JSON.parse(localStorage.getItem("session"));
 		},
 		
-		// 
+		// set the session to the local storage
 		setSession : function(session) {
 			if (session){
 				localStorage.setItem("session", JSON.stringify(session));

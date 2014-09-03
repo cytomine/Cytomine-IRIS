@@ -17,32 +17,29 @@ import be.cytomine.client.models.User
  *
  */
 class CytomineController {
+	
+	/**
+	 * The injected ProjectService for this controller.
+	 */
+	def projectService
 
 	/**
 	 * Get all projects from Cytomine host, which are associated with the user executing this query.
+	 * 
 	 * @return a ProjectCollection as JSON object
 	 */
 	def getProjects() {
 		// get the Cytomine instance from the request (injected by the security filter!)
 		Cytomine cytomine = request['cytomine']
-		def projectList = cytomine.getProjects().list
-
-		// optionally resolve the ontology and inject it in the project
-		if (params['resolveOntology'].equals("true")){
-			// get the ontology object for each project
-			projectList.each {
-				//println it.get("ontology")
-				long oID = it.get("ontology")
-				def ontology = cytomine.getOntology(oID)
-				it.resolvedOntology = ontology;
-			}
-		}
+		boolean resolveOntology = params['resolveOntology'].equals("true")
+		def projectList = projectService.getProjects(cytomine,resolveOntology)
 		render projectList as JSON
 	}
 
 	/**
 	 * Build the URLs for the images by adding the proper suffix to the Cytomine host URL.
 	 * The project ID is retrieved via the injected <code>params</code> property.
+	 * 
 	 * @return the list of images for a given project ID as JSON object
 	 */
 	def getImages() {
@@ -75,28 +72,13 @@ class CytomineController {
 	 * @return the description of a project as JSON object
 	 */
 	def getProjectDescription(){
-		def description;
 		try {
-			//println "request arrived: " + params
-			description = request['cytomine'].getDescription(params.long('projectID'), 'be.cytomine.project.Project')
-
+			def description = projectService.getProjectDescription(request['cytomine'], params.long('projectID'))
 			render description as JSON
-		} catch (CytomineException e) {
-			// 404 {"message":"Domain not found with id : 98851569 and className=be.cytomine.project.Project"}
-			// println e
-			// if there is no description associated, return a JSON object
-			//			if (e.httpCode == 404){
-			//				d = new JSONObject()
-			//				d.put("data", "This project does not have any description.")
-			//				d.put("status", 404);
-			//			}
-			//			println d as JSON
-			//			render d as JSON
-			log.error(e);
-			
-			// IMPORTANT HINT:
-			// do not send any response, since the Grails server automatically sends a 404 code
-			// and triggers the callbackError method in the JS client
+		} catch (CytomineException e){
+			response.setStatus(404)
+			response.setContentType("text/plain")
+			render e.toString()
 		}
 	}
 

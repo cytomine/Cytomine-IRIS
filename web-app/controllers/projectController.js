@@ -121,7 +121,7 @@ iris.controller("projectCtrl", function($rootScope, $scope, $http, $filter, $loc
 		
 		// error callback
 		function(data, status) {
-
+			
 			// react to specific status codes
 			if (status === 404){
 				dlgData = { data : "This project does not have any description.",

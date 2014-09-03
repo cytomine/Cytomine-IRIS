@@ -1,8 +1,5 @@
 package be.cytomine.apps.iris
 
-import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest;
-import org.codehaus.groovy.grails.web.util.WebUtils;
-
 import grails.transaction.Transactional
 import be.cytomine.client.Cytomine
 
