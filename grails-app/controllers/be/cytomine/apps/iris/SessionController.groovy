@@ -24,23 +24,23 @@ class SessionController {
 	 */
 	def getAll(){
 		// call the session service 
-		def allSessions = sessionService.getAllSessions() as JSON
+		def allSessions = sessionService.getAll() as JSON
 		render allSessions
 	}
 
 	/**
 	 * Gets a session object for a user. If the querying user does not have a session, 
 	 * a new one will be created. 
-	 * @return the Session as resolved JSON object
+	 * @return the Session as JSON object
 	 */
 	def getSession(){
-		def sessJSON = sessionService.getSession(params["publicKey"]) as JSON
+		def sessJSON = sessionService.get(request["cytomine"], params["publicKey"]) as JSON
 		render sessJSON 
 	}
 
 	/**
-	 * Create a new session for a given user identified by publicKey
-	 * @return
+	 * Create a new session for a given user identified by publicKey.
+	 * @return the new
 	 */
 	def createSession(){
 		Cytomine cytomine = request['cytomine']
@@ -98,7 +98,7 @@ class SessionController {
 		User u = User.findByCmID(userID)
 		//		User u = User.get(1)
 		Session sess = u.getSession()
-		def sessJSON = Utils.modelToJSON(sess);
+		def sessJSON = new Utils().modelToJSON(sess);
 
 		// assemble the response
 		long uID = 93518990L

@@ -13,6 +13,7 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 		// retrieve the current session for a user identified by public key
 		fetchSession : function(callbackSuccess, callbackError) {
 			var url = cytomineService.addKeys(sessionURL);
+			$log.debug(url)
 			
 			$http.get(url).success(function(data) {
 				$log.debug("Successfully retrieved session. ID=" + data.id);

@@ -1,3 +1,5 @@
+import java.net.Authenticator.RequestorType;
+
 import org.junit.After;
 
 import be.cytomine.client.Cytomine
@@ -5,15 +7,12 @@ import be.cytomine.client.Cytomine
 class SecurityFilters {
 	def springSecurityService
 
-
 	def filters = {
 
 		api(uri:'/api/**') {
 			before = {
 				String publicKey = params.get("publicKey")
 				String privateKey = params.get("privateKey")
-
-				//log.debug "running filter"
 
 				if(publicKey || privateKey) {
 					// store a new cytomine instance (from the client-JAR)

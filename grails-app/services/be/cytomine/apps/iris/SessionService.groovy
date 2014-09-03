@@ -8,6 +8,9 @@ import be.cytomine.client.Cytomine
 
 /**
  * This service handles all CRUD operations of a Session object.
+ * It also communicates with the Cytomine host instance, if 
+ * required. Thus passing request's <code>Cytomine</code> instance 
+ * is mandatory for some class methods.
  * 
  * @author Philipp Kainz
  *
@@ -15,25 +18,21 @@ import be.cytomine.client.Cytomine
 @Transactional
 class SessionService {
 	
-	GrailsWebRequest webUtils = WebUtils.retrieveGrailsWebRequest()
-	def request = webUtils.getCurrentRequest()
-
 	@Transactional(readOnly = true)
-	List<Session> getAllSessions(){
+	List<Session> getAll(){
 		// fetch all sessions from the database where the user is owner
 		List<Session> allSessions = Session.getAll()
 		return allSessions
 	}
 	
-	def getSession(long sessID){
+	def get(Cytomine cytomine, long sessID){
 		// TODO
 	}
 	
-	def getSession(String publicKey){
-		Cytomine cytomine = request['cytomine']
-
+	def get(Cytomine cytomine, String publicKey){
 		be.cytomine.client.models.User cmUser = cytomine.getUser(publicKey)
 		User user = User.findByCmID(cmUser.getId())
+		
 		// generate a new user, if the user does not yet exist, otherwise update the
 		// user information from cytomine
 		user = new DomainMapper().mapUser(cmUser, user)
@@ -77,12 +76,12 @@ class SessionService {
 		return sessJSON
 	}
 
-	def updateSession(long sessID){
+	def update(Cytomine cytomine, long sessID){
 		// set the new timestamp and save the session
 		
 	}
 	
-	def deleteSession(long sessID){
+	def delete(Cytomine cytomine, long sessID){
 		
 	}
 		
