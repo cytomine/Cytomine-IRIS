@@ -9,7 +9,7 @@ import be.cytomine.client.Cytomine
 /**
  * This service handles all CRUD operations of a Session object.
  * It also communicates with the Cytomine host instance, if 
- * required. Thus passing request's <code>Cytomine</code> instance 
+ * required. Thus passing the <code>request['cytomine']</code> instance 
  * is mandatory for some class methods.
  * 
  * @author Philipp Kainz
@@ -29,6 +29,16 @@ class SessionService {
 		// TODO
 	}
 	
+	/**
+	 * Gets the Session for a user identified by public key. 
+	 * If the user has no Session yet, a new one will be created.
+	 * The Session's state gets resolved and all <code>current</code> 
+	 * instances are fetched freshly from Cytomine and injected into the JSON object.
+	 * 
+	 * @param cytomine a Cytomine instance
+	 * @param publicKey the user's public key
+	 * @return a Session as JSON object ready to render it to the client
+	 */
 	def get(Cytomine cytomine, String publicKey){
 		be.cytomine.client.models.User cmUser = cytomine.getUser(publicKey)
 		User user = User.findByCmID(cmUser.getId())
@@ -46,6 +56,7 @@ class SessionService {
 		
 		// save the user and the session
 		user.save(flush:true,failOnError:true)
+		
 		
 		// ############################################
 		// inject non-IRIS objects into the session

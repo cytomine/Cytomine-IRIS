@@ -9,18 +9,24 @@ import be.cytomine.client.Cytomine
 /**
  * A SessionController handles the communication with the client and 
  * dispatches existing sessions for users or creates/updates them.
+ * <p> 
+ * It uses the underlying SessionService to communicate with the 
+ * Cytomine host. 
  * 
  * @author Philipp Kainz
  *
  */
 class SessionController {
 
-	// specify injected services for this controller
+	/**
+	 *  Injected SessionService instance for this controller. 
+	 */
 	def sessionService
 	
 	/**
-	 * Gets all sessions on this IRIS server instance.
-	 * @return a JSON object
+	 * Gets all sessions from the IRIS server.
+	 * 
+	 * @return a JSON array
 	 */
 	def getAll(){
 		// call the session service 
@@ -31,6 +37,7 @@ class SessionController {
 	/**
 	 * Gets a session object for a user. If the querying user does not have a session, 
 	 * a new one will be created. 
+	 * 
 	 * @return the Session as JSON object
 	 */
 	def getSession(){
@@ -39,8 +46,9 @@ class SessionController {
 	}
 
 	/**
-	 * Create a new session for a given user identified by publicKey.
-	 * @return the new
+	 * Create a new Session for a given user identified by <code>publicKey</code>.
+	 * 
+	 * @return the new Session as JSON object
 	 */
 	def createSession(){
 		Cytomine cytomine = request['cytomine']
@@ -52,6 +60,9 @@ class SessionController {
 		render null
 	}
 
+	/**
+	 * Deletes a session.
+	 */
 	def deleteSession(){
 		long userID = params.long('userID')
 		User user = User.findById(userID)
