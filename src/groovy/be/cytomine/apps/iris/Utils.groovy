@@ -110,7 +110,7 @@ class Utils {
 		}
 	}
 	
-	static JSONElement modelToJSON(def object){
+	public JSONElement modelToJSON(def object){
 		return JSON.parse((object as JSON).toString())
 	}
 }

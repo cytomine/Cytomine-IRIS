@@ -3,8 +3,11 @@ import java.awt.Desktop.Action;
 class UrlMappings {
 
 	static mappings = {
-		"/$controller/$action?/$id?(.$format)?"{ constraints { // apply constraints here
-			} }
+		"/$controller/$action?/$id?(.$format)?"{ 
+			constraints { // apply constraints here
+			
+			}
+		 }
 
 		/*
 		 * ###########################
@@ -98,17 +101,18 @@ class UrlMappings {
 		/*
 		 * SessionController
 		 */
-		"/api/session/$userID.$format"(controller:"session"){
+		// user identification is done by public key
+		"/api/session.$format"(controller:"session"){
 			action = [
 				GET: "getSession",
-				POST: "createSession",
-				PUT:  "updateSession",
-				//DELETE: "deleteSession"
+				PUT: "updateSession", // create or overwrite a resource
 			]
 		}
 		
-		"/api/session/$userID/projects/$projectID.$format"(controller:"session"){
-			action = [POST: "updateProject"]
+		"/api/session/$sessionID/project/$projectID.$format"(controller:"session"){
+			action = [
+				PUT: "updateProject" // create or overwrite a resource
+				]
 		}
 
 		"/api/sessions.$format"(controller:"session"){

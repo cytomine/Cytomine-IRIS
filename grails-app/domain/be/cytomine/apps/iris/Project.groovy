@@ -16,7 +16,7 @@ class Project implements Comparable<Project>, Updateable{
 	Boolean cmBlindMode = false
 
 	// many projects in one session
-	Session session;
+	Session session = null;
 	
 	// DELETE CASCADES
 	// in order to get deleted, when the parent session is deleted,
@@ -38,7 +38,7 @@ class Project implements Comparable<Project>, Updateable{
 	public int compareTo(Project p) {
 		// sort the projects according to the last activity,
 		// such that the session's first gets the current project (index 0)
-		return this.lastActivity.compareTo(p.getLastActivity());
+		return this.lastActivity.compareTo(p.getLastActivity())
 	}
 
 	@Override
@@ -51,6 +51,12 @@ class Project implements Comparable<Project>, Updateable{
 	 * @return the most recent image
 	 */
 	Image getCurrentImage(){
-		return this.images.last();
+		try {
+			return this.images.last()
+		} catch (NoSuchElementException e) {
+			return null
+		} catch (NullPointerException e) {
+			return null
+		}
 	}
 }

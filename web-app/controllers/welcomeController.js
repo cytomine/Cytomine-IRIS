@@ -3,8 +3,11 @@ var iris = angular.module("irisApp");
 iris.constant("welcomeUrl", "/api/welcome.json");
 
 iris.controller("welcomeCtrl", function($rootScope, $scope, $log, $http, $location,
-		helpService, cytomineService, welcomeUrl, hotkeys) {
+		helpService, cytomineService, welcomeUrl, hotkeys, sessionService) {
 	console.log("welcomeCtrl");
+	
+	// try to fetch a session for the user
+	sessionService.fetchSession();
 
 	// set the help variable for this page
 	helpService.setContentUrl("content/help/welcomeHelp.html");
@@ -61,5 +64,4 @@ iris.controller("welcomeCtrl", function($rootScope, $scope, $log, $http, $locati
 		})
 	};
 	$scope.getCytomineWeb();
-
 });

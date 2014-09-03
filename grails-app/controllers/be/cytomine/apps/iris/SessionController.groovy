@@ -15,34 +15,27 @@ import be.cytomine.client.Cytomine
  */
 class SessionController {
 
+	// specify injected services for this controller
+	def sessionService
+	
 	/**
 	 * Gets all sessions on this IRIS server instance.
 	 * @return a JSON object
 	 */
 	def getAll(){
-		// fetch all sessions from the database where the user is owner
-		List<Session> allSessions = Session.getAll()
-
-		//print allSessions as JSON
-		render allSessions as JSON
+		// call the session service 
+		def allSessions = sessionService.getAllSessions() as JSON
+		render allSessions
 	}
 
 	/**
 	 * Gets a session object for a user. If the querying user does not have a session, 
 	 * a new one will be created. 
-	 * @return the Session as deeply resolved JSON object
+	 * @return the Session as resolved JSON object
 	 */
 	def getSession(){
-		long userID = params.long('userID')
-		String pubKey = params['publicKey']
-
-		// TODO how to handle changed publicKeys??
-		User u;
-
-		// try to fetch a user session from the database
-		List<Session> userSession = Session.getAll()
-
-		render userSession as JSON
+		def sessJSON = sessionService.getSession(params["publicKey"]) as JSON
+		render sessJSON 
 	}
 
 	/**
@@ -67,6 +60,9 @@ class SessionController {
 
 	def updateSession(){
 		// TODO
+		def payload = request.JSON
+		
+		render payload
 	}
 
 	def updateProject(){
@@ -112,7 +108,7 @@ class SessionController {
 
 		def usr = cytomine.getUser(uID).getAttr()
 		sessJSON.user.cytomine = usr
-		
+
 		if (pID != null){
 			def pj = cytomine.getProject(pID).getAttr()
 			sessJSON.currentProject.cytomine = pj
@@ -121,10 +117,10 @@ class SessionController {
 			def img = cytomine.getImageInstance(iID).getAttr()
 			sessJSON.currentImage.cytomine = img
 		}
-//		if (aID != null){
-//			def ann = cytomine.getAnnotation(aID).getAttr()
-//			sessJSON.currentAnnotation.cytomine = ann
-//		}
+		//		if (aID != null){
+		//			def ann = cytomine.getAnnotation(aID).getAttr()
+		//			sessJSON.currentAnnotation.cytomine = ann
+		//		}
 
 		render sessJSON as JSON
 	}

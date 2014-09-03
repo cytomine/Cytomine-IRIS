@@ -20,7 +20,7 @@ class Image implements Comparable<Image>, Updateable{
 	
 	
 	// many images can belong to one project
-	Project project
+	Project project = null
 	
 	// DELETE CASCADES
 	// in order to get deleted, when the parent project is deleted,

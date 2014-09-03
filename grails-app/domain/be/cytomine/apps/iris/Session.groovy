@@ -41,7 +41,13 @@ class Session {
 	 * @return the most recent active project.
 	 */
 	Project getCurrentProject(){
-		return this.projects.last()
+		try {
+			return this.projects.last()
+		} catch (NoSuchElementException e) {
+			return null
+		} catch (NullPointerException e) {
+			return null
+		}
 	}
 
 	/**
@@ -51,6 +57,8 @@ class Session {
 	Image getCurrentImage(){
 		try {
 			return this.getCurrentProject().getCurrentImage()
+		} catch (NoSuchElementException e) {
+			return null
 		} catch(NullPointerException e){
 			return null
 		}

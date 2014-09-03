@@ -38,7 +38,7 @@ class User implements Updateable{
 	/*
 	 * Each User has one session.
 	 */
-	Session session
+	Session session = null
 	static hasOne = [session:Session] // this puts a foreign key in the session table
 	
 	// domain class properties (mapped from the Cytomine core)
