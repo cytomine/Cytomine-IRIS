@@ -102,8 +102,6 @@ class SessionService {
 	def touchProject(Cytomine cytomine, long sessionID, long cmProjectID) throws CytomineException{
 		// find the project in the session
 		Session sess = Session.get(sessionID)
-		
-		println sess
 
 		// find the nested project by projectID
 		Project projectForUpdate = sess.getProjects().find { it.cmID == cmProjectID }
@@ -112,6 +110,8 @@ class SessionService {
 		def cmProject = cytomine.getProject(cmProjectID)
 
 		projectForUpdate = new DomainMapper().mapProject(cmProject, projectForUpdate)
+		projectForUpdate.updateLastActivity()
+		
 		sess.addToProjects(projectForUpdate)
 
 		// set the new timestamp on the project and save
