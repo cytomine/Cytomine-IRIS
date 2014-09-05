@@ -6,14 +6,18 @@ import org.json.simple.JSONObject;
 
 import com.sun.org.apache.bcel.internal.generic.RETURN;
 
-class Session {
+class Session implements Updateable{
 	// GRAILS auto variables
-	Date dateCreated
-	Date lastUpdated
+	Date dateCreated = new Date()
+	Date lastUpdated = new Date()
 
 	static constraints = {
 		user nullable:true
 	}
+	/**
+	 * Date of last activity.
+	 */
+	Long lastActivity = new Date().getTime()
 	/**
 	 * The user of this session.
 	 */
@@ -57,5 +61,10 @@ class Session {
 		} catch(NullPointerException e){
 			return null
 		}
+	}
+	
+	@Override
+	public void updateLastActivity() {
+		this.lastActivity = new Date().getTime()
 	}
 }

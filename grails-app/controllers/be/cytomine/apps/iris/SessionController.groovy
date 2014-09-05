@@ -98,11 +98,12 @@ class SessionController {
 		try {
 			Cytomine cytomine = request['cytomine']
 			long sessionID = params.long('sessionID')
-			long cm_projectID = params.long('projectID')
+			long cmProjectID = params.long('cmProjectID')
 
-			def updatedCMProject = sessionService.updateProject(cytomine, sessionID, cm_projectID)
+			// TODO implement the update for 
+			//def irisProject = sessionService.updateProject(cytomine, sessionID, cmProjectID)
 						
-			render updatedCMProject as JSON
+			render irisProject as JSON
 		}catch(CytomineException e){
 			// TODO redirect to an error page or send back 404 and message
 		}catch(Exception ex){
@@ -110,6 +111,24 @@ class SessionController {
 		}
 	}
 
+	def touchProject(){
+		try {
+			Cytomine cytomine = request['cytomine']
+			long sessionID = params.long('sessionID')
+			long cmProjectID = params.long('cmProjectID')
+			
+			def irisProject = sessionService.touchProject(cytomine, sessionID, cmProjectID)
+
+			render irisProject as JSON
+		}catch(CytomineException e){
+			log.error(e)	
+		// TODO redirect to an error page or send back 404 and message
+		}catch(Exception ex){
+			log.error(ex)
+		// TODO redirect to an error page or send back 400
+		}
+	}
+	
 	def delProj(){
 		//		Project toDelete = Project.get(2)
 		//		println toDelete

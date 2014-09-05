@@ -92,32 +92,16 @@ iris.controller("projectCtrl", function($rootScope, $scope, $http, $filter, $loc
 	// open a project
 	$scope.openProject = function(project){
 		// update the project in the session
-		sessionService.updateProject(project)
+		sessionService.touchProject(project.id, function(data){
+			// forward to the image overview table of this project
+			$location.url("/project/" + project.id + "/images")
+		}, function(data,status){
+			$log.error(status + ": " + data)
+		})
 		
-		// forward to the image overview table of this project
-		$location.url("/project/" + project.id + "/images")
-	}
-	
-	// set the current project as JSON object
-	$scope.setCurrentProject = function(project) {
-		projectService.setCurrentProject(project);
-		$rootScope.$broadcast("currentProject", project);
+		
 	}
 
-	// retrieve the current project as JSON object
-	$scope.getCurrentProject = function() {
-		return projectService.getCurrentProject();
-	}
-
-	// clear the current project 
-	$scope.removeCurrentProject = function() {
-		$scope.setCurrentProject(null);
-		projectService.removeCurrentProject();
-	}
-
-	$scope.printProjectID = function() {
-		alert("The current project ID is: " + projectService.getCurrentProject().id);
-	}
 	
 	// ###############################################################
 	// PROJECT DESCRIPTION MODAL DIALOG

@@ -1,11 +1,11 @@
 var iris = angular.module("irisApp");
 
 iris.constant("sessionURL", "/api/session.json");
-iris.constant("updateProjectURL", "/api/session/{sessionID}/project/{projectID}.json");
+iris.constant("touchProjectURL", "/api/session/{sessionID}/project/{projectID}/touch");
 
 // A generic service for handling client sessions.
 iris.factory("sessionService", function($http, $log, $location, sessionURL,
-		updateProjectURL,
+		touchProjectURL,
 		sharedService, cytomineService) {
 
 	return {
@@ -75,15 +75,15 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 			}
 		},
 
-		// updates a project in the current session
-		updateProject : function(project, callbackSuccess, callbackError){
+		// touches a project in the current session
+		touchProject : function(cmProjectID, callbackSuccess, callbackError){
 			var sessionService = this;
 			var session = sessionService.getSession();
-			var url = cytomineService.addKeys(updateProjectURL)
+			var url = cytomineService.addKeys(touchProjectURL)
 							.replace("{sessionID}", session.id)
-							.replace("{projectID}", project.id);
+							.replace("{projectID}", cmProjectID);
 			
-			$http.put(url, project).success(function(data){
+			$http.post(url, null).success(function(data){
 				// on success, update the project in the local storage
 				session.currentProject = data;
 				sessionService.setSession(session);
@@ -94,7 +94,7 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 				// on error, show the error message
 				sharedService.addAlert(status + ": " + data, "danger");
 				$log.error(data);
-				sessionService.setSession(null);
+
 				if (callbackError){
 					callbackError(data, status)
 				}

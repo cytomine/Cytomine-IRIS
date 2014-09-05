@@ -10,8 +10,8 @@ import java.util.Map;
  */
 class User {
 	// GRAILS auto variables
-	Date dateCreated
-	Date lastUpdated
+	Date dateCreated = new Date()
+	Date lastUpdated = new Date()
 
 	static constraints = {
 		session nullable:true, unique:true

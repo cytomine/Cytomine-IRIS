@@ -5,8 +5,8 @@ import java.util.Date;
 
 class Activity {
 	// GRAILS auto variables
-	Date dateCreated
-	Date lastUpdated
+	Date dateCreated = new Date()
+	Date lastUpdated = new Date()
 
     static constraints = {
 		lastActivity nullable:false, blank:false

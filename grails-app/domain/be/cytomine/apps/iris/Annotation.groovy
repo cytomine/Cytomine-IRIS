@@ -4,8 +4,8 @@ import java.util.Map;
 
 class Annotation {
 	// GRAILS auto variables
-	Date dateCreated
-	Date lastUpdated
+	Date dateCreated = new Date()
+	Date lastUpdated = new Date()
 
     static constraints = {
     }

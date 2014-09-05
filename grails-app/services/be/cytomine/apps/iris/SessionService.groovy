@@ -99,15 +99,17 @@ class SessionService {
 	 * @throws CytomineException if the project is is not available for the 
 	 * querying user
 	 */
-	def updateProject(Cytomine cytomine, long sessionID, long projectID) throws CytomineException{
+	def touchProject(Cytomine cytomine, long sessionID, long cmProjectID) throws CytomineException{
 		// find the project in the session
 		Session sess = Session.get(sessionID)
+		
+		println sess
 
 		// find the nested project by projectID
-		Project projectForUpdate = sess.getProjects().find { it.cmID == projectID }
+		Project projectForUpdate = sess.getProjects().find { it.cmID == cmProjectID }
 
 		// fetch the Cytomine project instance
-		def cmProject = cytomine.getProject(projectID)
+		def cmProject = cytomine.getProject(cmProjectID)
 
 		projectForUpdate = new DomainMapper().mapProject(cmProject, projectForUpdate)
 		sess.addToProjects(projectForUpdate)
@@ -124,7 +126,7 @@ class SessionService {
 
 	/**
 	 * Fetches the current project settings from the Cytomine host
-	 * and returns the updated project.
+	 * and returns the updated project. Does not save the project on the IRIS server.
 	 *
 	 * @param cytomine a Cytomine instance
 	 * @param sessionID the IRIS session ID where the project belongs to
@@ -134,22 +136,38 @@ class SessionService {
 	 * @throws CytomineException if the project is is not available for the
 	 * querying user
 	 */
-	def getProject(Cytomine cytomine, long sessionID, long projectID) throws CytomineException{
+	def getProject(Cytomine cytomine, long sessionID, long cmProjectID) throws CytomineException{
 		// find the project in the session
 		Session sess = Session.get(sessionID)
 
 		// find the nested project by projectID
-		Project projectForUpdate = sess.getProjects().find { it.cmID == projectID }
+		Project projectForUpdate = sess.getProjects().find { it.cmID == cmProjectID }
 
-		// fetch the Cytomine project instance
-		def cmProject = cytomine.getProject(projectID)
-		def projectJSON = new Utils().modelToJSON(projectForUpdate)
-
-		projectJSON.cytomine = cmProject.getAttr()
+		def projectJSON = injectCytomineProject(cytomine, projectForUpdate)
 
 		return projectJSON
 	}
+	
+	/**
+	 * Injects a Cytomine Project into the IRIS project.
+	 * 
+	 * @param cytomine a Cytomine instance
+	 * @param irisProject the IRIS Project
+	 * @return a JSON object with the injected Cytomine project
+	 * 
+	 * @throws CytomineException if the project is is not available for the
+	 * querying user
+	 */
+	def injectCytomineProject(Cytomine cytomine, Project irisProject) throws CytomineException{
+		// fetch the Cytomine project instance
+		def cmProject = cytomine.getProject(iris.cmID)
+		def projectJSON = new Utils().modelToJSON(irisProject)
 
+		projectJSON.cytomine = cmProject.getAttr()
+		
+		return projectJSON
+	}
+	
 	def delete(Cytomine cytomine, long sessID){
 
 	}

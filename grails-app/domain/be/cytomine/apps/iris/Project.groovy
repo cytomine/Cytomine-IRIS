@@ -1,15 +1,16 @@
 package be.cytomine.apps.iris
 
-class Project implements Comparable<Project>{
+class Project implements Comparable<Project>, Updateable{
 	// GRAILS auto variables
-	Date dateCreated
-	Date lastUpdated
+	Date dateCreated = new Date()
+	Date lastUpdated = new Date()
 	
 	static constraints = {
 		cmID nullable:false, blank:false
 	}
 
 	// class members
+	Long lastActivity = new Date().getTime()
 	Long cmID = 0L
 	String cmName = "defaultProject"
 	Boolean cmBlindMode = false
@@ -37,7 +38,12 @@ class Project implements Comparable<Project>{
 	public int compareTo(Project p) {
 		// sort the projects according to the last activity,
 		// such that the session's first gets the current project (index 0)
-		return this.lastUpdated.compareTo(p.getLastUpdated())
+		return this.lastActivity.compareTo(p.getLastActivity())
+	}
+	
+	@Override
+	public void updateLastActivity() {
+		this.lastActivity = new Date().getTime()
 	}
 
 	/**

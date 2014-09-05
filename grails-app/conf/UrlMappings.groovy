@@ -103,7 +103,13 @@ class UrlMappings {
 			]
 		}
 		
-		"/api/session/$sessionID/project/$projectID(.$format)"(controller:"session"){
+		"/api/session/$sessionID/project/$cmProjectID/touch"(controller:"session"){
+			action = [
+				POST: "touchProject"
+				]
+		}
+		
+		"/api/session/$sessionID/project/$cmProjectID(.$format)"(controller:"session"){
 			action = [
 				GET: "getProject", // gets an IRIS project from a session
 				PUT: "updateProject" // create or overwrite the project in the session
