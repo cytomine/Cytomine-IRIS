@@ -103,7 +103,7 @@ class SessionService {
 		// find the project in the session
 		Session sess = Session.get(sessionID)
 		
-		// find the project by projectID
+		// find the nested project by projectID
 		Project projectForUpdate = sess.getProjects().find { it.cmID == projectID }
 		
 		// fetch the Cytomine project instance
@@ -118,7 +118,7 @@ class SessionService {
 		
 		def projectJSON = new Utils().modelToJSON(projectForUpdate)
 		
-		projectJSON.currentProject = cmProject.getAttr()
+		projectJSON.cytomine = cmProject.getAttr()
 
 		return projectJSON
 	}

@@ -27,7 +27,7 @@ class SessionController {
 	/**
 	 * Gets all sessions from the IRIS server.
 	 * 
-	 * @return a JSON array
+	 * @return a JSON array of Session objects
 	 */
 	def getAll(){
 		// call the session service
@@ -47,21 +47,6 @@ class SessionController {
 	}
 
 	/**
-	 * Create a new Session for a given user identified by <code>publicKey</code>.
-	 * 
-	 * @return the new Session as JSON object
-	 */
-	def createSession(){
-		Cytomine cytomine = request['cytomine']
-		String publicKey = params['publicKey']
-		long cm_userID = params.long('userID')
-
-		// TODO
-
-		render null
-	}
-
-	/**
 	 * Deletes a session.
 	 */
 	def deleteSession(){
@@ -78,10 +63,12 @@ class SessionController {
 	}
 
 	/**
-	 * Update a specific project in a session.
-	 * @return 
+	 * Update a specific Cytomine project in a session.
+	 * @return the updated Cytomine project instance
 	 */
 	def updateProject(){
+		println "received payload: " + (request.JSON as JSON)
+		
 		try {
 			Cytomine cytomine = request['cytomine']
 			long sessionID = params.long('sessionID')

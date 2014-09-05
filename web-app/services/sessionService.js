@@ -83,7 +83,7 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 							.replace("{sessionID}", session.id)
 							.replace("{projectID}", project.id);
 			
-			$http.put(url, null).success(function(data){
+			$http.put(url, project).success(function(data){
 				// on success, update the project in the local storage
 				session.currentProject = data;
 				sessionService.setSession(session);

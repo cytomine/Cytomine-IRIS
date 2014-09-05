@@ -3,7 +3,7 @@ var iris = angular.module("irisApp");
 iris.constant("labelUrl", "/project/{projectID}/image/{imageID}/label/{annID}");
 
 iris.controller("navCtrl", function($scope, $location, $log, sharedService,
-		projectService, helpService, imageService, labelingService, labelUrl) {
+		projectService, helpService, sessionService, imageService, labelingService, labelUrl) {
 	console.log("navCtrl");
 
 	// navigation active tab controller
@@ -35,7 +35,7 @@ iris.controller("navCtrl", function($scope, $location, $log, sharedService,
 		
 		// then get the current project ID and the status
 		
-		var pID = projectService.getCurrentProject().id;
+		var pID = sessionService.getCurrentProject().id;
 		var iID = imageService.getCurrentImage().id;
 		var annID = 136334701;// labelingService.getNextAnnotation().id;
 		var url = labelUrl.replace("{projectID}", pID)
@@ -46,7 +46,8 @@ iris.controller("navCtrl", function($scope, $location, $log, sharedService,
 	
 	// navigate to the current project's images
 	$scope.images = function() {
-		var projectID = projectService.getCurrentProject().id;
+		var projectID = sessionService.getCurrentProject().id;
+		// TODO check for null in the project
 		$location.url("/project/" + projectID + "/images");
 	};
 	

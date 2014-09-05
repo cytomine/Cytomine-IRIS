@@ -6,7 +6,7 @@ iris.config(function($logProvider) {
 
 iris.controller("labelingCtrl", function($scope, $http, $filter, $location,
 		$routeParams, $log, hotkeys, helpService, annotationService,
-		projectService, sharedService, imageService, cytomineService) {
+		projectService, sessionService, sharedService, imageService, cytomineService) {
 	console.log("labelingCtrl");
 	
 	// preallocate the objects
@@ -92,7 +92,7 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location,
 
 });
 
-iris.controller("termCtrl", function($scope, $log, $filter, $routeParams, sharedService, projectService, ngTableParams) {
+iris.controller("termCtrl", function($scope, $log, $filter, $routeParams, sharedService, sessionService, projectService, ngTableParams) {
 	console.log("termCtrl")
 
 	// this corresponds to resolvedOntology.attr
@@ -101,7 +101,7 @@ iris.controller("termCtrl", function($scope, $log, $filter, $routeParams, shared
 	// 585609 (ALCIAN BLUE) // flat
 	
 	// TODO get the ontologyID from the current project
-	projectService.fetchOntology(projectService.getCurrentProject().ontology, { flat : true }, function(data) {
+	projectService.fetchOntology(sessionService.getCurrentProject().ontology, { flat : true }, function(data) {
 		$scope.ontology = data;
 		
 		// build the ontology table

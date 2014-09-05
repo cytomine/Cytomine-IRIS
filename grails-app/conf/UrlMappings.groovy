@@ -96,7 +96,7 @@ class UrlMappings {
 			]
 		}
 		
-		"/api/session/$sessionID/project/$projectID.$format"(controller:"session"){
+		"/api/session/$sessionID/project/$projectID(.$format)"(controller:"session"){
 			action = [
 				PUT: "updateProject" // create or overwrite a resource
 				]
@@ -114,22 +114,34 @@ class UrlMappings {
 			action = [GET: "dev"]
 		}
 		
+		
 		/*
 		 * ProjectController
+		 * Retrieves information on Cytomine projects.
 		 */
+		
+		/*
+		 *  checks the availability of a project
+		 *  	$projectID = Cytomine project ID
+		 */ 
 		"/api/project/$projectID/availability(.$format)"(controller:"project"){
 			action = [GET: "checkAvailability"]
 		}
 		
 		/*
+		 * Gets the projects for a user. 
 		 *  optional parameters:
 		 *  	resolveOntology={true|false}
 		 */
-		"/api/projects.$format"(controller:"project"){
+		"/api/projects(.$format)"(controller:"project"){
 			action = [GET: "getProjects"]
 		}
 		
-		"/api/project/$projectID/description.$format"(controller:"project"){
+		/*
+		 * Gets the description of a project.
+		 * 		$projectID = Cytomine project ID 
+		 */
+		"/api/project/$projectID/description(.$format)"(controller:"project"){
 			action = [GET: "getProjectDescription"]
 		}
 

@@ -73,5 +73,5 @@ class ProjectController {
 			response.setContentType("text/plain")
 			render e.toString()
 		}
-	}
+	}	
 }
