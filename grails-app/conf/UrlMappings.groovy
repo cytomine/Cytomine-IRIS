@@ -89,7 +89,14 @@ class UrlMappings {
 		 * SessionController
 		 */
 		// user identification is done by public key
-		"/api/session.$format"(controller:"session"){
+		"/api/session(.$format)"(controller:"session"){
+			action = [
+				GET: "getSession",
+				PUT: "updateSession", // create or overwrite a resource
+			]
+		}
+		
+		"/api/session/$sessionID(.$format)"(controller:"session"){
 			action = [
 				GET: "getSession",
 				PUT: "updateSession", // create or overwrite a resource
@@ -98,11 +105,14 @@ class UrlMappings {
 		
 		"/api/session/$sessionID/project/$projectID(.$format)"(controller:"session"){
 			action = [
-				PUT: "updateProject" // create or overwrite a resource
+				GET: "getProject", // gets an IRIS project from a session
+				PUT: "updateProject" // create or overwrite the project in the session
 				]
 		}
+		
+		
 
-		"/api/sessions.$format"(controller:"session"){
+		"/api/sessions(.$format)"(controller:"session"){
 			action = [GET: "getAll"]
 		}
 		
@@ -117,7 +127,7 @@ class UrlMappings {
 		
 		/*
 		 * ProjectController
-		 * Retrieves information on Cytomine projects.
+		 * Retrieves information on and instances of Cytomine projects.
 		 */
 		
 		/*

@@ -1,5 +1,10 @@
 <div class="panel-body" ng-controller="imageCtrl">
 
+<!-- Show a warning panel if there is no current project in this session -->
+	<div ng-show="currentProject==null">
+		<ng-include src="'templates/html/openProjectPanel.html'"></ng-include>
+	</div>
+
     <div class="alert alert-danger" ng-show="image.error.retrieve">
         Error. Cannot get image list. {{image.error.retrieve.message}} ({{image.error.retrieve.status}}).
 <!--         <p><a href="#/projects">Please open a project.</a></p> -->

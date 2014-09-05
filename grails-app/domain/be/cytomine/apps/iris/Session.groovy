@@ -12,13 +12,8 @@ class Session {
 	Date lastUpdated
 
 	static constraints = {
-		lastActivity nullable:true, blank:true
 		user nullable:true
 	}
-	/**
-	 * The time of the last activity.
-	 */
-	Long lastActivity = new Date().getTime()
 	/**
 	 * The user of this session.
 	 */

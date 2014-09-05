@@ -102,22 +102,49 @@ class SessionService {
 	def updateProject(Cytomine cytomine, long sessionID, long projectID) throws CytomineException{
 		// find the project in the session
 		Session sess = Session.get(sessionID)
-		
+
 		// find the nested project by projectID
 		Project projectForUpdate = sess.getProjects().find { it.cmID == projectID }
-		
+
 		// fetch the Cytomine project instance
 		def cmProject = cytomine.getProject(projectID)
-		
+
 		projectForUpdate = new DomainMapper().mapProject(cmProject, projectForUpdate)
 		sess.addToProjects(projectForUpdate)
-				
-		// set the new timestamp on the project and save 
-		projectForUpdate.updateLastActivity()
+
+		// set the new timestamp on the project and save
 		sess.save(flush:true, failOnError:true)
-		
+
 		def projectJSON = new Utils().modelToJSON(projectForUpdate)
-		
+
+		projectJSON.cytomine = cmProject.getAttr()
+
+		return projectJSON
+	}
+
+	/**
+	 * Fetches the current project settings from the Cytomine host
+	 * and returns the updated project.
+	 *
+	 * @param cytomine a Cytomine instance
+	 * @param sessionID the IRIS session ID where the project belongs to
+	 * @param projectID the Cytomine project ID for updating
+	 * @return the updated IRIS project instance
+	 *
+	 * @throws CytomineException if the project is is not available for the
+	 * querying user
+	 */
+	def getProject(Cytomine cytomine, long sessionID, long projectID) throws CytomineException{
+		// find the project in the session
+		Session sess = Session.get(sessionID)
+
+		// find the nested project by projectID
+		Project projectForUpdate = sess.getProjects().find { it.cmID == projectID }
+
+		// fetch the Cytomine project instance
+		def cmProject = cytomine.getProject(projectID)
+		def projectJSON = new Utils().modelToJSON(projectForUpdate)
+
 		projectJSON.cytomine = cmProject.getAttr()
 
 		return projectJSON

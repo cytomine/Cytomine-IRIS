@@ -8,7 +8,7 @@ import java.util.Map;
  * 
  * @author Philipp Kainz
  */
-class User implements Updateable{
+class User {
 	// GRAILS auto variables
 	Date dateCreated
 	Date lastUpdated
@@ -42,7 +42,6 @@ class User implements Updateable{
 	static hasOne = [session:Session] // this puts a foreign key in the session table
 	
 	// domain class properties (mapped from the Cytomine core)
-	Long lastActivity = new Date().getTime()
 	Long cmID
 	String cmUserName
 	String cmLastName
@@ -63,9 +62,4 @@ class User implements Updateable{
 	Boolean cmUserByNow = true
 	
 	Map<String, String> prefs = [:]
-	
-	@Override
-	public void updateLastActivity() {
-		this.lastActivity = new Date().getTime()
-	}
 }

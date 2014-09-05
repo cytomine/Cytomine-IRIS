@@ -45,6 +45,23 @@ class SessionController {
 		def sessJSON = sessionService.get(request["cytomine"], params["publicKey"]) as JSON
 		render sessJSON
 	}
+	
+	/**
+	 * Gets an IRIS project instance.
+	 * @return the IRIS project and the injected Cytomine instance
+	 */
+	def getProject(){
+		long sID = params.long('sessionID')
+		long pID = params.long('projectID')
+		try {
+			def projJSON = sessionService.getProject(request["cytomine"], sID, pID) as JSON
+			render projJSON
+		} catch(CytomineException e){
+			// TODO 404
+		} catch(Exception ex){
+			// TODO 400
+		}
+	}
 
 	/**
 	 * Deletes a session.
@@ -56,10 +73,19 @@ class SessionController {
 	}
 
 	def updateSession(){
-		// TODO
-		def payload = request.JSON
-
-		render payload
+		// parse the payload of the PUT request
+		def sess = request.JSON
+		
+		// fetch the session from the DB
+		Session s = Session.get(sess.id)
+		
+		// TODO update all fields from the request body
+		s.setPrefs(sess.prefs)
+		
+		// update the record
+		s.save(failOnError:true,flush:true)
+		
+		render s as JSON
 	}
 
 	/**

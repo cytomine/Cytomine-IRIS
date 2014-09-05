@@ -2,7 +2,7 @@ package be.cytomine.apps.iris
 
 import java.util.Map;
 
-class Image implements Comparable<Image>, Updateable{
+class Image implements Comparable<Image>{
 	// GRAILS auto variables
 	Date dateCreated
 	Date lastUpdated
@@ -11,7 +11,6 @@ class Image implements Comparable<Image>, Updateable{
     }
 
 	// class members	
-	Long lastActivity = new Date().getTime()
 	Long cmID = 0L
 	String cmName = "defaultImage"
 	
@@ -38,12 +37,7 @@ class Image implements Comparable<Image>, Updateable{
 	public int compareTo(Image img) {
 		// sort the images according to the last activity,
 		// such that the project first gets the current image (index 0)
-		return this.lastActivity.compareTo(img.getLastActivity());
-	}
-	
-	@Override
-	public void updateLastActivity() {
-		this.lastActivity == new Date().getTime();
+		return this.lastUpdated.compareTo(img.getLastUpdated());
 	}
 	
 	Annotation getCurrentAnnotation(){

@@ -113,4 +113,5 @@ class Utils {
 	public JSONElement modelToJSON(def object){
 		return JSON.parse((object as JSON).toString())
 	}
+	
 }

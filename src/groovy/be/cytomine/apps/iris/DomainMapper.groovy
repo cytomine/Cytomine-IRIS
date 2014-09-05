@@ -17,14 +17,15 @@ import grails.converters.JSON;
 class DomainMapper {
 	/**
 	 * Map the be.cytomine.client.models.User model to the IRIS domain model of a user.
-	 * @param cmUser
-	 * @return 
+	 * @param cmUser a Cytomine user
+	 * @param irisUser an IRIS user, or null (then a new user is generated)
+	 * @return an IRIS user instance
 	 */
 	User mapUser(be.cytomine.client.models.User cmUser, User irisUser){
 		if (irisUser == null){
 			irisUser = new User()
 		}
-		println cmUser as JSON
+		//println cmUser as JSON
 		
 		// map the properties from the client user to the IRIS user model
 		irisUser.setCmID(cmUser.getId())
@@ -48,6 +49,13 @@ class DomainMapper {
 		return irisUser
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param cmProject
+	 * @param irisProject
+	 * @return
+	 */
 	Project mapProject(be.cytomine.client.models.Project cmProject, Project irisProject){
 		if (irisProject == null){
 			irisProject = new Project()
@@ -60,6 +68,12 @@ class DomainMapper {
 		return irisProject
 	}
 	
+	/**
+	 * 
+	 * @param cmImage
+	 * @param irisImage
+	 * @return
+	 */
 	Project mapImage(be.cytomine.client.models.ImageInstance cmImage, Image irisImage){
 		if (irisImage == null){
 			irisImage = new Image()
@@ -69,6 +83,5 @@ class DomainMapper {
 		irisImage.setCmName(cmImage.getStr("name"))
 		
 		return irisImage
-		
 	}
 }
