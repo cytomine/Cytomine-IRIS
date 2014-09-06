@@ -1,5 +1,7 @@
 package be.cytomine.apps.iris
 
+import org.codehaus.groovy.grails.web.json.JSONElement;
+
 import grails.converters.JSON;
 import grails.transaction.Transactional
 import be.cytomine.client.Cytomine
@@ -22,10 +24,6 @@ class SessionService {
 		// fetch all sessions from the database where the user is owner
 		List<Session> allSessions = Session.getAll()
 		return allSessions
-	}
-
-	def get(Cytomine cytomine, long sessID){
-		// TODO
 	}
 
 	/**
@@ -111,7 +109,8 @@ class SessionService {
 
 		projectForUpdate = new DomainMapper().mapProject(cmProject, projectForUpdate)
 		projectForUpdate.updateLastActivity()
-		
+
+		// trigger reordering of the projects in the session
 		sess.addToProjects(projectForUpdate)
 
 		// set the new timestamp on the project and save
@@ -126,11 +125,11 @@ class SessionService {
 
 	/**
 	 * Fetches the current project settings from the Cytomine host
-	 * and returns the updated project. Does not save the project on the IRIS server.
+	 * and returns the project. Does not save the project on the IRIS server.
 	 *
 	 * @param cytomine a Cytomine instance
 	 * @param sessionID the IRIS session ID where the project belongs to
-	 * @param projectID the Cytomine project ID for updating
+	 * @param cmProjectID the Cytomine project ID for updating
 	 * @return the updated IRIS project instance
 	 *
 	 * @throws CytomineException if the project is is not available for the
@@ -147,7 +146,7 @@ class SessionService {
 
 		return projectJSON
 	}
-	
+
 	/**
 	 * Injects a Cytomine Project into the IRIS project.
 	 * 
@@ -160,16 +159,55 @@ class SessionService {
 	 */
 	def injectCytomineProject(Cytomine cytomine, Project irisProject) throws CytomineException{
 		// fetch the Cytomine project instance
-		def cmProject = cytomine.getProject(iris.cmID)
+		def cmProject = cytomine.getProject(irisProject.cmID)
 		def projectJSON = new Utils().modelToJSON(irisProject)
 
 		projectJSON.cytomine = cmProject.getAttr()
-		
+
 		return projectJSON
 	}
-	
-	def delete(Cytomine cytomine, long sessID){
 
+	/**
+	 * Update an existing IRIS Project in a session with a JSON object delivered in the payload. 
+	 * 
+	 * 
+	 * @param cytomine a Cytomine instance
+	 * @param sessionID the session ID
+	 * @param irisProjectID the Cytomine project ID
+	 * @param payload the IRIS project as JSON (incl. injected cytomine project at "payload.cytomine")
+	 * @return
+	 */
+	def updateByIRISProject(Cytomine cytomine, long sessionID, long irisProjectID, def payload){
+		// get the session
+		Session sess = Session.get(sessionID)
+		
+		Project project = sess.getProjects().find { it.id == irisProjectID }
+		
+		// map all properties from json to the project
+		project = project.updateByJSON(payload)
+		sess.addToProjects(project)
+		sess.save(failOnError:true)
+		
+		def pj = injectCytomineProject(cytomine, project)
+		
+		return pj
 	}
 
+	def updateByCytomineProject(Cytomine cytomine, long sessionID, long cmProjectID, def payload){
+		// TODO implement updating by cytomine project if necessary
+	}
+
+	/**
+	 * Removes a session from the database.
+	 * 
+	 * @param cytomine a Cytomine instance
+	 * @param sessID the IRIS session ID
+	 * 
+	 * @return <code>null</code>, if the session does not exist
+	 * @throws Exception if any error occurs during deletion
+	 */
+	def delete(long sessID) throws Exception{
+		Session sess = Session.get(sessID)
+		sess.delete(flush:true, failOnError:true)
+	}
 }

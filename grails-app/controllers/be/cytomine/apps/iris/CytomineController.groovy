@@ -53,9 +53,6 @@ class CytomineController {
 			blindMode = irisProject.cmBlindMode
 		}
 		
-		println "######################" + blindMode
-
-		
 		// TODO implement paging using max and offset parameters from the request params
 		//int offset = params.long("offset")
 		//int max = params.long("max")

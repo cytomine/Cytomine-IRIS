@@ -1,11 +1,9 @@
 package be.cytomine.apps.iris
 
 import grails.converters.JSON
-
-import org.json.simple.JSONObject
-
+import org.codehaus.groovy.grails.web.json.JSONElement
 import be.cytomine.client.Cytomine
-import be.cytomine.client.CytomineException;
+import be.cytomine.client.CytomineException
 
 /**
  * A SessionController handles the communication with the client and 
@@ -67,11 +65,15 @@ class SessionController {
 	 * Deletes a session.
 	 */
 	def deleteSession(){
-		long userID = params.long('userID')
-		User user = User.findById(userID)
-		// TODO
+		long sessID = params.long('sessionID')
+		sessionService.delete(sessID)
 	}
 
+	/**
+	 * Update a session.
+	 * 
+	 * @return the updated session
+	 */
 	def updateSession(){
 		// parse the payload of the PUT request
 		def sess = request.JSON
@@ -89,28 +91,58 @@ class SessionController {
 	}
 
 	/**
-	 * Update a specific Cytomine project in a session.
-	 * @return the updated Cytomine project instance
+	 * Update a specific project in a session. The payload of the 
+	 * PUT request defines the ID to be used for querying the IRIS 
+	 * database.
+	 * 
+	 * @return the updated IRIS project instance
 	 */
 	def updateProject(){
-		println "received payload: " + (request.JSON as JSON)
-		
-		try {
+		try{
+			// get the JSON object from the payload
+			def payload = (request.JSON)
+			if (payload == null){
+				throw new IllegalArgumentException("The payload is empty!")
+			}
+			
+			// extract the class names
+			String pldClazz = payload["class"]
+			String urlClazz = params["class"]
+			
+			if (!pldClazz.equalsIgnoreCase(urlClazz)){
+				throw new IllegalArgumentException("Class of payload and URL do not match!")
+			}
+			
 			Cytomine cytomine = request['cytomine']
 			long sessionID = params.long('sessionID')
-			long cmProjectID = params.long('cmProjectID')
-
-			// TODO implement the update for 
-			//def irisProject = sessionService.updateProject(cytomine, sessionID, cmProjectID)
+			long projectID = payload["id"]
+			
+			// declare the project
+			def irisProject = null
+			
+			if (pldClazz.equals(Project.class.name)){
+				// update using the IRIS project
+				irisProject = sessionService.updateByIRISProject(cytomine, sessionID, projectID, payload)
+			} else if(pldClazz.equals(IRISConstants.CM_PROJECT)){
+				// update using the Cytomine project
+				irisProject = sessionService.updateByCytomineProject(cytomine, sessionID, projectID, payload)
+			}
 						
-			render irisProject as JSON
+			render (irisProject as JSON)
 		}catch(CytomineException e){
 			// TODO redirect to an error page or send back 404 and message
+			log.error("",e)
 		}catch(Exception ex){
 			// TODO redirect to an error page or send back 400
+			log.error("",ex)
 		}
 	}
 
+	/**
+	 * Updates a project in a session.
+	 * 
+	 * @return the updated project as JSON object
+	 */
 	def touchProject(){
 		try {
 			Cytomine cytomine = request['cytomine']
@@ -121,10 +153,10 @@ class SessionController {
 
 			render irisProject as JSON
 		}catch(CytomineException e){
-			log.error(e)	
+			log.error("",e)	
 		// TODO redirect to an error page or send back 404 and message
 		}catch(Exception ex){
-			log.error(ex)
+			log.error("",ex)
 		// TODO redirect to an error page or send back 400
 		}
 	}

@@ -93,31 +93,27 @@ class UrlMappings {
 			action = [
 				GET: "getSession",
 				PUT: "updateSession", // create or overwrite a resource
-			]
-		}
-		
-		"/api/session/$sessionID(.$format)"(controller:"session"){
-			action = [
-				GET: "getSession",
-				PUT: "updateSession", // create or overwrite a resource
+				DELETE: "deleteSession"
 			]
 		}
 		
 		"/api/session/$sessionID/project/$cmProjectID/touch"(controller:"session"){
 			action = [
-				POST: "touchProject"
+				POST: "touchProject" // create or overwrite the project in the session
 				]
 		}
 		
+		/*
+		 * Optional parameters for PUT request is 
+		 * 		class={cytomine|iris}
+		 */
 		"/api/session/$sessionID/project/$cmProjectID(.$format)"(controller:"session"){
 			action = [
 				GET: "getProject", // gets an IRIS project from a session
-				PUT: "updateProject" // create or overwrite the project in the session
+				PUT: "updateProject" // update the project in the session using the params from the payload
 				]
 		}
 		
-		
-
 		"/api/sessions(.$format)"(controller:"session"){
 			action = [GET: "getAll"]
 		}

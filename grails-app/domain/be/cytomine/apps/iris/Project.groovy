@@ -1,5 +1,8 @@
 package be.cytomine.apps.iris
 
+import org.codehaus.groovy.grails.web.json.JSONElement;
+import org.codehaus.groovy.grails.web.json.JSONObject;
+
 class Project implements Comparable<Project>, Updateable{
 	// GRAILS auto variables
 	Date dateCreated = new Date()
@@ -58,5 +61,22 @@ class Project implements Comparable<Project>, Updateable{
 		} catch (NullPointerException e) {
 			return null
 		}
+	}
+	
+	/**
+	 * Updates the project using a JSON object.  
+	 * 
+	 * @param json a JSONElement object (e.g. parsed from a PUT request payload)
+	 * @return the updated project
+	 */
+	Project updateByJSON(def json){
+		// assign all properties from the json to the object
+		this.setLastActivity(json.lastActivity)
+		this.setCmID(json.cmID)
+		this.setCmName(json.cmName)
+		this.setCmBlindMode(json.cmBlindMode)
+		this.setPrefs(json.prefs)
+		
+		return this
 	}
 }

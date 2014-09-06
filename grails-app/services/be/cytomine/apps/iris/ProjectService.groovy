@@ -59,7 +59,7 @@ class ProjectService {
 	 * @throws CytomineException if the project does not have a description
 	 */
 	def getProjectDescription(Cytomine cytomine, long projectID) throws CytomineException{
-		def description = cytomine.getDescription(projectID, 'be.cytomine.project.Project')
+		def description = cytomine.getDescription(projectID, IRISConstants.CM_PROJECT)
 		return description
 	}
 

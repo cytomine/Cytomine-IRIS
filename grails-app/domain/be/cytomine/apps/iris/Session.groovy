@@ -67,4 +67,18 @@ class Session implements Updateable{
 	public void updateLastActivity() {
 		this.lastActivity = new Date().getTime()
 	}
+	
+	/**
+	 * Updates the session using a JSON object.
+	 *
+	 * @param json a JSONElement object (e.g. parsed from a PUT request payload)
+	 * @return the updated session
+	 */
+	Session updateByJSON(def json){
+		// assign all properties from the json to the object
+		this.setLastActivity(json.lastActivity)
+		this.setPrefs(json.prefs)
+		
+		return this
+	}
 }

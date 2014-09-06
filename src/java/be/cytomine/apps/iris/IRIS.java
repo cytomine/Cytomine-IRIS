@@ -20,7 +20,7 @@ import be.cytomine.client.models.User;
 public class IRIS {
 
 	private Cytomine cytomine;
-
+	
 	/**
 	 * Construct a new application instance
 	 * 
