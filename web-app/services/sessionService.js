@@ -2,10 +2,11 @@ var iris = angular.module("irisApp");
 
 iris.constant("sessionURL", "/api/session.json");
 iris.constant("touchProjectURL", "/api/session/{sessionID}/project/{projectID}/touch");
+iris.constant("updateProjectURL", "/api/session/{sessionID}/project/{projectID}");
 
 // A generic service for handling client sessions.
 iris.factory("sessionService", function($http, $log, $location, sessionURL,
-		touchProjectURL,
+		touchProjectURL, updateProjectURL,
 		sharedService, cytomineService) {
 
 	return {
@@ -56,10 +57,11 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 		// retrieve the currently active project
 		getCurrentProject : function() {
 			var sess = this.getSession();
-			$log.debug(sess.currentProject)
 			if (sess.currentProject != null){
-				return sess.currentProject.cytomine;
+				$log.debug("returning local IRIS project")
+				return sess.currentProject;
 			} else {
+				$log.debug("returning null")
 				return null;
 			}
 		},
@@ -99,8 +101,39 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 					callbackError(data, status)
 				}
 			});
-		}
+		},			
 		
+		// updates a project in the current session, payload is the IRIS project instance
+		updateProject : function(irisProject, callbackSuccess, callbackError){
+			var sessionService = this;
+			var session = sessionService.getSession();
+			
+			var projectClass = irisProject['class']
+			
+			var url = cytomineService.addKeys(updateProjectURL + "?class=" + projectClass)
+							.replace("{sessionID}", session.id)
+							.replace("{projectID}", irisProject.cmID);
+			
+			$http.put(url, irisProject).success(function(data){
+				// on success, update the project in the local storage
+				session.currentProject = data;
+				sessionService.setSession(session);
+
+				$log.debug("successfully updated current project")
+				
+				if (callbackSuccess){
+					callbackSuccess(data)
+				}
+			}).error(function(data,status,header,config){
+				// on error, show the error message
+				sharedService.addAlert(status + ": " + data, "danger");
+				$log.error(status);
+
+				if (callbackError){
+					callbackError(data, status)
+				}
+			});
+		},
 	// END SESSION MANAGEMENT
 	// ###############################################################
 	}

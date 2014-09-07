@@ -49,15 +49,18 @@ class SessionController {
 	 * @return the IRIS project and the injected Cytomine instance
 	 */
 	def getProject(){
-		long sID = params.long('sessionID')
-		long pID = params.long('projectID')
 		try {
+			long sID = params.long('sessionID')
+			long pID = params.long('projectID')
+		
 			def projJSON = sessionService.getProject(request["cytomine"], sID, pID) as JSON
 			render projJSON
 		} catch(CytomineException e){
 			// TODO 404
+			log.error("",e)
 		} catch(Exception ex){
 			// TODO 400
+			log.error("",ex)
 		}
 	}
 
@@ -148,6 +151,8 @@ class SessionController {
 			Cytomine cytomine = request['cytomine']
 			long sessionID = params.long('sessionID')
 			long cmProjectID = params.long('cmProjectID')
+			
+			println sessionID + " - " + cmProjectID
 			
 			def irisProject = sessionService.touchProject(cytomine, sessionID, cmProjectID)
 

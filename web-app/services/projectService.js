@@ -82,8 +82,9 @@ iris.factory("projectService", function($http, $log,
 		},
 		
 		// check availability of a specific project for a user
-		checkAvailability : function(projectID,callbackSuccess,callbackError){
-			var url = cytomineService.addKeys(projectAvailUrl).replace("{projectID}", projectID);
+		checkAvailability : function(cmProjectID,callbackSuccess,callbackError){
+			var url = cytomineService.addKeys(projectAvailUrl)
+							.replace("{projectID}", cmProjectID);
 			
 			$http.get(url).success(function(data) {
 				console.log("success on $http.get(" + url + ")");

@@ -1,5 +1,7 @@
 package be.cytomine.apps.iris
 
+import grails.converters.JSON;
+
 import org.codehaus.groovy.grails.web.json.JSONElement;
 import org.codehaus.groovy.grails.web.json.JSONObject;
 
@@ -71,12 +73,11 @@ class Project implements Comparable<Project>, Updateable{
 	 */
 	Project updateByJSON(def json){
 		// assign all properties from the json to the object
-		this.setLastActivity(json.lastActivity)
+		this.updateLastActivity()
 		this.setCmID(json.cmID)
 		this.setCmName(json.cmName)
 		this.setCmBlindMode(json.cmBlindMode)
-		this.setPrefs(json.prefs)
-		
+		this.setPrefs((Map) json.prefs)
 		return this
 	}
 }

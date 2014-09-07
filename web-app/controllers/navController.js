@@ -35,7 +35,7 @@ iris.controller("navCtrl", function($scope, $location, $log, sharedService,
 		
 		// then get the current project ID and the status
 		
-		var pID = sessionService.getCurrentProject().id;
+		var pID = sessionService.getCurrentProject().cmID;
 		var iID = imageService.getCurrentImage().id;
 		var annID = 136334701;// labelingService.getNextAnnotation().id;
 		var url = labelUrl.replace("{projectID}", pID)
@@ -46,7 +46,7 @@ iris.controller("navCtrl", function($scope, $location, $log, sharedService,
 	
 	// navigate to the current project's images
 	$scope.images = function() {
-		var projectID = sessionService.getCurrentProject().id;
+		var projectID = sessionService.getCurrentProject().cmID;
 		// TODO check for null in the project
 		$location.url("/project/" + projectID + "/images");
 	};

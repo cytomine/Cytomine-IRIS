@@ -69,8 +69,6 @@ iris.controller(
 			// get all the images for the current project 
 			$scope.getAllImages = function(callbackSuccess) {
 				imageService.fetchImages($scope.projectID, function(data) {
-					// change the image names if the project is in blind mode
-//					$scope.blindNames(data);
 					callbackSuccess(data);
 				}, function(data, status) {
 					$scope.image.error.retrieve = {
@@ -81,21 +79,6 @@ iris.controller(
 				});
 			};
 			
-//			// blind the image name
-//			$scope.blindNames = function(data){
-//				// get the current project 
-//				var p = sessionService.getCurrentProject();
-//
-//				// modify the original file name
-//				data.forEach(function(item){
-//					if (p.blindMode === true){
-//						item.fileName = "[BLIND]" + item.id;
-//					} else {
-//						item.fileName = item.originalFilename;
-//					}
-//				});
-//			};
-			
 			// refresh the page
 			$scope.refreshPage = function(){
 				$scope.loading = true;
@@ -104,6 +87,9 @@ iris.controller(
 					$scope.image.error.retrieve = null;
 					$scope.image.images = data;
 					$log.info("image refresh successful");
+					
+					// TODO get user preferences from server
+					$scope.userProgressFiltered = sessionService.getCurrentProject().prefs['images.hideCompleted'];
 
 					// build the data table
 					$scope.tableParams = new ngTableParams(
@@ -175,10 +161,6 @@ iris.controller(
 				}
 			};
 			
-
-			// TODO get user preferences from server
-			$scope.userProgressFiltered = false;
-			
 			getBtnAllProgresses = function() {
 				return document.getElementById("allProgresses");
 			};
@@ -187,17 +169,25 @@ iris.controller(
 				return document.getElementById("hideFinishedProgresses");
 			};
 			
+			// post the prefs update to the server
 			$scope.filterProgresses = function(userProgressFiltered){
+				
+				var cPrj = sessionService.getCurrentProject();
+				cPrj.prefs['images.hideCompleted'] = userProgressFiltered;
+				sessionService.updateProject(cPrj)
+				
 				if (!userProgressFiltered){
 					$timeout(function() {
 						getBtnAllProgresses().click();
 						$scope.userProgressFiltered = userProgressFiltered;
-						},1);
+						},
+						1);
 				}else {
 					$timeout(function() {
 						getBtnHideFinishedProgresses().click();
 						$scope.userProgressFiltered = userProgressFiltered
-						},1);
+						},
+						1);
 				}
 			};
 		});
