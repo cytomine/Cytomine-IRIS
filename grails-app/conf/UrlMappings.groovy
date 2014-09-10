@@ -13,7 +13,7 @@ class UrlMappings {
 		 * ###########################
 		 * Global redirects (to views)
 		 */
-		"/"(view:"/index")
+		"/"(view:"/iris")
 		"/iris"(view:"/iris")
 		"500"(view:'/error')
 
