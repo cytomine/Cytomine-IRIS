@@ -101,7 +101,7 @@ iris.controller("termCtrl", function($scope, $log, $filter, $routeParams, shared
 	// 585609 (ALCIAN BLUE) // flat
 	
 	// TODO get the ontologyID from the current project
-	projectService.fetchOntology(sessionService.getCurrentProject().ontology, { flat : true }, function(data) {
+	projectService.fetchOntology(sessionService.getCurrentProject().cytomine.ontology, { flat : true }, function(data) {
 		$scope.ontology = data;
 		
 		// build the ontology table

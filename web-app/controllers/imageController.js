@@ -172,9 +172,10 @@ iris.controller(
 			// post the prefs update to the server
 			$scope.filterProgresses = function(userProgressFiltered){
 				
-				var cPrj = sessionService.getCurrentProject();
-				cPrj.prefs['images.hideCompleted'] = userProgressFiltered;
-				sessionService.updateProject(cPrj)
+				// TODO POSTING UPDATE TO SERVER NOT WORKING AT THE MOMENT!!
+				//var cPrj = sessionService.getCurrentProject();
+				//cPrj.prefs['images.hideCompleted'] = userProgressFiltered;
+				//sessionService.updateProject(cPrj)
 				
 				if (!userProgressFiltered){
 					$timeout(function() {

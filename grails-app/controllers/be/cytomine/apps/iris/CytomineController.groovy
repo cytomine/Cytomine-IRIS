@@ -38,8 +38,13 @@ class CytomineController {
 		// important for blinding image names
 		boolean blindMode = false
 		
+		be.cytomine.apps.iris.User u = be.cytomine.apps.iris.User.find { cmID == userID }
+		
+		// get the session
+		Session sess = u.getSession();
+		
 		// try to search in local database
-		Project irisProject = Project.find { cmID == projectID }
+		Project irisProject = sess.getProjects().find { it.cmID == projectID }
 		
 		if (irisProject == null){
 			def cmProject = cytomine.getProject(projectID)
