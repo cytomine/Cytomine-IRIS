@@ -90,8 +90,7 @@ iris.controller(
 					console.log("hideCompleted (session): " + sessionService.getCurrentProject().prefs['images.hideCompleted']);
 					
 					// get user preferences from session
-					$scope.hide = sessionService.getCurrentProject().prefs['images.hideCompleted'];
-					console.log("hideCompleted (scope): " + $scope.hide);
+					$scope.hide = (sessionService.getCurrentProject().prefs['images.hideCompleted'] === 'true');
 					
 					// build the data table
 					$scope.tableParams = new ngTableParams(
@@ -125,10 +124,11 @@ iris.controller(
 							$defer.resolve($scope.data);
 						},
 						filterDelay : 0,
-						
 					});
 					$log.info("image refresh successful");
-					$scope.hideCompleted(!$scope.hide)
+					
+					// hide or show the completed images
+					$scope.hideCompleted($scope.hide)
 					$scope.loading = false;
 				});
 			};
@@ -175,14 +175,14 @@ iris.controller(
 			// post the prefs update to the server
 			$scope.hideCompleted = function(hideCompleted){
 				
-				console.log("old: " + sessionService.getCurrentProject().prefs['images.hideCompleted'] + " --> new: " + hideCompleted);
+				console.log(typeof hideCompleted)
 				
 				// POSTING UPDATE TO SERVER
 				var cPrj = sessionService.getCurrentProject();
 				cPrj.prefs['images.hideCompleted'] = hideCompleted;
 				sessionService.updateProject(cPrj)
 				
-				if (hideCompleted === false){
+				if (hideCompleted == false){
 					$timeout(function() {
 						console.log("showing all progresses")
 						getBtnAllProgresses().click();
