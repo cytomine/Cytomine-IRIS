@@ -49,4 +49,20 @@ class Image implements Comparable<Image>, Updateable{
 	Annotation getCurrentAnnotation(){
 		// TODO 
 	}
+	
+	/**
+	 * Updates the image using a JSON object.
+	 *
+	 * @param json a JSONElement object (e.g. parsed from a PUT request payload)
+	 * @return the updated project
+	 */
+	Image updateByJSON(def json){
+		this.updateLastActivity()
+		
+		json.prefs.each {
+			String[] entry = it.toString().split("=")
+			this.getPrefs().put(entry[0],entry[1])
+		}
+		return this
+	}
 }

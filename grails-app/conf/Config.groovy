@@ -121,7 +121,8 @@ log4j = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
     warn  	'be.cytomine.client'
-	debug	'be.cytomine.apps.iris'	   	
+	debug	'grails.app.controllers',	
+			'grails.app.services'   	
 }
 
 grails.gorm.default.constraints = {

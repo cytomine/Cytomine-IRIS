@@ -86,11 +86,13 @@ iris.controller(
 				$scope.getAllImages(function(data) {
 					$scope.image.error.retrieve = null;
 					$scope.image.images = data;
-					$log.info("image refresh successful");
 					
-					// TODO get user preferences from server
-					$scope.userProgressFiltered = sessionService.getCurrentProject().prefs['images.hideCompleted'];
-
+					console.log("hideCompleted (session): " + sessionService.getCurrentProject().prefs['images.hideCompleted']);
+					
+					// get user preferences from session
+					$scope.hide = sessionService.getCurrentProject().prefs['images.hideCompleted'];
+					console.log("hideCompleted (scope): " + $scope.hide);
+					
 					// build the data table
 					$scope.tableParams = new ngTableParams(
 					{
@@ -125,7 +127,8 @@ iris.controller(
 						filterDelay : 0,
 						
 					});
-					$scope.filterProgresses($scope.userProgressFiltered)
+					$log.info("image refresh successful");
+					$scope.hideCompleted(!$scope.hide)
 					$scope.loading = false;
 				});
 			};
@@ -166,29 +169,36 @@ iris.controller(
 			};
 			
 			getBtnHideFinishedProgresses = function() {
-				return document.getElementById("hideFinishedProgresses");
+				return document.getElementById("hideCompleted");
 			};
 			
 			// post the prefs update to the server
-			$scope.filterProgresses = function(userProgressFiltered){
+			$scope.hideCompleted = function(hideCompleted){
 				
-				// TODO POSTING UPDATE TO SERVER NOT WORKING AT THE MOMENT!!
-				//var cPrj = sessionService.getCurrentProject();
-				//cPrj.prefs['images.hideCompleted'] = userProgressFiltered;
-				//sessionService.updateProject(cPrj)
+				console.log("old: " + sessionService.getCurrentProject().prefs['images.hideCompleted'] + " --> new: " + hideCompleted);
 				
-				if (!userProgressFiltered){
+				// POSTING UPDATE TO SERVER
+				var cPrj = sessionService.getCurrentProject();
+				cPrj.prefs['images.hideCompleted'] = hideCompleted;
+				sessionService.updateProject(cPrj)
+				
+				if (hideCompleted === false){
 					$timeout(function() {
+						console.log("showing all progresses")
 						getBtnAllProgresses().click();
-						$scope.userProgressFiltered = userProgressFiltered;
+						$scope.hide = false;
 						},
 						1);
 				}else {
 					$timeout(function() {
+						console.log("filtered progresses")
 						getBtnHideFinishedProgresses().click();
-						$scope.userProgressFiltered = userProgressFiltered
+						$scope.hide = true;
 						},
 						1);
 				}
+				
+				console.log("hideCompleted (scope after update): " + $scope.hide);
+				
 			};
 		});

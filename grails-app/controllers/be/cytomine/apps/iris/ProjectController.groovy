@@ -13,6 +13,10 @@ import be.cytomine.client.CytomineException
  */
 class ProjectController {
 
+	def beforeInterceptor = {
+		log.debug("Executing action $actionName with params $params")
+	}
+	
 	/**
 	 * The injected ProjectService instance for this controller.
 	 */

@@ -20,7 +20,7 @@ import grails.transaction.Transactional
  */
 @Transactional
 class ProjectService {
-
+	
 	/**
 	 * Fetches the project list of the user executing this query.
 	 * Optionally, there will be an injection of the associated ontology with 

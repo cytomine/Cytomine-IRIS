@@ -17,6 +17,10 @@ import be.cytomine.client.CytomineException
  */
 class SessionController {
 
+	def beforeInterceptor = {
+		log.debug("Executing action $actionName with params $params")
+	}
+
 	/**
 	 *  Injected SessionService instance for this controller. 
 	 */
@@ -43,7 +47,7 @@ class SessionController {
 		def sessJSON = sessionService.get(request["cytomine"], params["publicKey"]) as JSON
 		render sessJSON
 	}
-	
+
 	/**
 	 * Gets an IRIS project instance.
 	 * @return the IRIS project and the injected Cytomine instance
@@ -52,15 +56,15 @@ class SessionController {
 		try {
 			long sID = params.long('sessionID')
 			long pID = params.long('projectID')
-		
+
 			def projJSON = sessionService.getProject(request["cytomine"], sID, pID) as JSON
 			render projJSON
 		} catch(CytomineException e){
 			// TODO 404
-			log.error("",e)
+			log.error("Could not get projects!",e)
 		} catch(Exception ex){
 			// TODO 400
-			log.error("",ex)
+			log.error("Could not get projects!",ex)
 		}
 	}
 
@@ -80,16 +84,12 @@ class SessionController {
 	def updateSession(){
 		// parse the payload of the PUT request
 		def sess = request.JSON
-		
+
 		// fetch the session from the DB
 		Session s = Session.get(sess.id)
-		
-		// TODO update all fields from the request body
-		s.setPrefs(sess.prefs)
-		
-		// update the record
-		s.save(failOnError:true,flush:true)
-		
+
+		s = s.updateByJSON(sess)
+
 		render s as JSON
 	}
 
@@ -104,40 +104,38 @@ class SessionController {
 		try{
 			// get the JSON object from the payload
 			def payload = (request.JSON)
+
 			if (payload == null){
 				throw new IllegalArgumentException("The payload is empty!")
 			}
-			
+
 			// extract the class names
 			String pldClazz = payload["class"]
 			String urlClazz = params["class"]
-			
+
 			if (!pldClazz.equalsIgnoreCase(urlClazz)){
 				throw new IllegalArgumentException("Class of payload and URL do not match!")
 			}
-			
+
 			Cytomine cytomine = request['cytomine']
 			long sessionID = params.long('sessionID')
-			long projectID = payload["id"]
-			
+			long projectID = Long.valueOf(payload['id'])
+
 			// declare the project
 			def irisProject = null
-			
+
 			if (pldClazz.equals(Project.class.name)){
 				// update using the IRIS project
 				irisProject = sessionService.updateByIRISProject(cytomine, sessionID, projectID, payload)
-			} else if(pldClazz.equals(IRISConstants.CM_PROJECT)){
-				// update using the Cytomine project
-				irisProject = sessionService.updateByCytomineProject(cytomine, sessionID, projectID, payload)
 			}
-						
+
 			render (irisProject as JSON)
 		}catch(CytomineException e){
 			// TODO redirect to an error page or send back 404 and message
-			log.error("",e)
+			log.error("Error updating project!",e)
 		}catch(Exception ex){
 			// TODO redirect to an error page or send back 400
-			log.error("",ex)
+			log.error("Error updating project!",ex)
 		}
 	}
 
@@ -151,21 +149,21 @@ class SessionController {
 			Cytomine cytomine = request['cytomine']
 			long sessionID = params.long('sessionID')
 			long cmProjectID = params.long('cmProjectID')
-			
+
 			println sessionID + " - " + cmProjectID
-			
+
 			def irisProject = sessionService.touchProject(cytomine, sessionID, cmProjectID)
 
 			render irisProject as JSON
 		}catch(CytomineException e){
-			log.error("",e)	
-		// TODO redirect to an error page or send back 404 and message
+			log.error("Could not touch project!",e)
+			// TODO redirect to an error page or send back 404 and message
 		}catch(Exception ex){
-			log.error("",ex)
-		// TODO redirect to an error page or send back 400
+			log.error("Could not touch project!",e)
+			// TODO redirect to an error page or send back 400
 		}
 	}
-	
+
 	def delProj(){
 		//		Project toDelete = Project.get(2)
 		//		println toDelete

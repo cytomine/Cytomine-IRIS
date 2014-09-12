@@ -33,7 +33,7 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 		fetchSession : function(callbackSuccess, callbackError) {
 			var sessionService = this;
 			var url = cytomineService.addKeys(sessionURL);
-			$log.debug(url)
+			//$log.debug(url)
 			
 			$http.get(url).success(function(data) {
 				$log.debug("Successfully retrieved session. ID=" + data.id);
@@ -45,7 +45,7 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 					callbackSuccess(data);
 				}
 			}).error(function(data, status, header, config) {
-				$log.error("Error retrieving session: " + data);
+				//$log.error("Error retrieving session: " + data);
 				sharedService.addAlert("The session could not be retrieved!", "danger")
 				
 				if (callbackError) {
@@ -58,7 +58,7 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 		getCurrentProject : function() {
 			var sess = this.getSession();
 			if (sess.currentProject != null){
-				$log.debug("returning local IRIS project")
+				//$log.debug("returning local IRIS project")
 				return sess.currentProject;
 			} else {
 				$log.debug("returning null")
@@ -126,12 +126,12 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 				}
 			}).error(function(data,status,header,config){
 				// on error, show the error message
-				sharedService.addAlert(status + ": " + data, "danger");
-				$log.error(status);
+				sharedService.addAlert(status + ": failed updating project.", "danger");
+//				$log.error(status);
 
-				if (callbackError){
-					callbackError(data, status)
-				}
+//				if (callbackError){
+//					callbackError(data, status)
+//				}
 			});
 		},
 	// END SESSION MANAGEMENT

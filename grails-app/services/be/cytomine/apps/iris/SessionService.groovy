@@ -18,6 +18,8 @@ import be.cytomine.client.CytomineException;
  */
 @Transactional
 class SessionService {
+	
+	def projectService
 
 	@Transactional(readOnly = true)
 	List<Session> getAll(){
@@ -112,13 +114,11 @@ class SessionService {
 
 		// trigger reordering of the projects in the session
 		sess.addToProjects(projectForUpdate)
+		sess.updateLastActivity()
 
-		// set the new timestamp on the project and save
-		sess.save(flush:true, failOnError:true)
-
-		def projectJSON = new Utils().modelToJSON(projectForUpdate)
-
-		projectJSON.cytomine = cmProject.getAttr()
+		// inject the project here directly in order to avoid fetching it again
+		// from Cytomine
+		def projectJSON = injectCytomineProject(cytomine, projectForUpdate, cmProject)
 
 		return projectJSON
 	}
@@ -142,7 +142,7 @@ class SessionService {
 		// find the nested project by projectID
 		Project projectForUpdate = sess.getProjects().find { it.cmID == cmProjectID }
 
-		def projectJSON = injectCytomineProject(cytomine, projectForUpdate)
+		def projectJSON = injectCytomineProject(cytomine, projectForUpdate, null)
 
 		return projectJSON
 	}
@@ -152,18 +152,27 @@ class SessionService {
 	 * 
 	 * @param cytomine a Cytomine instance
 	 * @param irisProject the IRIS Project
+	 * @param cmProject the cytomineProject, or <code>null</code>, if the project should be fetched from Cytomine
 	 * @return a JSON object with the injected Cytomine project
 	 * 
 	 * @throws CytomineException if the project is is not available for the
 	 * querying user
 	 */
-	def injectCytomineProject(Cytomine cytomine, Project irisProject) throws CytomineException{
-		// fetch the Cytomine project instance
-		def cmProject = cytomine.getProject(irisProject.cmID)
+	def injectCytomineProject(Cytomine cytomine, Project irisProject, def cmProject) throws CytomineException{
+		
 		def projectJSON = new Utils().modelToJSON(irisProject)
-
-		projectJSON.cytomine = cmProject.getAttr()
-
+		
+		// fetch the Cytomine project instance
+		if (cmProject == null){
+			cmProject = cytomine.getProject(irisProject.cmID)
+			projectJSON.cytomine = cmProject.getAttr()
+		} else {
+			if (cmProject['attr'] != null){
+				projectJSON.cytomine = cmProject.getAttr()
+			} else {
+				projectJSON.cytomine = cmProject
+			}
+		}
 		return projectJSON
 	}
 
@@ -177,24 +186,48 @@ class SessionService {
 	 * @param payload the IRIS project as JSON (incl. injected cytomine project at "payload.cytomine")
 	 * @return
 	 */
-	def updateByIRISProject(Cytomine cytomine, long sessionID, long irisProjectID, def payload){
+	def updateByIRISProject(Cytomine cytomine, long sessionID, long irisProjectID, def payload) throws Exception{
+		// check if the user may access this project
+		def cmProject = cytomine.getProject(payload['cytomine'].id);
+		
+		// get the cytomine project from the payload
+		if (cmProject == null){
+			log.error("This user is not allowed to access the project.")
+			
+			return
+		}
+		
 		// get the session
 		Session sess = Session.get(sessionID)
-		
-		Project project = sess.getProjects().find { it.id == irisProjectID }
-		
+		if (sess == null){
+			log.error("Cannot find session " + sessionID)
+			
+			return
+		}
+
+		// find the specific project
+		def sessProjects = sess.getProjects();
+		log.debug("Session "+ sess.id +  " has " + sessProjects.size() + " projects: " + sessProjects)
+
+		// try to find the project
+		Project project = sessProjects.find { it.id == irisProjectID }
+
+		// if no project is available in this session, return null and cause error
+		if (project == null){
+			log.error("Cannot find project " + irisProjectID + " for session " + sessionID)
+			
+			return
+		}
+
 		// map all properties from json to the project
 		project = project.updateByJSON(payload)
+		
+		// add the project to the session and cause reordering
 		sess.addToProjects(project)
-		sess.save(failOnError:true)
-		
-		def pj = injectCytomineProject(cytomine, project)
-		
-		return pj
-	}
+		sess.updateLastActivity()
 
-	def updateByCytomineProject(Cytomine cytomine, long sessionID, long cmProjectID, def payload){
-		// TODO implement updating by cytomine project if necessary
+		def pjJSON = injectCytomineProject(cytomine, project, cmProject)
+		return pjJSON
 	}
 
 	/**

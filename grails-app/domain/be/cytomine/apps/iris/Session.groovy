@@ -76,9 +76,13 @@ class Session implements Updateable{
 	 */
 	Session updateByJSON(def json){
 		// assign all properties from the json to the object
-		this.setLastActivity(json.lastActivity)
-		this.setPrefs(json.prefs)
+		this.updateLastActivity()
 		
+		json.prefs.each {
+			String[] entry = it.toString().split("=")
+			this.getPrefs().put(entry[0],entry[1])
+		}
+				
 		return this
 	}
 }
