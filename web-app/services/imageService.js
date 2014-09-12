@@ -4,8 +4,7 @@
 var iris = angular.module("irisApp");
 
 iris.constant("imageUrl", "/api/project/{id}/images.json");
-iris
-		.constant(
+iris.constant(
 				"imageServerURLs",
 				"/api/abstractimage/{abstractImageID}/imageservers.json?imageinstance={imageInstanceID}");
 
@@ -16,27 +15,6 @@ iris.factory("imageService", function($http, $log, imageUrl, imageServerURLs,
 	var images = [];
 
 	return {
-
-		// set the current image
-		setCurrentImage : function(image) {
-			localStorage.setItem("currentImage", JSON.stringify(image));
-		},
-
-		// get the current image
-		getCurrentImage : function() {
-			return JSON.parse(localStorage.getItem("currentImage"));
-		},
-
-		// remove the current image
-		removeImageID : function() {
-			localStorage.removeItem("currentImage");
-		},
-
-		// get all cached images
-		getAllImages : function() {
-			return images;
-		},
-
 		// get the images
 		fetchImages : function(projectID, callbackSuccess, callbackError) {
 			var url = cytomineService.addKeys(imageUrl).replace("{id}",

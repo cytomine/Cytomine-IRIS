@@ -71,7 +71,7 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location,
 			$scope.labeling.annotation.cropURL = host + "/api/annotation/" + $scope.labeling.annotation.id +
 					"/crop.png?&increaseArea=8&maxSize=256&draw=true";
 			
-			$scope.labeling.annotation.goToURL = imageService.getCurrentImage().goToURL + $scope.labeling.annotation.id
+			$scope.labeling.annotation.goToURL = sessionService.getCurrentImage().goToURL + $scope.labeling.annotation.id
 			console.log($scope.labeling.annotation.goToURL)
 	});
 	

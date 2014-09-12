@@ -127,13 +127,48 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 			}).error(function(data,status,header,config){
 				// on error, show the error message
 				sharedService.addAlert(status + ": failed updating project.", "danger");
-//				$log.error(status);
 
-//				if (callbackError){
-//					callbackError(data, status)
-//				}
+				if (callbackError){
+					callbackError(data, status)
+				}
 			});
 		},
+		
+		// retrieve the currently active project
+		getCurrentImage : function() {
+			var sess = this.getSession();
+			if (sess.currentImage != null){
+				$log.debug("returning local IRIS image")
+				return sess.currentImage;
+			} else {
+				$log.debug("returning null")
+				return null;
+			}
+		},
+
+		// set the currently active project
+		setCurrentImage : function(image) {
+			if (image == null){
+				var session = this.getSession();
+				session.currentImage = null;
+				this.setSession(session);
+			} else {
+				this.updateImage(image);
+			}
+		},
+		
+		// updates a project in the current session, payload is the IRIS image instance
+		updateImage : function(irisImage, callbackSuccess, callbackError){
+			var sessionService = this;
+			var session = sessionService.getSession();
+			
+			$log.debug("TODO: implement server-side updating the image in the session/project")
+			// DEBUG ONLY
+			session.currentImage = irisImage;
+			this.setSession(session);
+			
+		},
+		
 	// END SESSION MANAGEMENT
 	// ###############################################################
 	}

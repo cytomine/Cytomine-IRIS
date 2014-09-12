@@ -54,7 +54,7 @@ iris.controller(
 			
 			// proceed to the labeling page and resume labeling
 			$scope.resumeLabeling = function(image) {
-				$scope.setCurrentImage(image);
+				sessionService.setCurrentImage(image);
 				// TODO load the "next" annotation from the session and 
 				// append it to the URL
 				$location.url("/project/"+$scope.projectID+"/image/"+image.id+"/label");
@@ -62,7 +62,7 @@ iris.controller(
 			
 			// proceed to the labeling page
 			$scope.startLabeling = function(image) {
-				$scope.setCurrentImage(image);
+				sessionService.setCurrentImage(image);
 				$location.url("/project/"+$scope.projectID+"/image/"+image.id+"/label/136334701");
 			};
 			
@@ -87,7 +87,7 @@ iris.controller(
 					$scope.image.error.retrieve = null;
 					$scope.image.images = data;
 					
-					console.log("hideCompleted (session): " + sessionService.getCurrentProject().prefs['images.hideCompleted']);
+//					console.log("hideCompleted (session): " + sessionService.getCurrentProject().prefs['images.hideCompleted']);
 					
 					// get user preferences from session
 					$scope.hide = (sessionService.getCurrentProject().prefs['images.hideCompleted'] === 'true');
@@ -139,23 +139,10 @@ iris.controller(
 			// //////////////////////////////////////////
 			// declare additional methods
 			// //////////////////////////////////////////
-			// set the current image
-			$scope.setCurrentImage = function(image) {
-				imageService.setCurrentImage(image);
-				$rootScope.$broadcast("currentImage", image);
-			};
-
-			// retrieve the current image ID
-			$scope.getCurrentImage = function() {
-				return imageService.getCurrentImage();
-			};
+			$scope.setCurrentImage = function(image){
+				sessionService.setCurrentImage(image);
+			}
 			
-			// removes the current image
-			$scope.removeCurrentImage = function() {
-				$scope.setCurrentImage(null);
-				imageService.removeCurrentImage();
-			};
-
 			// Determine the row's background color class according 
 			// to the current labeling progress.
 			$scope.rowClass = function(progress) {
@@ -175,7 +162,7 @@ iris.controller(
 			// post the prefs update to the server
 			$scope.hideCompleted = function(hideCompleted){
 				
-				console.log(typeof hideCompleted)
+//				console.log(typeof hideCompleted)
 				
 				// POSTING UPDATE TO SERVER
 				var cPrj = sessionService.getCurrentProject();
@@ -198,7 +185,7 @@ iris.controller(
 						1);
 				}
 				
-				console.log("hideCompleted (scope after update): " + $scope.hide);
+//				console.log("hideCompleted (scope after update): " + $scope.hide);
 				
 			};
 		});

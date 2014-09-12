@@ -36,7 +36,7 @@ iris.controller("navCtrl", function($scope, $location, $log, sharedService,
 		// then get the current project ID and the status
 		
 		var pID = sessionService.getCurrentProject().cmID;
-		var iID = imageService.getCurrentImage().id;
+		var iID = sessionService.getCurrentImage().id;
 		var annID = 136334701;// labelingService.getNextAnnotation().id;
 		var url = labelUrl.replace("{projectID}", pID)
 				.replace("{imageID}", iID).replace("{annID}",annID);
