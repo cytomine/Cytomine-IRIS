@@ -16,7 +16,12 @@ class ImageMarshaller implements IRISMarshaller{
 			img['cmID'] = it.cmID
 			img['annotations'] = it.annotations
 			img['prefs'] = it.prefs
-			img['project'] = it.project.id
+			img['project'] = (it.project==null?null:it.project.id)
+			img['goToURL'] = it.goToURL
+			img['labeledAnnotations'] = it.labeledAnnotations
+			img['numberOfAnnotations'] = it.numberOfAnnotations
+			img['userProgress'] = it.userProgress
+			img['originalFilename'] = it.originalFilename
 			return img
 		}
 	}

@@ -15,6 +15,7 @@ import grails.converters.JSON;
  *
  */
 class DomainMapper {
+
 	/**
 	 * Map the be.cytomine.client.models.User model to the IRIS domain model of a user.
 	 * @param cmUser a Cytomine user
@@ -25,8 +26,7 @@ class DomainMapper {
 		if (irisUser == null){
 			irisUser = new User()
 		}
-		//println cmUser as JSON
-		
+
 		// map the properties from the client user to the IRIS user model
 		irisUser.setCmID(cmUser.getId())
 		irisUser.setCmUserName(cmUser.getStr("username"))
@@ -45,10 +45,10 @@ class DomainMapper {
 		irisUser.setCmIsSwitched(cmUser.getBool("isSwitched"))
 		irisUser.setCmGuest(cmUser.getBool("guest"))
 		irisUser.setCmUser(cmUser.getBool("user"))
-		
+
 		return irisUser
 	}
-	
+
 	/**
 	 * 
 	 * 
@@ -60,28 +60,31 @@ class DomainMapper {
 		if (irisProject == null){
 			irisProject = new Project()
 		}
-		
+
+		// TODO map required properties from the client model
 		irisProject.setCmID(cmProject.getId())
 		irisProject.setCmName(cmProject.getStr("name"))
 		irisProject.setCmBlindMode(cmProject.getBool("blindMode"))
-		
+
 		return irisProject
 	}
-	
+
 	/**
 	 * 
 	 * @param cmImage
 	 * @param irisImage
 	 * @return
 	 */
-	Project mapImage(be.cytomine.client.models.ImageInstance cmImage, Image irisImage){
+	Image mapImage(be.cytomine.client.models.ImageInstance cmImage, Image irisImage){
 		if (irisImage == null){
 			irisImage = new Image()
 		}
-		
+
+		// TODO map required properties from the client model
 		irisImage.setCmID(cmImage.getId())
-		irisImage.setCmName(cmImage.getStr("name"))
-		
+		irisImage.setOriginalFilename(cmImage.get("originalFilename"))
+		irisImage.setNumberOfAnnotations(cmImage.get("numberOfAnnotations"))
+
 		return irisImage
 	}
 }

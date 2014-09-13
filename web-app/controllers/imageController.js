@@ -52,18 +52,32 @@ iris.controller(
 				}
 			});
 			
-			// proceed to the labeling page and resume labeling
-			$scope.resumeLabeling = function(image) {
-				sessionService.setCurrentImage(image);
-				// TODO load the "next" annotation from the session and 
-				// append it to the URL
-				$location.url("/project/"+$scope.projectID+"/image/"+image.id+"/label");
-			};
+//			// proceed to the labeling page and resume labeling
+//			$scope.resumeLabeling = function(image) {
+//				sessionService.setCurrentImage(image);
+//				// TODO load the "next" annotation from the session and 
+//				// append it to the URL
+//				$location.url("/project/"+$scope.projectID+"/image/"+image.id+"/label");
+//			};
 			
 			// proceed to the labeling page
 			$scope.startLabeling = function(image) {
-				sessionService.setCurrentImage(image);
-				$location.url("/project/"+$scope.projectID+"/image/"+image.id+"/label/136334701");
+				sessionService.touchImage($scope.projectID, image.id, function(data){
+					$log.debug("Successfully touched image " + image.id);
+					$location.url("/project/"+$scope.projectID+"/image/"+image.id+"/label/136334701");
+				}, function(data,status){
+					sharedService.addAlert("Cannot update image. Error " + status + ".", "danger");
+				})
+			};
+			
+			$scope.annotationGallery = function(image){
+				sessionService.touchImage($scope.projectID, image.id, function(data){
+					// handle success promise
+					// TODO forward to the annotation gallery of this image
+					$log.debug("successfully touched image " + image.id);
+				}, function(data,status){
+					sharedService.addAlert("Cannot update image. Error " + status + ".", "danger");
+				})
 			};
 			
 			// get all the images for the current project 
@@ -85,7 +99,7 @@ iris.controller(
 				
 				$scope.getAllImages(function(data) {
 					$scope.image.error.retrieve = null;
-					$scope.image.images = data;
+					$scope.image.images = data; // this should be an IRIS image list
 					
 //					console.log("hideCompleted (session): " + sessionService.getCurrentProject().prefs['images.hideCompleted']);
 					
@@ -139,8 +153,14 @@ iris.controller(
 			// //////////////////////////////////////////
 			// declare additional methods
 			// //////////////////////////////////////////
-			$scope.setCurrentImage = function(image){
-				sessionService.setCurrentImage(image);
+			$scope.touchImage = function(image){
+				// update the image in the session
+				sessionService.touchImage($scope.projectID, image.id, function(data){
+					// handle success promise
+					$log.debug("Successfully touched image " + image.id);
+				}, function(data,status){
+					sharedService.addAlert("Cannot touch image. Error " + status + ".", "danger");
+				});
 			}
 			
 			// Determine the row's background color class according 

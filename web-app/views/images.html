@@ -29,34 +29,34 @@
         	<p><strong>Count per page:</strong> {{tableParams.count()}}</p> -->
 	    
 		    <table ng-table="tableParams" show-filter="true" class="table table-hover table-bordered">
-		        <tr ng-repeat="item in data" class="{{rowClass(item.userProgress)}}">
-		            <td data-title="'ID'" sortable="'id'">{{item.id}}</td>
-		            <td data-title="'Preview'" class="text-center"><img class="img-rounded" src="{{item.macroURL}}" height="50px"/></td>
+		        <tr ng-repeat="item in data" class="{{rowClass(userProgress)}}">
+		            <td data-title="'ID'" sortable="'cytomine.id'">{{item.cytomine.id}}</td>
+		            <td data-title="'Preview'" class="text-center"><img class="img-rounded" src="{{item.cytomine.macroURL}}" height="50px"/></td>
 		            <td data-title="'Name'" sortable="'originalFilename'" filter="{ 'originalFilename': 'text' }">
 		            	 {{item.originalFilename}} 
-		            	 <span ng-show="({{today}} - {{item.created}}) <= {{image.stillNew}}" class="label label-success pull-right">New!</span>
-		            	 <p class="text-muted">{{item.width | number}} x {{item.height | number}} px</p>
+		            	 <span ng-show="({{today}} - {{item.cytomine.created}}) <= {{image.stillNew}}" class="label label-success pull-right">New!</span>
+		            	 <p class="text-muted">{{item.cytomine.width | number}} x {{item.cytomine.height | number}} px</p>
 		            	 </td>
-		            <td data-title="'Magnification'">{{item.magnification}} X</td>
+		            <td data-title="'Magnification'">{{item.cytomine.magnification}} X</td>
 		            <td data-title="'Progress'" sortable="'userProgress'" class="text-center" filter="{ 'userProgress' : 'userProgressFilter' }">
-		            	<div ng-switch="{{item.numberOfAnnotations}}">
+		            	<div ng-switch="{{item.cytomine.numberOfAnnotations}}">
 		            		<div ng-switch-when="0" class="label label-info">No Annotations!</div>
 		            		<div ng-switch-default><div ng-controller="progressCtrl" ng-include="'templates/html/progressPanel.html'"></div></div>
 		            	</div>
 		            </td>
 		            <td data-title="'Actions'" class="text-center">
 						<div class="btn-group" dropdown>
-						  <button type="button" class="btn btn-primary btn-sm" ng-click="startLabeling(item)" ng-class="{ disabled : item.numberOfAnnotations=='0'}">Start Labeling</button>
+						  <button type="button" class="btn btn-primary btn-sm" ng-click="startLabeling(item.cytomine)" ng-class="{ disabled : item.cytomine.numberOfAnnotations=='0'}">Start Labeling</button>
 						  <button type="button" class="btn btn-primary btn-sm dropdown-toggle">
 						    <span class="caret"></span>
 						    <span class="sr-only">Toggle Dropdown</span>
 						  </button>
 						  <ul class="dropdown-menu text-left" role="menu">
-						    <li ng-class="{ disabled : item.numberOfAnnotations=='0'}"><a ng-click="annotationGallery(item.id)" href>
+						    <li ng-class="{ disabled : item.cytomine.numberOfAnnotations=='0'}"><a ng-click="annotationGallery(item.cmID)" href>
 						    		View Annotation Gallery
 						    </a></li>
 						    <li class="divider"></li>
-						    <li><a ng-click="setCurrentImage(item)" target="_blank" href="{{item.goToURL}}">
+						    <li><a ng-click="touchImage(item)" target="_blank" href="{{item.goToURL}}">
 						    		Explore in Cytomine 
 						    </a></li>
 						  </ul>
@@ -71,15 +71,5 @@
 				<input id="hideCompleted" type="radio" ng-model="params.filter()[name]" name="filter-userProgress" value="!100" style="display: none;"/>
     		</script>
 	    </div>
-	    
-	    
-	    
-<!--         <div class="col-6 col-sm-6 col-lg-4" ng-repeat="item in data">
-            <h3>{{item.originalFilename}}</h3>
-            <p><img class="img-thumbnail" src="{{item.thumb}}"/></p>
-            <td data-title="'action'"  class="text-center">
-                <a class="btn btn-xs btn-primary" target="_blank" href="{{item.goToURL}}">Open in cytomine</a>
-            </td>
-        </div> -->
     </div>
 </div>

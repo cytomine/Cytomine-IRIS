@@ -96,10 +96,8 @@ iris.controller("projectCtrl", function($rootScope, $scope, $http, $filter, $loc
 			// forward to the image overview table of this project
 			$location.url("/project/" + project.id + "/images")
 		}, function(data,status){
-			$log.error(status + ": " + data)
+			sharedService.addAlert("Cannot touch project. Error " + status + ".", "danger");
 		})
-		
-		
 	}
 
 	

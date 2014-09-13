@@ -20,6 +20,7 @@ import be.cytomine.client.CytomineException;
 class SessionService {
 	
 	def projectService
+	def grailsApplication
 
 	@Transactional(readOnly = true)
 	List<Session> getAll(){
@@ -111,6 +112,9 @@ class SessionService {
 
 		projectForUpdate = new DomainMapper().mapProject(cmProject, projectForUpdate)
 		projectForUpdate.updateLastActivity()
+		
+		// save the project in order to have the ID returned in the response
+		projectForUpdate.save(flush:true,failOnError:true)
 
 		// trigger reordering of the projects in the session
 		sess.addToProjects(projectForUpdate)
@@ -175,6 +179,35 @@ class SessionService {
 		}
 		return projectJSON
 	}
+	
+	/**
+	 * Injects a Cytomine Image into the IRIS Image.
+	 *
+	 * @param cytomine a Cytomine instance
+	 * @param irisImage the IRIS Image
+	 * @param cmImage the Cytomine image, or <code>null</code>, if the image should be fetched from Cytomine
+	 * @return a JSON object with the injected Cytomine project
+	 *
+	 * @throws CytomineException if the image is is not available for the
+	 * querying user
+	 */
+	def injectCytomineImageInstance(Cytomine cytomine, Image irisImage, def cmImage) throws CytomineException{
+		
+		def imageJSON = new Utils().modelToJSON(irisImage)
+		
+		// fetch the Cytomine image instance
+		if (cmImage == null){
+			cmImage = cytomine.getImageInstance(irisImage.cmID)
+			imageJSON.cytomine = cmImage.getAttr()
+		} else {
+			if (cmImage['attr'] != null){
+				imageJSON.cytomine = cmImage.getAttr()
+			} else {
+				imageJSON.cytomine = cmImage
+			}
+		}
+		return imageJSON
+	}
 
 	/**
 	 * Update an existing IRIS Project in a session with a JSON object delivered in the payload. 
@@ -229,6 +262,55 @@ class SessionService {
 		def pjJSON = injectCytomineProject(cytomine, project, cmProject)
 		return pjJSON
 	}
+	
+	/**
+	 * Updates an image associated with an IRIS Session and Project.
+	 *
+	 * @param cytomine a Cytomine instance
+	 * @param sessionID the IRIS session ID where the project belongs to
+	 * @param cmProjectID the Cytomine project ID for updating
+	 * @param cmImageID the Cytomine imageID for updating
+	 * @return the updated IRIS image instance
+	 *
+	 * @throws CytomineException if the image is is not available for the
+	 * querying user
+	 */
+	def touchImage(Cytomine cytomine, long sessionID, long cmProjectID, long cmImageID) throws CytomineException{
+		// find the project in the session
+		Session sess = Session.get(sessionID)
+
+		// find the nested project by projectID
+		Project irisProject = sess.getProjects().find { it.cmID == cmProjectID }
+		
+		// find the nested image by imageID
+		Image imageForUpdate = irisProject.getImages().find { it.cmID == cmImageID }
+		
+		// fetch the image from Cytomine
+		def cmImage = cytomine.getImageInstance(cmImageID)
+		
+		// Map the client model to the IRIS model
+		imageForUpdate = new DomainMapper().mapImage(cmImage, imageForUpdate)
+		imageForUpdate.updateLastActivity()
+		// set the "goToURL"
+		imageForUpdate.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImageID + "-")
+		
+		// save the image in order to immediately reflect the ID
+		imageForUpdate.save(failOnError:true, flush:true)
+		
+		// update the time stamps and re-order the most recent images 
+		irisProject.addToImages(imageForUpdate)
+		irisProject.updateLastActivity()
+		
+		sess.addToProjects(irisProject)
+		sess.updateLastActivity()
+		
+		// inject the project here directly in order to avoid fetching it again
+		// from Cytomine
+		def imageJSON = injectCytomineImageInstance(cytomine, imageForUpdate, cmImage)
+		
+		return imageJSON
+	}
+
 
 	/**
 	 * Removes a session from the database.

@@ -13,10 +13,12 @@ class Image implements Comparable<Image>, Updateable{
 	// class members	
 	Long lastActivity = new Date().getTime()
 	Long cmID = 0L
-	String cmName = "defaultImage"
+	String originalFilename = "defaultImage"
+	String goToURL = ""
 	
-	Long cmNumberOfAnnotations = 127
-	Long labeledAnnotations = 0
+	Long numberOfAnnotations = 0L
+	Long labeledAnnotations = 0L
+	Long userProgress = 0L
 	
 	
 	// many images can belong to one project

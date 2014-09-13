@@ -3,26 +3,23 @@
  */
 var iris = angular.module("irisApp");
 
-iris.constant("imageUrl", "/api/project/{id}/images.json");
+iris.constant("imageURL", "/api/project/{id}/images.json");
 iris.constant(
 				"imageServerURLs",
 				"/api/abstractimage/{abstractImageID}/imageservers.json?imageinstance={imageInstanceID}");
 
-iris.factory("imageService", function($http, $log, imageUrl, imageServerURLs,
+iris.factory("imageService", function($http, $log, imageURL, imageServerURLs,
 		cytomineService) {
 
-	// cached object for the images
-	var images = [];
-
 	return {
-		// get the images
+		
+		// get the images for a project
 		fetchImages : function(projectID, callbackSuccess, callbackError) {
-			var url = cytomineService.addKeys(imageUrl).replace("{id}",
+			var url = cytomineService.addKeys(imageURL).replace("{id}",
 					projectID);
 
 			// execute the get request to the server
 			$http.get(url).success(function(data) {
-				images = data;
 				if (callbackSuccess) {
 					callbackSuccess(data);
 				}

@@ -141,7 +141,7 @@ class SessionController {
 	}
 
 	/**
-	 * Updates a project in a session.
+	 * Touches a project in a session in order to be the most recent one.
 	 * 
 	 * @return the updated project as JSON object
 	 */
@@ -151,8 +151,6 @@ class SessionController {
 			long sessionID = params.long('sessionID')
 			long cmProjectID = params.long('cmProjectID')
 
-			println sessionID + " - " + cmProjectID
-
 			def irisProject = sessionService.touchProject(cytomine, sessionID, cmProjectID)
 
 			render irisProject as JSON
@@ -160,7 +158,31 @@ class SessionController {
 			log.error("Could not touch project!",e)
 			// TODO redirect to an error page or send back 404 and message
 		}catch(Exception ex){
-			log.error("Could not touch project!",e)
+			log.error("Could not touch project!",ex)
+			// TODO redirect to an error page or send back 400
+		}
+	}
+	
+	/**
+	 * Touches an image in order to be the most recent in a project. 
+	 *
+	 * @return the updated image as JSON object
+	 */
+	def touchImage(){
+		try {
+			Cytomine cytomine = request['cytomine']
+			long sessionID = params.long('sessionID')
+			long cmProjectID = params.long('cmProjectID')
+			long cmImageID = params.long('cmImageID')
+
+			def irisImage = sessionService.touchImage(cytomine, sessionID, cmProjectID, cmImageID)
+
+			render irisImage as JSON
+		}catch(CytomineException e){
+			log.error("Could not touch image!",e)
+			// TODO redirect to an error page or send back 404 and message
+		}catch(Exception ex){
+			log.error("Could not touch image!",ex)
 			// TODO redirect to an error page or send back 400
 		}
 	}
@@ -185,7 +207,7 @@ class SessionController {
 		long projectID = params.long("projectID");
 		
 		def imageList = imageService.getImagesWithProgress(request['cytomine'], projectID, params.get("publicKey"))
-		
+
 		render imageList as JSON
 	}
 

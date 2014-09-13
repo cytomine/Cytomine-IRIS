@@ -95,7 +95,7 @@ class UrlMappings {
 		
 		"/api/session/$sessionID/project/$cmProjectID/touch"(controller:"session"){
 			action = [
-				POST: "touchProject" // create or overwrite the project in the session
+				POST: "touchProject" // create or overwrite the "current" project in the session
 				]
 		}
 		
@@ -112,6 +112,12 @@ class UrlMappings {
 		
 		"/api/project/$projectID/images.$format"(controller:"session"){
 			action = [GET: "getImages"]
+		}
+		
+		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/touch"(controller:"session"){
+			action = [
+				POST: "touchImage" // create or overwrite the "current" image in the session
+				]
 		}
 		
 		"/api/sessions(.$format)"(controller:"session"){
