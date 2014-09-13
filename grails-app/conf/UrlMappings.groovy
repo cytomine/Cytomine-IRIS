@@ -52,10 +52,6 @@ class UrlMappings {
 		 * cytomineController
 		 * - handles the general communication to the core via the Java client
 		 */
-		"/api/project/$projectID/images.$format"(controller:"cytomine"){
-			action = [GET: "getImages"]
-		}
-
 		/*
 		 *  optional parameters: 
 		 *  	flat={true|false}
@@ -112,6 +108,10 @@ class UrlMappings {
 				GET: "getProject", // gets an IRIS project from a session
 				PUT: "updateProject" // update the project in the session using the params from the payload
 				]
+		}
+		
+		"/api/project/$projectID/images.$format"(controller:"session"){
+			action = [GET: "getImages"]
 		}
 		
 		"/api/sessions(.$format)"(controller:"session"){

@@ -33,7 +33,7 @@ class Utils {
 		filters.put("project", String.valueOf(projectID))
 		filters.put("image", String.valueOf(imageID))
 
-		// get the annotations of this image
+		// get the annotations of this image (as batch, causes 1 access per image)
 		AnnotationCollection annotations = cytomine.getAnnotations(filters)
 
 		// total annotations in a given image

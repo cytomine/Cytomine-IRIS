@@ -22,9 +22,10 @@ class SessionController {
 	}
 
 	/**
-	 *  Injected SessionService instance for this controller. 
+	 *  Injected Services for this controller. 
 	 */
 	def sessionService
+	def imageService
 
 	/**
 	 * Gets all sessions from the IRIS server.
@@ -173,6 +174,21 @@ class SessionController {
 		//		pr.delete()
 		render "ok"
 	}
+	
+	/**
+	 * Build the URLs for the images by adding the proper suffix to the Cytomine host URL.
+	 * The project ID is retrieved via the injected <code>params</code> property.
+	 *
+	 * @return the list of images for a given project ID as JSON object including the current progress
+	 */
+	def getImages() {
+		long projectID = params.long("projectID");
+		
+		def imageList = imageService.getImagesWithProgress(request['cytomine'], projectID, params.get("publicKey"))
+		
+		render imageList as JSON
+	}
+
 
 	def dev(){
 		Cytomine cytomine = request['cytomine']

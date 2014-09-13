@@ -27,7 +27,7 @@ iris.controller(
 				$log.error("project is not available!");
 			})
 			
-			// TODO try to fetch a session for the user
+			// TODO fetch a session for the user
 //			sessionService.fetchSession();
 			
 			
