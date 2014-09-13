@@ -1,28 +1,29 @@
 var iris = angular.module("irisApp")
 
-iris.constant("userAnnUrl","/api/project/{pID}/image/{iID}/user/{uID}/annotations.json");
+iris.constant("userAnnURL", "/api/session/{sessionID}/project/{projectID}/image/{imageID}/annotations.json")
 
-iris.service("annotationService", function($http, $log, cytomineService, userAnnUrl) {
+iris.service("annotationService", function($http, $log, cytomineService, userAnnURL) {
 	
 	return {
 		// get the annotations for a given project and image
-		getUserAnnotations : function(projectID, imageID, userID, callbackSuccess, callbackError){
-			$log.debug(projectID + " - " + imageID + " - " + userID)
+		getUserAnnotations : function(sessionID, projectID, imageID, callbackSuccess, callbackError){
+			$log.debug("Getting user annotations: " + sessionID + " - " + projectID + " - " + imageID)
 			
 			// modify the parameters
-			userAnnUrl = userAnnUrl.replace('{pID}', projectID).replace('{iID}', imageID).replace("{uID}", userID);
+			var url = cytomineService.addKeys(userAnnURL).
+				.replace("{sessionID}", sessionID)
+				.replace('{projectID}', projectID)
+				.replace('{imageID}', imageID);
 			
-			$log.debug(userAnnUrl)
+			// TODO add optional offset and max parameters 
 			
 			// execute the http get request to the IRIS server
-			$http.get(tmpUrl = cytomineService.addKeys(userAnnUrl))
-            .success(function (data) {
-            	//console.log("success on $http.get(" + tmpUrl + ")");
+			$http.get(url).success(function (data) {
+            	// console.log("success on $http.get(" + url + ")");
             	$log.debug(data)
-            	// on success, assign the data to the projects array
-//              TODO  if(callbackSuccess) {
-//                    callbackSuccess(data);
-//                }
+				if(callbackSuccess) {
+					callbackSuccess(data);
+				}
             })
             .error(function (data, status, headers, config) {
             	// on error log the error

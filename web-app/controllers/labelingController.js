@@ -106,9 +106,7 @@ iris.controller("termCtrl", function($scope, $log, $filter, $routeParams,
 	// $log.debug(cp)
 
 	// TODO get the ontologyID from the current project
-	projectService.fetchOntology(cp.cytomine.ontology, {
-		flat : true
-	}, function(data) {
+	projectService.fetchOntology(cp.cytomine.ontology, { flat : true }, function(data) {
 		$scope.ontology = data;
 
 		// build the ontology table
@@ -120,7 +118,7 @@ iris.controller("termCtrl", function($scope, $log, $filter, $routeParams,
 				name : 'asc' // initial sorting
 			},
 			filter : {
-			// applies filter to the "data" object before sorting
+				// applies filter to the "data" object before sorting
 			}
 		}, {
 			total : $scope.ontology.length, // number of terms
