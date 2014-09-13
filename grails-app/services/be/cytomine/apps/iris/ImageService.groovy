@@ -118,5 +118,4 @@ class ImageService {
 		return irisImageList
 	}
 
-
 }
