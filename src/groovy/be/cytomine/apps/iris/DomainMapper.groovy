@@ -65,7 +65,8 @@ class DomainMapper {
 		irisProject.setCmID(cmProject.getId())
 		irisProject.setCmName(cmProject.getStr("name"))
 		irisProject.setCmBlindMode(cmProject.getBool("blindMode"))
-
+		irisProject.setCmOntology(cmProject.getLong("ontology"))
+				
 		return irisProject
 	}
 
@@ -86,5 +87,27 @@ class DomainMapper {
 		irisImage.setNumberOfAnnotations(cmImage.get("numberOfAnnotations"))
 
 		return irisImage
+	}
+	
+	/**
+	 *
+	 * @param cmAnnotation
+	 * @param irisAnnotation
+	 * @return
+	 */
+	Annotation mapAnnnotation(be.cytomine.client.models.Annotation cmAnnotation, Annotation irisAnnotation){
+		if (irisAnnotation == null){
+			irisAnnotation = new Annotation()
+		}
+
+		// TODO map required properties from the client model
+		irisAnnotation.setCmID(cmAnnotation.getId())
+		irisAnnotation.setCmProjectID(cmAnnotation.getLong("project"))
+		irisAnnotation.setCmImageID(cmAnnotation.getLong("image"))
+		irisAnnotation.setCmCreatorUserID(cmAnnotation.get("user"))
+		irisAnnotation.setCmImageURL(cmAnnotation.getStr("imageURL"))
+		irisAnnotation.setCmSmallCropURL(cmAnnotation.getStr("smallCropURL"))
+		
+		return irisAnnotation
 	}
 }

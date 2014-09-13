@@ -37,6 +37,7 @@ class CytomineController {
 		Ontology ontology = cytomine.getOntology(oID)
 
 		if (params["flat"].equals("true")){
+			// flattens the ontology but preserves the parent element in the hierarchy
 			List<JSONObject> flatOntology = new Utils().flattenOntology(ontology)
 			render flatOntology as JSON
 		} else {

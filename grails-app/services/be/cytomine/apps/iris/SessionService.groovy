@@ -181,6 +181,35 @@ class SessionService {
 	}
 	
 	/**
+	 * Injects a Cytomine Annotation into the IRIS annotation.
+	 *
+	 * @param cytomine a Cytomine instance
+	 * @param irisAnnotation the IRIS Annotation
+	 * @param cmAnnotation the cytomine Annotation, or <code>null</code>, if the Annotation should be fetched from Cytomine
+	 * @return a JSON object with the injected Cytomine annotation
+	 *
+	 * @throws CytomineException if the annotation is is not available for the
+	 * querying user
+	 */
+	def injectCytomineAnnotation(Cytomine cytomine, Annotation irisAnnotation, def cmAnnotation) throws CytomineException{
+		
+		def annJSON = new Utils().modelToJSON(irisAnnotation)
+		
+		// fetch the Cytomine project instance
+		if (cmAnnotation == null){
+			cmAnnotation = cytomine.getAnnotation(irisAnnotation.cmID)
+			annJSON.cytomine = cmAnnotation.getAttr()
+		} else {
+			if (cmAnnotation['attr'] != null){
+				annJSON.cytomine = cmAnnotation.getAttr()
+			} else {
+				annJSON.cytomine = cmAnnotation
+			}
+		}
+		return annJSON
+	}
+	
+	/**
 	 * Injects a Cytomine Image into the IRIS Image.
 	 *
 	 * @param cytomine a Cytomine instance

@@ -76,7 +76,7 @@ class UrlMappings {
 			action = [GET: "getAnnotation"]
 		}
 
-		"/api/image/$imageID/annotations.$format"(controller:"annotation"){
+		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotations.$format"(controller:"annotation"){
 			action = [GET: "getAnnotations"]
 		}
 

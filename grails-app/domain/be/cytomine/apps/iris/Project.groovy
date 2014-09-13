@@ -19,6 +19,7 @@ class Project implements Comparable<Project>, Updateable{
 	Long cmID = 0L
 	String cmName = "defaultProject"
 	Boolean cmBlindMode = false
+	Long cmOntology = 0L
 
 	// many projects in one session
 	Session session = null;
