@@ -3,16 +3,16 @@
  */
 var iris = angular.module("irisApp");
 
-iris.constant("projectUrl", "/api/projects.json");
-iris.constant("projectDescrUrl", "/api/project/{id}/description.json");
-iris.constant("ontologyUrl", "/api/ontology/{ontologyID}.json");
-iris.constant("projectAvailUrl", "/api/project/{projectID}/availability");
+iris.constant("projectURL", "/api/projects.json");
+iris.constant("projectDescrURL", "/api/project/{id}/description.json");
+iris.constant("ontologyURL", "/api/ontology/{ontologyID}.json");
+iris.constant("projectAvailURL", "/api/project/{projectID}/availability");
 
 iris.factory("projectService", function($http, $log,
-		projectUrl, 
-		projectDescrUrl, 
-		ontologyUrl, 
-		projectAvailUrl,
+		projectURL, 
+		projectDescrURL, 
+		ontologyURL, 
+		projectAvailURL,
 		sessionService,
 		cytomineService) {
 	/*
@@ -26,7 +26,7 @@ iris.factory("projectService", function($http, $log,
 
 		// retrieve one specific project
 		getDescription : function(projectID, callbackSuccess, callbackError) {
-			var tmpUrl = projectDescrUrl.replace("{id}", projectID);
+			var tmpUrl = projectDescrURL.replace("{id}", projectID);
 			$http.get(cytomineService.addKeys(tmpUrl)).success(function(data) {
 				// console.log("success on $http.get(" + tmpUrl + ")");
 				if (callbackSuccess) {
@@ -43,7 +43,7 @@ iris.factory("projectService", function($http, $log,
 		// refresh all projects (fetch the entire collection freshly from the
 		// Cytomine core server
 		fetchProjects : function(callbackSuccess, callbackError) {
-			var url = cytomineService.addKeys(projectUrl);
+			var url = cytomineService.addKeys(projectURL);
 
 			$http.get(url).success(function(data) {
 				// console.log("success on $http.get(" + url + ")");
@@ -61,7 +61,7 @@ iris.factory("projectService", function($http, $log,
 		
 		// get the associated ontology for a project
 		fetchOntology : function(ontologyID, params, callbackSuccess, callbackError) {
-			var url = cytomineService.addKeys(ontologyUrl).replace("{ontologyID}", ontologyID);
+			var url = cytomineService.addKeys(ontologyURL).replace("{ontologyID}", ontologyID);
 			if (params.flat == true) {
 				url += "&flat=true";
 			}			
@@ -83,7 +83,7 @@ iris.factory("projectService", function($http, $log,
 		
 		// check availability of a specific project for a user
 		checkAvailability : function(cmProjectID,callbackSuccess,callbackError){
-			var url = cytomineService.addKeys(projectAvailUrl)
+			var url = cytomineService.addKeys(projectAvailURL)
 							.replace("{projectID}", cmProjectID);
 			
 			$http.get(url).success(function(data) {

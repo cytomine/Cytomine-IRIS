@@ -70,8 +70,11 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location,
 			function(data) {
 				$log.debug("retrieved " + data.length + " annotations");
 				$scope.labeling.annotations = data;
-				$scope.annotation = data[0];
-				$log.debug($scope.annotation)
+				$scope.totalItems = data.length;
+				$scope.itemsPerPage = 1;
+				
+				// set the first annotation for display
+				$scope.annotation = $scope.labeling.annotations[0];
 			}, function(data, status) {
 				sharedService.addAlert("Cannot get user annotations! Status "
 						+ status + ".", "danger");
@@ -83,15 +86,23 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location,
 		$scope.saving.status = "saving"
 	};
 
-	// TODO implement pagination
-	$scope.maxSize = 4;
-	$scope.totalItems = 64;
+	// TODO pagination settings
+	//$scope.maxSize = 4;
+	//$scope.numPages = 64;
+	
+	$scope.$watch('currentPage', function(){
+		$log.debug("Setting current page to " + $scope.currentPage)
+		// switch through the array
+		$scope.annotation = $scope.labeling.annotations[$scope.currentPage-1];
+		$log.debug("currentPage on the $watch: " + $scope.annotation)
+	})
+	
 	$scope.currentPage = 1;
-	$scope.numPages = 64;
+	
 
 });
 
-iris.controller("termCtrl", function($scope, $log, $filter, $routeParams,
+iris.controller("termCtrl", function($scope, $log, $filter, $routeParams, $document,
 		sharedService, sessionService, projectService, ngTableParams) {
 	console.log("termCtrl")
 
@@ -151,9 +162,13 @@ iris.controller("termCtrl", function($scope, $log, $filter, $routeParams,
 	
 	setSelectedButton = function(term) {
 		// TODO set the corresponding button selected
+		var button = document.getElementById(term.id);
+		
+		
 	}
 	
 	$scope.reset = function() {
 		// TODO unselect all terms (e.g. if term is successfully removed)
+		
 	}
 });
