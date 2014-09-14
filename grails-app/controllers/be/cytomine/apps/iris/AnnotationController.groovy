@@ -19,6 +19,7 @@ import be.cytomine.client.models.Ontology
  */
 class AnnotationController {
 	
+	def grailsApplication
 	def sessionService
 	
 	/**
@@ -62,7 +63,7 @@ class AnnotationController {
 			Annotation annotation = annotations.get(i)
 			
 			// map the annotation to the IRIS model
-			be.cytomine.apps.iris.Annotation irisAnn = new DomainMapper().mapAnnnotation(annotation, null) 
+			be.cytomine.apps.iris.Annotation irisAnn = new DomainMapper(grailsApplication).mapAnnnotation(annotation, null) 
 			
 			// grab all terms from all users for the current annotation
 			List userByTermList = annotation.getList("userByTerm");

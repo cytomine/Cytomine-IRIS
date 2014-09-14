@@ -1,6 +1,8 @@
 package be.cytomine.apps.iris
 
 import org.apache.log4j.Logger;
+import org.codehaus.groovy.grails.commons.GrailsApplication;
+import org.springframework.aop.aspectj.RuntimeTestWalker.ThisInstanceOfResidueTestVisitor;
 
 import be.cytomine.apps.iris.Image;
 import be.cytomine.apps.iris.Project;
@@ -15,6 +17,12 @@ import grails.converters.JSON;
  *
  */
 class DomainMapper {
+
+	def grailsApplication
+
+	DomainMapper(def grailsApplication){
+		this.grailsApplication = grailsApplication
+	}
 
 	/**
 	 * Map the be.cytomine.client.models.User model to the IRIS domain model of a user.
@@ -66,7 +74,7 @@ class DomainMapper {
 		irisProject.setCmName(cmProject.getStr("name"))
 		irisProject.setCmBlindMode(cmProject.getBool("blindMode"))
 		irisProject.setCmOntology(cmProject.getLong("ontology"))
-				
+
 		return irisProject
 	}
 
@@ -88,7 +96,7 @@ class DomainMapper {
 
 		return irisImage
 	}
-	
+
 	/**
 	 *
 	 * @param cmAnnotation
@@ -106,8 +114,13 @@ class DomainMapper {
 		irisAnnotation.setCmImageID(cmAnnotation.getLong("image"))
 		irisAnnotation.setCmCreatorUserID(cmAnnotation.get("user"))
 		irisAnnotation.setCmImageURL(cmAnnotation.getStr("imageURL"))
+		irisAnnotation.setCmCropURL(cmAnnotation.getStr("cropURL"))
+		irisAnnotation.setDrawIncreasedAreaURL(grailsApplication.config.grails.cytomine.host
+							+ "/api/annotation/"
+							+ cmAnnotation.getId()
+							+ "/crop.png?increaseArea=8&maxSize=256&draw=true")
 		irisAnnotation.setCmSmallCropURL(cmAnnotation.getStr("smallCropURL"))
-		
+
 		return irisAnnotation
 	}
 }

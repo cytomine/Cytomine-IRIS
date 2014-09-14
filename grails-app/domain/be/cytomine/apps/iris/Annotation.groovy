@@ -21,6 +21,8 @@ class Annotation {
 	
 	// the URL of the image explorer
 	String cmImageURL = null
+	String cmCropURL = null
+	String drawIncreasedAreaURL = null
 	String cmSmallCropURL = null
 	
 	// the assigned Cytomine term ID by the user // TODO implement multiple terms

@@ -12,14 +12,14 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location,
 
 	// preallocate the objects
 	$scope.labeling = {
-		annotation : {},
+		annotations : {},
 		ontology : {},
 		error : {}
 	};
 
-	$scope.labeling.projectID = $routeParams["projectID"];
-	$scope.labeling.imageID = $routeParams["imageID"];
-	$scope.labeling.annotation.id = $routeParams["annID"];
+	$scope.projectID = $routeParams["projectID"];
+	$scope.imageID = $routeParams["imageID"];
+	$scope.annotationID = $routeParams["annID"];
 
 	// set content url for the help page
 	helpService.setContentUrl("content/help/labelingHelp.html");
@@ -66,16 +66,27 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location,
 		}
 	});
 
-	// get the image URL for the crop view
-	cytomineService
-			.getCytomineHost(function(host) {
-				$scope.labeling.annotation.cropURL = host + "/api/annotation/"
-						+ $scope.labeling.annotation.id
-						+ "/crop.png?&increaseArea=8&maxSize=256&draw=true";
+//	// get the image URL for the crop view
+//	cytomineService
+//			.getCytomineHost(function(host) {
+//				$scope.annotation.cropURL = host + "/api/annotation/"
+//						+ $scope.annotationID
+//						+ "/crop.png?&increaseArea=8&maxSize=256&draw=true";
+//
+//				$scope.annotation.goToURL = sessionService
+//						.getCurrentImage().goToURL
+//						+ $scope.annotationID
+//			});
 
-				$scope.labeling.annotation.goToURL = sessionService
-						.getCurrentImage().goToURL
-						+ $scope.labeling.annotation.id
+	annotationService.fetchUserAnnotations($scope.projectID, $scope.imageID,
+			function(data) {
+				$log.debug("retrieved " + data.length + " annotations");
+				$scope.labeling.annotations = data;
+				$scope.annotation = data[0];
+				$log.debug($scope.annotation)
+			}, function(data, status) {
+				sharedService.addAlert("Cannot get user annotations! Status "
+						+ status + ".", "danger");
 			});
 
 	$scope.removeTerm = function() {
@@ -106,7 +117,9 @@ iris.controller("termCtrl", function($scope, $log, $filter, $routeParams,
 	// $log.debug(cp)
 
 	// TODO get the ontologyID from the current project
-	projectService.fetchOntology(cp.cytomine.ontology, { flat : true }, function(data) {
+	projectService.fetchOntology(cp.cytomine.ontology, {
+		flat : true
+	}, function(data) {
 		$scope.ontology = data;
 
 		// build the ontology table
@@ -118,7 +131,7 @@ iris.controller("termCtrl", function($scope, $log, $filter, $routeParams,
 				name : 'asc' // initial sorting
 			},
 			filter : {
-				// applies filter to the "data" object before sorting
+			// applies filter to the "data" object before sorting
 			}
 		}, {
 			total : $scope.ontology.length, // number of terms

@@ -1,4 +1,6 @@
-<div id="alerts" ng-controller="alertCtrl">
-	<alert ng-repeat="alert in alerts" type="{{alert.type}}"
-		close="closeAlert($index)" class="alert">{{alert.msg}}</alert>
+<div id="alert-container">
+	<div id="alerts" ng-controller="alertCtrl">
+		<alert ng-repeat="alert in alerts" type="{{alert.type}}"
+			close="closeAlert($index)" class="alert">{{alert.msg}}</alert>
+	</div>
 </div>

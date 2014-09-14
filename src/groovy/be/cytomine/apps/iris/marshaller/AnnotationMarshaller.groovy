@@ -17,6 +17,8 @@ class AnnotationMarshaller implements IRISMarshaller {
 			ann['cmImageID'] = it.cmImageID
 			ann['cmCreatorUserID'] = it.cmCreatorUserID
 			ann['cmImageURL'] = it.cmImageURL
+			ann['cmCropURL'] = it.cmCropURL
+			ann['drawIncreasedAreaURL'] = it.drawIncreasedAreaURL
 			ann['cmSmallCropURL'] = it.cmSmallCropURL
 			ann['cmTermID'] = it.cmTermID
 			ann['cmTermName'] = it.cmTermName
