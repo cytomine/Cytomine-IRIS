@@ -66,18 +66,6 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location,
 		}
 	});
 
-//	// get the image URL for the crop view
-//	cytomineService
-//			.getCytomineHost(function(host) {
-//				$scope.annotation.cropURL = host + "/api/annotation/"
-//						+ $scope.annotationID
-//						+ "/crop.png?&increaseArea=8&maxSize=256&draw=true";
-//
-//				$scope.annotation.goToURL = sessionService
-//						.getCurrentImage().goToURL
-//						+ $scope.annotationID
-//			});
-
 	annotationService.fetchUserAnnotations($scope.projectID, $scope.imageID,
 			function(data) {
 				$log.debug("retrieved " + data.length + " annotations");
@@ -91,12 +79,11 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location,
 
 	$scope.removeTerm = function() {
 		console.log("remove term");
-		// TODO
+		// TODO unselect term
 		$scope.saving.status = "saving"
 	};
 
-	// TODO
-
+	// TODO implement pagination
 	$scope.maxSize = 4;
 	$scope.totalItems = 64;
 	$scope.currentPage = 1;
@@ -116,7 +103,7 @@ iris.controller("termCtrl", function($scope, $log, $filter, $routeParams,
 	var cp = sessionService.getCurrentProject();
 	// $log.debug(cp)
 
-	// TODO get the ontologyID from the current project
+	// get the ontologyID from the current project
 	projectService.fetchOntology(cp.cytomine.ontology, {
 		flat : true
 	}, function(data) {
@@ -160,5 +147,13 @@ iris.controller("termCtrl", function($scope, $log, $filter, $routeParams,
 
 	$scope.postAssignment = function(child, annotation) {
 
+	}
+	
+	setSelectedButton = function(term) {
+		// TODO set the corresponding button selected
+	}
+	
+	$scope.reset = function() {
+		// TODO unselect all terms (e.g. if term is successfully removed)
 	}
 });

@@ -1,6 +1,6 @@
 var iris = angular.module("irisApp");
 
-iris.constant("labelUrl", "/project/{projectID}/image/{imageID}/label/{annID}");
+iris.constant("labelUrl", "/project/{projectID}/image/{imageID}/label/");
 
 iris.controller("navCtrl", function($scope, $location, $log, sharedService,
 		projectService, helpService, sessionService, imageService, labelingService, labelUrl) {
@@ -28,18 +28,14 @@ iris.controller("navCtrl", function($scope, $location, $log, sharedService,
 		}
 	};
 
-	// navigate to the current image for labeling
+	// navigate to the current annotation for labeling
 	$scope.labeling = function() {
-		// TODO update the current status of the user and retrieve the 
-		// UserSession object
-		
-		// then get the current project ID and the status
-		
+		// then get the current project ID and image ID
 		var pID = sessionService.getCurrentProject().cmID;
 		var iID = sessionService.getCurrentImage().cmID;
-		var annID = 136334701;// labelingService.getNextAnnotation().id;
+		//var annID = 136334701;// labelingService.getNextAnnotation().id;
 		var url = labelUrl.replace("{projectID}", pID)
-				.replace("{imageID}", iID).replace("{annID}",annID);
+				.replace("{imageID}", iID);
 
 		$location.url(url)
 	};
