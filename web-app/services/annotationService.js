@@ -17,12 +17,12 @@ iris.factory("annotationService", function($http, $log, cytomineService, session
 				.replace('{imageID}', imageID);
 			
 			// TODO add optional offset and max parameters 
-//			url += "&max=10"
+			url += "&max=10"
 			
 			// execute the http get request to the IRIS server
 			$http.get(url).success(function (data) {
             	//console.log("success on $http.get(" + url + ")");
-            	$log.debug(data)
+            	//$log.debug(data)
 				if(callbackSuccess) {
 					callbackSuccess(data);
 				}

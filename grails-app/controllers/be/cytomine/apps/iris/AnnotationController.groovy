@@ -63,7 +63,7 @@ class AnnotationController {
 			Annotation annotation = annotations.get(i)
 			
 			// map the annotation to the IRIS model
-			be.cytomine.apps.iris.Annotation irisAnn = new DomainMapper(grailsApplication).mapAnnnotation(annotation, null) 
+			be.cytomine.apps.iris.Annotation irisAnn = new DomainMapper(grailsApplication).mapAnnotation(annotation, null) 
 			
 			// grab all terms from all users for the current annotation
 			List userByTermList = annotation.getList("userByTerm");
@@ -136,13 +136,37 @@ class AnnotationController {
 	 * 
 	 * @return
 	 */
-	def storeUniqueLabel(){
-		// TODO get the user by public/private key in the params
-
-		// TODO if the user exists, retrieve the annotation by ID in the params
-
+	def assignUniqueTerm(){
+		Cytomine cytomine = request['cytomine']
+		long sessionID = params.long('sessionID')
+		long cmProjectID = params.long('cmProjectID')
+		long cmImageID = params.long('cmImageID')
+		long cmAnnID = params.long('cmAnnID')
+		
+		def payload = (request.JSON)
+		// { "annotation": 12345, "term": 1239458, "user": 1299488 }
+				
+		// TODO get the user from the session
+		Session sess = Session.get(sessionID)
+		User u = sess.getUser()
+		Project p = sess.getProjects().find { it.cmID == cmProjectID }
+		Image i = p.getImages().find { it.cmID == cmImageID } 
+				
 		// TODO if there is already a label assigned, clear the label and set the new one
-
+		
+	}
+	
+	def touchAnnotation(){
+		// TODO insert the annotation into the database and send back the object as "current" annotation
+		Cytomine cytomine = request['cytomine']
+		long sessionID = params.long('sessionID')
+		long cmProjectID = params.long('cmProjectID')
+		long cmImageID = params.long('cmImageID')
+		long cmAnnID = params.long('cmAnnID')
+		
+		def irisAnn = sessionService.touchAnnotation(cytomine, sessionID, cmProjectID, cmImageID, cmAnnID);
+		
+		render irisAnn as JSON
 	}
 
 	def removeLabels(){

@@ -7,6 +7,7 @@ import org.codehaus.groovy.grails.web.json.JSONElement;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject
 
+import sun.security.rsa.RSACore.BlindingParameters;
 import be.cytomine.client.Cytomine
 import be.cytomine.client.CytomineException
 import be.cytomine.client.collections.ImageInstanceCollection;
@@ -33,7 +34,7 @@ class ImageService {
 		def cmProject = cytomine.getProject(cmProjectID)
 		imageList.each {
 			// inject the blinded file name in each image, if required
-			if (cmProject.get("blindMode").equals("true")){
+			if (cmProject.get("blindMode") == true){
 				it.originalFilename = "[BLIND]" + it.id
 			}
 		}
@@ -92,16 +93,11 @@ class ImageService {
 			ImageInstance cmImage = cmImageCollection.get(i)
 			
 			// map the client image to the IRIS image
-			Image irisImage = new DomainMapper().mapImage(cmImage, null);
+			Image irisImage = new DomainMapper().mapImage(cmImage, null, blindMode)
 			
 			//for each image, add a goToURL property containing the full URL to open the image in the core Cytomine instance
 			irisImage.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImage.getId() + "-")
 			
-			// inject the blinded file name in each image, if required
-			if (blindMode){
-				cmImage.originalFilename = "[BLIND]" + cmImage.getId()
-			}
-
 			// retrieve the user's progress on each image and return it in the object
 			JSONObject annInfo = new Utils().getUserProgress(cytomine, cmProjectID, cmImage.getId(), userID)
 			// resolving the values from the JSONObject to each image as property
@@ -110,7 +106,8 @@ class ImageService {
 			irisImage.setNumberOfAnnotations(annInfo.get("totalAnnotations"))
 			
 			// set the Cytomine image as "cytomine" property in the irisImage
-			def imageJSON = sessionService.injectCytomineImageInstance(cytomine, irisImage, cmImage)
+			def imageJSON = sessionService.injectCytomineImageInstance(cytomine, irisImage, cmImage, blindMode)
+			
 			// add it to the result list
 			irisImageList.add(imageJSON)
 		}

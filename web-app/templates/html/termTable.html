@@ -6,10 +6,7 @@
 		<tr ng-repeat="term in data">
 			<td data-title="''" class="text-center"><span style="background : {{term.color}};">&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
 			<td data-title="'Name'" sortable="'name'" filter="{ 'name': 'text' }">
-<!-- 				Make sure, that just one button can be selected at a time by wrapping them in a button group -->
-				<div class="buttonGroup">
-					<button id="{{term.id}}" type="button" class="btn btn-xs btn-default" ng-click="assign(term)">{{term.name}}</button>
-				</div>
+				<button id="{{term.id}}" type="button" class="btn btn-xs btn-default" ng-click="assign(term)">{{term.name}}</button>
 			</td>
 			<td data-title="'Category/Class'" sortable="'parentName'" filter="{ 'parentName': 'text' }">{{term.parentName}}</td>
 		</tr>

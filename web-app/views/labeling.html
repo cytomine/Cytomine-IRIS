@@ -18,6 +18,8 @@
 	<div class="row">
 		<div class="col-xs-4 text-center well">
 			<div class="row">
+				{{annotation.cmTermName || 'no term assigned'}}
+				<pager total-items="totalItems" items-per-page="itemsPerPage" ng-model="currentPage"></pager>
 <!-- 			TODO add the viewPanel  -->
 				<img class="img-thumbnail"
 				src="{{annotation.drawIncreasedAreaURL}}"

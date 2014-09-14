@@ -220,8 +220,7 @@ class SessionService {
 	 * @throws CytomineException if the image is is not available for the
 	 * querying user
 	 */
-	def injectCytomineImageInstance(Cytomine cytomine, Image irisImage, def cmImage) throws CytomineException{
-		
+	def injectCytomineImageInstance(Cytomine cytomine, Image irisImage, def cmImage, boolean blindMode) throws CytomineException{
 		def imageJSON = new Utils().modelToJSON(irisImage)
 		
 		// fetch the Cytomine image instance
@@ -235,6 +234,17 @@ class SessionService {
 				imageJSON.cytomine = cmImage
 			}
 		}
+		// inject/overwrite the file name in each image, if required
+		if (blindMode){
+			imageJSON.cytomine.originalFilename = "[BLIND]" + cmImage.getId()
+			imageJSON.cytomine.path = null
+			imageJSON.cytomine.fullPath = null
+			imageJSON.cytomine.extension = null
+			imageJSON.cytomine.filename = null
+			imageJSON.cytomine.mime = null
+			imageJSON.cytomine.originalMimeType = null
+		}
+		
 		return imageJSON
 	}
 
@@ -318,7 +328,7 @@ class SessionService {
 		def cmImage = cytomine.getImageInstance(cmImageID)
 		
 		// Map the client model to the IRIS model
-		imageForUpdate = new DomainMapper().mapImage(cmImage, imageForUpdate)
+		imageForUpdate = new DomainMapper().mapImage(cmImage, imageForUpdate, irisProject.getCmBlindMode())
 		imageForUpdate.updateLastActivity()
 		// set the "goToURL"
 		imageForUpdate.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImageID + "-")
@@ -335,9 +345,62 @@ class SessionService {
 		
 		// inject the project here directly in order to avoid fetching it again
 		// from Cytomine
-		def imageJSON = injectCytomineImageInstance(cytomine, imageForUpdate, cmImage)
+		def imageJSON = injectCytomineImageInstance(cytomine, imageForUpdate, cmImage, irisProject.getCmBlindMode())
 		
 		return imageJSON
+	}
+	
+	/**
+	 * Updates an annotation associated with an IRIS Session, Project and Image.
+	 *
+	 * @param cytomine a Cytomine instance
+	 * @param sessionID the IRIS session ID where the project belongs to
+	 * @param cmProjectID the Cytomine project ID for updating
+	 * @param cmImageID the Cytomine imageID for updating
+	 * @param cmAnnID the Cytomine annotationID for updating
+	 * @return the updated IRIS image instance
+	 *
+	 * @throws CytomineException if the annotation is is not available for the
+	 * querying user
+	 */
+	def touchAnnotation(Cytomine cytomine, long sessionID, long cmProjectID, long cmImageID, long cmAnnID) throws CytomineException{
+		// find the project in the session
+		Session sess = Session.get(sessionID)
+
+		// find the nested project by projectID
+		Project irisProject = sess.getProjects().find { it.cmID == cmProjectID }
+		
+		// find the nested image by imageID
+		Image irisImage = irisProject.getImages().find { it.cmID == cmImageID }
+		
+		// get the annotation
+		be.cytomine.apps.iris.Annotation irisAnn = irisImage.getAnnotations().find { it.cmID == cmAnnID }
+		
+		// fetch the annotation from Cytomine
+		def cmAnn = cytomine.getAnnotation(cmAnnID)
+		
+		// Map the client model to the IRIS model
+		irisAnn = new DomainMapper(grailsApplication).mapAnnotation(cmAnn, irisAnn)
+		
+		// save the image in order to immediately reflect the ID
+		// TODO GORM LOCKING ERROR when sending multiple requests in rather short time!!
+		irisAnn.save(failOnError:true, flush:true)
+		
+		irisImage.addToAnnotations(irisAnn);
+		irisImage.updateLastActivity();
+		
+		// update the time stamps and re-order the most recent images
+		irisProject.addToImages(irisImage)
+		irisProject.updateLastActivity()
+		
+		sess.addToProjects(irisProject)
+		sess.updateLastActivity()
+		
+		// inject the project here directly in order to avoid fetching it again
+		// from Cytomine
+		def annJSON = new Utils().modelToJSON(irisAnn)
+		
+		return annJSON
 	}
 
 

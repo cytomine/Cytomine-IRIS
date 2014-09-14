@@ -7,10 +7,12 @@ iris.constant("updateProjectURL",
 		"/api/session/{sessionID}/project/{projectID}");
 iris.constant("touchImageURL",
 		"/api/session/{sessionID}/project/{projectID}/image/{imageID}/touch");
+iris.constant("touchAnnotationURL",
+		"/api/session/{sessionID}/project/{projectID}/image/{imageID}/annotation/{annID}/touch");
 
 // A generic service for handling client sessions.
 iris.factory("sessionService", function($http, $log, $location, sessionURL,
-		touchProjectURL, updateProjectURL, touchImageURL, sharedService,
+		touchProjectURL, updateProjectURL, touchImageURL, touchAnnotationURL, sharedService,
 		cytomineService) {
 
 	return {
@@ -189,6 +191,36 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 			}).error(function(data, status, header, config) {
 				// on error, show the error message
 				sharedService.addAlert(status + ": " + data, "danger");
+				$log.error(data);
+
+				if (callbackError) {
+					callbackError(data, status)
+				}
+			});
+
+		},
+		
+		// touch the current annotation in this session
+		touchAnnotation : function(cmProjectID, cmImageID, cmAnnotationID, callbackSuccess,
+				callbackError) {
+			var sessionService = this;
+			var session = sessionService.getSession();
+
+			var url = cytomineService.addKeys(touchAnnotationURL).replace(
+					"{sessionID}", session.id).replace("{projectID}",
+					cmProjectID).replace("{imageID}", cmImageID)
+					.replace("{annID}", cmAnnotationID);
+
+			$http.post(url, null).success(function(data) {
+				// on success, update the image in the local storage
+				session.currentAnnotation = data;
+				sessionService.setSession(session);
+				if (callbackSuccess) {
+					callbackSuccess(data)
+				}
+			}).error(function(data, status, header, config) {
+				// on error, show the error message
+				sharedService.addAlert("Touching annotation failed! Status " + status + ".", "danger");
 				$log.error(data);
 
 				if (callbackError) {

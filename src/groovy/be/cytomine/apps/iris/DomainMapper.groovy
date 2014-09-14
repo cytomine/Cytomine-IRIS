@@ -84,14 +84,18 @@ class DomainMapper {
 	 * @param irisImage
 	 * @return
 	 */
-	Image mapImage(be.cytomine.client.models.ImageInstance cmImage, Image irisImage){
+	Image mapImage(be.cytomine.client.models.ImageInstance cmImage, Image irisImage, boolean blindMode){
 		if (irisImage == null){
 			irisImage = new Image()
 		}
 
 		// TODO map required properties from the client model
 		irisImage.setCmID(cmImage.getId())
-		irisImage.setOriginalFilename(cmImage.get("originalFilename"))
+		if (blindMode){
+			irisImage.setOriginalFilename("[BLIND]" + cmImage.getId())
+		} else {
+			irisImage.setOriginalFilename(cmImage.get("originalFilename"))
+		}
 		irisImage.setNumberOfAnnotations(cmImage.get("numberOfAnnotations"))
 
 		return irisImage
@@ -103,7 +107,7 @@ class DomainMapper {
 	 * @param irisAnnotation
 	 * @return
 	 */
-	Annotation mapAnnnotation(be.cytomine.client.models.Annotation cmAnnotation, Annotation irisAnnotation){
+	Annotation mapAnnotation(be.cytomine.client.models.Annotation cmAnnotation, Annotation irisAnnotation){
 		if (irisAnnotation == null){
 			irisAnnotation = new Annotation()
 		}

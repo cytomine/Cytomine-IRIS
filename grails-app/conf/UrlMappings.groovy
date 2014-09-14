@@ -79,7 +79,14 @@ class UrlMappings {
 		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotations.$format"(controller:"annotation"){
 			action = [GET: "getAnnotations"]
 		}
-
+		
+		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID.$format"(controller:"annotation"){
+			action = [PUT: "assignUniqueTerm"]
+		}
+		
+		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/touch"(controller:"annotation"){
+			action = [POST: "touchAnnotation"]
+		}
 
 		/*
 		 * SessionController
