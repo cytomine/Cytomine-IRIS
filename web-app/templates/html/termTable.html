@@ -1,15 +1,28 @@
-<table 
-	ng-table="tableParams" 
-	show-filter="true"
-	class="table table-hover table-condensed">
-	<tbody>
-		<tr ng-repeat="term in data">
-			<td data-title="''" class="text-center"><span style="background : {{term.color}};">&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
-			<td data-title="'Name'" sortable="'name'" filter="{ 'name': 'text' }">
-				<button id="{{term.id}}" type="button" class="btn btn-xs btn-default" ng-click="assign(term)">{{term.name}}</button>
-			</td>
-			<td data-title="'Category/Class'" sortable="'parentName'" filter="{ 'parentName': 'text' }">{{term.parentName}}</td>
-		</tr>
-	</tbody>
-</table>
-<a ng-click="tableParams.filter({})" class="btn btn-xs btn-default">Clear filter</a>
+<div ng-show="loadingTerms">
+	<p class="text-center">
+   		<p class="text-center">
+   		Loading ontology terms...
+   		</p>
+  		<img class="img-responsive center-block" src="images/ajax-loader.gif"/>
+   	</p>
+</div>
+<div ng-hide="loadingTerms">
+	<table ng-table="tableParams" show-filter="true"
+		class="table table-hover table-condensed">
+		<tbody>
+			<tr ng-repeat="term in data">
+				<td data-title="''" class="text-center"><span
+					style="background: {{term.color}}">&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
+				<td data-title="'Name'" sortable="'name'"
+					filter="{ 'name': 'text' }">
+					<button id="{{term.id}}" type="button"
+						class="btn btn-xs btn-default" ng-click="assign(term)">{{term.name}}</button>
+				</td>
+				<td data-title="'Category/Class'" sortable="'parentName'"
+					filter="{ 'parentName': 'text' }">{{term.parentName}}</td>
+			</tr>
+		</tbody>
+	</table>
+	<a ng-click="tableParams.filter({})" class="btn btn-xs btn-default">Clear
+		filter</a>
+</div>
