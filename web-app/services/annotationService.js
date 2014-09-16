@@ -74,6 +74,6 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 						}
 			})
 		}
-	},
+	}
 
 });
