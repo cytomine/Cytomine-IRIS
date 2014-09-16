@@ -80,8 +80,8 @@ class UrlMappings {
 			action = [GET: "getAnnotations"]
 		}
 		
-		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID.$format"(controller:"annotation"){
-			action = [PUT: "assignUniqueTerm"]
+		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/term/$cmTermID/clearBefore.$format"(controller:"annotation"){
+			action = [POST: "assignUniqueTerm"]
 		}
 		
 		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/touch"(controller:"annotation"){
