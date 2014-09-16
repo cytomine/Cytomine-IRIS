@@ -1,4 +1,4 @@
-var iris = angular.module("irisApp")
+var iris = angular.module("irisApp");
 
 iris.constant("userAnnURL", "/api/session/{sessionID}/project/"
 		+ "{projectID}/image/{imageID}/annotations.json");
@@ -55,6 +55,7 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 					.replace("{imageID}", imageID).replace("{annID}", annID)
 					.replace("{termID}", termID);
 			
+			// construct the payload
 			var payload = "{ annotation: " + annID + ", term: " + termID + " }";
 
 //			HINT: content-type "application/json" is default!
@@ -62,17 +63,17 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 			$http.post(url, payload).success(function(data) {
 				// console.log("success on $http.get(" + url + ")");
 				$log.debug(data)
-//				if (callbackSuccess) {
-//					callbackSuccess(data);
-//				}
+				if (callbackSuccess) {
+					callbackSuccess(data);
+				}
 			}).error(function(data, status, headers, config) {
 				// on error log the error
 				$log.error(status)
-//				if (callbackError) {
-//					callbackError(data, status, headers, config);
-//				}
+						if (callbackError) {
+							callbackError(data, status, headers, config);
+						}
 			})
 		}
-	}
+	},
 
 });

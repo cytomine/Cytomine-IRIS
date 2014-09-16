@@ -1,7 +1,7 @@
 var iris = angular.module("irisApp");
 
 // this service communicates the labeling changes to the server
-iris.service("labelingService", function($http, $log, cytomineService){
+iris.factory("labelingService", function($http, $log, cytomineService, annotationService){
 	return  {
 		
 	}
