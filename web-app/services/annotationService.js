@@ -6,9 +6,11 @@ iris.constant("setAnnTermURL", "/api/session/{sessionID}/project/"
 		+ "{projectID}/image/{imageID}/annotation/{annID}/term/{termID}/clearBefore.json");
 iris.constant("addAnnTermURL", "/api/session/{sessionID}/project/"
 		+ "{projectID}/image/{imageID}/annotation/{annID}/term/{termID}.json");
+iris.constant("delAnnTermURL", "/api/session/{sessionID}/project/"
+		+ "{projectID}/image/{imageID}/annotation/{annID}/term/{termID}.json");
 
 iris.factory("annotationService", function($http, $log, cytomineService,
-		sessionService, userAnnURL, setAnnTermURL, addAnnTermURL) {
+		sessionService, userAnnURL, setAnnTermURL, addAnnTermURL, delAnnTermURL) {
 
 	return {
 		// get the annotations for a given project and image
@@ -24,7 +26,7 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 					.replace("{imageID}", imageID);
 
 			// TODO add optional offset and max parameters
-			// url += "&max=10"
+			url += "&max=10"
 
 			// execute the http get request to the IRIS server
 			$http.get(url).success(function(data) {
@@ -59,8 +61,37 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 			var payload = "{ annotation: " + annID + ", term: " + termID + " }";
 
 //			HINT: content-type "application/json" is default!
-			// execute the http get request to the IRIS server
+			// execute the http post request to the IRIS server
 			$http.post(url, payload).success(function(data) {
+				// console.log("success on $http.get(" + url + ")");
+				$log.debug(data)
+				if (callbackSuccess) {
+					callbackSuccess(data);
+				}
+			}).error(function(data, status, headers, config) {
+				// on error log the error
+				$log.error(status)
+						if (callbackError) {
+							callbackError(data, status, headers, config);
+						}
+			})
+		}, 
+		
+		// remove term for a specific user for a specific annotation
+		deleteAnnotationTerm : function(projectID, imageID, annID, termID, callbackSuccess,
+				callbackError) {
+			var sessionID = sessionService.getSession().id
+			$log.debug("Removing term assignment: " + sessionID + " - "
+					+ projectID + " - " + imageID + " - " + annID + " - " + termID);
+
+			// modify the parameters
+			var url = cytomineService.addKeys(delAnnTermURL).replace(
+					"{sessionID}", sessionID).replace("{projectID}", projectID)
+					.replace("{imageID}", imageID).replace("{annID}", annID)
+					.replace("{termID}", termID);
+			
+			// execute the http delete request to the IRIS server
+			$http.delete(url).success(function(data) {
 				// console.log("success on $http.get(" + url + ")");
 				$log.debug(data)
 				if (callbackSuccess) {

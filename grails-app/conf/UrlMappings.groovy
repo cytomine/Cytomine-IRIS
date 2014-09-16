@@ -81,7 +81,16 @@ class UrlMappings {
 		}
 		
 		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/term/$cmTermID/clearBefore.$format"(controller:"annotation"){
-			action = [POST: "assignUniqueTerm"]
+			action = [POST: "setUniqueTerm"]
+		}
+		
+		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/term/$cmTermID.$format"(controller:"annotation"){
+			action = [POST: "addTerm",
+					DELETE: "deleteTerm"]
+		}
+		
+		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/terms.$format"(controller:"annotation"){
+			action = [DELETE: "deleteAllTerms"]
 		}
 		
 		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/touch"(controller:"annotation"){

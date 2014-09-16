@@ -140,7 +140,7 @@ class AnnotationController {
 	 * 
 	 * @return
 	 */
-	def assignUniqueTerm(){
+	def setUniqueTerm(){
 		Cytomine cytomine = request['cytomine']
 		CytomineX cX = new CytomineX(cytomine.host, cytomine.publicKey, cytomine.privateKey, cytomine.basePath)
 
@@ -154,17 +154,17 @@ class AnnotationController {
 		// something like {annotation: 12345, term: 1239458}
 		long pldTermID = Long.valueOf(payload.get('term'))
 		long pldAnnID = Long.valueOf(payload.get('annotation'))
-		
+
 		if (pldAnnID != cmAnnID || pldTermID != cmTermID){
 			throw new IllegalArgumentException("The identifiers in URL and payload do not match!")
 		}
 
 		// TODO store the currentAnnotation for this user
 		//get the user from the session
-//		Session sess = Session.get(sessionID)
-//		User u = sess.getUser()
-//		Project p = sess.getProjects().find { it.cmID == cmProjectID }
-//		Image i = p.getImages().find { it.cmID == cmImageID }
+		//		Session sess = Session.get(sessionID)
+		//		User u = sess.getUser()
+		//		Project p = sess.getProjects().find { it.cmID == cmProjectID }
+		//		Image i = p.getImages().find { it.cmID == cmImageID }
 
 		// set the term to the annotation
 		AnnotationTerm annTerm = cX.setAnnotationTerm(cmAnnID, pldTermID)
@@ -185,12 +185,31 @@ class AnnotationController {
 		render irisAnn as JSON
 	}
 
-	def removeLabels(){
-		// TODO get the user by public/private key in the params
+	def deleteTerm(){
+		Cytomine cytomine = request['cytomine']
 
-		// TODO if the user exists, retrieve the annotation by ID in the params
+		long sessionID = params.long('sessionID')
+		long cmProjectID = params.long('cmProjectID')
+		long cmImageID = params.long('cmImageID')
+		long cmAnnID = params.long('cmAnnID')
+		long cmTermID = params.long('cmTermID')
 
-		// TODO clear the labels of the user
+		cytomine.deleteAnnotationTerm(cmAnnID, cmTermID)
 
+		render new JSONObject().put("message", "The term has been deleted.");
+	}
+
+
+	def deleteAllTerms(){
+		Cytomine cytomine = request['cytomine']
+
+		long sessionID = params.long('sessionID')
+		long cmProjectID = params.long('cmProjectID')
+		long cmImageID = params.long('cmImageID')
+		long cmAnnID = params.long('cmAnnID')
+
+		// TODO implement deleting all terms
+
+		render new JSONObject().put("message", "All terms have been deleted.");
 	}
 }
