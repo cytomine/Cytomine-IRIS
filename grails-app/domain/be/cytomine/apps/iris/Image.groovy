@@ -14,7 +14,7 @@ class Image implements Comparable<Image>, Updateable{
 	Long lastActivity = new Date().getTime()
 	Long cmID = 0L
 	String originalFilename = "defaultImage"
-	String goToURL = ""
+	String goToURL = null
 	
 	Long numberOfAnnotations = 0L
 	Long labeledAnnotations = 0L
@@ -30,12 +30,38 @@ class Image implements Comparable<Image>, Updateable{
 	static belongsTo = [project:Project]
 	
 	
-	// an image can have annotations and preferences
-	Set<Annotation> annotations
+	// an image can have preferences
 	Map<String, String> prefs = [:]
+	
+	// each image may have up to 3 annotations (current, previous, next)
+	// which will be updated accordingly 
+	Map annotations = [:]
 	static hasMany = [annotations:Annotation]
-
 			
+	public void setCurrentAnnotation(Annotation currAnn){
+		this.annotations.put("currentAnnotation", currAnn)
+	}
+	
+	public void setPreviousAnnotation(Annotation prevAnn){
+		this.annotations.put("previousAnnotation", prevAnn)
+	}
+	
+	public void setNextAnnotation(Annotation nextAnn){
+		this.annotations.put("nextAnnotation", nextAnn)
+	}
+	
+	public Annotation getCurrentAnnotation(){
+		return this.annotations.get("currentAnnotation")
+	}
+	
+	public Annotation getPreviousAnnotation(){
+		return this.annotations.get("previousAnnotation")
+	}
+	
+	public Annotation getNextAnnotation(){
+		return this.annotations.get("nextAnnotation")
+	}
+	
 	@Override
 	public int compareTo(Image img) {
 		// sort the images according to the last activity,
@@ -46,10 +72,6 @@ class Image implements Comparable<Image>, Updateable{
 	@Override
 	public void updateLastActivity() {
 		this.lastActivity = new Date().getTime()		
-	}
-	
-	Annotation getCurrentAnnotation(){
-		// TODO 
 	}
 	
 	/**

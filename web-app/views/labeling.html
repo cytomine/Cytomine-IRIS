@@ -18,12 +18,23 @@
 	<div class="row">
 		<div class="col-xs-4 text-center well">
 			<div class="row">
-				{{annotation.cmTermName || 'no term assigned'}}
-				<pager total-items="totalItems" items-per-page="itemsPerPage" ng-model="currentPage"></pager>
+				<div class="col-xs-6">ID: {{annotation.cmID}}</div>
+				<div class="col-xs-6">#: {{labeling.annotationTuple.currentIndex+1}} / {{labeling.annotationTuple.numberOfAnnotations}}</div>
+			</div>
+			<div class="row">
+				<h4><span class="label" ng-class="{ 'label-success' : annotation.cmTermName, 'label-warning' : !annotation.cmTermName }">{{annotation.cmTermName || 'no term assigned'}}</span></h4>
+				<div class="pager">
+					<a id="prevButton" class="btn btn-primary btn-sm pull-left" ng-class="{ disabled : !labeling.annotationTuple.hasPrevious }" 
+						ng-click="moveToPreviousAnnotation()">&laquo; Previous</a>
+					<a id="nextButton" class="btn btn-primary btn-sm pull-right" ng-class="{ disabled : !labeling.annotationTuple.hasNext }" 
+						ng-click="moveToNextAnnotation()">Next &raquo;</a>
+				</div>
+				
 <!-- 			TODO add the viewPanel  -->
 				<img class="img-thumbnail"
 				src="{{annotation.drawIncreasedAreaURL}}"
-				width="256px"
+				width="400px"
+				height="400px"
 				alt="" /> 
 			</div>
 			<div class="row" style="margin-top:10px;">
@@ -31,16 +42,10 @@
 			</div>
 		</div>
 		<div class="col-xs-8">
-<!-- 			<div class="text-center"> -->
-<!-- 				<pagination total-items="totalItems" ng-model="currentPage" -->
-<!-- 					max-size="maxSize" class="text-center pagination-sm pagination-no-margin" -->
-<!-- 					boundary-links="true" direction-links="true" num-pages="numPages"></pagination> -->
-<!-- 				<pager total-items="totalItems" ng-model="currentPage"></pager> -->
-<!-- 			</div> -->
 			<div class="panel panel-default">
 				<div class="panel-heading clearfix">
 					<h4 class="panel-title pull-left">Assign a label by selection</h4>
-					<a href="" ng-click="removeTerm()" class="btn btn-xs btn-warning pull-right">Remove label</a>
+					<a href="" ng-click="removeTerm()" class="btn btn-xs btn-warning pull-right" ng-class="{ disabled : (annotation.cmTermID <= 0) }">Remove label</a>
 					<div class="text-center" ng-switch="saving.status">
 						<div ng-switch-when="saving">
 							<span class="label label-info">Saving</span>&nbsp; <img src="images/ajax-loader-xs.gif"/>
@@ -53,7 +58,6 @@
 						</div>
 						<div ng-switch-default>
 							&nbsp;
-<!-- 							<span class="label label-success">Placeholder</span> -->
 						</div>
 					</div>
 				</div>

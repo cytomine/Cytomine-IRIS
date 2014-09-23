@@ -386,6 +386,7 @@ class SessionService {
 		// TODO GORM LOCKING ERROR when sending multiple requests in rather short time!!
 		irisAnn.save(failOnError:true, flush:true)
 		
+		// TODO add a Set<Annotation> annotations to the Image domain model!
 		irisImage.addToAnnotations(irisAnn);
 		irisImage.updateLastActivity();
 		
@@ -402,7 +403,6 @@ class SessionService {
 		
 		return annJSON
 	}
-
 
 	/**
 	 * Removes a session from the database.

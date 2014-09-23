@@ -12,6 +12,7 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 
 	// preallocate the objects
 	$scope.labeling = {
+		annotationTuple : {},
 		annotations : {},
 		error : {}
 	};
@@ -49,14 +50,16 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 		description : 'Proceed to next annotation',
 		callback : function() {
 			// TODO
-			console.log("move to next annotation")
+//			console.log("move to next annotation")
+			$scope.moveToNextAnnotation();
 		}
 	}).add({
 		combo : 'p',
 		description : 'Go back to the previous annotation',
 		callback : function() {
 			// TODO
-			console.log("go back to the previous annotation")
+//			console.log("go back to the previous annotation")
+			$scope.moveToPreviousAnnotation();
 		}
 	}).add({
 		// TODO remove
@@ -68,50 +71,74 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 		}
 	});
 
-	annotationService.fetchUserAnnotations($scope.projectID, $scope.imageID,
-			function(data) {
-				$log.debug("retrieved " + data.length + " annotations");
-				$scope.labeling.annotations = data;
-				$scope.totalItems = data.length;
-				$scope.itemsPerPage = 1;
-				// show the first page
-				$scope.currentPage = 1;
-				
-			}, function(data, status) {
-				sharedService.addAlert("Cannot get user annotations! Status "
-						+ status + ".", "danger");
-			});
-
-	// TODO pagination settings
-	//$scope.maxSize = 4;
-	//$scope.numPages = 64;
-	var nextRequestBlocked = false;
+	// get a new 3-tuple (around annID) from the server
+	$scope.fetchNewTuple = function(annID, displayCurrentAnnotation) {
+		annotationService.fetchUserAnnotations3Tuple($scope.projectID, $scope.imageID, annID,
+		function(data) {
+//			$log.debug(data)
+			$scope.labeling.annotationTuple = data;
+			$log.debug("retrieved " + data.size + " annotations");
+			
+			if (displayCurrentAnnotation === true){
+				$scope.annotation = data.currentAnnotation;
+				$log.debug("Setting the current annotation for display.");
+			}
+			
+		}, function(data, status) {
+			sharedService.addAlert("Cannot get user annotations! Status "
+					+ status + ".", "danger");
+		});
+	};
 	
-	$scope.$watch('currentPage', function(){
-		if (nextRequestBlocked){
-			// TODO workaround for not crashing server by DoS
-			$log.debug("blocked sending request");
+	// fetch the new tuple (from start = null), or from current annotation
+	// on loading set the flag to true, if the current annotation should be displayed
+	$scope.fetchNewTuple($scope.annotationID, true);
+	
+	$scope.moveToNextAnnotation = function(){
+		var hasNext = $scope.labeling.annotationTuple.hasNext;
+		if (!hasNext){
+			sharedService.addAlert("This is the last annotation.", "info");
 			return;
 		}
 		
-		$log.debug("Setting current page to " + $scope.currentPage)
-		// switch through the array of annotations
-		$scope.annotation = $scope.labeling.annotations[$scope.currentPage-1];
+		$log.debug("Fetching next annotation")
+		// get the next annotation ID from the array
+		var nextAnnID = $scope.labeling.annotationTuple.nextAnnotation.cmID
 		
-		try {
-			$log.debug($scope.annotation);
-			$timeout(function(){ 
-				nextRequestBlocked = false;
-			}, 1000);
-			sessionService.touchAnnotation($scope.projectID, $scope.imageID, $scope.annotation.cmID, function(data){
-				$log.debug("successfully touched annotation " + data.id)
-			});
-			nextRequestBlocked = true;
-		} catch(e){
-			$log.error(e.message);
+		// blend in next annotation
+		$scope.annotation = $scope.labeling.annotationTuple.nextAnnotation
+
+		// fetch the next 3-tuple from the server, currentAnnotation = nextAnnotation.cmID
+		if ($scope.labeling.annotationTuple.hasNext){
+			$scope.fetchNewTuple(nextAnnID, false)
 		}
-	});
+	};
 	
+	$scope.moveToPreviousAnnotation = function(){
+		var hasPrevious = $scope.labeling.annotationTuple.hasPrevious;
+		if (!hasPrevious){
+			sharedService.addAlert("This is the first annotation.", "info");
+			return;
+		}
+		
+		$log.debug("Fetching previous annotation")
+		// get the previous annotation ID
+		var prevAnnID = $scope.labeling.annotationTuple.previousAnnotation.cmID
+		
+		// blend in previous annotation
+		$scope.annotation = $scope.labeling.annotationTuple.previousAnnotation
+
+		// fetch the 3-tuple from the server, currentAnnotation = previousAnnotation.cmID
+		if ($scope.labeling.annotationTuple.hasPrevious){
+			$scope.fetchNewTuple(prevAnnID, false)
+		}
+	};
+	
+		
+	
+	///////////////////////
+	// ONTOLOGY functions
+	///////////////////////
 	$scope.loadOntology = function(){
 		$scope.loadingTerms = true;
 		
@@ -165,53 +192,43 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 		annotationService.setAnnotationTerm($scope.projectID, 
 				$scope.imageID, $scope.annotation.cmID, term.id,
 				function(data){
-			$log.debug("assigning term '" + term.name + "' to annotation.");
+			// map the results to the local element
+			$scope.annotation.cmTermName = term.name;
+			$scope.annotation.cmTermID = term.id;
+
 			sharedService.addAlert("Term '" + term.name + "' has been assigned.");
-			$scope.currentTerm = term;
+
 			$scope.saving.status = "success";
 			$timeout(function(){ $scope.saving.status = ""; }, 2000);
 		}, function(data, status){
 			sharedService.addAlert("Cannot assign term '" + term.name + "'. Status " + status + ".", "danger");
 			$scope.saving.status = "error";
-			$scope.currentTerm = null;
-			$timeout(function(){ $scope.saving.status = ""; }, 2000);
-		});
-	}
-	
-	// removes a term
-	$scope.removeTerm = function() {
-		var term;
-		var termID;
-		try {
-			term = $scope.currentTerm;
-			termID = $scope.currentTerm.id;
-		} catch(e){
-			$log.error(e);
-			return;
-		}
-		$scope.saving.status = "saving";
-		annotationService.deleteAnnotationTerm($scope.projectID, 
-				$scope.imageID, $scope.annotation.cmID, termID,
-				function(data){
-			$log.debug("Removing term '" + term.name + "' from annotation.");
-			sharedService.addAlert("Term '" + term.name + "' has been removed.");
-			$scope.saving.status = "success";
-			$timeout(function(){ $scope.saving.status = ""; }, 2000);
-		}, function(data, status){
-			sharedService.addAlert("Cannot remove term '" + term.name + "'. Status " + status + ".", "danger");
-			$scope.saving.status = "error";
 			$timeout(function(){ $scope.saving.status = ""; }, 2000);
 		});
 	};
 	
-	$scope.setButtonClass = function(term) {
-		// TODO set the corresponding button selected
-		var button = document.getElementById(term.id);
+	// removes a term
+	$scope.removeTerm = function() {
+		var termID = $scope.annotation.cmTermID;
+		var termName = $scope.annotation.cmTermName;
 		
-	}
-	
-	$scope.reset = function() {
-		// TODO unselect all terms (e.g. if term is successfully removed)
-		
-	}
+		$scope.saving.status = "saving";
+		annotationService.deleteAnnotationTerm($scope.projectID, 
+				$scope.imageID, $scope.annotation.cmID, termID,
+				function(data){
+			// remove the elements from the local object
+			$scope.annotation.cmTermName = null;
+			$scope.annotation.cmTermID = 0;
+			$scope.annotation.cmOntologyID = 0;
+			
+			$log.debug("Removing term '" + termName + "' from annotation.");
+			sharedService.addAlert("Term '" + termName + "' has been removed.");
+			$scope.saving.status = "success";
+			$timeout(function(){ $scope.saving.status = ""; }, 2000);
+		}, function(data, status){
+			sharedService.addAlert("Cannot remove term '" + termName + "'. Status " + status + ".", "danger");
+			$scope.saving.status = "error";
+			$timeout(function(){ $scope.saving.status = ""; }, 2000);
+		});
+	};
 });

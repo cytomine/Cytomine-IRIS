@@ -72,30 +72,61 @@ class UrlMappings {
 		 * annotationController
 		 * - communicates annotation CRUD operations to the core via the Java client
 		 */
-		"/api/annotation/$annID.$format"(controller:"annotation"){
-			action = [GET: "getAnnotation"]
-		}
-
+		/*
+		 * Get a single annotation
+		 */
+//		"/api/annotation/$annID.$format"(controller:"annotation"){
+//			action = [GET: "getAnnotation"]
+//		}
+		
+		/*
+		 * Get all annotations
+		 * Optional parameters
+		 * 		max = { $max || null }
+		 * 			if null, get all annotations
+		 */
 		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotations.$format"(controller:"annotation"){
 			action = [GET: "getAnnotations"]
 		}
-		
+
+		/*
+		 * Get a 3-tuple of annotations
+		 * Optional parameters
+		 * 		currentAnnotation = { $cmAnnID || null }
+		 * 			if null, return first and subsequent item, if any, previousAnnotation = null
+		 */
+		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotations/tuple.$format"(controller:"annotation"){
+			action = [GET: "getAnnotation3Tuple"]
+		}
+
+		/*
+		 * Assign a unique term		
+		 */
 		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/term/$cmTermID/clearBefore.$format"(controller:"annotation"){
 			action = [POST: "setUniqueTerm"]
 		}
 		
+		/*
+		 * Adds another term or deletes it
+		 */
 		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/term/$cmTermID.$format"(controller:"annotation"){
 			action = [POST: "addTerm",
 					DELETE: "deleteTerm"]
 		}
 		
+		/*
+		 * Removes all terms from the annotation
+		 */
 		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/terms.$format"(controller:"annotation"){
 			action = [DELETE: "deleteAllTerms"]
 		}
 		
-		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/touch"(controller:"annotation"){
-			action = [POST: "touchAnnotation"]
-		}
+		/*
+		 * Touches the annotation (UNUSED)
+		 */
+//		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/touch"(controller:"annotation"){
+//			action = [POST: "touchAnnotation"]
+//		}
 
 		/*
 		 * SessionController

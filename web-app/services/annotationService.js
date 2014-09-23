@@ -2,6 +2,8 @@ var iris = angular.module("irisApp");
 
 iris.constant("userAnnURL", "/api/session/{sessionID}/project/"
 		+ "{projectID}/image/{imageID}/annotations.json");
+iris.constant("userAnn3TupleURL", "/api/session/{sessionID}/project/"
+		+ "{projectID}/image/{imageID}/annotations/tuple.json");
 iris.constant("setAnnTermURL", "/api/session/{sessionID}/project/"
 		+ "{projectID}/image/{imageID}/annotation/{annID}/term/{termID}/clearBefore.json");
 iris.constant("addAnnTermURL", "/api/session/{sessionID}/project/"
@@ -10,7 +12,7 @@ iris.constant("delAnnTermURL", "/api/session/{sessionID}/project/"
 		+ "{projectID}/image/{imageID}/annotation/{annID}/term/{termID}.json");
 
 iris.factory("annotationService", function($http, $log, cytomineService,
-		sessionService, userAnnURL, setAnnTermURL, addAnnTermURL, delAnnTermURL) {
+		sessionService, userAnnURL, userAnn3TupleURL, setAnnTermURL, addAnnTermURL, delAnnTermURL) {
 
 	return {
 		// get the annotations for a given project and image
@@ -32,6 +34,37 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 			$http.get(url).success(function(data) {
 				// console.log("success on $http.get(" + url + ")");
 				// $log.debug(data)
+				if (callbackSuccess) {
+					callbackSuccess(data);
+				}
+			}).error(function(data, status, headers, config) {
+				// on error log the error
+				// console.log(callbackError)
+				if (callbackError) {
+					callbackError(data, status, headers, config);
+				}
+			})
+		},
+		
+		// get the 3-tuple annotations for a given project and image
+		fetchUserAnnotations3Tuple : function(projectID, imageID, annID, callbackSuccess,
+				callbackError) {
+			var sessionID = sessionService.getSession().id
+			$log.debug("Getting user annotations (3-tuple): " + sessionID + " - "
+					+ projectID + " - " + imageID + ", starting at " + annID)
+
+			// modify the parameters
+			var url = cytomineService.addKeys(userAnn3TupleURL).replace(
+					"{sessionID}", sessionID).replace("{projectID}", projectID)
+					.replace("{imageID}", imageID);
+
+			// add optional offset and max parameters
+			url += ("&currentAnnotation=" + annID);
+
+			// execute the http get request to the IRIS server
+			$http.get(url).success(function(data) {
+				// console.log("success on $http.get(" + url + ")");
+				$log.debug(data)
 				if (callbackSuccess) {
 					callbackSuccess(data);
 				}
