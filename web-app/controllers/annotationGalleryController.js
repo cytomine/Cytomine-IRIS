@@ -15,6 +15,27 @@ iris.controller("annotationGalleryCtrl", function($scope, $http, $filter,
 		error : {}
 	};
 	
+	$scope.annotations=[ 
+	  {name:'John'},
+	  {name:'Jessie'},
+	  {name:'Johanna'},
+	  {name:'Joy'},
+	  {name:'Mary'},
+	  {name:'Peter'},
+	  {name:'Sebastian'},
+	  {name:'Erika'},
+	  {name:'Patrick'},
+	  {name:'John'},
+	  {name:'Jessie'},
+	  {name:'Johanna'},
+	  {name:'Joy'},
+	  {name:'Mary'},
+	  {name:'Peter'},
+	  {name:'Sebastian'},
+	  {name:'Erika'},
+	  {name:'Patrick'},
+	  {name:'Samantha'} ];
+	
 	// put all valid shortcuts for this page here
 	hotkeys.bindTo($scope)
 	.add({

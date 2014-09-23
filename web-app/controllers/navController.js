@@ -47,6 +47,13 @@ iris.controller("navCtrl", function($scope, $location, $log, sharedService,
 		$location.url("/project/" + projectID + "/images");
 	};
 	
+	// navigate to the current project's annotations
+	$scope.annotations = function() {
+		var projectID = sessionService.getCurrentProject().cmID;
+		// TODO check for null in the project
+		$location.url("/project/" + projectID + "/gallery");
+	};
+	
 	// show the help page
 	$scope.showHelp = function() {
 		helpService.showHelp();
