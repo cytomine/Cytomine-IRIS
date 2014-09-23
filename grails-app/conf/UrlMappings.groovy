@@ -64,7 +64,7 @@ class UrlMappings {
 			action = [GET: "getUserByPublicKey"]
 		}
 
-		"/api/abstractimage/$abstractImageID/imageservers.json"(controller:"cytomine"){
+		"/api/abstractimage/$abstractImageID/imageinstance/$imageInstanceID/imageservers.json"(controller:"cytomine"){
 			action = [GET: "getImageServerURLs"]
 		}
 
@@ -155,6 +155,10 @@ class UrlMappings {
 				GET: "getProject", // gets an IRIS project from a session
 				PUT: "updateProject" // update the project in the session using the params from the payload
 				]
+		}
+		
+		"/api/project/$cmProjectID/image/$cmImageID.$format"(controller:"session"){
+			action = [GET: "getImage"]
 		}
 		
 		"/api/project/$projectID/images.$format"(controller:"session"){

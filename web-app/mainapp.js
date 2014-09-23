@@ -10,6 +10,9 @@ iris.config(function($routeProvider, $locationProvider) {
 	$routeProvider.when("/", {
 		templateUrl : "views/welcome.html",
 	});
+	$routeProvider.when("/map", {
+		templateUrl : "views/map.html",
+	});
 	$routeProvider.when("/login", {
 		templateUrl : "views/login.html",
 	});

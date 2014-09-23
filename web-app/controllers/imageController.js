@@ -101,6 +101,8 @@ iris.controller(
 					$scope.image.error.retrieve = null;
 					$scope.image.images = data; // this should be an IRIS image list
 					
+//					$log.debug(data)
+					
 //					console.log("hideCompleted (session): " + sessionService.getCurrentProject().prefs['images.hideCompleted']);
 					
 					// get user preferences from session

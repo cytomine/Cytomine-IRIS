@@ -156,7 +156,7 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 				count : 25, // count per page
 				// leave this blank for no sorting at all
 				sorting : {
-					name : 'desc' // initial sorting
+					name : 'asc' // initial sorting
 				},
 				filter : {
 				// applies filter to the "data" object before sorting

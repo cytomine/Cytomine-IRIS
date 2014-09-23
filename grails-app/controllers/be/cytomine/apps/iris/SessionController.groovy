@@ -204,11 +204,26 @@ class SessionController {
 	 * @return the list of images for a given project ID as JSON object including the current progress
 	 */
 	def getImages() {
-		long projectID = params.long("projectID");
+		long projectID = params.long("projectID")
 		
 		def imageList = imageService.getImagesWithProgress(request['cytomine'], projectID, params.get("publicKey"))
 
 		render imageList as JSON
+	}
+	
+	/**
+	 * Get an image in a project.
+	 *
+	 * @return the image as JSON object
+	 */
+	def getImage() {
+		Cytomine cytomine = request['cytomine']
+		long projectID = params.long("cmProjectID")
+		long imageInstanceID = params.long("cmImageID")
+		
+		def image = imageService.getImage(cytomine, projectID, imageInstanceID, params.get("publicKey"))
+
+		render image as JSON
 	}
 
 

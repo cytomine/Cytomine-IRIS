@@ -1,17 +1,14 @@
 package be.cytomine.apps.iris
 
-import grails.converters.JSON
 import grails.transaction.Transactional
 
-import org.codehaus.groovy.grails.web.json.JSONElement;
-import org.json.simple.JSONArray;
+import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 
-import sun.security.rsa.RSACore.BlindingParameters;
 import be.cytomine.client.Cytomine
 import be.cytomine.client.CytomineException
-import be.cytomine.client.collections.ImageInstanceCollection;
-import be.cytomine.client.models.ImageInstance;
+import be.cytomine.client.collections.ImageInstanceCollection
+import be.cytomine.client.models.ImageInstance
 
 @Transactional
 class ImageService {
@@ -22,6 +19,40 @@ class ImageService {
 	def grailsApplication
 	def sessionService
 
+	/**
+	 * Gets a single image from Cytomine.
+	 *
+	 * @param cytomine a Cytomine instance
+	 * @param cmProjectID the Cytomine project ID
+	 * @param cmImageInstanceID the Cytomine imageinstance ID
+	 * @return the IRIS image
+	 */
+	def getImage(Cytomine cytomine, long cmProjectID, long cmImageInstanceID, String publicKey){
+		ImageInstance cmImage = cytomine.getImageInstance(cmImageInstanceID)
+		Project p = Project.find { cmID == cmProjectID }
+		User user = User.find { cmPublicKey == publicKey}
+		
+		Image irisImage = new DomainMapper().mapImage(cmImage, null, p.getCmBlindMode())
+		
+		//for each image, add a goToURL property containing the full URL to open the image in the core Cytomine instance
+		irisImage.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImage.getId() + "-")
+		
+		// retrieve the user's progress on each image and return it in the object
+		JSONObject annInfo = new Utils().getUserProgress(cytomine, cmProjectID, cmImage.getId(), user.getCmID())
+		// resolving the values from the JSONObject to each image as property
+		irisImage.setLabeledAnnotations(annInfo.get("labeledAnnotations"))
+		irisImage.setUserProgress(annInfo.get("userProgress"))
+		irisImage.setNumberOfAnnotations(annInfo.get("totalAnnotations"))
+		
+		// set the Cytomine image as "cytomine" property in the irisImage
+		def imageJSON = sessionService.injectCytomineImageInstance(cytomine, irisImage, cmImage, p.getCmBlindMode())
+		
+		// TODO optionally inject the image server urls
+		//imageJSON.putAt("imageServersURLs", getImageServerURLs(cytomine, (long) cmImage.get("baseImage"), cmImageInstanceID).getAt("imageServersURLs"))
+		
+		return imageJSON
+	}
+	
 	/**
 	 * Gets images from Cytomine.
 	 * 
@@ -81,11 +112,6 @@ class ImageService {
 			blindMode = irisProject.cmBlindMode
 		}
 
-		// TODO implement paging using max and offset parameters from the request params
-		//int offset = params.long("offset")
-		//int max = params.long("max")
-		//cytomine.setMax(5); //max 5 images
-
 		ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)
 		def irisImageList = new JSONArray()
 		
@@ -114,5 +140,16 @@ class ImageService {
 
 		return irisImageList
 	}
-
+	
+	/**
+	 * Gets the image server URLs for a given image.
+	 * @return the URLs for a given abstractImage for the OpenLayers instance as JSONObject
+	 */
+	def getImageServerURLs(Cytomine cytomine, long abstrImgID, long imgInstID){
+		// perform a synchronous get request to the Cytomine host server
+		String urls = cytomine.doGet("/api/abstractimage/" + abstrImgID + "/imageservers.json?imageinstance=" + imgInstID)
+		// urls are a long string, so break them up in a JSONarray
+		org.codehaus.groovy.grails.web.json.JSONObject obj = new org.codehaus.groovy.grails.web.json.JSONObject(urls)
+		return obj
+	}
 }

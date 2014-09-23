@@ -57,7 +57,7 @@ class CytomineController {
 
 		render user.getAt("attr") as JSON
 	}
-
+	
 	/**
 	 * Gets the image server URLs for a given image.
 	 * @return the URLs for a given abstractImage for the OpenLayers instance
@@ -65,13 +65,11 @@ class CytomineController {
 	def getImageServerURLs(){
 		Cytomine cytomine = request['cytomine']
 		long abstrImgID = params.long('abstractImageID')
-		long imgInstID = params.long('imageinstance')
+		long imgInstID = params.long('imageInstanceID')
 
 		// perform a synchronous get request to the Cytomine host server
-		def urls = cytomine.doGet("/api/abstractimage/" + abstrImgID + "/imageservers.json?imageinstance=" + imgInstID)
-		urls.replace("\"", "\\\"")
-		response.setContentType("application/json")
-		response.setCharacterEncoding("UTF-8")
+		org.codehaus.groovy.grails.web.json.JSONObject urls = imageService.getImageServerURLs(cytomine, abstrImgID, imgInstID)
+		// render URLs to client
 		render urls;
 	}
 }
