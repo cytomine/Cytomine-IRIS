@@ -41,7 +41,7 @@ class CytomineController {
 			List<JSONObject> flatOntology = new Utils().flattenOntology(ontology)
 			render flatOntology as JSON
 		} else {
-			render ontology as JSON
+			render ontology.getAttr() as JSON
 		}
 	}
 

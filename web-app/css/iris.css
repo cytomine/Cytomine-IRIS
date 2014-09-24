@@ -42,3 +42,35 @@ div.olMap {
 	height: 300px;
 	border: 1px solid black;
 }
+
+.container-100 {
+	width: 100% !important;
+	padding-left: 25px;
+	padding-right: 20px;
+}
+
+[treecontrol] {
+	font-family: inherit;
+	font-size: 13px;
+}
+
+[treecontrol] li {
+	padding: 0px;
+	line-height: 25px;
+}
+
+.colorbox {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    z-index: 0;
+}
+
+/*Shift the checkbox over the span label*/
+input[type="checkbox"].colorbox-checkbox {
+   left: -16px;
+   z-index: 30;
+   position: relative;
+}

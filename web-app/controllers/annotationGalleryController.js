@@ -5,7 +5,7 @@ iris.config(function($logProvider) {
 });
 
 iris.controller("annotationGalleryCtrl", function($scope, $http, $filter,
-		$location, hotkeys, helpService, annotationService, $routeParams) {
+		$location, hotkeys, helpService, annotationService, sessionService, $routeParams) {
 	console.log("annotationGalleryCtrl");
 
 	// set content url for the help page
@@ -14,6 +14,8 @@ iris.controller("annotationGalleryCtrl", function($scope, $http, $filter,
 	$scope.annotation = {
 		error : {}
 	};
+	
+	$scope.projectName = sessionService.getCurrentProject().cmName;
 	
 	$scope.annotations=[ 
 	  {name:'John'},

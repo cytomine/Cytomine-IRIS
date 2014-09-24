@@ -1,0 +1,22 @@
+<div ng-controller="termTreeCtrl" id="termTree-UI">
+	Selected node: {{ selectedNode.name || 'N/A' }}
+	<h5>Ontology: {{treeData.name}}</h5>
+	<div
+		treecontrol="" class="tree-light" tree-model="treeData"
+		options="treeOptions" on-selection="selectOrUnselectTerm(event)" 
+		selected-node="selectedNode" expanded-nodes="expandedNodes">
+		<span id="{{ 'treeTermColorPanel-' + node.id }}" ng-hide="node.isFolder" style="background:{{node.color}}" class="colorbox">&nbsp;&nbsp;&nbsp;&nbsp;</span><input id="{{ 'chbxTerm-' + node.id }}" ng-hide="node.hideCheckbox" ng-class="{'colorbox-checkbox': !node.isFolder}" type="checkbox">
+		<span id="{{ 'treeTermLabel-' + node.id }}">{{ node.name }}</span>
+	</div>
+	<div class="row" style="margin-top:20px">
+		<div class="col-xs-12">
+			<div class="btn btn-xs btn-info" ng-click="checkAllTerms()">Check all</div>
+			<div class="btn btn-xs btn-info" ng-click="uncheckAllTerms()">Uncheck all</div>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+			<div class="btn btn-xs btn-info" ng-click="expandAll()">Expand all</div>
+			<div class="btn btn-xs btn-info" ng-click="collapseAll()">Collapse all</div>
+		</div>
+	</div>
+</div>
+
+<!-- {{ ontology | json }} -->

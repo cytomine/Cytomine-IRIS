@@ -1,4 +1,4 @@
-<div ng-controller="labelingCtrl">
+<div ng-controller="labelingCtrl" class="container">
 <!-- 	<div class="row text-center" style="margin-bottom:15px;">
 		<div class="col-xs-1">&nbsp;</div>
 		<div class="col-xs-4">
@@ -24,10 +24,10 @@
 			<div class="row">
 				<h4><span class="label" ng-class="{ 'label-success' : annotation.cmTermName, 'label-warning' : !annotation.cmTermName }">{{annotation.cmTermName || 'no term assigned'}}</span></h4>
 				<div class="pager">
-					<a id="prevButton" class="btn btn-primary btn-sm pull-left" ng-class="{ disabled : !labeling.annotationTuple.hasPrevious }" 
-						ng-click="moveToPreviousAnnotation()">&laquo; Previous</a>
-					<a id="nextButton" class="btn btn-primary btn-sm pull-right" ng-class="{ disabled : !labeling.annotationTuple.hasNext }" 
-						ng-click="moveToNextAnnotation()">Next &raquo;</a>
+					<button style="width:80px" type="button" href id="prevButton" class="btn btn-primary btn-sm pull-left" ng-class="{ disabled : !labeling.annotationTuple.hasPrevious }" 
+						ng-click="moveToPreviousAnnotation()">&laquo; Previous</button>
+					<button style="width:80px" type="button" href id="nextButton" class="btn btn-primary btn-sm pull-right" ng-class="{ disabled : !labeling.annotationTuple.hasNext }" 
+						ng-click="moveToNextAnnotation()">Next &raquo;</button>
 				</div>
 				
 <!-- 			TODO add the viewPanel  -->
