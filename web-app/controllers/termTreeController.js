@@ -1,6 +1,6 @@
 var iris = angular.module("irisApp");
 
-iris.controller("termTreeCtrl", function($scope, $log){
+iris.controller("termTreeCtrl", function($scope, $timeout, $log){
 	
 	console.log("termTreeCtrl");
 	
@@ -15,29 +15,9 @@ iris.controller("termTreeCtrl", function($scope, $log){
 	
 	$scope.treeOptions = {
 		    nodeChildren: "children",
-		    dirSelectable: false,
-		    injectClasses: {
-		        ul: "a1",
-		        li: "a2",
-		        liSelected: "a7",
-		        iExpanded: "a3",
-		        iCollapsed: "a4",
-		        iLeaf: "a5",
-		        label: "a6",
-		        labelSelected: "a8"
-		    }
+		    dirSelectable: false
 		};
 	
-//	$scope.showSelected = function(node) {
-//		if (node === undefined){
-//			$log.debug("unselected node");
-//			return;
-//		}
-//        $log.debug("selecting node " + node.id);
-//        // add the node to the array of checked terms
-////        checkedTerms.push(node);
-//    };
-    
     $scope.selectOrUnselectTerm = function(e) {
         var targ;
         if (!e) {
@@ -50,26 +30,25 @@ iris.controller("termTreeCtrl", function($scope, $log){
         }
         
         // get the ID of the clicked term
-        var id = targ.id.split("-")[1];
+        var id = Number(targ.id.split("-")[1]);
         var chbxID = "chbxTerm-"+id;
                
         // if the term is checked, it is in the checked list
-        var idx = checkedTerms.indexOf(id)
-        if (idx !== -1){
-        	// remove the term
-        	checkedTerms.splice(idx,1);
-        	// TODO unselect the checkbox
-        	var chbx = document.getElementById(chbxID);
-        	chbx.checked = false;
-        }else {
+        var idx = checkedTerms.indexOf(id);
+        var chbx = document.getElementById(chbxID);
+        if (idx === -1){
         	// add the term
         	checkedTerms.push(id);
-        	// TODO select the checkbox
-        	var chbx = document.getElementById(chbxID);
+        	// select the checkbox
         	chbx.checked = true;
+        }else {
+        	// remove the term from the array
+        	checkedTerms.splice(idx,1);
+        	// unselect the checkbox
+        	chbx.checked = false;
         }
         
-        $log.debug("Active Terms: {" + checkedTerms.toString() + "}.");
+        //$log.debug("Active Terms: {" + checkedTerms.toString() + "}.");
     };
     
     $scope.clearSelected = function() {
@@ -105,41 +84,64 @@ iris.controller("termTreeCtrl", function($scope, $log){
     	return nodeArray;
     };
     
-    // expand all nodes by default
+    $scope.showToggle = function(node, expanded) {
+        //$log.debug(node.id+ (expanded?" expanded":" collapsed"));
+        
+        if (expanded){
+        	// reselect the children, which are selected
+        	$timeout(function(){ selectCheckboxes(checkedTerms, true);}, 50);  
+        }
+        // find selected children of the node id
+        //$log.debug("Active Terms: {" + checkedTerms.toString() + "}.");
+    };
+    
+    // expand all nodes by default and reselect the nodes
 	$scope.expandAll = function() {
 	    $scope.expandedNodes = [];
 	    searchForExpandableNode($scope.treeData, $scope.expandedNodes);
+	    $timeout(function(){ selectCheckboxes(checkedTerms, true);}, 50);  
 	};
 	$scope.expandAll();
 	
-	// collapse all nodes
+	// collapse all nodes, but do not deselect the check boxes
 	$scope.collapseAll = function(){
 		 $scope.expandedNodes = [];
 	}
     
     $scope.checkAllTerms = function(){
-    	searchForSelectableNode($scope.treeData, checkedTerms)
-    	$log.debug("checked all terms: " + checkedTerms.length)
+    	checkedTerms = [];
+    	searchForSelectableNode($scope.treeData, checkedTerms);
+    	selectCheckboxes(checkedTerms, true);    
+    	//$log.debug("Active Terms: {" + checkedTerms.toString() + "}.");
+    	//$log.debug("checked all terms: " + checkedTerms.length);
     };
     
     $scope.uncheckAllTerms = function(){
-    	$scope.clearSelected();
     	checkedTerms = [];
-    	$log.debug("UNchecked all terms")
+    	searchForSelectableNode($scope.treeData, checkedTerms);
+    	selectCheckboxes(checkedTerms, false);
+    	checkedTerms = [];
+    	//$log.debug("Active Terms: {" + checkedTerms.toString() + "}.");
+    	//$log.debug("UNchecked all terms.")
     };
     
     // select the terms in the tree
-    var setTermsSelected = function(checkedTerms){
+    var selectCheckboxes = function(checkedTerms, select){
     	for (var i = 0; i < checkedTerms.length; i++){
     		var termID = checkedTerms[i];
-    		
-    		document.getElementById(elName)
+    		var chbxID = "chbxTerm-"+termID;
+    		var chbx = document.getElementById(chbxID);
+    		try {
+    			chbx.checked = select;
+    		}catch(e){
+    			$log.warn(e.message);
+    		}
     	}
     };
     
     // applies a filter using the checked terms and the checked images
     var applyFilter = function(checkedTerms, checkedImages){
-    	
+    	// TODO continue implementation
     }
 	
 });

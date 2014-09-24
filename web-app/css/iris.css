@@ -59,6 +59,10 @@ div.olMap {
 	line-height: 25px;
 }
 
+[treecontrol].tree-light li .tree-selected{
+	font-weight: normal;
+}
+
 .colorbox {
     width: 20px;
     height: 20px;
