@@ -59,10 +59,18 @@ div.olMap {
 	line-height: 25px;
 }
 
+/*always include the class of the tree (tree-classic, tree-light, tree-dark)*/
 [treecontrol].tree-light li .tree-selected{
 	font-weight: normal;
 }
 
+[treecontrol].tree-classic li .tree-selected{
+	font-weight: normal;
+}
+
+[treecontrol].tree-dark li .tree-selected{
+	font-weight: normal;
+}
 .colorbox {
     width: 20px;
     height: 20px;
@@ -78,3 +86,4 @@ input[type="checkbox"].colorbox-checkbox {
    z-index: 30;
    position: relative;
 }
+
