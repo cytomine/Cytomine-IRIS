@@ -13,7 +13,8 @@
 
 grails.project.groupId = be.cytomine.apps.iris // change this to alter the default package name and Maven publishing destination
 
-//grails.cytomine.host = "http://localhost:8080"
+grails.cytomine.apps.iris.host = "http://localhost:8080"
+grails.cytomine.image.host = "http://image{serverID}.cytomine.be"
 grails.cytomine.host = "http://beta.cytomine.be"
 grails.cytomine.web = "http://www.cytomine.be"
 
@@ -122,7 +123,8 @@ log4j = {
            'net.sf.ehcache.hibernate'
     warn  	'be.cytomine.client'
 	debug	'grails.app.controllers',	
-			'grails.app.services'   	
+			'grails.app.services'
+//			'be.cytomine.client.HttpClient'
 }
 
 grails.gorm.default.constraints = {

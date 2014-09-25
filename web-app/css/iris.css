@@ -26,7 +26,6 @@
 	width: 400px;
 }
 
-
 #alert-container {
 	position: fixed;
 	bottom: 0;
@@ -39,11 +38,12 @@
 
 div.olMap {
 	/*border: 1px solid black;*/
+	
 }
 
 #map {
 	width: 100%;
-	height: 300px;	
+	height: 300px;
 }
 
 .container-100 {
@@ -63,30 +63,102 @@ div.olMap {
 }
 
 /*always include the class of the tree (tree-classic, tree-light, tree-dark)*/
-[treecontrol].tree-light li .tree-selected{
+[treecontrol].tree-light li .tree-selected {
 	font-weight: normal;
 }
 
-[treecontrol].tree-classic li .tree-selected{
+[treecontrol].tree-classic li .tree-selected {
 	font-weight: normal;
 }
 
-[treecontrol].tree-dark li .tree-selected{
+[treecontrol].tree-dark li .tree-selected {
 	font-weight: normal;
 }
+
 .colorbox {
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-    position: relative;
-    vertical-align: middle;
-    z-index: 0;
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	position: relative;
+	vertical-align: middle;
+	z-index: 0;
 }
 
 /*Shift the checkbox over the span label*/
 input[type="checkbox"].colorbox-checkbox {
-   left: -16px;
-   z-index: 30;
-   position: relative;
+	left: -16px;
+	z-index: 30;
+	position: relative;
 }
 
+/*ngDraggable*/
+* {
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+[ng-drag] {
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+/*style of any draggable element*/
+[ng-drag] {
+	width: 100px;
+	height: 100px;
+	background: rgba(255, 0, 0, 0.5);
+	color: white;
+	text-align: center;
+	padding-top: 40px;
+	display: inline-block;
+	margin: 10px;
+	cursor: move;
+}
+
+/* when the dragged component enters the drop area*/
+[ng-drag].drag-over {
+	border: solid 1px red;
+}
+
+/*style of dragged element*/
+[ng-drag].dragging {
+	opacity: 0.5;
+}
+
+/*drop area style*/
+[ng-drop] {
+/* 	background: rgba(0, 255, 0, 0.5); */
+/* 	text-align: center; */
+	width: 600px;
+	height: 200px;
+/* 	padding-top: 90px; */
+/* 	display: block; */
+/* 	margin: 20px auto; */
+/* 	position: relative; */
+}
+
+/*highlight the drop area on enter*/
+[ng-drop].drag-enter {
+	border: solid 5px red;
+	background: rgba(0, 255, 0, 0.5);
+}
+
+[ng-drop] span.title {
+	display: block;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 200px;
+	height: 20px;
+	margin-left: -100px;
+	margin-top: -10px;
+}
+
+[ng-drop] div {
+	position: relative;
+	z-index: 2;
+}

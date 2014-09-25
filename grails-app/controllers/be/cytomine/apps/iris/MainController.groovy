@@ -11,6 +11,10 @@ import be.cytomine.client.Cytomine;
 class MainController {
 
     def grailsApplication
+	
+	def beforeInterceptor = {
+		log.debug("Executing action $actionName with params $params")
+	}
 
 	/**
 	 * Renders a welcome text for the start page.

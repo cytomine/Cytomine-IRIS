@@ -1,6 +1,6 @@
 <div class="container-100" ng-controller="annotationGalleryCtrl">
 	<div class="row">
-		<div class="col-xs-4">
+		<div class="col-xs-3">
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h4 class="panel-title">Filter: {{projectName}}</h4>
@@ -10,31 +10,37 @@
 					<hr>
 					<h5>Images</h5>
 <!-- 					<ng-include src="'templates/html/imageTree.html'"></ng-include> -->
-					<p>
-						<div class="btn btn-xs btn-info">Check all</div>
-						<div class="btn btn-xs btn-info">Uncheck all</div>
-					</p>
-				</div>
-<!-- 				<div class="panel-footer"> -->
-<!-- 					Footer -->
-<!-- 				</div> -->
-			</div>
-		</div>
-		<div class="col-xs-8">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title">Term Name</h4>
-				</div>
-				<div class="panel-body">
-					<div ng-repeat="item in annotations">
-						<div class="col-lg-2 col-md-2 col-sm-3 col-xs-6">
-							<div class="thumbnail" style="width: 90px; height: 90px">col {{item.name}}</div>
+					<div class="row" style="margin-top:20px">
+						<div class="col-xs-12">
+							<div class="btn btn-xs btn-info" ng-click="checkAllTerms()" style="width: 90px">Check all</div>
+							<p class="clearfix" style="margin:2px;"></p>
+							<div class="btn btn-xs btn-default" ng-click="uncheckAllTerms()" style="width: 90px">Uncheck all</div>
 						</div>
 					</div>
 				</div>
 <!-- 				<div class="panel-footer"> -->
 <!-- 					Footer -->
 <!-- 				</div> -->
+			</div>
+		</div>
+		
+		<div class="col-xs-9">
+			<div class="panel panel-default" > <!-- TODO implement the ng-repeat for all filtered terms -->
+				<div class="panel-heading">
+					<h4 class="panel-title">All Draggable Objects</h4>
+				</div>
+				<div class="panel-body">
+					<div ng-repeat="item in annotations" ng-drag="true" ng-drag-data="item">
+						col {{item.name}}
+					</div>
+				</div>
+				<div class="panel-footer">
+					<div ng-drop="true" ng-drop-success="onDropComplete($data,$event)">
+						<div ng-repeat="item in droppedObjects" ng-drag="true" ng-drag-data="item" ng-drag-success="onDragSuccess($item,$event)">
+							col {{item.name}}
+						</div>
+					</div>	
+				</div>
 			</div>
 		</div>
 	</div>	

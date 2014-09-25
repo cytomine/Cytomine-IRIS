@@ -67,6 +67,19 @@ class UrlMappings {
 		"/api/abstractimage/$abstractImageID/imageinstance/$imageInstanceID/imageservers.json"(controller:"cytomine"){
 			action = [GET: "getImageServerURLs"]
 		}
+		
+		/*
+		 * Optional Parameters: 
+		 * 		zoomify
+		 */
+		"/image/tile"(controller:"cytomine"){
+			action = [GET: "getTile"]
+		}
+		
+//		///image/tile?zoomify=/data/beta.cytomine.be/93518990/93518990/1389785459805/HE_32911_12_converted.tif/
+//		"/image/tile"(controller:"cytomine"){
+//			action = [GET: "dev"]
+//		}
 
 		/*
 		 * annotationController

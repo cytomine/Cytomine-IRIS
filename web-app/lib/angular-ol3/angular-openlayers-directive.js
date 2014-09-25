@@ -72,7 +72,7 @@ angular.module("openlayers-directive", []).directive('openlayers', ["$log", "$q"
 
             if (!isDefined(attrs.center)) {
                 map.setView(new ol.View({
-                    center: [ defaults.center.lon, defaults.center.lat ],
+                	center: [ defaults.center.lon, defaults.center.lat ],
                     zoom: defaults.center.zoom,
                     maxZoom: defaults.center.maxZoom,
                     minZoom: defaults.center.minZoom
@@ -546,6 +546,24 @@ angular.module("openlayers-directive").factory('olHelpers', ["$q", "$log", funct
                 });
 
                 break;
+                
+            case 'Zoomify':
+            	// Maps always need a projection, but Zoomify layers are not geo-referenced, and
+            	// are only measured in pixels.  So, we create a fake projection that the map
+            	// can use to properly display the layer.
+            	var proj = new ol.proj.Projection({
+            	  code: 'ZOOMIFY',
+            	  units: 'pixels',
+            	  extent: [0, 0, source.width, source.height]
+            	});
+
+            	oSource = new ol.source.Zoomify({
+            	  url: source.url,
+            	  size: [source.width, source.height],
+            	  crossOrigin: (source.crossOrigin?'anonymous':source.crossOrigin+'')
+            	});
+
+                break;
         }
 
         return oSource;
@@ -667,6 +685,7 @@ angular.module("openlayers-directive").factory('olHelpers', ["$q", "$log", funct
 
             switch(type) {
                 case 'Tile':
+                case 'Zoomify':
                     oLayer = new ol.layer.Tile({ source: oSource });
                     break;
                 case 'Vector':

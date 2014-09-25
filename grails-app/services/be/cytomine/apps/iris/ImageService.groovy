@@ -1,5 +1,6 @@
 package be.cytomine.apps.iris
 
+import grails.converters.JSON;
 import grails.transaction.Transactional
 
 import org.json.simple.JSONArray
@@ -146,10 +147,23 @@ class ImageService {
 	 * @return the URLs for a given abstractImage for the OpenLayers instance as JSONObject
 	 */
 	def getImageServerURLs(Cytomine cytomine, long abstrImgID, long imgInstID){
+		String irisHost = grailsApplication.config.grails.cytomine.apps.iris.host;
+		String cmHost = grailsApplication.config.grails.cytomine.host;
+		
 		// perform a synchronous get request to the Cytomine host server
 		String urls = cytomine.doGet("/api/abstractimage/" + abstrImgID + "/imageservers.json?imageinstance=" + imgInstID)
+		
 		// urls are a long string, so break them up in a JSONarray
 		org.codehaus.groovy.grails.web.json.JSONObject obj = new org.codehaus.groovy.grails.web.json.JSONObject(urls)
-		return obj
+		
+		def newUrls = obj.imageServersURLs.collect {
+			irisHost + "/image/tile" + it.substring(it.indexOf("?"), it.length())
+		}
+		obj.putAt("imageServersURLs", newUrls)
+		
+		return obj as JSON
 	}
+	
+	
+	
 }

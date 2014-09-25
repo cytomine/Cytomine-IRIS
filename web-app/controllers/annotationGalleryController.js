@@ -36,7 +36,8 @@ iris.controller("annotationGalleryCtrl", function($scope, $http, $filter,
 	  {name:'Sebastian'},
 	  {name:'Erika'},
 	  {name:'Patrick'},
-	  {name:'Samantha'} ];
+	  {name:'Samantha'} 
+	  ];
 	
 	// put all valid shortcuts for this page here
 	hotkeys.bindTo($scope)
@@ -48,8 +49,24 @@ iris.controller("annotationGalleryCtrl", function($scope, $http, $filter,
 		}
 	});
 	
-	
 	$scope.projectID = $routeParams["projectID"];
 
-	// TODO
+	// TODO implement drag and drop feature
+    $scope.droppedObjects = [];
+    $scope.onDropComplete=function(data,evt){
+        var index = $scope.droppedObjects.indexOf(data);
+        if (index == -1){
+        	$scope.droppedObjects.push(data);
+        }
+    };
+    $scope.onDragSuccess=function(data,evt){
+        var index = $scope.droppedObjects.indexOf(data);
+        if (index > -1) {
+            $scope.droppedObjects.splice(index, 1);
+        }
+    };
+    var inArray = function(array, obj) {
+        var index = array.indexOf(obj);
+    };
+	
 });
