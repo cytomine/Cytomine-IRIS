@@ -1,5 +1,5 @@
 var iris = angular.module("irisApp", [ "ngRoute", "ngResource", "ngTable",
-		"ui.bootstrap", "cfp.hotkeys", "treeControl", "ngDraggable" ]);
+		"ui.bootstrap", "cfp.hotkeys", "treeControl", "ngDraggable", "openlayers-directive" ]);
 
 // include application wide route-specific cheat sheets
 iris.config(function(hotkeysProvider) {
