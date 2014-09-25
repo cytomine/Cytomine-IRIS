@@ -88,7 +88,7 @@ iris.controller("termTreeCtrl", function($scope, $timeout, $log){
         //$log.debug(node.id+ (expanded?" expanded":" collapsed"));
         
         if (expanded){
-        	// reselect the children, which are selected
+        	// reselect previously selected children
         	$timeout(function(){ selectCheckboxes(checkedTerms, true);}, 50);  
         }
         // find selected children of the node id
@@ -102,12 +102,13 @@ iris.controller("termTreeCtrl", function($scope, $timeout, $log){
 	    $timeout(function(){ selectCheckboxes(checkedTerms, true);}, 50);  
 	};
 	$scope.expandAll();
+	$scope.showTree = true;
 	
 	// collapse all nodes, but do not deselect the check boxes
 	$scope.collapseAll = function(){
 		 $scope.expandedNodes = [];
 	}
-    
+	
     $scope.checkAllTerms = function(){
     	checkedTerms = [];
     	searchForSelectableNode($scope.treeData, checkedTerms);

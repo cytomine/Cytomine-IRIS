@@ -1,10 +1,10 @@
 <div ng-controller="termTreeCtrl" id="termTree-UI">
-	<h5>Ontology: {{treeData.name}}</h5>
-	<div
+	<h5>Ontology: {{treeData.name}}&nbsp;<a href="" ng-click="showTree=!showTree"><span class="label label-default" ng-show="showTree"  tooltip-placement="right" tooltip="hide the term tree">hide</span><span class="label label-default"  ng-show="!showTree" tooltip-placement="right" tooltip="show the term tree">show</span></a></h5>
+	<div ng-show="showTree"
 		treecontrol="" class="tree-light" tree-model="treeData" on-node-toggle="showToggle(node, expanded)"
 		options="treeOptions" on-selection="selectOrUnselectTerm(event)" expanded-nodes="expandedNodes">
 		<span id="{{ 'treeTermColorPanel-' + node.id }}" ng-hide="node.isFolder" style="background:{{node.color}}" class="colorbox">&nbsp;&nbsp;&nbsp;&nbsp;</span><input id="{{ 'chbxTerm-' + node.id }}" ng-hide="node.hideCheckbox" ng-class="{'colorbox-checkbox': !node.isFolder}" type="checkbox">
-		<span id="{{ 'treeTermLabel-' + node.id }}" tooltip-placement="right" tooltip="{{node.id}}">{{ node.name }}</span>
+		<span id="{{ 'treeTermLabel-' + node.id }}">{{ node.name }}</span>
 	</div>
 	<div class="row" style="margin-top:20px">
 		<div class="col-xs-12">
