@@ -328,8 +328,6 @@ angular.module("openlayers-directive").directive('layers', ["$log", "$q", "olDat
                         layers = angular.copy(defaults.layers);
                     }
                     
-                    console.log("resolving layers");
-
                     // Delete non existent layers from the map
                     for (name in olLayers) {
                         layer = olLayers[name];
@@ -353,6 +351,7 @@ angular.module("openlayers-directive").directive('layers', ["$log", "$q", "olDat
                             olLayer = createLayer(layers[name]);
                             if (isDefined(olLayer)) {
                                 olLayers[name] = olLayer;
+                                olLayer.set('name', name);
                                 map.addLayer(olLayer);
                             }
                         } else {
@@ -364,6 +363,7 @@ angular.module("openlayers-directive").directive('layers', ["$log", "$q", "olDat
                                     map.removeLayer(olLayer);
                                     delete olLayers[name];
                                     var l = createLayer(layer);
+                                    l.set('name', name);
                                     map.addLayer(l);
                                     olLayers[name] = l;
                                 }
