@@ -21,19 +21,9 @@ iris.controller("mapCtrl", function($scope, $log, $location, $http, olData, shar
 	    }),
 		stroke: new ol.style.Stroke({
 		  width: 3,
-	      color: '#ffffff'
+	      color: [0xff, 0xff, 0xff, 1.0]
 	    })
 	}); 
-	
-	var polygonStyle = new ol.style.Style({
-		    fill: new ol.style.Fill({
-		      color: [0xff, 0xff, 0xff, 0.5]
-		    }),
-		    stroke: new ol.style.Stroke({
-			  width: 5,
-		      color: '#ffffff'
-		    })
-		  });
 	
 	var url = currImg.olTileServerURL;"http://localhost:8080/image/tile?zoomify=/data/beta.cytomine.be/93518990/93518990/1389785459805/HE_32911_12_converted.tif/";
 
