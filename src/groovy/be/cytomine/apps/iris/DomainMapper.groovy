@@ -128,12 +128,22 @@ class DomainMapper {
 		// TODO map centroid and location object
 		try {
 			irisAnnotation.setCmLocation(cmAnnotation.getStr("location"))
-			irisAnnotation.setCmCentroidX(Double.valueOf(cmAnnotation.get("centroid").get("x")))
-			irisAnnotation.setCmCentroidY(Double.valueOf(cmAnnotation.get("centroid").get("y")))
 		} catch(Exception e){
 			e.printStackTrace()
 		}
-		
+			
+		// the centroid can be in a distinct object, or in extra coordinates
+		try {
+			if (cmAnnotation.get("centroid") == null){
+				irisAnnotation.setCmCentroidX(Double.valueOf(cmAnnotation.get("x")))
+				irisAnnotation.setCmCentroidX(Double.valueOf(cmAnnotation.get("y")))
+			} else {
+				irisAnnotation.setCmCentroidX(Double.valueOf(cmAnnotation.get("centroid").get("x")))
+				irisAnnotation.setCmCentroidY(Double.valueOf(cmAnnotation.get("centroid").get("y")))
+			}			
+		} catch(Exception e){
+		e.printStackTrace()
+	}
 		return irisAnnotation
 	}
 }
