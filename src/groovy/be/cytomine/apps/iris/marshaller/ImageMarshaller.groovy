@@ -20,6 +20,7 @@ class ImageMarshaller implements IRISMarshaller{
 			img['prefs'] = it.prefs
 			img['project'] = (it.project==null?null:it.project.id)
 			img['goToURL'] = it.goToURL
+			img['olTileServerURL'] = it.olTileServerURL
 			img['labeledAnnotations'] = it.labeledAnnotations
 			img['numberOfAnnotations'] = it.numberOfAnnotations
 			img['userProgress'] = it.userProgress

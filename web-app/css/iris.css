@@ -36,14 +36,9 @@
 	margin: 5px 0px;
 }
 
-div.olMap {
-	/*border: 1px solid black;*/
-	
-}
-
-#map {
-	width: 100%;
-	height: 300px;
+.ol-viewport {
+	background: url('../images/textured_paper.jpeg') repeat;
+	cursor: move;
 }
 
 .container-100 {

@@ -97,7 +97,7 @@ class CytomineController {
 		String[] zoomify_params = zoomify_string.split("/")
 		
 		if (zoomify_params.length < 9){
-			throw new IllegalArgumentException("Zoomify URL is not specified in the request URL.")
+			throw new IllegalArgumentException("Zoomify URL is malformed in the request URL.")
 		}
 		
 		int tileGroup = Integer.valueOf(zoomify_params[7].substring("TileGroup".length()))
@@ -108,8 +108,6 @@ class CytomineController {
 		int tileX = Integer.valueOf(positions[1])
 		int tileY = Integer.valueOf(positions[2])
 		
-		println tileGroup + " --> " + positions
-
 		String path = "&tileGroup={tileGroup}&z={z}&x={x}&y={y}&channels=0&layer=0&timeframe=0&mimeType=image/tiff"
 		path = path.replace("{tileGroup}", tileGroup+"")
 		path = path.replace("{z}", tileZ+"")
@@ -125,6 +123,8 @@ class CytomineController {
 		
 		String imageURL = cmHost + "/image/tile?zoomify=" + dataString + path
 		
+		log.debug(imageURL)
+		
 		// get the image as byte[]
 		HttpClient client = new DefaultHttpClient()
 		HttpGet req = new HttpGet(imageURL)
@@ -139,6 +139,9 @@ class CytomineController {
 		int contentLength = entity.getContentLength().toInteger()
 		response.setContentLength(contentLength)
 		
+		response.setHeader("Access-Control-Allow-Methods", "GET")
+		response.setHeader("Access-Control-Allow-Origin", "*")
+				
 		// render image back to client
 		response.outputStream.leftShift(is)
 	}

@@ -237,6 +237,7 @@ class AnnotationController {
 		Map<String,String> filters = new HashMap<String,String>()
 		filters.put("project", String.valueOf(cmProjectID))
 		filters.put("image", String.valueOf(cmImageID))
+		filters.put("showBasic", "true") // retrieve a light version of the annotation list
 		
 		AnnotationCollection annotations = cytomine.getAnnotations(filters)
 		// previous call equals cytomine.doGet("/api/annotation.json?project=93519082&image=94255021")
@@ -258,6 +259,7 @@ class AnnotationController {
 			idx = annotations.list.indexOf( annotations.list.find { ann -> ann.id == cmAnnID } )
 		}
 		def curr = annotations.get(idx)
+		curr = cytomine.getAnnotation(curr.getId())
 		def currIrisAnn = dm.mapAnnotation(curr, null)
 		currIrisAnn = annotationService.resolveTerms(ontologyID, terms, user, curr, currIrisAnn)
 //		TODO save the annotation 
@@ -269,6 +271,7 @@ class AnnotationController {
 		def predIrisAnn = null
 		try {
 			pred = annotations.get(idx-1)
+			pred = cytomine.getAnnotation(pred.getId()) // TODO get the location and centroid from the filtered annotations
 			predIrisAnn = dm.mapAnnotation(pred, null)
 			predIrisAnn = annotationService.resolveTerms(ontologyID, terms, user, pred, predIrisAnn)
 			//		TODO save the annotation
@@ -283,6 +286,7 @@ class AnnotationController {
 		def succIrisAnn = null
 		try {
 			succ = annotations.get(idx+1)
+			succ = cytomine.getAnnotation(succ.getId())
 			succIrisAnn = dm.mapAnnotation(succ, null)
 			succIrisAnn = annotationService.resolveTerms(ontologyID, terms, user, succ, succIrisAnn)
 			//		TODO save the annotation

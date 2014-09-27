@@ -19,6 +19,7 @@ class ImageService {
 	 */
 	def grailsApplication
 	def sessionService
+	def imageService
 
 	/**
 	 * Gets a single image from Cytomine.
@@ -37,6 +38,7 @@ class ImageService {
 		
 		//for each image, add a goToURL property containing the full URL to open the image in the core Cytomine instance
 		irisImage.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImage.getId() + "-")
+		irisImage.setOlTileServerURL(imageService.getImageServerURL(cytomine, cmImage.get("baseImage"), cmImage.getId()));
 		
 		// retrieve the user's progress on each image and return it in the object
 		JSONObject annInfo = new Utils().getUserProgress(cytomine, cmProjectID, cmImage.getId(), user.getCmID())
@@ -47,9 +49,6 @@ class ImageService {
 		
 		// set the Cytomine image as "cytomine" property in the irisImage
 		def imageJSON = sessionService.injectCytomineImageInstance(cytomine, irisImage, cmImage, p.getCmBlindMode())
-		
-		// TODO optionally inject the image server urls
-		//imageJSON.putAt("imageServersURLs", getImageServerURLs(cytomine, (long) cmImage.get("baseImage"), cmImageInstanceID).getAt("imageServersURLs"))
 		
 		return imageJSON
 	}
@@ -124,6 +123,7 @@ class ImageService {
 			
 			//for each image, add a goToURL property containing the full URL to open the image in the core Cytomine instance
 			irisImage.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImage.getId() + "-")
+			irisImage.setOlTileServerURL(imageService.getImageServerURL(cytomine, cmImage.get("baseImage"), cmImage.getId()));
 			
 			// retrieve the user's progress on each image and return it in the object
 			JSONObject annInfo = new Utils().getUserProgress(cytomine, cmProjectID, cmImage.getId(), userID)
@@ -140,6 +140,12 @@ class ImageService {
 		}
 
 		return irisImageList
+	}
+	
+	def getImageServerURL(Cytomine cytomine, long abstrImgID, long imgInstID){
+		def urls = imageService.getImageServerURLs(cytomine, abstrImgID, imgInstID)
+		def url = new org.codehaus.groovy.grails.web.json.JSONObject(urls.toString()).getAt("imageServersURLs")[0]
+		return url.toString()
 	}
 	
 	/**

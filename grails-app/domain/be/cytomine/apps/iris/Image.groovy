@@ -8,6 +8,7 @@ class Image implements Comparable<Image>, Updateable{
 	Date lastUpdated = new Date()
 
     static constraints = {
+		olTileServerURL size:0..1000
     }
 
 	// class members	
@@ -15,6 +16,7 @@ class Image implements Comparable<Image>, Updateable{
 	Long cmID = 0L
 	String originalFilename = "defaultImage"
 	String goToURL = null
+	String olTileServerURL = null
 	
 	Long numberOfAnnotations = 0L
 	Long labeledAnnotations = 0L
@@ -28,7 +30,6 @@ class Image implements Comparable<Image>, Updateable{
 	// in order to get deleted, when the parent project is deleted,
 	// we need to declare, that the image belongs to its project
 	static belongsTo = [project:Project]
-	
 	
 	// an image can have preferences
 	Map<String, String> prefs = [:]

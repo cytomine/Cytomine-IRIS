@@ -20,6 +20,7 @@ import be.cytomine.client.CytomineException;
 class SessionService {
 	
 	def projectService
+	def imageService
 	def grailsApplication
 
 	@Transactional(readOnly = true)
@@ -238,7 +239,7 @@ class SessionService {
 		if (blindMode){
 			imageJSON.cytomine.originalFilename = "[BLIND]" + cmImage.getId()
 			imageJSON.cytomine.path = null
-			imageJSON.cytomine.fullPath = null
+			//imageJSON.cytomine.fullPath = null this contains the image path for the tiles
 			imageJSON.cytomine.extension = null
 			imageJSON.cytomine.filename = null
 			imageJSON.cytomine.mime = null
@@ -332,6 +333,7 @@ class SessionService {
 		imageForUpdate.updateLastActivity()
 		// set the "goToURL"
 		imageForUpdate.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImageID + "-")
+		imageForUpdate.setOlTileServerURL(imageService.getImageServerURL(cytomine, cmImage.get("baseImage"), cmImage.getId()));
 		
 		// save the image in order to immediately reflect the ID
 		imageForUpdate.save(failOnError:true, flush:true)

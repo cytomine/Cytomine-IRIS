@@ -1,5 +1,6 @@
-<!-- This map shows the current annotation in an openLayers map -->
-<div class="olMap">
-	<openlayers defaults="defaults" center="center" id="map"></openlayers>
-</div>
-{{ center | json }}
+<!-- This map shows the current annotation in an OpenLayers map -->
+<openlayers defaults="defaults" layers="layers" center="center" width="400px" height="400px"></openlayers>
+<div class="btn btn-primary" ng-click="addAnnotation()">add annotation layer</div> <div class="btn btn-primary" ng-click="moveToCenter()">center annotation</div>
+<p class="well">
+	{{ center | json }}
+</p>

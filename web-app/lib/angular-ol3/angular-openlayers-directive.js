@@ -51,14 +51,15 @@ angular.module("openlayers-directive", []).directive('openlayers', ["$log", "$q"
 
             var controls = ol.control.defaults(defaults.controls);
             var interactions = ol.interaction.defaults(defaults.interactions);
-
+            
             // Create the Openlayers Map Object with the options
             var map = new ol.Map({
                 target: element[0],
                 controls: controls,
                 interactions: interactions
             });
-
+            
+            // FIRST PRIORITY have attributes in the HTML element
             // If no layer is defined, set the default tileLayer
             if (!isDefined(attrs.layers)) {
                 var layer = createLayer(defaults.layers.main);
@@ -69,7 +70,7 @@ angular.module("openlayers-directive", []).directive('openlayers', ["$log", "$q"
             if (!isDefined(attrs.events)) {
                 setEvents(defaults.events, map, scope);
             }
-
+            
             if (!isDefined(attrs.center)) {
                 map.setView(new ol.View({
                 	center: [ defaults.center.lon, defaults.center.lat ],
@@ -77,8 +78,8 @@ angular.module("openlayers-directive", []).directive('openlayers', ["$log", "$q"
                     maxZoom: defaults.center.maxZoom,
                     minZoom: defaults.center.minZoom
                 }));
-            }
-
+            } 
+            
             // Resolve the map object to the promises
             olData.setMap(map, attrs.id);
             _olMap.resolve(map);
@@ -125,48 +126,71 @@ angular.module("openlayers-directive").directive('center', ["$log", "$location",
                     center.zoom = 1;
                 }
 
-                var view = new ol.View({
-                    center: ol.proj.transform([ center.lon, center.lat ], 'EPSG:4326', 'EPSG:3857'),
-                    zoom: center.zoom,
-                    maxZoom: defaults.maxZoom,
-                    minZoom: defaults.minZoom
-                });
+                if (isDefined(center.projection) 
+                		&& isDefined(center.projection.getCode())
+                		&& center.projection.getCode() === 'Zoomify'){
+                		
+                		console.log("setting zoomify view")
+                		var view = new ol.View({
+                			projection: center.projection,
+                			center: [ center.lon, center.lat ],
+                			zoom: center.zoom,
+                			maxZoom: defaults.maxZoom,
+                			minZoom: defaults.minZoom
+                		});
+                } else {
+                	var view = new ol.View({
+                		center: ol.proj.transform([ center.lon, center.lat ], 'EPSG:4326', 'EPSG:3857'),
+                		zoom: center.zoom,
+                		maxZoom: defaults.maxZoom,
+                		minZoom: defaults.minZoom
+                	});
+                }
+                               
                 map.setView(view);
 
                 var centerUrlHash;
                 if (center.centerUrlHash === true) {
-                    var extractCenterFromUrl = function() {
-                        var search = $location.search();
-                        var centerParam;
-                        if (isDefined(search.c)) {
-                            var cParam = search.c.split(":");
-                            if (cParam.length === 3) {
-                                centerParam = {
-                                    lat: parseFloat(cParam[0]),
-                                    lon: parseFloat(cParam[1]),
-                                    zoom: parseInt(cParam[2], 10)
-                                };
-                            }
-                        }
-                        return centerParam;
-                    };
-                    centerUrlHash = extractCenterFromUrl();
-
-                    olScope.$on('$locationChangeSuccess', function(event) {
-                        var scope = event.currentScope;
-                        var urlCenter = extractCenterFromUrl();
-                        if (isDefined(urlCenter) && !isSameCenterOnMap(urlCenter, map)) {
-                            scope.center = {
-                                lat: urlCenter.lat,
-                                lon: urlCenter.lon,
-                                zoom: urlCenter.zoom
-                            };
-                        }
-                    });
+                	
+                	if (isDefined(center.projection) 
+                    		&& isDefined(center.projection.getCode())
+                    		&& center.projection.getCode() === 'Zoomify'){
+                		$log.warn("centerUrlHash is not yet supported for 'Zoomify' projections");
+                	} else {
+	                    var extractCenterFromUrl = function() {
+	                        var search = $location.search();
+	                        var centerParam;
+	                        if (isDefined(search.c)) {
+	                            var cParam = search.c.split(":");
+	                            if (cParam.length === 3) {
+	                                centerParam = {
+	                                    lat: parseFloat(cParam[0]),
+	                                    lon: parseFloat(cParam[1]),
+	                                    zoom: parseInt(cParam[2], 10)
+	                                };
+	                            }
+	                        }
+	                        return centerParam;
+	                    };
+	                    centerUrlHash = extractCenterFromUrl();
+	
+	                    olScope.$on('$locationChangeSuccess', function(event) {
+	                    	var scope = event.currentScope;
+	                        var urlCenter = extractCenterFromUrl();
+	                        if (isDefined(urlCenter) && !isSameCenterOnMap(urlCenter, map)) {
+	                            scope.center = {
+	                                lat: urlCenter.lat,
+	                                lon: urlCenter.lon,
+	                                zoom: urlCenter.zoom
+	                            };
+	                        }
+	                    });
+                	}
                 }
 
                 var geolocation;
                 olScope.$watch("center", function(center) {
+                	//console.log("$watch(center)");
                     if (center.autodiscover) {
                         if (!geolocation) {
                             geolocation = new ol.Geolocation({
@@ -193,48 +217,77 @@ angular.module("openlayers-directive").directive('center', ["$log", "$location",
                     if (!isValidCenter(center)) {
                         $log.warn("[AngularJS - Openlayers] invalid 'center'");
                         center = defaults.center;
-                    }
+                    } 
 
                     if (view.getCenter()) {
-                        var actualCenter = ol.proj.transform(view.getCenter(),
+                    	var proj_code = center.projection.getCode();
+                    	if (proj_code === 'Zoomify'){ 
+                    		$log.debug("Projection code: '" + proj_code + "', skipping transformation of center.");
+                    		view.setCenter([ center.lon, center.lat ]);
+                    	}else{
+                    		$log.debug("Projection code: '" + proj_code + "', transforming center: 'EPSG:3857' -> 'EPSG:4326'");
+                    		var actualCenter = ol.proj.transform(view.getCenter(),
                                                 'EPSG:3857',
                                                 'EPSG:4326');
-
-                        if (!equals({ lat: actualCenter[1], lon: actualCenter[1] }, { lat: center.lat, lon: center.lon })) {
-                            var proj = ol.proj.transform([ center.lon, center.lat ], 'EPSG:4326', 'EPSG:3857');
-                            view.setCenter(proj);
-                        }
+                    		if (!equals({ lat: actualCenter[1], lon: actualCenter[1] }, { lat: center.lat, lon: center.lon })) {
+                    			var proj = ol.proj.transform([ center.lon, center.lat ], 'EPSG:4326', 'EPSG:3857');
+                    			view.setCenter(proj);
+                    		}
+                    	}
                     }
 
                     if (view.getZoom() !== center.zoom) {
+                    	$log.debug("Setting zoom from '" + view.getZoom() + "' to '" + center.zoom + "'.")
                         view.setZoom(center.zoom);
                     }
                 }, true);
 
                 view.on('change:resolution', function() {
                     safeApply(olScope, function(scope) {
+                    	//console.log("change:resolution");
                         scope.center.zoom = view.getZoom();
 
                         // Calculate the bounds if needed
                         if (isArray(scope.center.bounds)) {
                             var extent = view.calculateExtent(map.getSize());
-                            scope.center.bounds = ol.proj.transform(extent, 'EPSG:3857', 'EPSG:4326');
+                            var proj_code = view.getProjection().getCode();
+                            if (proj_code !== 'Zoomify'){
+                            	$log.debug("Transforming center bounds: 'EPSG:3857' -> 'EPSG:4326'.");
+                            	scope.center.bounds = ol.proj.transform(extent, 'EPSG:3857', 'EPSG:4326');
+                            } else {
+                            	scope.center.bounds = extent;
+                            }
                         }
                     });
                 });
 
                 view.on("change:center", function() {
                     safeApply(olScope, function(scope) {
-                        var center = map.getView().getCenter();
-                        var proj = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
+                    	//console.log("change:center");
+                    	
+                    	var center = map.getView().getCenter();
+                    	var projection = view.getProjection();
+                    	var proj_center = center;
+                    	
+                    	// do not transform the coordinates if Zoomify projection
+                    	if (projection.getCode() !== 'Zoomify'){
+                    		$log.debug("Transforming center: 'EPSG:3857' -> 'EPSG:4326'.");
+                    		proj_center = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
+                    	}
+                        
                         if (scope.center) {
-                            scope.center.lat = proj[1];
-                            scope.center.lon = proj[0];
+                            scope.center.lat = proj_center[1];
+                            scope.center.lon = proj_center[0];
 
                             // Calculate the bounds if needed
                             if (isArray(scope.center.bounds)) {
                                 var extent = view.calculateExtent(map.getSize());
-                                scope.center.bounds = ol.proj.transform(extent, 'EPSG:3857', 'EPSG:4326');
+                                if (projection.getCode() !== 'Zoomify'){
+                                	$log.debug("Transforming center bounds: 'EPSG:3857' -> 'EPSG:4326'.");
+                                	scope.center.bounds = ol.proj.transform(extent, 'EPSG:3857', 'EPSG:4326');
+                                } else {
+                                	scope.center.bounds = extent;
+                                }
                             }
                         }
                     });
@@ -274,6 +327,8 @@ angular.module("openlayers-directive").directive('layers', ["$log", "$q", "olDat
                         $log.warn("[AngularJS - OpenLayers] At least one layer has to be defined.");
                         layers = angular.copy(defaults.layers);
                     }
+                    
+                    console.log("resolving layers");
 
                     // Delete non existent layers from the map
                     for (name in olLayers) {
@@ -323,7 +378,6 @@ angular.module("openlayers-directive").directive('layers', ["$log", "$q", "olDat
                 // We can resolve the layer promises
                 _olLayers.resolve(olLayers);
                 olData.setLayers(olLayers, attrs.id);
-
             });
         }
     };
@@ -450,6 +504,10 @@ angular.module("openlayers-directive").factory('olHelpers', ["$q", "$log", funct
                     return 'Vector';
                 case 'TopoJSON':
                     return 'Vector';
+                case 'Vector':
+                    return 'Vector';
+                case 'Zoomify':
+                    return 'Zoomify';
                 default:
                   return 'Tile';
             }
@@ -542,28 +600,23 @@ angular.module("openlayers-directive").factory('olHelpers', ["$q", "$log", funct
             case 'TileJSON':
                 oSource = new ol.source.TileJSON({
                     url: source.url,
-                    crossOrigin: 'anonymous'
+                    crossOrigin: (source.crossOrigin?'anonymous':source.crossOrigin+'')
                 });
 
                 break;
                 
             case 'Zoomify':
-            	// Maps always need a projection, but Zoomify layers are not geo-referenced, and
-            	// are only measured in pixels.  So, we create a fake projection that the map
-            	// can use to properly display the layer.
-            	var proj = new ol.proj.Projection({
-            	  code: 'ZOOMIFY',
-            	  units: 'pixels',
-            	  extent: [0, 0, source.width, source.height]
-            	});
-
             	oSource = new ol.source.Zoomify({
             	  url: source.url,
             	  size: [source.width, source.height],
             	  crossOrigin: (source.crossOrigin?'anonymous':source.crossOrigin+'')
             	});
-
-                break;
+            	
+                break; 
+            
+            case 'Vector':
+            	oSource = new ol.source.Vector({});
+            	break;
         }
 
         return oSource;
@@ -753,7 +806,7 @@ angular.module("openlayers-directive").factory('olMapDefaults', ["$q", "olHelper
             },
             events: {
                 map: [ 'click' ]
-            }
+            },
         };
     };
 

@@ -8,6 +8,7 @@ class Annotation {
 	Date lastUpdated = new Date()
 
     static constraints = {
+		cmLocation size:0..5000 
     }
 	
 	// the Cytomine ID of this annotation
@@ -24,6 +25,9 @@ class Annotation {
 	String cmCropURL = null
 	String drawIncreasedAreaURL = null
 	String cmSmallCropURL = null
+	String cmLocation = null
+	Double cmCentroidX = null
+	Double cmCentroidY = null
 	
 	// the assigned Cytomine term ID by the user // TODO implement multiple terms
 	Long cmTermID = 0L

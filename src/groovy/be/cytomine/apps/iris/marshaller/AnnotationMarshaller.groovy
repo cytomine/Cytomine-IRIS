@@ -26,6 +26,11 @@ class AnnotationMarshaller implements IRISMarshaller {
 			ann['cmUserID'] = it.cmUserID
 			ann['prefs'] = it.prefs
 			ann['image'] = (it.image==null?null:it.image.id)
+			ann['location'] = it.cmLocation
+			def centroid = [:]
+			centroid['x'] = it.cmCentroidX
+			centroid['y'] = it.cmCentroidY
+			ann['centroid'] = centroid
 			
 			// TODO marshal the image server URLs
 			return ann
