@@ -1,9 +1,13 @@
 <!-- This map shows the current annotation in an OpenLayers map -->
-<div>
-	<openlayers oncontextmenu="return false;" defaults="defaults" layers="layers" center="center" width="400px" height="400px"></openlayers>
+<div class="map">
+	<openlayers oncontextmenu="return false;" defaults="defaults" layers="layers" center="center" width="100%" height="400px"></openlayers>
 </div>
-<div class="btn btn-sm btn-primary" ng-click="moveToCenter()">reset annotation view</div>
+<p>
+<div class="btn btn-xs btn-primary" ng-click="resetView(true)">Reset View</div>
+<div class="btn btn-xs btn-primary" ng-click="panToCenter()">Pan To Annotation</div>
+</p>
 <div ng-show="debug">
+	
 	<p class="well">
 		{{ center | json }}
 	</p>

@@ -1,10 +1,25 @@
-var iris = angular.module("irisApp", [ "ngRoute", "ngResource", "ngTable",
-		"ui.bootstrap", "cfp.hotkeys", "treeControl", "ngDraggable", "openlayers-directive" ]);
+var iris = angular.module("irisApp", [ "ngRoute", "ngResource", "ngTable", 
+                                       "ui.bootstrap", "cfp.hotkeys", "treeControl", 
+                                       "ngDraggable", "openlayers-directive" ]);
 
 // include application wide route-specific cheat sheets
 iris.config(function(hotkeysProvider) {
     hotkeysProvider.includeCheatSheet = true;
   });
+
+iris.run(['$route', '$rootScope', '$location', function ($route, $rootScope, $location) {
+    var original = $location.path;
+    $location.path = function (path, reload) {
+        if (reload === false) {
+            var lastRoute = $route.current;
+            var un = $rootScope.$on('$locationChangeSuccess', function () {
+                $route.current = lastRoute;
+                un();
+            });
+        }
+        return original.apply($location, [path]);
+    };
+}])
 
 iris.config(function($routeProvider, $locationProvider) {
 	$routeProvider.when("/", {

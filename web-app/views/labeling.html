@@ -31,13 +31,16 @@
 				</div>
 				
 <!-- 			TODO add the viewPanel  -->
-				<img class="img-thumbnail"
+				<div id="viewPanel">
+					<ng-include src="'templates/html/viewPanel.html'" ng-controller="mapCtrl"></ng-include>
+				</div>
+				<!-- <img class="img-thumbnail"
 				src="{{annotation.drawIncreasedAreaURL}}"
 				width="400px"
 				height="400px"
-				alt="" /> 
+				alt="" />  -->
 			</div>
-			<div class="row" style="margin-top:10px;">
+			<div class="row">
 				<a href="{{annotation.cmImageURL}}" class="btn btn-sm btn-primary" target="_blank">View in Cytomine</a>
 			</div>
 		</div>

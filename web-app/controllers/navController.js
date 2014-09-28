@@ -1,9 +1,7 @@
 var iris = angular.module("irisApp");
 
-iris.constant("labelUrl", "/project/{projectID}/image/{imageID}/label/");
-
-iris.controller("navCtrl", function($scope, $location, $log, sharedService,
-		projectService, helpService, sessionService, imageService, labelingService, labelUrl) {
+iris.controller("navCtrl", function($scope, $window, $route, $location, $log, sharedService,
+		projectService, helpService, sessionService, imageService) {
 	console.log("navCtrl");
 
 	// navigation active tab controller
@@ -33,11 +31,8 @@ iris.controller("navCtrl", function($scope, $location, $log, sharedService,
 		// then get the current project ID and image ID
 		var pID = sessionService.getCurrentProject().cmID;
 		var iID = sessionService.getCurrentImage().cmID;
-		//var annID = 136334701;// labelingService.getNextAnnotation().id;
-		var url = labelUrl.replace("{projectID}", pID)
-				.replace("{imageID}", iID);
-
-		$location.url(url)
+	
+		sharedService.moveToLabelingPage(pID, iID);
 	};
 	
 	// navigate to the current project's images

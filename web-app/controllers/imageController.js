@@ -64,7 +64,7 @@ iris.controller(
 			$scope.startLabeling = function(image) {
 				sessionService.touchImage($scope.projectID, image.id, function(data){
 					$log.debug("Successfully touched image " + image.id);
-					$location.url("/project/"+$scope.projectID+"/image/"+image.id+"/label");
+					sharedService.moveToLabelingPage($scope.projectID, image.id);
 				}, function(data,status){
 					sharedService.addAlert("Cannot update image. Error " + status + ".", "danger");
 				})

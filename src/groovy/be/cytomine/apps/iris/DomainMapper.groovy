@@ -125,7 +125,7 @@ class DomainMapper {
 							+ "/crop.png?increaseArea=8&maxSize=256&draw=true")
 		irisAnnotation.setCmSmallCropURL(cmAnnotation.getStr("smallCropURL"))
 		
-		// TODO map centroid and location object
+		// map centroid and location object
 		try {
 			irisAnnotation.setCmLocation(cmAnnotation.getStr("location"))
 		} catch(Exception e){
@@ -136,7 +136,7 @@ class DomainMapper {
 		try {
 			if (cmAnnotation.get("centroid") == null){
 				irisAnnotation.setCmCentroidX(Double.valueOf(cmAnnotation.get("x")))
-				irisAnnotation.setCmCentroidX(Double.valueOf(cmAnnotation.get("y")))
+				irisAnnotation.setCmCentroidY(Double.valueOf(cmAnnotation.get("y")))
 			} else {
 				irisAnnotation.setCmCentroidX(Double.valueOf(cmAnnotation.get("centroid").get("x")))
 				irisAnnotation.setCmCentroidY(Double.valueOf(cmAnnotation.get("centroid").get("y")))

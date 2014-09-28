@@ -49,25 +49,13 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 		combo : 'n',
 		description : 'Proceed to next annotation',
 		callback : function() {
-			// TODO
-//			console.log("move to next annotation")
 			$scope.moveToNextAnnotation();
 		}
 	}).add({
 		combo : 'p',
 		description : 'Go back to the previous annotation',
 		callback : function() {
-			// TODO
-//			console.log("go back to the previous annotation")
 			$scope.moveToPreviousAnnotation();
-		}
-	}).add({
-		// TODO remove
-		combo : 'd',
-		description : 'print debug info on the project',
-		callback : function() {
-			// TODO
-
 		}
 	});
 

@@ -72,6 +72,7 @@ angular.module("openlayers-directive", []).directive('openlayers', ["$log", "$q"
             }
             
             if (!isDefined(attrs.center)) {
+            	console.log("setting VIEW!!")
                 map.setView(new ol.View({
                 	center: [ defaults.center.lon, defaults.center.lat ],
                     zoom: defaults.center.zoom,
@@ -110,9 +111,9 @@ angular.module("openlayers-directive").directive('center', ["$log", "$location",
 
                 if (attrs.center.search("-") !== -1) {
                     $log.error('[AngularJS - Openlayers] The "center" variable can\'t use a "-" on his key name: "' + attrs.center + '".');
-                    map.setView(new ol.View({
-                        center: ol.proj.transform([ defaults.center.lon, defaults.center.lat ], 'EPSG:4326', 'EPSG:3857')
-                    }));
+//                    map.setView(new ol.View({
+//                        center: ol.proj.transform([ defaults.center.lon, defaults.center.lat ], 'EPSG:4326', 'EPSG:3857')
+//                    }));
 
                     return;
                 }
@@ -139,12 +140,13 @@ angular.module("openlayers-directive").directive('center', ["$log", "$location",
                 			minZoom: defaults.minZoom
                 		});
                 } else {
-                	var view = new ol.View({
-                		center: ol.proj.transform([ center.lon, center.lat ], 'EPSG:4326', 'EPSG:3857'),
-                		zoom: center.zoom,
-                		maxZoom: defaults.maxZoom,
-                		minZoom: defaults.minZoom
-                	});
+                	console.log("setting EPSG:3857 view")
+//                	var view = new ol.View({
+//                		center: ol.proj.transform([ center.lon, center.lat ], 'EPSG:4326', 'EPSG:3857'),
+//                		zoom: center.zoom,
+//                		maxZoom: defaults.maxZoom,
+//                		minZoom: defaults.minZoom
+//                	});
                 }
                                
                 map.setView(view);
@@ -226,13 +228,13 @@ angular.module("openlayers-directive").directive('center', ["$log", "$location",
                     		view.setCenter([ center.lon, center.lat ]);
                     	}else{
                     		$log.debug("Projection code: '" + proj_code + "', transforming center: 'EPSG:3857' -> 'EPSG:4326'");
-                    		var actualCenter = ol.proj.transform(view.getCenter(),
-                                                'EPSG:3857',
-                                                'EPSG:4326');
-                    		if (!equals({ lat: actualCenter[1], lon: actualCenter[1] }, { lat: center.lat, lon: center.lon })) {
-                    			var proj = ol.proj.transform([ center.lon, center.lat ], 'EPSG:4326', 'EPSG:3857');
-                    			view.setCenter(proj);
-                    		}
+//                    		var actualCenter = ol.proj.transform(view.getCenter(),
+//                                                'EPSG:3857',
+//                                                'EPSG:4326');
+//                    		if (!equals({ lat: actualCenter[1], lon: actualCenter[1] }, { lat: center.lat, lon: center.lon })) {
+//                    			var proj = ol.proj.transform([ center.lon, center.lat ], 'EPSG:4326', 'EPSG:3857');
+//                    			view.setCenter(proj);
+//                    		}
                     	}
                     }
 
@@ -253,7 +255,7 @@ angular.module("openlayers-directive").directive('center', ["$log", "$location",
                             var proj_code = view.getProjection().getCode();
                             if (proj_code !== 'Zoomify'){
                             	$log.debug("Transforming center bounds: 'EPSG:3857' -> 'EPSG:4326'.");
-                            	scope.center.bounds = ol.proj.transform(extent, 'EPSG:3857', 'EPSG:4326');
+//                            	scope.center.bounds = ol.proj.transform(extent, 'EPSG:3857', 'EPSG:4326');
                             } else {
                             	scope.center.bounds = extent;
                             }
@@ -272,7 +274,7 @@ angular.module("openlayers-directive").directive('center', ["$log", "$location",
                     	// do not transform the coordinates if Zoomify projection
                     	if (projection.getCode() !== 'Zoomify'){
                     		$log.debug("Transforming center: 'EPSG:3857' -> 'EPSG:4326'.");
-                    		proj_center = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
+//                    		proj_center = ol.proj.transform(center, 'EPSG:3857', 'EPSG:4326');
                     	}
                         
                         if (scope.center) {
@@ -284,7 +286,7 @@ angular.module("openlayers-directive").directive('center', ["$log", "$location",
                                 var extent = view.calculateExtent(map.getSize());
                                 if (projection.getCode() !== 'Zoomify'){
                                 	$log.debug("Transforming center bounds: 'EPSG:3857' -> 'EPSG:4326'.");
-                                	scope.center.bounds = ol.proj.transform(extent, 'EPSG:3857', 'EPSG:4326');
+//                                	scope.center.bounds = ol.proj.transform(extent, 'EPSG:3857', 'EPSG:4326');
                                 } else {
                                 	scope.center.bounds = extent;
                                 }

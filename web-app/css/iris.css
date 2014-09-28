@@ -36,10 +36,14 @@
 	margin: 5px 0px;
 }
 
+/*
+Map controls.
+*/
 .ol-viewport {
 	background: url('../images/textured_paper.jpeg') repeat;
 	cursor: move;
 }
+/*map controls end*/
 
 .container-100 {
 	width: 100% !important;

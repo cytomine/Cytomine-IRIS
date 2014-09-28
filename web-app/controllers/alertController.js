@@ -19,10 +19,10 @@ iris.controller("alertCtrl", function($rootScope, $scope, $timeout) {
 		}
 		$scope.alerts.push(newAlert);
 		
-		// let the alert vanish after 7 seconds
+		// let the alert vanish after x seconds
 		$timeout(function(){
 	        $scope.closeAlert($scope.alerts.indexOf(newAlert))
-		}, 4000)
+		}, 2000)
 	});
 
 	// close the alert manually using the 'x' in the UI element

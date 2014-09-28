@@ -239,6 +239,8 @@ class AnnotationController {
 		filters.put("image", String.valueOf(cmImageID))
 		filters.put("showWKT", "true") 
 		filters.put("showGIS", "true")
+		filters.put("showMeta", "true")
+		filters.put("showTerm", "true")
 		
 		AnnotationCollection annotations = cytomine.getAnnotations(filters)
 		// previous call equals cytomine.doGet("/api/annotation.json?project=93519082&image=94255021")
