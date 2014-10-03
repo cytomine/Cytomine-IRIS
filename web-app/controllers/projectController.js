@@ -169,7 +169,7 @@ iris.controller("projectCtrl", function($rootScope, $scope, $http, $filter, $loc
 	};
 
 	// controller for the project descriptor modal dialog
-	var projectDescriptorCtrl = function($scope, $modalInstance, data,
+	var projectDescriptorCtrl = function($scope, $modalInstance, $sce, data,
 			project, error) {
 
 		$scope.description = data;

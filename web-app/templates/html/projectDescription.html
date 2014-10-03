@@ -6,9 +6,9 @@
         
 	<div class="modal-body">
 		<div ng-hide="error.show">
-			{{ description }}
+			<p ng-bind-html="description"></p>	
 		</div>
-		<div ng-show="error.show" class="alert alert-danger" >
+		<div ng-show="error.show" class="alert alert-danger">
        		Error: {{error.message}} ({{error.status}}).
     	</div>
     </div>
