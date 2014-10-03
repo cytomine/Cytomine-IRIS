@@ -4,23 +4,23 @@ iris.controller("imageTreeCtrl", function($scope, $timeout, $log, sessionService
 	
 	console.log("imageTreeCtrl");
 	
-	var demoTree = [{"class":"be.cytomine.image.AbstractImage","id":94255014,"created":"1389786341459","updated":"1389786344467","deleted":null,"filename":"93518990/1389785459805/HE_32911_12_converted.tif","originalFilename":"HE_32911_12.svs","scanner":null,"sample":94255013,"path":"93518990/1389785459805/HE_32911_12_converted.tif","mime":"tiff","width":56640,"height":39163,"depth":8,"resolution":0.65,"magnification":40,"thumb":"http://beta.cytomine.be/api/abstractimage/94255014/thumb.png?maxSize=512","preview":"http://beta.cytomine.be/api/abstractimage/94255014/thumb.png?maxSize=1024","fullPath":"/data/beta.cytomine.be/93518990/93518990/1389785459805/HE_32911_12_converted.tif","macroURL":"http://beta.cytomine.be/api/abstractimage/94255014/associated/macro.png?maxWidth=512"},{"class":"be.cytomine.image.AbstractImage","id":98878438,"created":"1391527195500","updated":"1391527199160","deleted":null,"filename":"93518990/1391527097255/HE_397_2013.svs","originalFilename":"HE_397_2013.svs","scanner":null,"sample":98878437,"path":"93518990/1391527097255/HE_397_2013.svs","mime":"svs","width":39983,"height":30114,"depth":8,"resolution":0.24539999663829803,"magnification":40,"thumb":"http://beta.cytomine.be/api/abstractimage/98878438/thumb.png?maxSize=512","preview":"http://beta.cytomine.be/api/abstractimage/98878438/thumb.png?maxSize=1024","fullPath":"/data/beta.cytomine.be/93518990/93518990/1391527097255/HE_397_2013.svs","macroURL":"http://beta.cytomine.be/api/abstractimage/98878438/associated/macro.png?maxWidth=512"}];
+	var demoTree = [{"goToURL":"http://beta.cytomine.be/#tabs-image-93519082-100117637-","userProgress":42,"cytomine":{"reviewUser":107758880,"resolution":0.24539999663829803,"reviewed":false,"id":100117637,"numberOfReviewedAnnotations":0,"numberOfJobAnnotations":0,"height":30114,"updated":"1408348746333","created":"1391852925210","path":null,"inReview":true,"originalFilename":"[BLIND]100117637","macroURL":"http://beta.cytomine.be/api/abstractimage/98878438/associated/macro.png?maxWidth=512","fullPath":"/data/beta.cytomine.be/93518990/93518990/1391527097255/HE_397_2013.svs","reviewStart":"1408348746298","baseImage":98878438,"sample":98878437,"reviewStop":null,"width":39983,"class":"be.cytomine.image.ImageInstance","originalMimeType":null,"deleted":null,"depth":8,"extension":null,"magnification":40,"project":93519082,"preview":"http://beta.cytomine.be/api/abstractimage/98878438/thumb.png?maxSize=1024","numberOfAnnotations":7,"filename":null,"mime":null,"user":93518990,"thumb":"http://beta.cytomine.be/api/abstractimage/98878438/thumb.png?maxSize=512"},"nextAnnotation":null,"labeledAnnotations":3,"class":"be.cytomine.apps.iris.Image","previousAnnotation":null,"id":null,"cmID":100117637,"project":null,"lastActivity":1412357502898,"prefs":{},"olTileServerURL":"http://localhost:8080/image/tile?zoomify=/data/beta.cytomine.be/93518990/93518990/1391527097255/HE_397_2013.svs/","currentAnnotation":null,"numberOfAnnotations":7,"originalFilename":"[BLIND]100117637"},{"goToURL":"http://beta.cytomine.be/#tabs-image-93519082-94255021-","userProgress":42,"cytomine":{"reviewUser":93518990,"resolution":0.65,"reviewed":false,"id":94255021,"numberOfReviewedAnnotations":2,"numberOfJobAnnotations":0,"height":39163,"updated":"1395240656230","created":"1389786341627","path":null,"inReview":true,"originalFilename":"[BLIND]94255021","macroURL":"http://beta.cytomine.be/api/abstractimage/94255014/associated/macro.png?maxWidth=512","fullPath":"/data/beta.cytomine.be/93518990/93518990/1389785459805/HE_32911_12_converted.tif","reviewStart":"1393863218998","baseImage":94255014,"sample":94255013,"reviewStop":null,"width":56640,"class":"be.cytomine.image.ImageInstance","originalMimeType":null,"deleted":null,"depth":8,"extension":null,"magnification":40,"project":93519082,"preview":"http://beta.cytomine.be/api/abstractimage/94255014/thumb.png?maxSize=1024","numberOfAnnotations":133,"filename":null,"mime":null,"user":93518990,"thumb":"http://beta.cytomine.be/api/abstractimage/94255014/thumb.png?maxSize=512"},"nextAnnotation":null,"labeledAnnotations":56,"class":"be.cytomine.apps.iris.Image","previousAnnotation":null,"id":null,"cmID":94255021,"project":null,"lastActivity":1412357503229,"prefs":{},"olTileServerURL":"http://localhost:8080/image/tile?zoomify=/data/beta.cytomine.be/93518990/93518990/1389785459805/HE_32911_12_converted.tif/","currentAnnotation":null,"numberOfAnnotations":133,"originalFilename":"[BLIND]94255021"}];
 
 	var checkedImages = [];
 	
 	$scope.tree = {
-		loading : true,
+		loading: true,
 	};
 	
 	var initTree = function(){
-		$scope.expandAll();
-		$scope.showTree = true;
+		$scope.showTree = false;
+		$scope.checkAllImages();
 	}
 	
 	// get the images and initialize the tree
 	imageService.fetchImages(sessionService.getCurrentProject().cmID, function(images){
-		$scope.treeData = demoTree;
-		//$scope.treeData = images;
+		//$scope.treeData = demoTree;
+		$scope.treeData = images;
 		$scope.tree.loading = false;
 		
 		// initialize the tree (show and expand all)
@@ -31,7 +31,6 @@ iris.controller("imageTreeCtrl", function($scope, $timeout, $log, sessionService
 	
 	
 	$scope.selectedNode = {};
-	$scope.expandedNodes = [];
 	
 	$scope.treeOptions = {
 		    nodeChildren: "children",
@@ -75,61 +74,13 @@ iris.controller("imageTreeCtrl", function($scope, $timeout, $log, sessionService
         $scope.selectedNode = undefined;
     };
     
-    var searchForExpandableNode = function(root, nodeArray){
-    	for (var i = 0; i< root.children.length; i++){
-    		var child = root.children[i];
-//    		console.log(child.name);
-	    	if (child.isFolder){
-//	    		console.log("search in folder: " + child.name)
-	    		nodeArray.push(child);
-	    		// recurse
-	    		searchForExpandableNode(child, nodeArray);
-	    	} 
-	    }
-    	return nodeArray;
-    };
-    
-    var searchForSelectableNode = function(root, nodeArray){
-    	for (var i = 0; i< root.children.length; i++){
-    		var child = root.children[i];
-//    		console.log(child.name);
-	    	if (child.isFolder){
-//	    		console.log("found selectable child:  " + child.name)
-	    		// recurse
-	    		searchForSelectableNode(child, nodeArray);
-	    	} else {
-	    		nodeArray.push(child.id);
-	    	}
-	    }
-    	return nodeArray;
-    };
-    
-    $scope.showToggle = function(node, expanded) {
-        //$log.debug(node.id+ (expanded?" expanded":" collapsed"));
-        
-        if (expanded){
-        	// reselect previously selected children
-        	$timeout(function(){ selectCheckboxes(checkedImages, true);}, 50);  
-        }
-        // find selected children of the node id
-        //$log.debug("Active Images: {" + checkedImages.toString() + "}.");
-    };
-    
-    // expand all nodes by default and reselect the nodes
-	$scope.expandAll = function() {
-	    $scope.expandedNodes = [];
-	    searchForExpandableNode($scope.treeData, $scope.expandedNodes);
-	    $timeout(function(){ selectCheckboxes(checkedImages, true);}, 50);  
-	};
-	
-	// collapse all nodes, but do not deselect the check boxes
-	$scope.collapseAll = function(){
-		 $scope.expandedNodes = [];
-	}
-	
     $scope.checkAllImages = function(){
     	checkedImages = [];
-    	searchForSelectableNode($scope.treeData, checkedImages);
+    	
+    	for (var i=0; i<$scope.treeData.length; i++){
+    		checkedImages.push($scope.treeData[i].cmID)
+    	}
+    	
     	selectCheckboxes(checkedImages, true);    
     	//$log.debug("Active Images: {" + checkedImages.toString() + "}.");
     	//$log.debug("checked all images: " + checkedImages.length);
@@ -137,13 +88,13 @@ iris.controller("imageTreeCtrl", function($scope, $timeout, $log, sessionService
     
     $scope.uncheckAllImages = function(){
     	checkedImages = [];
-    	searchForSelectableNode($scope.treeData, checkedImages);
+    	for (var i=0; i<$scope.treeData.length; i++){
+    		checkedImages.push($scope.treeData[i].cmID)
+    	}
     	selectCheckboxes(checkedImages, false);
     	checkedImages = [];
     	//$log.debug("Active Images: {" + checkedImages.toString() + "}.");
     	//$log.debug("UNchecked all images.")
-    	
-    	// TODO hide all panels
     };
     
     // select the images in the tree
@@ -161,8 +112,7 @@ iris.controller("imageTreeCtrl", function($scope, $timeout, $log, sessionService
     };
     
     // applies a filter using the checked terms and the checked images
-    var applyFilter = function(checkedImages, checkedImages){
+    var applyFilter = function(checkedTerms, checkedImages){
     	// TODO continue implementation
     }
-	
 });
