@@ -23,7 +23,7 @@
     	<ng-include src="'templates/html/refreshPanel.html'"></ng-include>
     	
 	    <div ng-hide="image.error.retrieve">
-	        <p>This project has {{data.length}} images.</p>
+	        <p>This project has {{image.total}} images.</p>
 	        
 	        <!--<p><strong>Page:</strong> {{tableParams.page()}}</p>
         	<p><strong>Count per page:</strong> {{tableParams.count()}}</p> -->
@@ -56,7 +56,7 @@
 						    		View Annotation Gallery
 						    </a></li>
 						    <li class="divider"></li>
-						    <li><a ng-click="touchImage(item)" target="_blank" href="{{item.goToURL}}">
+						    <li><a target="_blank" href="{{item.goToURL}}">
 						    		Explore in Cytomine 
 						    </a></li>
 						  </ul>
