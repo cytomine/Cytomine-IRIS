@@ -19,6 +19,7 @@ import grails.converters.JSON;
 class DomainMapper {
 
 	def grailsApplication
+	def log
 
 	DomainMapper(def grailsApplication){
 		this.grailsApplication = grailsApplication
@@ -142,8 +143,8 @@ class DomainMapper {
 				irisAnnotation.setCmCentroidY(Double.valueOf(cmAnnotation.get("centroid").get("y")))
 			}			
 		} catch(Exception e){
-		e.printStackTrace()
-	}
+			log.warn("'Centroid' information does not exist for this instance of " + cmAnnotation.getClass() + ".")
+		}
 		return irisAnnotation
 	}
 }

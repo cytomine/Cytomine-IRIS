@@ -62,10 +62,12 @@ iris.factory("projectService", function($http, $log,
 		// get the associated ontology for a project
 		fetchOntology : function(ontologyID, params, callbackSuccess, callbackError) {
 			var url = cytomineService.addKeys(ontologyURL).replace("{ontologyID}", ontologyID);
-			if (params.flat == true) {
-				url += "&flat=true";
-			}			
-
+			if (params !== null){
+				if (params.flat == true) {
+					url += "&flat=true";
+				}	
+			}
+				
 			$http.get(url).success(function(data) {
 				// console.log("success on $http.get(" + url + ")");
 				// on success, assign the data to the projects array

@@ -85,25 +85,18 @@ class UrlMappings {
 		 * annotationController
 		 * - communicates annotation CRUD operations to the core via the Java client
 		 */
+	
 		/*
-		 * Get a single annotation
-		 */
-//		"/api/annotation/$annID.$format"(controller:"annotation"){
-//			action = [GET: "getAnnotation"]
-//		}
-		
-		/*
-		 * Get all annotations
+		 * Get all annotations for a project.
 		 * Optional parameters
-		 * 		max = { $max || null }
-		 * 			if null, get all annotations
+		 * 		image = [imageID#1,imageID#2,...]
 		 */
-		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotations.$format"(controller:"annotation"){
+		"/api/session/$sessionID/project/$cmProjectID/annotations.$format"(controller:"annotation"){
 			action = [GET: "getAnnotations"]
 		}
 
 		/*
-		 * Get a 3-tuple of annotations
+		 * Get a 3-tuple of annotations for an image in a project
 		 * Optional parameters
 		 * 		currentAnnotation = { $cmAnnID || null }
 		 * 			if null, return first and subsequent item, if any, previousAnnotation = null

@@ -112,10 +112,11 @@ input[type="checkbox"].colorbox-checkbox {
 	background: rgba(255, 0, 0, 0.5);
 	color: white;
 	text-align: center;
-	padding-top: 40px;
-	display: inline-block;
+	/*padding-top: 0px;*/
+	display: block;
 	margin: 10px;
-	cursor: move;
+	float: left;
+	/*cursor: move;*/
 }
 
 /* when the dragged component enters the drop area*/

@@ -123,7 +123,8 @@ log4j = {
            'net.sf.ehcache.hibernate'
     warn  	'be.cytomine.client'
 	debug	'grails.app.controllers',	
-			'grails.app.services'
+			'grails.app.services',
+			'be.cytomine.apps.iris'
 //			'be.cytomine.client.HttpClient'
 }
 

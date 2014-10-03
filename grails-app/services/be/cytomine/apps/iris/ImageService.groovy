@@ -113,9 +113,12 @@ class ImageService {
 		}
 
 		ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)
+		// TODO speedup of status computation required urgently!
+		int nImages = cmImageCollection.size()
 		def irisImageList = new JSONArray()
 		
-		for (int i = 0; i < cmImageCollection.size(); i++) {
+		def start = System.currentTimeMillis()
+		for (int i = 0; i < nImages; i++) {
 			ImageInstance cmImage = cmImageCollection.get(i)
 			
 			// map the client image to the IRIS image
@@ -138,6 +141,7 @@ class ImageService {
 			// add it to the result list
 			irisImageList.add(imageJSON)
 		}
+		println "Resolving image status for " + nImages +  " images lasted " + (System.currentTimeMillis()-start)/1000 + " seconds."
 
 		return irisImageList
 	}

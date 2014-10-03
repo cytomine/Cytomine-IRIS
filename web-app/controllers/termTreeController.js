@@ -1,6 +1,6 @@
 var iris = angular.module("irisApp");
 
-iris.controller("termTreeCtrl", function($scope, $timeout, $log){
+iris.controller("termTreeCtrl", function($scope, $timeout, $log, sessionService, projectService, sharedService){
 	
 	console.log("termTreeCtrl");
 	
@@ -8,7 +8,28 @@ iris.controller("termTreeCtrl", function($scope, $timeout, $log){
 
 	var checkedTerms = [];
 	
-	$scope.treeData = demoTree;
+	$scope.tree = {
+		loading : true,
+	};
+	
+	var initTree = function(){
+		$scope.expandAll();
+		$scope.showTree = true;
+	}
+	
+	// get the ontology and initialize the tree
+	projectService.fetchOntology(sessionService.getCurrentProject().cmOntology, null, function(ontology){
+		//	$scope.treeData = demoTree;
+		$scope.treeData = ontology;
+		$scope.tree.loading = false;
+		
+		// initialize the tree (show and expand all)
+		initTree();
+	}, function(data, status){
+		sharedService.addAlert("Cannot retrieve ontology. Status " + status + ".", "danger");
+	})
+	
+	
 	
 	$scope.selectedNode = {};
 	$scope.expandedNodes = [];
@@ -18,15 +39,15 @@ iris.controller("termTreeCtrl", function($scope, $timeout, $log){
 		    dirSelectable: false
 		};
 	
-    $scope.selectOrUnselectTerm = function(e) {
+    $scope.selectOrUnselectTerm = function(evt) {
         var targ;
-        if (!e) {
-            var e = window.event;
+        if (!evt) {
+            var evt = window.event;
         }
-        if (e.target) {
-            targ=e.target;
-        } else if (e.srcElement) {
-            targ=e.srcElement;
+        if (evt.target) {
+            targ=evt.target;
+        } else if (evt.srcElement) {
+            targ=evt.srcElement;
         }
         
         // get the ID of the clicked term
@@ -101,8 +122,6 @@ iris.controller("termTreeCtrl", function($scope, $timeout, $log){
 	    searchForExpandableNode($scope.treeData, $scope.expandedNodes);
 	    $timeout(function(){ selectCheckboxes(checkedTerms, true);}, 50);  
 	};
-	$scope.expandAll();
-	$scope.showTree = true;
 	
 	// collapse all nodes, but do not deselect the check boxes
 	$scope.collapseAll = function(){
@@ -124,6 +143,8 @@ iris.controller("termTreeCtrl", function($scope, $timeout, $log){
     	checkedTerms = [];
     	//$log.debug("Active Terms: {" + checkedTerms.toString() + "}.");
     	//$log.debug("UNchecked all terms.")
+    	
+    	// TODO hide all panels
     };
     
     // select the terms in the tree

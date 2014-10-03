@@ -40,7 +40,7 @@ class Utils {
 		totalAnnotations = annotations.size();
 
 		// count the annotations per user
-		for(int i=0;i<annotations.size();i++) {
+		for(int i=0;i<totalAnnotations;i++) {
 			Annotation annotation = annotations.get(i)
 			// grab all terms from all users for the current annotation
 			List userByTermList = annotation.getList("userByTerm");
@@ -63,7 +63,7 @@ class Utils {
 		int userProgress = (totalAnnotations==0?0:(int)((labeledAnnotations/totalAnnotations)*100));
 		jsonResult.put("userProgress", userProgress)
 
-		// send the response to the client
+		// return the json result
 		return jsonResult;
 	}
 	

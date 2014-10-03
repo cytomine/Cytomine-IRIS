@@ -1,7 +1,7 @@
 var iris = angular.module("irisApp");
 
 iris.constant("userAnnURL", "/api/session/{sessionID}/project/"
-		+ "{projectID}/image/{imageID}/annotations.json");
+		+ "{projectID}/annotations.json?");
 iris.constant("userAnn3TupleURL", "/api/session/{sessionID}/project/"
 		+ "{projectID}/image/{imageID}/annotations/tuple.json");
 iris.constant("setAnnTermURL", "/api/session/{sessionID}/project/"
@@ -16,30 +16,33 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 
 	return {
 		// get the annotations for a given project and image
-		fetchUserAnnotations : function(projectID, imageID, callbackSuccess,
+		fetchUserAnnotations : function(projectID, imageIDs, callbackSuccess,
 				callbackError) {
 			var sessionID = sessionService.getSession().id
 			$log.debug("Getting user annotations: " + sessionID + " - "
-					+ projectID + " - " + imageID)
-
+					+ projectID + " - " + imageIDs)
+					
 			// modify the parameters
 			var url = cytomineService.addKeys(userAnnURL).replace(
-					"{sessionID}", sessionID).replace("{projectID}", projectID)
-					.replace("{imageID}", imageID);
+					"{sessionID}", sessionID).replace("{projectID}", projectID);
+			
+			if (imageIDs !== null){
+				url += "&imageID=" + imageIDs.toString().replace("[","").replace("]","");
+			}
 
 			// TODO add optional offset and max parameters
-			url += "&max=10"
+			//url += "&max=10"
 
 			// execute the http get request to the IRIS server
 			$http.get(url).success(function(data) {
 				// console.log("success on $http.get(" + url + ")");
-				// $log.debug(data)
+				$log.debug(data)
 				if (callbackSuccess) {
 					callbackSuccess(data);
 				}
 			}).error(function(data, status, headers, config) {
 				// on error log the error
-				// console.log(callbackError)
+				console.log(callbackError)
 				if (callbackError) {
 					callbackError(data, status, headers, config);
 				}

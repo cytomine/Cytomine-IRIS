@@ -36,7 +36,19 @@ class AnnotationController {
 
 		long sessionID = params.long('sessionID')
 		long projectID = params.long('cmProjectID')
-		long imageID = params.long('cmImageID')
+
+		// filter for a specific project and image
+		Map<String,String> filters = new HashMap<String,String>()
+		filters.put("project", String.valueOf(projectID))
+		filters.put("showGIS", "true") // show the centroid information on the location
+		filters.put("showMeta", "true") // show the meta information
+		filters.put("showTerm", "true") // show the term information
+				
+		String imageIDs = params['image']
+		if (imageIDs != null){
+			filters.put("image", String.valueOf(imageIDs))
+		}
+		// TODO implement pagination
 		int max = (params['max']==null?0:params.int('max'))
 
 		// get the session and the user
@@ -49,14 +61,6 @@ class AnnotationController {
 
 		// fetch the terms from the ontology
 		TermCollection terms = cytomine.getTermsByOntology(ontologyID)
-
-		// get a maximum of (max) instances
-		cytomine.setMax(max)
-
-		// filter for a specific project and image
-		Map<String,String> filters = new HashMap<String,String>()
-		filters.put("project", String.valueOf(projectID))
-		filters.put("image", String.valueOf(imageID))
 
 		// get all annotations according to the filter
 		AnnotationCollection annotations = cytomine.getAnnotations(filters)
@@ -84,43 +88,6 @@ class AnnotationController {
 
 		render (irisAnnList as JSON)
 	}
-
-//	/**
-//	 * Get a specific annotation by ID.
-//	 * 
-//	 * @return
-//	 */
-//	def getAnnotation() {
-//		Cytomine cytomine = request['cytomine']
-//		String publicKey = params['publicKey']
-//		//long projectID = params.long('projectID')
-//		//long imageID = params.long('imageID')
-//		long annID = params.long('annID')
-//
-//
-//		// TODO retrieve one specific annotation for a project
-//		def annotation = null;
-//
-//		// resolve the assigned label by the calling user
-//		// TODO speed up the query by getting the user from the local database
-//		User user = cytomine.getUser(publicKey);
-//
-//		List userByTermList = annotation.getList("userByTerm");
-//		println userByTermList.getClass()
-//		return;
-//		for (int i=0; i < userByTermList.size(); i++){
-//			def assignment = userByTermList.get(i);
-//			List userList = assignment.get("user").toList()
-//
-//			// if the user has assigned a label to this annotation
-//			if (user.get("id") in userList){
-//				// inject the term ID into the annotation as "userLabels"
-//				annotation.putAt("userLabels", [assignment.get("term")])
-//			}
-//		}
-//
-//		render (annotation as JSON)
-//	}
 
 	/**
 	 * 
