@@ -19,19 +19,17 @@
 		<div class="col-xs-9">
 			 <!-- TODO implement the ng-repeat for all filtered terms -->
 			 <div class="row" ng-repeat="group in annotation.groups">
-			 	<div class="panel panel-default">
-					<div class="panel-heading">
+			 	<div id="{{ 'panel-group-' + group.termName }}" class="panel panel-default">
+					<div id="{{ 'panel-heading-' + group.termName }}" class="panel-heading">
 						<h4 class="panel-title">{{ group.termName || 'TODO Term Name' }}</h4>
 					</div>
-					<div class="panel-body">
-						<div ng-repeat="item in annotations" ng-drag="false" ng-drag-data="item">
-	<!-- 						<div class="vertical-center"> -->
-							<img src="{{item.cmSmallCropURL}}" style="max-height:100px; max-width:100px" alt=""/>
-	<!-- 						<div> -->
+					<div id="{{ 'panel-body-' + group.termName }}" class="panel-body">
+						<div ng-repeat="item in annotations" id="{{ 'item-' + item.cmID }}" ng-drag="false" ng-drag-data="item">
+							<img id="{{ 'thumb-' + item.cmID }}" src="{{ item.cmSmallCropURL }}" style="max-height:100px; max-width:100px" alt=""/>
 						</div>
 					</div>
 					<!-- END BODY -->
-					<!-- <div class="panel-footer">
+					<!-- <div id="{{ 'panel-footer-' + group.termName }}" class="panel-footer">
 						<div ng-drop="true" ng-drop-success="onDropComplete($data,$event)">
 							<div ng-repeat="item in droppedObjects" ng-drag="true" ng-drag-data="item" ng-drag-success="onDragSuccess($item,$event)">
 								col {{item.name}}

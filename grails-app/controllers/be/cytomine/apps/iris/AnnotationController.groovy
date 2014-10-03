@@ -41,13 +41,19 @@ class AnnotationController {
 		Map<String,String> filters = new HashMap<String,String>()
 		filters.put("project", String.valueOf(projectID))
 		filters.put("showGIS", "true") // show the centroid information on the location
-		filters.put("showMeta", "true") // show the meta information
-		filters.put("showTerm", "true") // show the term information
+		filters.put("showMeta", "true") // show the meta informations
+		filters.put("showTerm", "true") // show the term informations
 				
 		String imageIDs = params['image']
 		if (imageIDs != null){
 			filters.put("image", String.valueOf(imageIDs))
 		}
+		
+		String termIDs = params['term']
+		if (termIDs != null){
+			filters.put("term", String.valueOf(termIDs))
+		}
+		
 		// TODO implement pagination
 		int max = (params['max']==null?0:params.int('max'))
 
@@ -65,7 +71,7 @@ class AnnotationController {
 		// get all annotations according to the filter
 		AnnotationCollection annotations = cytomine.getAnnotations(filters)
 		def irisAnnList = new JSONArray()
-
+		
 		// create a new domain mapper
 		DomainMapper dm = new DomainMapper(grailsApplication)
 
