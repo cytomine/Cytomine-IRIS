@@ -7,12 +7,17 @@
 	</div>
 	<div ng-hide="tree.loading">
 		<h5>Ontology: {{treeData.name}}&nbsp;<a href="" ng-click="showTree=!showTree"><span class="label label-default" ng-show="showTree" tooltip-placement="right" tooltip="hide the term tree">hide</span><span class="label label-default" ng-show="!showTree" tooltip-placement="right" tooltip="show the term tree">show</span></a></h5>
+		<span id="termLabel-0" class="label label-warning leaf-like" href="" ng-click="selectOrUnselectTerm(event)"><input id="chbxTerm-0" type="checkbox">&nbsp;no term assigned</span>
+		<hr style="margin:5px;">
+		<!-- the ontology tree -->
 		<div ng-show="showTree"
 			treecontrol="" class="tree-light" tree-model="treeData" on-node-toggle="showToggle(node, expanded)"
 			options="treeOptions" on-selection="selectOrUnselectTerm(event)" expanded-nodes="expandedNodes">
 			<span id="{{ 'treeTermColorPanel-' + node.id }}" ng-hide="node.isFolder" style="background:{{node.color}}" class="colorbox">&nbsp;&nbsp;&nbsp;&nbsp;</span><input id="{{ 'chbxTerm-' + node.id }}" ng-hide="node.hideCheckbox" ng-class="{'colorbox-checkbox': !node.isFolder}" type="checkbox">
 			<span id="{{ 'treeTermLabel-' + node.id }}">{{ node.name }}</span>
 		</div>
+		<!-- end ontology tree -->
+		
 		<div class="row" style="margin-top:20px">
 			<div class="col-xs-12">
 				<div class="btn btn-xs btn-info" ng-click="checkAllTerms()" style="width: 90px">Check all</div>

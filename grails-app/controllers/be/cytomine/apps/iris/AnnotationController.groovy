@@ -37,7 +37,7 @@ class AnnotationController {
 		long sessionID = params.long('sessionID')
 		long projectID = params.long('cmProjectID')
 
-		// filter for a specific project and image
+		// filter for a specific project/image/term
 		Map<String,String> filters = new HashMap<String,String>()
 		filters.put("project", String.valueOf(projectID))
 		filters.put("showGIS", "true") // show the centroid information on the location
@@ -49,11 +49,20 @@ class AnnotationController {
 			filters.put("image", String.valueOf(imageIDs))
 		}
 		
+		// filter for terms
 		String termIDs = params['term']
 		if (termIDs != null){
 			filters.put("term", String.valueOf(termIDs))
 		}
-		
+		// additionally check for termID 0, this will be annotations without terms
+		if (params['noTerm'] != null && params['noTerm'].equals("true")){
+			filters.put("noTerm", "true")
+		}
+		// check for multiple terms
+		if (params['multipleTerm'] != null && params['multipleTerm'].equals("true")){
+			filters.put("multipleTerm", "true")
+		}
+
 		// TODO implement pagination
 		int max = (params['max']==null?0:params.int('max'))
 

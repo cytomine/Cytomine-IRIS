@@ -10,6 +10,7 @@ iris.controller("termTreeCtrl", function($scope, $timeout, $log, sessionService,
 	
 	$scope.tree = {
 		loading : true,
+		// TODO add a variable for transporting the selected terms ---> filter: {}
 	};
 	
 	var initTree = function(){

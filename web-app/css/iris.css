@@ -56,6 +56,14 @@ Map controls.
 	font-size: 13px;
 }
 
+/*Elements outside a tree control, but with same indent.*/
+.leaf-like {
+	line-height: 25px;
+	padding: 5px;
+	left: 20px;
+	position: relative;
+}
+
 [treecontrol] li {
 	padding: 0px;
 	line-height: 25px;
@@ -65,15 +73,14 @@ Map controls.
 [treecontrol].tree-light li .tree-selected {
 	font-weight: normal;
 }
-
 [treecontrol].tree-classic li .tree-selected {
 	font-weight: normal;
 }
-
 [treecontrol].tree-dark li .tree-selected {
 	font-weight: normal;
 }
 
+/*Colored background of a checkbox.*/
 .colorbox {
 	width: 20px;
 	height: 20px;
@@ -109,7 +116,7 @@ input[type="checkbox"].colorbox-checkbox {
 [ng-drag] {
 	width: 100px;
 	height: 100px;
-	background: rgba(255, 0, 0, 0.5);
+	background: rgba(255, 0, 0, 0.2);
 	color: white;
 	text-align: center;
 	/*padding-top: 0px;*/
