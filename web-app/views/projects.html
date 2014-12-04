@@ -23,7 +23,7 @@
 			
 		    <table ng-table="tableParams"  show-filter="true" class="table table-striped table-bordered table-hover">
 		        <tr ng-repeat="item in data">
-		            <td data-title="'ID'" sortable="'id'">{{item.id}}</td>
+		            <!-- <td data-title="'ID'" sortable="'id'">{{item.id}}</td> -->
 		            <td data-title="'Name'" sortable="'name'" filter="{ 'name': 'text' }">
 		            	{{item.name}} 
 		            	<span ng-show="{{item.isClosed}}" 
@@ -43,13 +43,13 @@
 					</div>
 		            </td>
 		            <td data-title="'Action'" class="text-center">
-		                <span ng-switch="{{item.isClosed}}">
-		                	<span ng-switch-when="false">
-		                	 	<a class="btn btn-sm btn-primary" ng-click="openProject(item)" href="">Open</a>
-		                	</span>
-		                	<span ng-switch-default>
-		                		<a class="btn btn-sm btn-primary" disabled="disabled" href tooltip-placement="top" tooltip="This project is closed.">Open</a>
-		            		</span>
+		            	<span ng-switch="canBeOpened(item)">
+	                		<span ng-switch-when="true">
+	                	 		<a class="btn btn-sm btn-primary" ng-click="openProject(item)" href>Open</a>
+	                		</span>
+			                <span ng-switch-default>
+			                	<a class="btn btn-sm btn-primary" disabled="disabled" href tooltip-placement="top" tooltip="This project is closed or has no images.">Open</a>
+			            	</span>
 		            	</span>
 		            </td>
 		            <td data-title="'Info'" class="text-center">

@@ -17,7 +17,7 @@ iris.controller(
 			// retrieve the project parameter from the URL
 			$scope.projectID = $routeParams["projectID"];
 			
-			// TODO look up in IRIS, if the requested project is available
+			// look up in IRIS, if the requested project is available
 			// for this user.
 			projectService.checkAvailability($scope.projectID, function(data){
 				// the success
@@ -75,9 +75,14 @@ iris.controller(
 					// handle success promise
 					// TODO forward to the annotation gallery of this image
 					$log.debug("successfully touched image " + image.id);
+					navService.navToAnnotationGallery();
 				}, function(data,status){
 					sharedService.addAlert("Cannot update image. Error " + status + ".", "danger");
 				})
+			};
+			
+			$scope.navToProjects = function() {
+				navService.navToProjects();
 			};
 			
 			// get all the images for the current project 
@@ -100,9 +105,19 @@ iris.controller(
 				$scope.getAllImages(function(data) {
 					console.timeEnd('loading all images');
 					
-					$scope.image.error.retrieve = null;
 					$scope.image.images = data; // this should be an IRIS image list
-					$scope.image.total = data.length
+					$scope.image.total = data.length;
+					
+					if (data.length < 1){
+						$scope.image.error.empty= {
+								message : "This project does not have any images.",
+							};
+						$scope.loading = false;
+						return;
+					} else {
+						delete $scope.image.error;
+					}
+					
 //					$log.debug(data)
 					
 //					console.log("hideCompleted (session): " + sessionService.getCurrentProject().prefs['images.hideCompleted']);

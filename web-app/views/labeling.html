@@ -17,7 +17,7 @@
 	
 	<div ng-show="labeling.error">
 		<div class="alert alert-danger text-center" ng-show="labeling.error.retrieve">
-       	 	Error: {{labeling.error.retrieve.message}} ({{labeling.error.status}})
+       	 	{{labeling.error.retrieve.message}}
         </div>
         <div class="alert alert-info text-center" ng-show="labeling.error.empty">
         	{{labeling.error.empty.message}} 
@@ -30,7 +30,7 @@
 		<div class="col-xs-4 text-center well">
 			<div class="row">
 				<div class="col-xs-6">ID: {{annotation.cmID}}</div>
-				<div class="col-xs-6">#: {{labeling.annotationTuple.currentIndex+1}} / {{labeling.annotationTuple.numberOfAnnotations}}</div>
+				<div class="col-xs-6"># {{labeling.annotationTuple.currentIndex+1}} / {{labeling.annotationTuple.numberOfAnnotations}}</div>
 			</div>
 			<div class="row">
 				<h4><span class="label" ng-class="{ 'label-success' : annotation.cmTermName, 'label-warning' : !annotation.cmTermName }">{{annotation.cmTermName || 'no term assigned'}}</span></h4>

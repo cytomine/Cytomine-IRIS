@@ -28,11 +28,7 @@ iris.controller("navCtrl", function($scope, $window, $route, $location, $log, sh
 
 	// navigate to the current annotation for labeling
 	$scope.labeling = function() {
-		// then get the current project ID and image ID
-		var pID = sessionService.getCurrentProject().cmID;
-		var iID = sessionService.getCurrentImage().cmID;
-	
-		navService.navToLabelingPage(pID, iID);
+		navService.navToLabelingPage();
 	};
 	
 	// navigate to the available projects

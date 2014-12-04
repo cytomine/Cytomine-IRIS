@@ -5,9 +5,15 @@
 		<ng-include src="'templates/html/openProjectPanel.html'"></ng-include>
 	</div>
 -->
-    <div class="alert alert-danger" ng-show="image.error.retrieve">
-        Error: Cannot get image list. {{image.error.retrieve.message}} ({{image.error.retrieve.status}}).
-<!--         <p><a href="#/projects">Please open a project.</a></p> -->
+    <div ng-show="image.error">
+		<div class="alert alert-danger text-center" ng-show="image.error.retrieve">
+       	 	{{image.error.retrieve.message}}
+        </div>
+        <div class="alert alert-info text-center" ng-show="image.error.empty">
+        	{{image.error.empty.message}} 
+        	<br/>
+        	Please select another one from the <a href ng-click="navToProjects()">project list</a>.
+    	</div>
     </div>
 
     <div ng-show="loading">
@@ -22,7 +28,7 @@
     <div class="row" ng-hide="loading">
     	<ng-include src="'templates/html/refreshPanel.html'"></ng-include>
     	
-	    <div ng-hide="image.error.retrieve">
+	    <div ng-hide="image.error">
 	        <p>This project has {{image.total}} images.</p>
 	        
 	        <!--<p><strong>Page:</strong> {{tableParams.page()}}</p>

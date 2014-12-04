@@ -94,9 +94,8 @@ iris.controller(
 //					]
 
 					var animateMap = true;
-					
 					var currImg = sessionService.getCurrentImage();
-					
+
 					var imgWidth = currImg.cytomine.width;// 56640;
 					var imgHeight = currImg.cytomine.height;// 39163;
 					var imgCenter = [ imgWidth / 2, - imgHeight / 2 ];

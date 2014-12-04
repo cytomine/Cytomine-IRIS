@@ -167,6 +167,10 @@ iris.controller("projectCtrl", function($rootScope, $scope, $http, $filter, $loc
 			$log.debug('Project Description Modal: ' + result);
 		});
 	};
+	
+	$scope.canBeOpened = function(item){
+		return item.numberOfImages>0 && !item.isClosed;
+	}
 
 	// controller for the project descriptor modal dialog
 	var projectDescriptorCtrl = function($scope, $modalInstance, $sce, data,

@@ -193,7 +193,11 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 	};
 	
 	// fetch the ontology on page reload
-	$scope.loadOntology();
+	try {
+		$scope.loadOntology();
+	} catch (e) {
+		$scope.labeling.error = {}
+	}
 	
 	// assign a term to the current annotation
 	$scope.assign = function(term) {
