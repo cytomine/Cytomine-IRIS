@@ -113,9 +113,12 @@ class ImageService {
 		}
 
 		ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)
-		// TODO speedup of status computation required urgently!
-		int nImages = cmImageCollection.size()
+		// TODO speedup of status computation required urgently, use pagination!
+		// TODO DEBUG
+		int nImages = Math.min(cmImageCollection.size(), 5)
+//		int nImages = cmImageCollection.size()
 		def irisImageList = new JSONArray()
+		Utils utils = new Utils()
 		
 		def start = System.currentTimeMillis()
 		for (int i = 0; i < nImages; i++) {
@@ -129,7 +132,7 @@ class ImageService {
 			irisImage.setOlTileServerURL(imageService.getImageServerURL(cytomine, cmImage.get("baseImage"), cmImage.getId()));
 			
 			// retrieve the user's progress on each image and return it in the object
-			JSONObject annInfo = new Utils().getUserProgress(cytomine, cmProjectID, cmImage.getId(), userID)
+			JSONObject annInfo = utils.getUserProgress(cytomine, cmProjectID, cmImage.getId(), userID)
 			// resolving the values from the JSONObject to each image as property
 			irisImage.setLabeledAnnotations(annInfo.get("labeledAnnotations"))
 			irisImage.setUserProgress(annInfo.get("userProgress"))

@@ -1,11 +1,9 @@
 var iris = angular.module("irisApp");
 
-iris.constant("labelURL", "/project/{projectID}/image/{imageID}/label/");
-
 /**
  * This service provides common (shared) functionality for the client.
  */
-iris.factory("sharedService",function($http, $rootScope, $location, $window, $log, labelURL, cytomineService) {
+iris.factory("sharedService", function($http, $rootScope, $location, $window, $log, cytomineService) {
 	
 		return {
 			// firing an alert which will be handled by the alertCtrl
@@ -13,7 +11,7 @@ iris.factory("sharedService",function($http, $rootScope, $location, $window, $lo
 				$rootScope.$broadcast("addAlert", { msg : message, type : alertType });
 			},
 			
-			/////////////////////////////////
+			// ///////////////////////////////
 			// JUST FOR DEBUG!!!
 			getCurrentUser : function(callbackSuccess, callbackError){
 				$http.get("http://beta.cytomine.be/api/user/current.json")
@@ -30,17 +28,7 @@ iris.factory("sharedService",function($http, $rootScope, $location, $window, $lo
 					}
 				});
 			},
-			/////////////////////////////////
-			
-			moveToLabelingPage : function(projectID, imageID){
-				var url = labelURL.replace("{projectID}", projectID)
-				.replace("{imageID}", imageID);
-
-				$location.path(url, false);
-				console.log($location.absUrl());
-				$window.location.href = $location.absUrl();
-				$window.location.reload();
-			},
+			// ///////////////////////////////
 			
 			// create the today variable in "long" format
 			today : new Date().getTime(),

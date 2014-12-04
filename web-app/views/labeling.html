@@ -14,8 +14,19 @@
 <!-- 		</div>
 		<div class="col-xs-1">&nbsp;</div>
 	</div> -->
+	
+	<div ng-show="labeling.error">
+		<div class="alert alert-danger text-center" ng-show="labeling.error.retrieve">
+       	 	Error: {{labeling.error.retrieve.message}} ({{labeling.error.status}})
+        </div>
+        <div class="alert alert-info text-center" ng-show="labeling.error.empty">
+        	{{labeling.error.empty.message}} 
+        	<br/>
+        	Please select another one from the <a href ng-click="navToImages()">image list</a>.
+    	</div>
+    </div>
 
-	<div class="row">
+	<div class="row" ng-hide="labeling.error">
 		<div class="col-xs-4 text-center well">
 			<div class="row">
 				<div class="col-xs-6">ID: {{annotation.cmID}}</div>

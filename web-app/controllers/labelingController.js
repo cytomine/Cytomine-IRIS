@@ -14,7 +14,6 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 	$scope.labeling = {
 		annotationTuple : {},
 		annotations : {},
-		error : {}
 	};
 	
 	$scope.ontology = {};
@@ -63,6 +62,8 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 	$scope.fetchNewTuple = function(annID, displayCurrentAnnotation) {
 		annotationService.fetchUserAnnotations3Tuple($scope.projectID, $scope.imageID, annID,
 		function(data) {
+			// delete the errors
+			delete $scope.labeling.error;
 //			$log.debug(data)
 			$scope.labeling.annotationTuple = data;
 			$log.debug("retrieved " + data.size + " annotations");
@@ -73,8 +74,28 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 			}
 			
 		}, function(data, status) {
-			sharedService.addAlert("Cannot get user annotations! Status "
-					+ status + ".", "danger");
+			var msg = "";
+			if (data === 'null'){
+				msg = "This image does not have any annotations!";
+				// add message
+				$scope.labeling.error = {
+						empty : { 
+							message : msg
+							}
+				}
+			} 
+			else {
+				msg = "Cannot get user annotations!";
+				// add message
+				$scope.labeling.error = {
+						retrieve : { 
+							message : msg,
+							status : status
+							}
+					}
+			}
+//			sharedService.addAlert(msg + " Status "
+//					+ status + ".", "danger");
 		});
 	};
 	
@@ -218,5 +239,9 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 			$scope.saving.status = "error";
 			$timeout(function(){ $scope.saving.status = ""; }, 2000);
 		});
+	};
+	
+	$scope.navToImages = function(){
+		sharedService.navToImages();
 	};
 });

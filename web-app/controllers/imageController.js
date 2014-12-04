@@ -10,7 +10,7 @@ iris.controller(
 				$document, $timeout, $location, 
 				$routeParams, $log, hotkeys,
 				projectService, imageService, sessionService, 
-				helpService, sharedService, annotationService, 
+				helpService, sharedService, navService, annotationService, 
 				ngTableParams) {
 			console.log("imageCtrl");
 			
@@ -64,7 +64,7 @@ iris.controller(
 			$scope.startLabeling = function(image) {
 				sessionService.touchImage($scope.projectID, image.id, function(data){
 					$log.debug("Successfully touched image " + image.id);
-					sharedService.moveToLabelingPage($scope.projectID, image.id);
+					navService.navToLabelingPage($scope.projectID, image.id);
 				}, function(data,status){
 					sharedService.addAlert("Cannot update image. Error " + status + ".", "danger");
 				})
@@ -96,8 +96,10 @@ iris.controller(
 			// refresh the page
 			$scope.refreshPage = function(){
 				$scope.loading = true;
-				
+				console.time('loading all images');
 				$scope.getAllImages(function(data) {
+					console.timeEnd('loading all images');
+					
 					$scope.image.error.retrieve = null;
 					$scope.image.images = data; // this should be an IRIS image list
 					$scope.image.total = data.length

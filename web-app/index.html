@@ -68,6 +68,7 @@
 <script type="text/javascript" src="services/cytomineService.js"></script>
 <script type="text/javascript" src="services/sessionService.js"></script>
 <script type="text/javascript" src="services/imageService.js"></script>
+<script type="text/javascript" src="services/navService.js"></script>
 
 <!-- Controllers -->
 <script type="text/javascript" src="controllers/mapController.js"></script>
@@ -97,7 +98,7 @@
 		<div class="navbar-collapse collapse" ng-controller="navCtrl">
 			<ul class="nav navbar-nav navbar-left">
 				<li ng-class="{ active: isActive('/projects')}"><a
-					id="user-nav-button" href="#/projects"><span
+					id="user-nav-button" href="projects()"><span
 						class="glyphicon glyphicon-list-alt"></span> Projects</a></li>
 				<li ng-class="{ active: isActive('/images')}"><a
 					id="user-nav-button" href ng-click="images()"><span
@@ -122,9 +123,9 @@
 							({{main.user.username}})&nbsp;<span class="caret"></span>&nbsp;
 					</a>
 						<ul class="dropdown-menu" role="menu">
-							<li><a id="user-nav-button" href="{{main.cytomineHost}}"
+							<!-- <li><a id="user-nav-button" href="{{main.cytomineHost}}"
 								target="_blank"><span class="glyphicon glyphicon-user"></span>
-									Login</a></li>
+									Login</a></li>-->
 							<li><a id="user-nav-button" href="#" ng-click="changeKeys()">
 									<span class="glyphicon glyphicon-random"></span> Change keys
 							</a></li>

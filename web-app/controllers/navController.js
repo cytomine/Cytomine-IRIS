@@ -1,6 +1,6 @@
 var iris = angular.module("irisApp");
 
-iris.controller("navCtrl", function($scope, $window, $route, $location, $log, sharedService,
+iris.controller("navCtrl", function($scope, $window, $route, $location, $log, sharedService, navService,
 		projectService, helpService, sessionService, imageService) {
 	console.log("navCtrl");
 
@@ -32,21 +32,22 @@ iris.controller("navCtrl", function($scope, $window, $route, $location, $log, sh
 		var pID = sessionService.getCurrentProject().cmID;
 		var iID = sessionService.getCurrentImage().cmID;
 	
-		sharedService.moveToLabelingPage(pID, iID);
+		navService.navToLabelingPage(pID, iID);
+	};
+	
+	// navigate to the available projects
+	$scope.projects = function() {
+		navService.navToProjects();
 	};
 	
 	// navigate to the current project's images
 	$scope.images = function() {
-		var projectID = sessionService.getCurrentProject().cmID;
-		// TODO check for null in the project
-		$location.url("/project/" + projectID + "/images");
+		navService.navToImages();
 	};
 	
 	// navigate to the current project's annotations
 	$scope.annotations = function() {
-		var projectID = sessionService.getCurrentProject().cmID;
-		// TODO check for null in the project
-		$location.url("/project/" + projectID + "/gallery");
+		navService.navToAnnotationGallery();
 	};
 	
 	// show the help page

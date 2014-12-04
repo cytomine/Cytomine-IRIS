@@ -46,7 +46,7 @@ class Utils {
 			List userByTermList = annotation.getList("userByTerm");
 			for (assignment in userByTermList){
 				List userList = assignment.get("user").toList()
-				
+
 				// if the user has assigned a label to this annotation, increase the counter
 				if (userID in userList){
 					labeledAnnotations++
@@ -66,52 +66,65 @@ class Utils {
 		// return the json result
 		return jsonResult;
 	}
-	
+
 	public List<JSONObject> flattenOntology(Ontology ontology){
 		// perform recursion and flatten the hierarchy
 		JSONObject root = ontology.getAttr();
 		List flatHierarchy = new ArrayList<JSONObject>();
-		
+
 		// build a lookup table for each term in the annotation
 		Map<Long, Object> dict = new HashMap<Long, Object>();
-		
+
 		// pass the root node
 		flatHelper(root, dict, flatHierarchy);
-		
-//		String result = new Gson().toJson(flatHierarchy);
-//		println "######################################################"
-		
+
+		//		String result = new Gson().toJson(flatHierarchy);
+		//		println "######################################################"
+
 		return flatHierarchy;
 	}
-	
+
 	private void flatHelper(JSONObject node, Map<Long,Object> dict, List flatHierarchy){
 		// get the node's children
 		List childrenList = node.get("children").toList()
-		
+
 		// recurse through the children
 		for (child in childrenList){
 			// put each node to the dictionary
 			dict.put(Long.valueOf(child.get("id")), child);
-			
+
 			if (child.get("isFolder")){
 				flatHelper(child, dict, flatHierarchy);
 			} else {
 				String parentName = "root";
-				
+
 				if (child.get("parent") != null){
 					// these are the non-root elements
 					parentName = dict.get(Long.valueOf(child.get("parent"))).get("name")
-				} 
-								
+				}
+
 				// add the child to the flat ontology
 				child.put("parentName", parentName)
 				flatHierarchy.add(child);
 			}
 		}
 	}
-	
+
 	public JSONElement modelToJSON(def object){
 		return JSON.parse((object as JSON).toString())
 	}
-	
+
+	public Annotation getPredecessor(
+			AnnotationCollection annotations,
+			int currentIndex)
+	throws IndexOutOfBoundsException{
+		return annotations.get(currentIndex-1)
+	}
+
+	public Annotation getSuccessor(
+			AnnotationCollection annotations,
+			int currentIndex)
+	throws IndexOutOfBoundsException{
+		return annotations.get(currentIndex+1)
+	}
 }

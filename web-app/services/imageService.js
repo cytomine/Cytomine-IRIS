@@ -39,8 +39,6 @@ iris.factory("imageService", function($http, $log, imageURL, imageServerURLs,
 
 			// execute the get request to the server
 			$http.get(url).success(function(data) {
-				// TODO pass the URL array to the callback and 
-				// execute the random selection in the custom getURL function of openlayers
 				//////////////////////////////////////
 				var urls = data.imageServersURLs;
 				//console.log(urls)

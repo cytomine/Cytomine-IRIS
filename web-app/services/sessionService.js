@@ -72,6 +72,9 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 				return sess.currentProject;
 			} else {
 				$log.debug("returning null")
+				// if no project is found, move on to the project page
+				// and let the user select a project
+				$location.url("/projects")
 				return null;
 			}
 		},
