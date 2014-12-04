@@ -98,7 +98,7 @@
 		<div class="navbar-collapse collapse" ng-controller="navCtrl">
 			<ul class="nav navbar-nav navbar-left">
 				<li ng-class="{ active: isActive('/projects')}"><a
-					id="user-nav-button" href="projects()"><span
+					id="user-nav-button" href ng-click="projects()"><span
 						class="glyphicon glyphicon-list-alt"></span> Projects</a></li>
 				<li ng-class="{ active: isActive('/images')}"><a
 					id="user-nav-button" href ng-click="images()"><span
