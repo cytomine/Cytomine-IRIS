@@ -117,8 +117,6 @@ class ImageService {
 //		}
 //
 //		ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)
-//		// TODO speedup of status computation required urgently, use pagination!
-//		// TODO DEBUG
 //		int nImages = Math.min(cmImageCollection.size(), 5)
 ////		int nImages = cmImageCollection.size()
 //		def irisImageList = new JSONArray()
@@ -181,6 +179,8 @@ class ImageService {
 			blindMode = irisProject.cmBlindMode
 		}
 
+		def start = System.currentTimeMillis()
+
 		ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)
 
 		int nImages = cmImageCollection.size()
@@ -189,8 +189,6 @@ class ImageService {
 			irisImageList.add(null)
 		}
 		Utils utils = new Utils()
-			
-		def start = System.currentTimeMillis()
 		
 		// define the number of parallel threads
 		int nThreads = grailsApplication.config.grails.cytomine.execution.threads
@@ -257,10 +255,10 @@ class ImageService {
 				endIdx = nImages-1;
 			} else {
 				endIdx = splitIndices.get(i)
-				worker.setRange(startIdx, endIdx)
-				threadPool.execute(worker);
-				startIdx = endIdx+1;
 			}
+			worker.setRange(startIdx, endIdx)
+			threadPool.execute(worker);
+			startIdx = endIdx+1;
 		}
 		
 		// wait for the threads to finish

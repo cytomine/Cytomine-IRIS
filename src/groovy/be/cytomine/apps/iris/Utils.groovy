@@ -127,22 +127,30 @@ class Utils {
 	throws IndexOutOfBoundsException{
 		return annotations.get(currentIndex+1)
 	}
-	
+
 	public def getSplitIndices(def theList, int nParts){
 		def nItems = theList.size()
+		int cutoff = 1;
+
 		if (nItems == 0){
 			return []
+		} else if (nItems <= cutoff){
+			// process in a single thread, if smaller equal than cutoff
+			return [nItems-1]
 		}
-		
+
+		// determine the number of parts
 		if (nItems < nParts){
-			nParts = 1
+			// limit the number of parts by the number of items
+			nParts = nItems
 		}
-		
+		int maxSplits = nParts-1;
+
 		int nElementsPerPart = Math.round(nItems/nParts)
-		//assert nParts == new Double(Math.ceil(nItems / nElementsPerPart)).intValue()
-		
+		assert nParts == new Double(Math.round(nItems / nElementsPerPart)).intValue()
+
 		// split the list in subparts
-		def splitIndices = (1..nParts-2).collect { (it * nElementsPerPart)-1 }
+		def splitIndices = (1..maxSplits).collect { (it * nElementsPerPart)-1 }
 		print "max elements per part: " << nElementsPerPart << ", parts: " << nParts
 		println "      --> Split indices: " << splitIndices
 		return splitIndices

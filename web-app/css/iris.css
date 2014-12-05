@@ -44,7 +44,6 @@ Map controls.
 	cursor: move;
 }
 /*map controls end*/
-
 .container-100 {
 	width: 100% !important;
 	padding-left: 25px;
@@ -73,9 +72,11 @@ Map controls.
 [treecontrol].tree-light li .tree-selected {
 	font-weight: normal;
 }
+
 [treecontrol].tree-classic li .tree-selected {
 	font-weight: normal;
 }
+
 [treecontrol].tree-dark li .tree-selected {
 	font-weight: normal;
 }
@@ -138,14 +139,14 @@ input[type="checkbox"].colorbox-checkbox {
 
 /*drop area style*/
 [ng-drop] {
-/* 	background: rgba(0, 255, 0, 0.5); */
-/* 	text-align: center; */
+	/* 	background: rgba(0, 255, 0, 0.5); */
+	/* 	text-align: center; */
 	width: 600px;
 	height: 200px;
-/* 	padding-top: 90px; */
-/* 	display: block; */
-/* 	margin: 20px auto; */
-/* 	position: relative; */
+	/* 	padding-top: 90px; */
+	/* 	display: block; */
+	/* 	margin: 20px auto; */
+	/* 	position: relative; */
 }
 
 /*highlight the drop area on enter*/
@@ -168,4 +169,12 @@ input[type="checkbox"].colorbox-checkbox {
 [ng-drop] div {
 	position: relative;
 	z-index: 2;
+}
+
+.dropshadowimg {
+	border: 1px solid #bfbfbf;
+	-moz-box-shadow : 5px 5px 10px #999;
+	-webkit-box-shadow: 5px 5px 10px #999;
+	box-shadow: 5px 5px 10px #999;
+	margin-bottom: 20px; 
 }
