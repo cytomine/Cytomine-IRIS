@@ -8,8 +8,12 @@ import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.DefaultHttpClient
 import org.json.simple.JSONObject
+import org.json.simple.JSONArray
 
 import be.cytomine.client.Cytomine
+import be.cytomine.client.CytomineException
+import be.cytomine.client.collections.ImageInstanceCollection
+import be.cytomine.client.models.ImageInstance
 import be.cytomine.client.models.Ontology
 import be.cytomine.client.models.User
 
@@ -28,6 +32,7 @@ class CytomineController {
 	def projectService
 	def imageService
 	def grailsApplication
+	def sessionService
 	
 	def beforeInterceptor = {
 		log.debug("Executing action $actionName with params $params")

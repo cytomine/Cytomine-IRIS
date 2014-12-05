@@ -1,9 +1,15 @@
 package be.cytomine.apps.iris
 
 import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONElement
+
+import org.json.simple.JSONArray
+import org.json.simple.JSONObject
+
 import be.cytomine.client.Cytomine
 import be.cytomine.client.CytomineException
+import be.cytomine.client.collections.AnnotationCollection;
+import be.cytomine.client.collections.ImageInstanceCollection
+import be.cytomine.client.models.ImageInstance
 
 /**
  * A SessionController handles the communication with the client and 
@@ -26,6 +32,7 @@ class SessionController {
 	 */
 	def sessionService
 	def imageService
+	def grailsApplication
 
 	/**
 	 * Gets all sessions from the IRIS server.
@@ -260,5 +267,27 @@ class SessionController {
 		//		}
 
 		render sessJSON as JSON
+	}
+	
+	/**
+	 *
+	 *
+	 * @param cytomine a Cytomine instance
+	 * @param cmProjectID the Cytomine project ID
+	 * @param publicKey the public key of the user
+	 *
+	 * @return a list of IRIS images
+	 *
+	 * @throws CytomineException if the user is not found
+	 */
+	def getImagesWithProgressDEV() {
+		Cytomine cytomine = request['cytomine']
+		long cmProjectID = params.long('pid')
+		String publicKey = params['publicKey']
+		
+		def imageList = imageService.getImagesWithProgress(request['cytomine'], cmProjectID, publicKey)
+		
+		render imageList as JSON
+		
 	}
 }

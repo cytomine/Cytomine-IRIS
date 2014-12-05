@@ -17,6 +17,7 @@ grails.cytomine.apps.iris.host = "http://localhost:8080"
 grails.cytomine.image.host = "http://image{serverID}.cytomine.be"
 grails.cytomine.host = "http://beta.cytomine.be"
 grails.cytomine.web = "http://www.cytomine.be"
+grails.cytomine.execution.threads = 16
 
 // The ACCEPT header will not be used for content negotiation for user agents containing the following strings (defaults to the 4 major rendering engines)
 grails.mime.disable.accept.header.userAgents = ['Gecko', 'WebKit', 'Presto', 'Trident']

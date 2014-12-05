@@ -189,6 +189,10 @@ class UrlMappings {
 			action = [GET: "dev"]
 		}
 		
+		"/api/imageswithprogress.json"(controller:"session"){
+			action = [GET: "getImagesWithProgressDEV"]
+		}
+		
 		
 		/*
 		 * ProjectController
