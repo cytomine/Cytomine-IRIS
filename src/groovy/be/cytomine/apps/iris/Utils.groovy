@@ -130,29 +130,30 @@ class Utils {
 
 	public def getSplitIndices(def theList, int nParts){
 		def nItems = theList.size()
-		int cutoff = 1;
+		def splitIndices;
 
 		if (nItems == 0){
-			return []
-		} else if (nItems <= cutoff){
-			// process in a single thread, if smaller equal than cutoff
-			return [nItems-1]
+			splitIndices = []
+		} else if (nParts == 1 || nItems == 1) {
+			splitIndices = [nItems-1]
+		} else {
+			int maxSplits = nParts-1;
+			// determine the number of parts
+			if (nItems <= nParts){
+				// limit the number of parts by the number of items
+				nParts = nItems
+				maxSplits = nParts
+			}
+
+			int nElementsPerPart = Math.round(nItems/nParts)
+			//assert nParts == new Double(Math.round(nItems / nElementsPerPart)).intValue()
+
+			// split the list in subparts
+			splitIndices = (1..maxSplits).collect { (it * nElementsPerPart)-1 }
+			print "max elements per part: " << nElementsPerPart << ", parts: " << nParts << ", maxSplits: " << maxSplits
 		}
-
-		// determine the number of parts
-		if (nItems < nParts){
-			// limit the number of parts by the number of items
-			nParts = nItems
-		}
-		int maxSplits = nParts-1;
-
-		int nElementsPerPart = Math.round(nItems/nParts)
-		assert nParts == new Double(Math.round(nItems / nElementsPerPart)).intValue()
-
-		// split the list in subparts
-		def splitIndices = (1..maxSplits).collect { (it * nElementsPerPart)-1 }
-		print "max elements per part: " << nElementsPerPart << ", parts: " << nParts
 		println "      --> Split indices: " << splitIndices
+
 		return splitIndices
 	}
 }
