@@ -177,6 +177,12 @@ class UrlMappings {
 				]
 		}
 		
+		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/progress"(controller:"session"){
+			action = [
+				GET: "labelingProgress" // get the labeling progress of an image
+				]
+		}
+		
 		"/api/sessions(.$format)"(controller:"session"){
 			action = [GET: "getAll"]
 		}

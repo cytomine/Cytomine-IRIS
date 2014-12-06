@@ -30,11 +30,11 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 		status : "",
 	};
 
-	// TODO DEBUG
+	// Initialize the variable for the progress
 	$scope.item = {
-		userProgress : 45,
-		labeledAnnotations : 45,
-		numberOfAnnotations : 100
+		userProgress : 0,
+		labeledAnnotations : 0,
+		numberOfAnnotations : 0
 	};
 
 	// put all valid shortcuts for this page here
@@ -72,6 +72,13 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 				$scope.annotation = data.currentAnnotation;
 				$log.debug("Setting the current annotation for display.");
 			}
+			
+			// map the progress to the 'item' for the progress bar
+			$scope.item = {
+				userProgress : data.userProgress,
+				labeledAnnotations : data.labeledAnnotations,
+				numberOfAnnotations : data.numberOfAnnotations
+			};
 			
 		}, function(data, status) {
 			var msg = "";
@@ -212,10 +219,16 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 			sharedService.addAlert("Term '" + term.name + "' has been assigned.");
 
 			$scope.saving.status = "success";
+
+			// REFLECT UPDATED LABELING PROGRESS
+			$scope.updateLabelingProgress();
 			$timeout(function(){ $scope.saving.status = ""; }, 2000);
 		}, function(data, status){
 			sharedService.addAlert("Cannot assign term '" + term.name + "'. Status " + status + ".", "danger");
 			$scope.saving.status = "error";
+
+			// REFLECT UPDATED LABELING PROGRESS
+			$scope.updateLabelingProgress();
 			$timeout(function(){ $scope.saving.status = ""; }, 2000);
 		});
 	};
@@ -233,18 +246,38 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 			$scope.annotation.cmTermName = null;
 			$scope.annotation.cmTermID = 0;
 			$scope.annotation.cmOntologyID = 0;
-			
+
 			$log.debug("Removing term '" + termName + "' from annotation.");
 			sharedService.addAlert("Term '" + termName + "' has been removed.");
 			$scope.saving.status = "success";
+			
+			// REFLECT UPDATED LABELING PROGRESS
+			$scope.updateLabelingProgress();
 			$timeout(function(){ $scope.saving.status = ""; }, 2000);
 		}, function(data, status){
 			sharedService.addAlert("Cannot remove term '" + termName + "'. Status " + status + ".", "danger");
 			$scope.saving.status = "error";
+			
+			// REFLECT UPDATED LABELING PROGRESS
+			$scope.updateLabelingProgress();
 			$timeout(function(){ $scope.saving.status = ""; }, 2000);
 		});
 	};
 	
+	// fetch the labeling status of the current image 
+	$scope.updateLabelingProgress = function(){
+		sessionService.getLabelingProgress($scope.projectID, $scope.imageID, function(data){
+			$scope.item = {
+					userProgress : data.userProgress,
+					labeledAnnotations : data.labeledAnnotations,
+					numberOfAnnotations : data.totalAnnotations
+				};
+		}, function(data, status, header, config){
+			sharedService.addAlert("Cannot update progress! Status " + status + ".", "danger");
+		})
+	}
+	
+	// navigates to the image list
 	$scope.navToImages = function(){
 		sharedService.navToImages();
 	};

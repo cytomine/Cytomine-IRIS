@@ -27,6 +27,7 @@
     </div>
 
 	<div class="row" ng-hide="labeling.error">
+		<div class="row text-center" ng-controller="progressCtrl" ng-include="'templates/html/progressPanel.html'" style="margin-bottom: 10px; margin-top: -10px"></div>
 		<div class="col-xs-4 text-center well">
 			<div class="row">
 				<div class="col-xs-6">ID: {{annotation.cmID}}</div>
@@ -41,7 +42,7 @@
 						ng-click="moveToNextAnnotation()">Next &raquo;</button>
 				</div>
 				
-<!-- 			TODO add the viewPanel  -->
+<!-- 			add the viewPanel  -->
 				<div id="viewPanel">
 					<ng-include src="'templates/html/viewPanel.html'" ng-controller="mapCtrl"></ng-include>
 				</div>

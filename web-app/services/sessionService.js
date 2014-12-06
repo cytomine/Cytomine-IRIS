@@ -7,12 +7,14 @@ iris.constant("updateProjectURL",
 		"/api/session/{sessionID}/project/{projectID}");
 iris.constant("touchImageURL",
 		"/api/session/{sessionID}/project/{projectID}/image/{imageID}/touch");
+iris.constant("labelingProgressURL",
+		"/api/session/{sessionID}/project/{projectID}/image/{imageID}/progress");
 iris.constant("touchAnnotationURL",
 		"/api/session/{sessionID}/project/{projectID}/image/{imageID}/annotation/{annID}/touch");
 
 // A generic service for handling client sessions.
 iris.factory("sessionService", function($http, $log, $location, sessionURL,
-		touchProjectURL, updateProjectURL, touchImageURL, touchAnnotationURL, sharedService,
+		touchProjectURL, updateProjectURL, touchImageURL, labelingProgressURL, touchAnnotationURL, sharedService,
 		cytomineService) {
 
 	return {
@@ -231,6 +233,28 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 				}
 			});
 
+		},
+		
+		// touches an image in the current session
+		getLabelingProgress : function(cmProjectID, cmImageID, callbackSuccess,
+				callbackError) {
+			var sessionService = this;
+			var session = sessionService.getSession();
+
+			var url = cytomineService.addKeys(labelingProgressURL).replace(
+					"{sessionID}", session.id).replace("{projectID}",
+					cmProjectID).replace("{imageID}", cmImageID);
+
+			$http.get(url).success(function(data) {
+				if (callbackSuccess) {
+					callbackSuccess(data)
+				}
+			}).error(function(data, status, header, config) {
+				$log.error(data);
+				if (callbackError) {
+					callbackError(data, status)
+				}
+			});
 		},
 
 	// END SESSION MANAGEMENT

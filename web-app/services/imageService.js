@@ -3,9 +3,8 @@
  */
 var iris = angular.module("irisApp");
 
-iris.constant("imageURL", "/api/project/{id}/images.json");
-iris.constant(
-				"imageServerURLs",
+iris.constant("imageURL", "/api/project/{projectID}/images.json");
+iris.constant("imageServerURLs",
 				"/api/abstractimage/{abstractImageID}/imageinstance/{imageInstanceID}/imageservers.json");
 
 iris.factory("imageService", function($http, $log, imageURL, imageServerURLs,
@@ -15,7 +14,7 @@ iris.factory("imageService", function($http, $log, imageURL, imageServerURLs,
 		
 		// get the images for a project
 		fetchImages : function(projectID, callbackSuccess, callbackError) {
-			var url = cytomineService.addKeys(imageURL).replace("{id}",
+			var url = cytomineService.addKeys(imageURL).replace("{projectID}",
 					projectID);
 
 			// execute the get request to the server
@@ -54,6 +53,6 @@ iris.factory("imageService", function($http, $log, imageURL, imageServerURLs,
 					callbackError(data, status);
 				}
 			})
-		}
+		},
 	};
 });

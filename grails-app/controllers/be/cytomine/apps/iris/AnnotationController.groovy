@@ -308,8 +308,13 @@ class AnnotationController {
 		result.put("size", tupleSize) // number of annotations in the tuple
 
 		result.put("currentIndex", idx)
-		result.put("labeledAnnotations", 2) // TODO compute userProgress in this image
-		result.put("numberOfAnnotations", annotations.size())
+		
+		// retrieve the user's progress on each image and return it in the object
+		JSONObject annInfo = utils.getUserProgress(cytomine, cmProjectID, cmImageID, user.getCmID())
+		// resolving the values from the JSONObject to each image as property
+		result.put("labeledAnnotations", annInfo.get("labeledAnnotations"))
+		result.put("userProgress", annInfo.get("userProgress"))
+		result.put("numberOfAnnotations", annInfo.get("totalAnnotations"))
 
 		render (result as JSON)
 	}

@@ -193,6 +193,36 @@ class SessionController {
 			// TODO redirect to an error page or send back 400
 		}
 	}
+	
+	
+	/**
+	 * Gets the labeling progress for a specific image in a project.
+	 * The user is determined by the session.
+	 *
+	 * @return the updated image as JSON object
+	 */
+	def labelingProgress(){
+		try {
+			Cytomine cytomine = request['cytomine']
+			long sessionID = params.long('sessionID')
+			long cmProjectID = params.long('cmProjectID')
+			long cmImageID = params.long('cmImageID')
+
+			Session sess = Session.get(sessionID)
+			User u = sess.getUser()
+			
+			Utils utils = new Utils()
+			// retrieve the user's progress on each image and return it in the object
+			JSONObject annInfo = utils.getUserProgress(cytomine, cmProjectID, cmImageID, u.getCmID())
+			render annInfo as JSON
+		}catch(CytomineException e){
+			log.error("Could not retrieve labeling status of image!",e)
+			// TODO redirect to an error page or send back 404 and message
+		}catch(Exception ex){
+			log.error("Could not retrieve labeling status of image!",ex)
+			// TODO redirect to an error page or send back 400
+		}
+	}
 
 	def delProj(){
 		//		Project toDelete = Project.get(2)
@@ -232,8 +262,7 @@ class SessionController {
 
 		render image as JSON
 	}
-
-
+	
 	def dev(){
 		Cytomine cytomine = request['cytomine']
 		long userID = params.long('userID')

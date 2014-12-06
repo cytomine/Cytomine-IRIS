@@ -77,7 +77,7 @@ class ImageService {
 	}
 
 	/**
-	 * 
+	 * Gets the images with progress.
 	 * 
 	 * @param cytomine a Cytomine instance
 	 * @param cmProjectID the Cytomine project ID
@@ -181,6 +181,7 @@ class ImageService {
 
 		def start = System.currentTimeMillis()
 
+		// get the images from cytomine core server
 		ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)
 
 		int nImages = cmImageCollection.size()
@@ -193,7 +194,7 @@ class ImageService {
 		// define the number of parallel threads
 		int nThreads = grailsApplication.config.grails.cytomine.execution.threads
 
-		// multi-threaded implementation
+		// multi-threaded implementation of computing the status
 		def threadPool = Executors.newFixedThreadPool(nThreads)
 		// split the list in subparts, get the indices of splitting
 		def splitIndices = utils.getSplitIndices(cmImageCollection, nThreads)
@@ -313,6 +314,5 @@ class ImageService {
 		return obj as JSON
 	}
 
-
-
+	
 }
