@@ -80,6 +80,8 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 				numberOfAnnotations : data.numberOfAnnotations
 			};
 			
+			$log.debug($scope.item)
+			
 		}, function(data, status) {
 			var msg = "";
 			if (data === 'null'){
@@ -267,11 +269,13 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 	// fetch the labeling status of the current image 
 	$scope.updateLabelingProgress = function(){
 		sessionService.getLabelingProgress($scope.projectID, $scope.imageID, function(data){
+			console.log("updated status")
 			$scope.item = {
 					userProgress : data.userProgress,
 					labeledAnnotations : data.labeledAnnotations,
 					numberOfAnnotations : data.totalAnnotations
 				};
+			$log.debug($scope.item)
 		}, function(data, status, header, config){
 			sharedService.addAlert("Cannot update progress! Status " + status + ".", "danger");
 		})

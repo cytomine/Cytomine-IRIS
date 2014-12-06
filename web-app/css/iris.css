@@ -6,6 +6,10 @@
 	padding: 0px;
 }
 
+.panel-body {
+	padding: 5px;
+}
+
 .container-fluid.rounded-corners {
 	border-radius: 10px;
 }
