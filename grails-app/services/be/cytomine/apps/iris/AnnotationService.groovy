@@ -62,8 +62,8 @@ class AnnotationService {
 			}
 		}
 		//		TODO save the current annotation for that image
-		//		image.setCurrentAnnotation(currIrisAnn)
-
+		image.setCurrentCmAnnotationID(currIrisAnn.cmID)
+		
 		assert currIrisAnn != null
 		
 		log.debug("############ CURRENT ANNOTATION RESOLVED")

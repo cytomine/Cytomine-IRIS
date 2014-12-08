@@ -153,7 +153,7 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 					});
 		},
 
-		// retrieve the currently active project
+		// retrieve the currently active image
 		getCurrentImage : function() {
 			var sess = this.getSession();
 			if (sess.currentImage != null) {
@@ -165,14 +165,16 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 			}
 		},
 
-		// set the currently active project
+		// set the currently active image
 		setCurrentImage : function(image) {
 			if (image == null) {
 				var session = this.getSession();
 				session.currentImage = null;
 				this.setSession(session);
 			} else {
-				this.updateImage(image);
+				// TODO METHOD ????
+//				this.updateImage(image);
+				$log.debug("IMPLEMENTATION SET CURRENT IMAGE MISSING")
 			}
 		},
 
@@ -203,6 +205,25 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 				}
 			});
 
+		},
+		
+		// retrieve the currently active annotation
+		getCurrentAnnotationID : function() {
+			var sess = this.getSession();
+			if (sess.currentImage.currentCmAnnotationID != null) {
+				$log.debug("returning current IRIS annotation")
+				return sess.currentImage.currentCmAnnotationID;
+			} else {
+				$log.debug("current IRIS annotation is null")
+				return null;
+			}
+		},
+
+		// set the currently active annotation
+		setCurrentAnnotationID : function(annotationID) {
+			var session = this.getSession();
+			session.currentImage.currentCmAnnotationID = annotationID;
+			this.setSession(session);
 		},
 		
 		// touch the current annotation in this session

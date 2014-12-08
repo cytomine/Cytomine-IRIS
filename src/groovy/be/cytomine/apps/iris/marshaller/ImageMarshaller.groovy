@@ -14,9 +14,10 @@ class ImageMarshaller implements IRISMarshaller{
 			img['id'] = it.id
 			img['lastActivity'] = it.lastActivity
 			img['cmID'] = it.cmID
-			img['currentAnnotation'] = it.currentAnnotation
-			img['previousAnnotation'] = it.previousAnnotation
-			img['nextAnnotation'] = it.nextAnnotation
+			img['currentCmAnnotationID'] = it.currentCmAnnotationID
+//			img['currentAnnotation'] = it.currentAnnotation
+//			img['previousAnnotation'] = it.previousAnnotation
+//			img['nextAnnotation'] = it.nextAnnotation
 			img['prefs'] = it.prefs
 			img['project'] = (it.project==null?null:it.project.id)
 			img['goToURL'] = it.goToURL
@@ -28,5 +29,4 @@ class ImageMarshaller implements IRISMarshaller{
 			return img
 		}
 	}
-	
 }

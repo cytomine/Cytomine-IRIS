@@ -27,10 +27,6 @@ iris.controller(
 				$log.error("project is not available!");
 			})
 			
-			// TODO fetch a session for the user
-//			sessionService.fetchSession();
-			
-			
 			// set content url for the help page
 			helpService.setContentUrl("content/help/imageHelp.html");
 			

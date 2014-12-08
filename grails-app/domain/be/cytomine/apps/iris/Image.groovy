@@ -21,8 +21,7 @@ class Image implements Comparable<Image>, Updateable{
 	Long numberOfAnnotations = 0L
 	Long labeledAnnotations = 0L
 	Long userProgress = 0L
-	
-	
+		
 	// many images can belong to one project
 	Project project = null
 	
@@ -34,11 +33,13 @@ class Image implements Comparable<Image>, Updateable{
 	// an image can have preferences
 	Map<String, String> prefs = [:]
 	
+	Long currentCmAnnotationID = 0L
+	
 	// each image may have up to 3 annotations (current, previous, next)
 	// which will be updated accordingly 
 	Map annotations = [:]
 	static hasMany = [annotations:Annotation]
-			
+	
 	public void setCurrentAnnotation(Annotation currAnn){
 		this.annotations.put("currentAnnotation", currAnn)
 	}

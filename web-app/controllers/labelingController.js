@@ -6,7 +6,7 @@ iris.config(function($logProvider) {
 
 iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $timeout,
 		$routeParams, $log, hotkeys, ngTableParams, helpService, annotationService,
-		projectService, sessionService, sharedService, imageService,
+		projectService, sessionService, sharedService, navService, imageService,
 		cytomineService) {
 	console.log("labelingCtrl");
 
@@ -19,9 +19,14 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 	
 	$scope.ontology = {};
 
+	// TODO fetch the updated session
+	
 	$scope.projectID = $routeParams["projectID"];
 	$scope.imageID = $routeParams["imageID"];
-	$scope.annotationID = $routeParams["annID"];
+	
+	// get the current annotation according to the current image
+	$scope.annotationID = sessionService.getCurrentAnnotationID()==null?
+			null:sessionService.getCurrentAnnotationID();
 
 	// set content url for the help page
 	helpService.setContentUrl("content/help/labelingHelp.html");
@@ -85,12 +90,12 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 				labeledAnnotations : data.labeledAnnotations,
 				numberOfAnnotations : data.numberOfAnnotations
 			};
+
+			// set the current annotation to the local session
+			sessionService.setCurrentAnnotationID(data.currentAnnotation.cmID);
 			
 			// enable navigation
 			$scope.navDisabled = false;
-			
-			$log.debug($scope.item)
-			
 		}, function(data, status) {
 			var msg = "";
 			if (data === 'null'){
@@ -112,6 +117,9 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 							}
 					}
 			}
+			
+			// set the current annotation to the local session
+			sessionService.setCurrentAnnotationID(null);
 			
 			$scope.navDisabled = false;
 //			sharedService.addAlert(msg + " Status "
@@ -311,6 +319,6 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 	
 	// navigates to the image list
 	$scope.navToImages = function(){
-		sharedService.navToImages();
+		navService.navToImages();
 	};
 });
