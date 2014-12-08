@@ -60,6 +60,7 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 
 	// get a new 3-tuple (around annID) from the server
 	$scope.fetchNewTuple = function(annID, displayCurrentAnnotation) {
+		$scope.navDisabled = true;
 		annotationService.fetchUserAnnotations3Tuple($scope.projectID, $scope.imageID, annID,
 		function(data) {
 			// delete the errors
@@ -79,6 +80,9 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 				labeledAnnotations : data.labeledAnnotations,
 				numberOfAnnotations : data.numberOfAnnotations
 			};
+			
+			// enable navigation
+			$scope.navDisabled = false;
 			
 			$log.debug($scope.item)
 			
@@ -103,6 +107,8 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 							}
 					}
 			}
+			
+			$scope.navDisabled = false;
 //			sharedService.addAlert(msg + " Status "
 //					+ status + ".", "danger");
 		});
@@ -113,6 +119,11 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 	$scope.fetchNewTuple($scope.annotationID, true);
 	
 	$scope.moveToNextAnnotation = function(){
+		// check for disabled next button (e.g. while loading)
+		if ($scope.navDisabled){
+			return;
+		}
+		
 		var hasNext = $scope.labeling.annotationTuple.hasNext;
 		if (!hasNext){
 			sharedService.addAlert("This is the last annotation.", "info");
@@ -133,6 +144,11 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 	};
 	
 	$scope.moveToPreviousAnnotation = function(){
+		// check for disabled navigation (e.g. while loading)
+		if ($scope.navDisabled){
+			return;
+		}
+		
 		var hasPrevious = $scope.labeling.annotationTuple.hasPrevious;
 		if (!hasPrevious){
 			sharedService.addAlert("This is the first annotation.", "info");
