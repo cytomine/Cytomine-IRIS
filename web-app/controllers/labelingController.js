@@ -14,6 +14,7 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 	$scope.labeling = {
 		annotationTuple : {},
 		annotations : {},
+		hideCompleted : false,
 	};
 	
 	$scope.ontology = {};
@@ -61,7 +62,11 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 	// get a new 3-tuple (around annID) from the server
 	$scope.fetchNewTuple = function(annID, displayCurrentAnnotation) {
 		$scope.navDisabled = true;
-		annotationService.fetchUserAnnotations3Tuple($scope.projectID, $scope.imageID, annID,
+		annotationService.fetchUserAnnotations3Tuple(
+				$scope.projectID, 
+				$scope.imageID, 
+				$scope.labeling.hideCompleted, 
+				annID,
 		function(data) {
 			// delete the errors
 			delete $scope.labeling.error;
@@ -168,6 +173,13 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 		}
 	};
 	
+	// shows or hides completed annotations
+	$scope.showOrHideCompleted = function() {
+		$log.debug($scope.labeling.hideCompleted);
+		
+		// TODO fetch new tuple
+		$scope.fetchNewTuple($scope.labeling.annotationTuple.currentAnnotation.cmID, true);
+	};
 		
 	
 	///////////////////////

@@ -50,7 +50,7 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 		},
 		
 		// get the 3-tuple annotations for a given project and image
-		fetchUserAnnotations3Tuple : function(projectID, imageID, annID, callbackSuccess,
+		fetchUserAnnotations3Tuple : function(projectID, imageID, hideCompleted, annID, callbackSuccess,
 				callbackError) {
 			var sessionID = sessionService.getSession().id
 			$log.debug("Getting user annotations (3-tuple): " + sessionID + " - "
@@ -63,6 +63,7 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 
 			// add optional offset and max parameters
 			url += ("&currentAnnotation=" + annID);
+			url += ("&hideCompleted=" + hideCompleted);
 
 			// execute the http get request to the IRIS server
 			$http.get(url).success(function(data) {

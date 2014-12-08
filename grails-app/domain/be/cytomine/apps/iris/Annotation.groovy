@@ -35,6 +35,8 @@ class Annotation {
 	Long cmOntology = 0L
 	// the Cytomine user ID of the person who assigned this term
 	Long cmUserID = 0L
+	// a flag determining whether the annotation is already labeled
+	boolean alreadyLabeled = false
 	
 	// a map of preferences
 	Map<String, String> prefs = [:]

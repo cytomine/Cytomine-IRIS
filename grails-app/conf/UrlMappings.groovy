@@ -100,6 +100,7 @@ class UrlMappings {
 		 * Optional parameters
 		 * 		currentAnnotation = { $cmAnnID || null }
 		 * 			if null, return first and subsequent item, if any, previousAnnotation = null
+		 * 		hideCompleted = { true || false }
 		 */
 		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotations/tuple.$format"(controller:"annotation"){
 			action = [GET: "getAnnotation3Tuple"]
@@ -192,14 +193,9 @@ class UrlMappings {
 			action = [DELETE: "delProj"]
 		}
 		
-		"/api/dev.json"(controller:"session"){
+		"/api/session/dev.json"(controller:"session"){
 			action = [GET: "dev"]
 		}
-		
-		"/api/imageswithprogress.json"(controller:"session"){
-			action = [GET: "getImagesWithProgressDEV"]
-		}
-		
 		
 		/*
 		 * ProjectController
