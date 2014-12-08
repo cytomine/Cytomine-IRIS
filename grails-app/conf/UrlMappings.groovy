@@ -167,6 +167,7 @@ class UrlMappings {
 			action = [GET: "getImage"]
 		}
 		
+		// optional parameters (progress = true | false)
 		"/api/project/$projectID/images.$format"(controller:"session"){
 			action = [GET: "getImages"]
 		}

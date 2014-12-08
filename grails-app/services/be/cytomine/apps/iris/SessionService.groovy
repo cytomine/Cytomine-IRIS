@@ -239,7 +239,7 @@ class SessionService {
 		if (blindMode){
 			imageJSON.cytomine.originalFilename = "[BLIND]" + cmImage.getId()
 			imageJSON.cytomine.path = null
-			//imageJSON.cytomine.fullPath = null this contains the image path for the tiles
+			imageJSON.cytomine.fullPath = null // this contains the image path for the tiles
 			imageJSON.cytomine.extension = null
 			imageJSON.cytomine.filename = null
 			imageJSON.cytomine.mime = null

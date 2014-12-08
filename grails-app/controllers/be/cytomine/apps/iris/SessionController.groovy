@@ -241,13 +241,20 @@ class SessionController {
 	 * @return the list of images for a given project ID as JSON object including the current progress
 	 */
 	def getImages() {
+		Cytomine cytomine = request['cytomine']
 		long projectID = params.long("projectID")
+		Boolean withProgress = Boolean.parseBoolean(params['computeProgress'])
+		Boolean withTiles = Boolean.parseBoolean(params['withTileURL'])
 		
-		def imageList = imageService.getImagesWithProgress(request['cytomine'], projectID, params.get("publicKey"))
-
+		def imageList
+		if (withProgress){
+			imageList = imageService.getImagesWithProgress(cytomine, projectID, params.get("publicKey"), withTiles)
+		} else {
+			imageList = imageService.getImages(cytomine, projectID, withTiles)
+		}
 		render imageList as JSON
 	}
-	
+		
 	/**
 	 * Get an image in a project.
 	 *
@@ -298,25 +305,25 @@ class SessionController {
 		render sessJSON as JSON
 	}
 	
-	/**
-	 *
-	 *
-	 * @param cytomine a Cytomine instance
-	 * @param cmProjectID the Cytomine project ID
-	 * @param publicKey the public key of the user
-	 *
-	 * @return a list of IRIS images
-	 *
-	 * @throws CytomineException if the user is not found
-	 */
-	def getImagesWithProgressDEV() {
-		Cytomine cytomine = request['cytomine']
-		long cmProjectID = params.long('pid')
-		String publicKey = params['publicKey']
-		
-		def imageList = imageService.getImagesWithProgress(request['cytomine'], cmProjectID, publicKey)
-		
-		render imageList as JSON
-		
-	}
+//	/**
+//	 *
+//	 *
+//	 * @param cytomine a Cytomine instance
+//	 * @param cmProjectID the Cytomine project ID
+//	 * @param publicKey the public key of the user
+//	 *
+//	 * @return a list of IRIS images
+//	 *
+//	 * @throws CytomineException if the user is not found
+//	 */
+//	def getImagesWithProgressDEV() {
+//		Cytomine cytomine = request['cytomine']
+//		long cmProjectID = params.long('pid')
+//		String publicKey = params['publicKey']
+//		
+//		def imageList = imageService.getImagesWithProgress(request['cytomine'], cmProjectID, publicKey)
+//		
+//		render imageList as JSON
+//		
+//	}
 }

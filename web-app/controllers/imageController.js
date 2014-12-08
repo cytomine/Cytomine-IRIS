@@ -87,7 +87,7 @@ iris.controller(
 			
 			// get all the images for the current project 
 			$scope.getAllImages = function(callbackSuccess) {
-				imageService.fetchImages($scope.projectID, function(data) {
+				imageService.fetchImages($scope.projectID, true, function(data) {
 					callbackSuccess(data);
 				}, function(data, status) {
 					$scope.image.error.retrieve = {

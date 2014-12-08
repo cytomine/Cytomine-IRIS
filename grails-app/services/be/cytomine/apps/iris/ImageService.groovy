@@ -57,23 +57,40 @@ class ImageService {
 	}
 
 	/**
-	 * Gets images from Cytomine.
+	 * Gets images from Cytomine without computing the user's labeling progress.
 	 * 
 	 * @param cytomine a Cytomine instance
 	 * @param cmProjectID the Cytomine project ID
-	 * @return a list of Cytomine images for the project
+	 * @param withTileURL optionally compute the tile URLs for each image
+	 * @return a list of (blinded) IRIS images for the project
 	 */
-	def getImages(Cytomine cytomine, long cmProjectID){
-		def imageList = cytomine.getImageInstances(cmProjectID).list
+	def getImages(Cytomine cytomine, long cmProjectID, boolean withTileURL){
+		ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)
 		def cmProject = cytomine.getProject(cmProjectID)
-		imageList.each {
-			// inject the blinded file name in each image, if required
-			if (cmProject.get("blindMode") == true){
-				it.originalFilename = "[BLIND]" + it.id
+		boolean blindMode = cmProject.get("blindMode")
+		int nImages = cmImageCollection.size()
+
+		JSONArray irisImageList = new JSONArray()
+		for (int i = 0; i < nImages; i++) {
+			ImageInstance cmImage = cmImageCollection.get(i)
+
+			// map the client image to the IRIS image
+			Image irisImage = new DomainMapper().mapImage(cmImage, null, blindMode)
+
+			//for each image, add a goToURL property containing the full URL to open the image in the core Cytomine instance
+			irisImage.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImage.getId() + "-")
+			if (withTileURL) {
+				irisImage.setOlTileServerURL(imageService.getImageServerURL(cytomine, cmImage.get("baseImage"), cmImage.getId()));
 			}
+
+			// set the Cytomine image as "cytomine" property in the irisImage
+			def imageJSON = sessionService.injectCytomineImageInstance(cytomine, irisImage, cmImage, blindMode)
+
+			// add it to the result list
+			irisImageList.add(irisImage)
 		}
 
-		return imageList
+		return irisImageList
 	}
 
 	/**
@@ -82,12 +99,13 @@ class ImageService {
 	 * @param cytomine a Cytomine instance
 	 * @param cmProjectID the Cytomine project ID
 	 * @param publicKey the public key of the user
+	 * @param withTileURL optionally compute the tile URLs for each image
 	 * 
 	 * @return a list of IRIS images
 	 * 
 	 * @throws CytomineException if the user is not found
 	 */
-	def getImagesWithProgress(Cytomine cytomine, long cmProjectID, String publicKey) throws CytomineException{
+	def getImagesWithProgress(Cytomine cytomine, long cmProjectID, String publicKey, boolean withTileURL) throws CytomineException{
 
 		// SERIAL IMPLEMENTATION
 		//		long userID = cytomine.getUser(publicKey).getId()
@@ -131,7 +149,9 @@ class ImageService {
 		//
 		//			//for each image, add a goToURL property containing the full URL to open the image in the core Cytomine instance
 		//			irisImage.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImage.getId() + "-")
-		//			irisImage.setOlTileServerURL(imageService.getImageServerURL(cytomine, cmImage.get("baseImage"), cmImage.getId()));
+		//			if (withTileURL){
+		//				irisImage.setOlTileServerURL(imageService.getImageServerURL(cytomine, cmImage.get("baseImage"), cmImage.getId()));
+		//			}
 		//
 		//			// retrieve the user's progress on each image and return it in the object
 		//			JSONObject annInfo = utils.getUserProgress(cytomine, cmProjectID, cmImage.getId(), userID)
@@ -241,8 +261,12 @@ class ImageService {
 
 								//for each image, add a goToURL property containing the full URL to open the image in the core Cytomine instance
 								irisImage.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImage.getId() + "-")
-								irisImage.setOlTileServerURL(imageService.getImageServerURL(cytomine, cmImage.get("baseImage"), cmImage.getId()));
-
+								// TODO this performs an synchronous GET request to the cytomine server
+								// and may thus hamper performance
+								if (withTileURL) {
+									irisImage.setOlTileServerURL(imageService.getImageServerURL(cytomine, cmImage.get("baseImage"), cmImage.getId()));
+								}
+									
 								// retrieve the user's progress on each image and return it in the object
 								JSONObject annInfo = utils.getUserProgress(cytomine, cmProjectID, cmImage.getId(), userID)
 								// resolving the values from the JSONObject to each image as property
@@ -301,11 +325,15 @@ class ImageService {
 		String cmHost = grailsApplication.config.grails.cytomine.host;
 
 		// perform a synchronous get request to the Cytomine host server
+		// TODO hard-code the tile urls for performance improvement
 		String urls = cytomine.doGet("/api/abstractimage/" + abstrImgID + "/imageservers.json?imageinstance=" + imgInstID)
+
+		//		obj = {"imageServersURLs":["http://image3.cytomine.be/image/tile?zoomify=/data/beta.cytomine.be/93518990//1412329489945/BM_GRAZ_HE_0006.svs/","http://image4.cytomine.be/image/tile?zoomify=/data/beta.cytomine.be/93518990//1412329489945/BM_GRAZ_HE_0006.svs/","http://image5.cytomine.be/image/tile?zoomify=/data/beta.cytomine.be/93518990//1412329489945/BM_GRAZ_HE_0006.svs/","http://image.cytomine.be/image/tile?zoomify=/data/beta.cytomine.be/93518990//1412329489945/BM_GRAZ_HE_0006.svs/"]}
 
 		// urls are a long string, so break them up in a JSONarray
 		org.codehaus.groovy.grails.web.json.JSONObject obj = new org.codehaus.groovy.grails.web.json.JSONObject(urls)
 
+		// imageServersURLs is a property of the object
 		def newUrls = obj.imageServersURLs.collect {
 			irisHost + "/image/tile" + it.substring(it.indexOf("?"), it.length())
 		}
@@ -314,5 +342,5 @@ class ImageService {
 		return obj as JSON
 	}
 
-	
+
 }

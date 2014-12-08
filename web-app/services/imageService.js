@@ -12,10 +12,10 @@ iris.factory("imageService", function($http, $log, imageURL, imageServerURLs,
 
 	return {
 		
-		// get the images for a project
-		fetchImages : function(projectID, callbackSuccess, callbackError) {
+		// get the images with their progress for a project
+		fetchImages : function(projectID, computeProgress, callbackSuccess, callbackError) {
 			var url = cytomineService.addKeys(imageURL).replace("{projectID}",
-					projectID);
+					projectID) + "&computeProgress=" + computeProgress;
 
 			// execute the get request to the server
 			$http.get(url).success(function(data) {

@@ -93,7 +93,7 @@ iris.controller(
 //					                   {"class":"be.cytomine.ontology.UserAnnotation","id":114156761,"created":"1395487722306","updated":null,"deleted":null,"location":"POLYGON ((37814.47308554502 13587.50884353635, 37798.893637608904 13592.651359678839, 37787.48239872964 13602.04720420449, 37782.2124757773 13614.071750236246, 37783.99508630609 13626.64584452565, 37792.52200076107 13637.595311938, 37806.318838168394 13645.026890084913, 37823 13647.655591591021, 37839.681161831606 13645.026890084913, 37853.47799923893 13637.595311938, 37862.00491369391 13626.64584452565, 37863.7875242227 13614.071750236246, 37858.51760127036 13602.04720420449, 37847.106362391096 13592.651359678839, 37831.52691445498 13587.50884353635, 37814.47308554502 13587.50884353635))","image":94255021,"geometryCompression":0.0,"project":93519082,"container":93519082,"user":93518990,"nbComments":0,"area":1607.0,"perimeterUnit":"mm","areaUnit":"micron²","perimeter":0.0,"x":37823.00000000001,"y":13617.25,"term":[95795881],"similarity":null,"rate":null,"idTerm":null,"idExpectedTerm":null,"cropURL":"http://beta.cytomine.be/api/userannotation/114156761/crop.jpg","smallCropURL":"http://beta.cytomine.be/api/userannotation/114156761/crop.png?maxSize=256","url":"http://beta.cytomine.be/api/userannotation/114156761/crop.jpg","imageURL":"http://beta.cytomine.be/#tabs-image-93519082-94255021-114156761","reviewed":false}
 //					]
 
-					var animateMap = true;
+					var animateMap = false;
 					var currImg = sessionService.getCurrentImage();
 
 					var imgWidth = currImg.cytomine.width;// 56640;

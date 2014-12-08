@@ -18,7 +18,7 @@ iris.controller("imageTreeCtrl", function($scope, $timeout, $log, sessionService
 	}
 	
 	// get the images and initialize the tree
-	imageService.fetchImages(sessionService.getCurrentProject().cmID, function(images){
+	imageService.fetchImages(sessionService.getCurrentProject().cmID, false, function(images){
 		//$scope.treeData = demoTree;
 		$scope.treeData = images;
 		$scope.tree.loading = false;
