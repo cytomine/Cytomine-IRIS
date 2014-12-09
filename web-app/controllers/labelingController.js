@@ -14,12 +14,13 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 	$scope.labeling = {
 		annotationTuple : {},
 		annotations : {},
-		hideCompleted : false,
+		hideCompleted : (sessionService.getCurrentImage().prefs['annotations.hideCompleted'] === 'true'),
 	};
 	
 	$scope.ontology = {};
 
 	// TODO fetch the updated session
+	//sessionService.fetchSession();
 	
 	$scope.projectID = $routeParams["projectID"];
 	$scope.imageID = $routeParams["imageID"];

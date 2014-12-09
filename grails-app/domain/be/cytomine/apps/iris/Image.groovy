@@ -31,7 +31,9 @@ class Image implements Comparable<Image>, Updateable{
 	static belongsTo = [project:Project]
 	
 	// an image can have preferences
-	Map<String, String> prefs = [:]
+	Map<String, String> prefs = [
+		"annotations.hideCompleted":String.valueOf(false)
+		]
 	
 	Long currentCmAnnotationID = 0L
 	
