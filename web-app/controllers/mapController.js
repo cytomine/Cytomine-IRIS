@@ -4,7 +4,7 @@ iris.constant("image")
 
 iris.controller(
 				"mapCtrl",
-				function($scope, $route, $timeout, $log, $location, $http, olData, sharedService,
+				function($scope, $route, $timeout, $log, $location, $http, olData, navService, sharedService,
 						sessionService, imageService, projectService) {
 					console.log("mapCtrl");
 					
@@ -244,6 +244,11 @@ iris.controller(
 								function(map) {
 									var view = map.getView();
 									console.log(view.getProjection().getCode())
+									if (view.getProjection().getCode() !== 'Zoomify'){
+										// workaround for openlayers problem with refreshing page
+										// on browser history navigation
+										navService.navToLabelingPage();
+									}
 									
 									if (animateMap){
 										var duration = 1000;
