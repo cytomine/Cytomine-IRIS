@@ -286,7 +286,7 @@ class AnnotationController {
 		result.put("nextAnnotation", succIrisAnn) // may be null
 		result.put("hasNext", !(succIrisAnn==null))
 		result.put("size", tupleSize) // number of annotations in the tuple
-		result.put("hideCompleted", hideCompleted)
+		result.put("hideCompleted", String.valueOf(hideCompleted))
 
 		result.put("currentIndex", queryIdx)
 

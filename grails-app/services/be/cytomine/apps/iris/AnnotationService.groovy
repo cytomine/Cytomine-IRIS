@@ -61,7 +61,7 @@ class AnnotationService {
 				}
 			}
 		}
-		//		TODO save the current annotation for that image
+		// save the current annotation for that image
 		image.setCurrentCmAnnotationID(currIrisAnn.cmID)
 		image.getPrefs().putAt("annotations.hideCompleted", String.valueOf(hideCompleted))
 		image.save(failOnError:true, flush:true)

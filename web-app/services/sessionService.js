@@ -167,15 +167,9 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 
 		// set the currently active image
 		setCurrentImage : function(image) {
-			if (image == null) {
-				var session = this.getSession();
-				session.currentImage = null;
-				this.setSession(session);
-			} else {
-				// TODO METHOD ????
-//				this.updateImage(image);
-				$log.debug("IMPLEMENTATION SET CURRENT IMAGE MISSING")
-			}
+			var session = this.getSession();
+			session.currentImage = image;
+			this.setSession(session);
 		},
 
 		// touches an image in the current session

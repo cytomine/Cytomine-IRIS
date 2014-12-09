@@ -95,6 +95,11 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 			// set the current annotation to the local session
 			sessionService.setCurrentAnnotationID(data.currentAnnotation.cmID);
 			
+			// set the hidden state of the annotations to the local session
+			var cImg = sessionService.getCurrentImage();
+			cImg.prefs['annotations.hideCompleted'] = data.hideCompleted;
+			sessionService.setCurrentImage(cImg);
+			
 			// enable navigation
 			$scope.navDisabled = false;
 		}, function(data, status) {
@@ -121,7 +126,7 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 			
 			// set the current annotation to the local session
 			sessionService.setCurrentAnnotationID(null);
-			
+
 			$scope.navDisabled = false;
 //			sharedService.addAlert(msg + " Status "
 //					+ status + ".", "danger");
