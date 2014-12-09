@@ -2,6 +2,7 @@ package be.cytomine.apps.iris
 
 import grails.converters.JSON
 
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException;
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 
@@ -67,12 +68,21 @@ class SessionController {
 
 			def projJSON = sessionService.getProject(request["cytomine"], sID, pID) as JSON
 			render projJSON
-		} catch(CytomineException e){
-			// TODO 404
-			log.error("Could not get projects!",e)
-		} catch(Exception ex){
-			// TODO 400
-			log.error("Could not get projects!",ex)
+		} catch(CytomineException e1){
+			// exceptions from the cytomine java client
+			response.setStatus(e1.httpCode)
+			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+			render errorMsg as JSON
+		} catch(GroovyCastException e2) {
+			// send back 400 if the ID is other than long format
+			response.setStatus(400)
+			JSONObject errorMsg = new Utils().resolveException(e2, 400)
+			render errorMsg as JSON
+		} catch(Exception e3){
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
 		}
 	}
 
@@ -169,7 +179,7 @@ class SessionController {
 			// TODO redirect to an error page or send back 400
 		}
 	}
-	
+
 	/**
 	 * Touches an image in order to be the most recent in a project. 
 	 *
@@ -185,16 +195,25 @@ class SessionController {
 			def irisImage = sessionService.touchImage(cytomine, sessionID, cmProjectID, cmImageID)
 
 			render irisImage as JSON
-		}catch(CytomineException e){
-			log.error("Could not touch image!",e)
-			// TODO redirect to an error page or send back 404 and message
-		}catch(Exception ex){
-			log.error("Could not touch image!",ex)
-			// TODO redirect to an error page or send back 400
+		} catch(CytomineException e1){
+			// exceptions from the cytomine java client
+			response.setStatus(e1.httpCode)
+			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+			render errorMsg as JSON
+		} catch(GroovyCastException e2) {
+			// send back 400 if the project ID is other than long format
+			response.setStatus(400)
+			JSONObject errorMsg = new Utils().resolveException(e2, 400)
+			render errorMsg as JSON
+		} catch(Exception e3){
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
 		}
 	}
-	
-	
+
+
 	/**
 	 * Gets the labeling progress for a specific image in a project.
 	 * The user is determined by the session.
@@ -210,17 +229,26 @@ class SessionController {
 
 			Session sess = Session.get(sessionID)
 			User u = sess.getUser()
-			
+
 			Utils utils = new Utils()
 			// retrieve the user's progress on each image and return it in the object
 			JSONObject annInfo = utils.getUserProgress(cytomine, cmProjectID, cmImageID, u.getCmID())
 			render annInfo as JSON
-		}catch(CytomineException e){
-			log.error("Could not retrieve labeling status of image!",e)
-			// TODO redirect to an error page or send back 404 and message
-		}catch(Exception ex){
-			log.error("Could not retrieve labeling status of image!",ex)
-			// TODO redirect to an error page or send back 400
+		} catch(CytomineException e1){
+			// exceptions from the cytomine java client
+			response.setStatus(e1.httpCode)
+			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+			render errorMsg as JSON
+		} catch(GroovyCastException e2) {
+			// send back 400 if the project ID is other than long format
+			response.setStatus(400)
+			JSONObject errorMsg = new Utils().resolveException(e2, 400)
+			render errorMsg as JSON
+		} catch(Exception e3){
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
 		}
 	}
 
@@ -233,7 +261,7 @@ class SessionController {
 		//		pr.delete()
 		render "ok"
 	}
-	
+
 	/**
 	 * Build the URLs for the images by adding the proper suffix to the Cytomine host URL.
 	 * The project ID is retrieved via the injected <code>params</code> property.
@@ -241,35 +269,69 @@ class SessionController {
 	 * @return the list of images for a given project ID as JSON object including the current progress
 	 */
 	def getImages() {
-		Cytomine cytomine = request['cytomine']
-		long projectID = params.long("projectID")
-		Boolean withProgress = Boolean.parseBoolean(params['computeProgress'])
-		Boolean withTiles = Boolean.parseBoolean(params['withTileURL'])
-		
-		def imageList
-		if (withProgress){
-			imageList = imageService.getImagesWithProgress(cytomine, projectID, params.get("publicKey"), withTiles)
-		} else {
-			imageList = imageService.getImages(cytomine, projectID, withTiles)
+		try {
+			Cytomine cytomine = request['cytomine']
+			long projectID = params.long("projectID")
+			Boolean withProgress = Boolean.parseBoolean(params['computeProgress'])
+			Boolean withTiles = Boolean.parseBoolean(params['withTileURL'])
+
+			def imageList
+			if (withProgress){
+				imageList = imageService.getImagesWithProgress(cytomine, projectID, params.get("publicKey"), withTiles)
+			} else {
+				imageList = imageService.getImages(cytomine, projectID, withTiles)
+			}
+			render imageList as JSON
+		} catch(CytomineException e1){
+			// exceptions from the cytomine java client
+			response.setStatus(e1.httpCode)
+			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+			render errorMsg as JSON
+		} catch(GroovyCastException e2) {
+			// send back 400 if the project ID is other than long format
+			response.setStatus(400)
+			JSONObject errorMsg = new Utils().resolveException(e2, 400)
+			render errorMsg as JSON
+		} catch(Exception e3){
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
 		}
-		render imageList as JSON
 	}
-		
+
 	/**
 	 * Get an image in a project.
 	 *
 	 * @return the image as JSON object
 	 */
 	def getImage() {
-		Cytomine cytomine = request['cytomine']
-		long projectID = params.long("cmProjectID")
-		long imageInstanceID = params.long("cmImageID")
-		
-		def image = imageService.getImage(cytomine, projectID, imageInstanceID, params.get("publicKey"))
+		try {
+			Cytomine cytomine = request['cytomine']
+			long projectID = params.long("cmProjectID")
+			long imageInstanceID = params.long("cmImageID")
 
-		render image as JSON
+			def image = imageService.getImage(cytomine, projectID, imageInstanceID, params.get("publicKey"))
+
+			render image as JSON
+		} catch(CytomineException e1){
+			// exceptions from the cytomine java client
+			response.setStatus(e1.httpCode)
+			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+			render errorMsg as JSON
+		} catch(GroovyCastException e2) {
+			// send back 400 if the project ID is other than long format
+			response.setStatus(400)
+			JSONObject errorMsg = new Utils().resolveException(e2, 400)
+			render errorMsg as JSON
+		} catch(Exception e3){
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
+		}
 	}
-	
+
 	def dev(){
 		Cytomine cytomine = request['cytomine']
 		long userID = params.long('userID')
@@ -304,26 +366,26 @@ class SessionController {
 
 		render sessJSON as JSON
 	}
-	
-//	/**
-//	 *
-//	 *
-//	 * @param cytomine a Cytomine instance
-//	 * @param cmProjectID the Cytomine project ID
-//	 * @param publicKey the public key of the user
-//	 *
-//	 * @return a list of IRIS images
-//	 *
-//	 * @throws CytomineException if the user is not found
-//	 */
-//	def getImagesWithProgressDEV() {
-//		Cytomine cytomine = request['cytomine']
-//		long cmProjectID = params.long('pid')
-//		String publicKey = params['publicKey']
-//		
-//		def imageList = imageService.getImagesWithProgress(request['cytomine'], cmProjectID, publicKey)
-//		
-//		render imageList as JSON
-//		
-//	}
+
+	//	/**
+	//	 *
+	//	 *
+	//	 * @param cytomine a Cytomine instance
+	//	 * @param cmProjectID the Cytomine project ID
+	//	 * @param publicKey the public key of the user
+	//	 *
+	//	 * @return a list of IRIS images
+	//	 *
+	//	 * @throws CytomineException if the user is not found
+	//	 */
+	//	def getImagesWithProgressDEV() {
+	//		Cytomine cytomine = request['cytomine']
+	//		long cmProjectID = params.long('pid')
+	//		String publicKey = params['publicKey']
+	//
+	//		def imageList = imageService.getImagesWithProgress(request['cytomine'], cmProjectID, publicKey)
+	//
+	//		render imageList as JSON
+	//
+	//	}
 }

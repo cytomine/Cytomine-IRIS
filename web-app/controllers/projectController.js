@@ -39,7 +39,7 @@ iris.controller("projectCtrl", function($rootScope, $scope, $http, $filter, $loc
 		}, function(data, status) {
 			$scope.project.error.retrieve = {
 				status : status,
-				message : data.errors
+				message : data.error.message
 			};
 			$scope.loading = false;
 		});

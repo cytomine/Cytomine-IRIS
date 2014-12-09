@@ -73,8 +73,9 @@ class ProjectService {
 	 * otherwise
 	 * 
 	 * @throws CytomineException if the project does not exist
+	 * @throws Exception on any exception
 	 */
-	boolean isAvailable(Cytomine cytomine, long projectID) throws CytomineException{
+	boolean isAvailable(Cytomine cytomine, long projectID) throws CytomineException {
 
 		def p = cytomine.getProject(projectID)
 

@@ -315,7 +315,7 @@ class SessionService {
 	 * @throws CytomineException if the image is is not available for the
 	 * querying user
 	 */
-	def touchImage(Cytomine cytomine, long sessionID, long cmProjectID, long cmImageID) throws CytomineException{
+	def touchImage(Cytomine cytomine, long sessionID, long cmProjectID, long cmImageID) throws CytomineException {
 		// find the project in the session
 		Session sess = Session.get(sessionID)
 

@@ -69,7 +69,7 @@ iris.controller(
 			$scope.annotationGallery = function(image){
 				sessionService.touchImage($scope.projectID, image.id, function(data){
 					// handle success promise
-					// TODO forward to the annotation gallery of this image
+					// forward to the annotation gallery of this image
 					$log.debug("successfully touched image " + image.id);
 					navService.navToAnnotationGallery();
 				}, function(data,status){
@@ -88,7 +88,7 @@ iris.controller(
 				}, function(data, status) {
 					$scope.image.error.retrieve = {
 						status : status,
-						message : data.errors
+						message : data.error.message
 					};
 					$scope.loading = false;
 				});

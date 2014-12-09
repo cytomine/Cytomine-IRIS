@@ -124,6 +124,8 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 					}
 			}
 			
+			$log.error(data);
+			
 			// set the current annotation to the local session
 			sessionService.setCurrentAnnotationID(null);
 

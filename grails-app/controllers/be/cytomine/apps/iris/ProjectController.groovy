@@ -1,5 +1,10 @@
 package be.cytomine.apps.iris
 
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException;
+import org.json.simple.JSONObject;
+
+import com.google.gson.JsonObject;
+
 import grails.converters.JSON
 import be.cytomine.client.Cytomine
 import be.cytomine.client.CytomineException
@@ -16,7 +21,7 @@ class ProjectController {
 	def beforeInterceptor = {
 		log.debug("Executing action $actionName with params $params")
 	}
-	
+
 	/**
 	 * The injected ProjectService instance for this controller.
 	 */
@@ -36,18 +41,24 @@ class ProjectController {
 			def available = projectService.isAvailable(request['cytomine'], projectID)
 			response.setContentType("text/plain")
 			render available
-		} catch(CytomineException e){
-			response.setStatus(404)
-			response.setContentType("text/plain")
-			render e.toString()
-		} catch(Exception ex) {
+		} catch(CytomineException e1){
+			// exceptions from the cytomine java client
+			response.setStatus(e1.httpCode)
+			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+			render errorMsg as JSON
+		} catch(GroovyCastException e2) {
 			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
-			response.setContentType("text/plain")
-			render ex.getMessage()
+			JSONObject errorMsg = new Utils().resolveException(e2, 400)
+			render errorMsg as JSON
+		} catch(Exception e3){
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
 		}
 	}
-	
+
 	/**
 	 * Get all projects from Cytomine host, which are associated with the 
 	 * user executing this query.
@@ -55,13 +66,30 @@ class ProjectController {
 	 * @return a ProjectCollection as JSON object
 	 */
 	def getProjects() {
-		// get the Cytomine instance from the request (injected by the security filter!)
-		Cytomine cytomine = request['cytomine']
-		boolean resolveOntology = params['resolveOntology'].equals("true")
-		def projectList = projectService.getProjects(cytomine, resolveOntology)
-		render projectList as JSON
+		try {
+			// get the Cytomine instance from the request (injected by the security filter!)
+			Cytomine cytomine = request['cytomine']
+			boolean resolveOntology = params['resolveOntology'].equals("true")
+			def projectList = projectService.getProjects(cytomine, resolveOntology)
+			render projectList as JSON
+		} catch(CytomineException e1){
+			// exceptions from the cytomine java client
+			response.setStatus(e1.httpCode)
+			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+			render errorMsg as JSON
+		} catch(GroovyCastException e2) {
+			// send back 400 if the project ID is other than long format
+			response.setStatus(400)
+			JSONObject errorMsg = new Utils().resolveException(e2, 400)
+			render errorMsg as JSON
+		} catch(Exception e3){
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
+		}
 	}
-	
+
 	/**
 	 * Gets the project description for a given ID.
 	 * 
@@ -72,10 +100,21 @@ class ProjectController {
 		try {
 			def description = projectService.getProjectDescription(request['cytomine'], params.long('projectID'))
 			render description as JSON
-		} catch (CytomineException e){
-			response.setStatus(404)
-			response.setContentType("text/plain")
-			render e.toString()
+		} catch(CytomineException e1){
+			// exceptions from the cytomine java client
+			response.setStatus(e1.httpCode)
+			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+			render errorMsg as JSON
+		} catch(GroovyCastException e2) {
+			// send back 400 if the project ID is other than long format
+			response.setStatus(400)
+			JSONObject errorMsg = new Utils().resolveException(e2, 400)
+			render errorMsg as JSON
+		} catch(Exception e3){
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
 		}
-	}	
+	}
 }

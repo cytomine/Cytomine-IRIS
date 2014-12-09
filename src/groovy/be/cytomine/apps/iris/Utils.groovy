@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import be.cytomine.client.Cytomine
+import be.cytomine.client.CytomineException;
 import be.cytomine.client.collections.AnnotationCollection
 import be.cytomine.client.models.Annotation
 import be.cytomine.client.models.Ontology
@@ -157,5 +158,28 @@ class Utils {
 		return splitIndices
 	}
 	
+	JSONObject resolveCytomineException(CytomineException e){
+		JSONObject errorMsg = new JSONObject()
+		errorMsg.putAt("class", CytomineException.class.getName())
+		errorMsg.putAt("error", new org.codehaus.groovy.grails.web.json.JSONObject(e.toString().replace(e.httpCode + " ", "")))
+		errorMsg.getAt("error").putAt("status", e.httpCode)
+		return errorMsg
+	}
+	
+	JSONObject resolveException(Exception e, int httpCode){
+		JSONObject errorMsg = new JSONObject()
+		errorMsg.putAt("class", e.getClass().getName())
+		org.codehaus.groovy.grails.web.json.JSONObject errorObj
+		try {
+			String msg = e.getMessage()==null?"The requested operation cannot be performed.":e.getMessage()
+			errorObj = new org.codehaus.groovy.grails.web.json.JSONObject("{ status : " +
+				httpCode + ", message : \"" + msg + "\" }")
+		} catch (Exception ex){
+			errorObj = new org.codehaus.groovy.grails.web.json.JSONObject("{ status : " +
+				httpCode + ", message : \"The requested operation cannot be performed.\" }")
+		}
+		errorMsg.putAt("error", errorObj)
+		return errorMsg
+	}
 	
 }
