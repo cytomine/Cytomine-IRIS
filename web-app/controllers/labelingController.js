@@ -104,26 +104,24 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 			$scope.navDisabled = false;
 		}, function(data, status) {
 			var msg = "";
-			if (data === 'null'){
+			if (status === 404){
 				msg = "This image does not have any annotations!";
 				// add message
 				$scope.labeling.error = {
 						empty : { 
-							message : msg
-							}
-				}
-			} 
-			else {
-				msg = "Cannot get user annotations!";
-				// add message
-				$scope.labeling.error = {
-						retrieve : { 
 							message : msg,
 							status : status
 							}
-					}
+				}
+			} else if (status === 412){
+				$scope.labeling.error = {
+						retrieve : { 
+							message : data.error.message,
+							status : status
+						}
+				}
 			}
-			
+						
 			$log.error(data);
 			
 			// set the current annotation to the local session

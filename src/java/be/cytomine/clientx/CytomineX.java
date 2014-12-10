@@ -77,6 +77,7 @@ public class CytomineX extends Cytomine {
         if (code == 302) throw new CytomineException(code, json);
     }
 	
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		CytomineX cX = new CytomineX("http://beta.cytomine.be",
 				"0880e4b4-fe26-4967-8169-f15ed2f9be5c",

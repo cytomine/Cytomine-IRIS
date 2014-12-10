@@ -161,7 +161,16 @@ class Utils {
 	JSONObject resolveCytomineException(CytomineException e){
 		JSONObject errorMsg = new JSONObject()
 		errorMsg.putAt("class", CytomineException.class.getName())
-		errorMsg.putAt("error", new org.codehaus.groovy.grails.web.json.JSONObject(e.toString().replace(e.httpCode + " ", "")))
+		errorMsg.putAt("error", new JSONObject())
+		org.codehaus.groovy.grails.web.json.JSONObject msgObj
+		String msg
+		try {
+			msgObj = new org.codehaus.groovy.grails.web.json.JSONObject(e.toString().replace(e.httpCode + " ", ""))
+			msg = msgObj.getString("message")
+		} catch (Exception ex){
+			msg = e.toString().replace(e.httpCode + " ", "")
+		}
+		errorMsg.getAt("error").putAt("message", msg)
 		errorMsg.getAt("error").putAt("status", e.httpCode)
 		return errorMsg
 	}

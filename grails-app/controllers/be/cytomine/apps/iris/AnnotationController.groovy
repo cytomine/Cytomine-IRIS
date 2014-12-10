@@ -12,6 +12,7 @@ import be.cytomine.client.collections.AnnotationCollection;
 import be.cytomine.client.collections.TermCollection;
 import be.cytomine.client.models.Annotation;
 import be.cytomine.client.models.AnnotationTerm;
+import be.cytomine.client.models.ImageInstance;
 import be.cytomine.client.models.Ontology
 import be.cytomine.clientx.CytomineX;
 
@@ -316,9 +317,20 @@ class AnnotationController {
 
 			// if no annotations are available for this image
 			if (annotations.isEmpty()){
-				response.setStatus(404)
-				render new JSONObject().put("message", "No annotations found for that query.")
-				return
+				String message = ""
+				
+				// check if the image does exist for the project
+				ImageInstance img = cytomine.getImageInstance(cmImageID)
+				if (img.getAttr().getAt("project") != cmProjectID){
+					message = "The image (ID: " + cmImageID + ") is not available in the selected project."
+					log.error(message)
+					throw new CytomineException(412, message)
+				} 
+				
+				// otherwise throw another exception
+				message = "No annotations found for that query."
+				log.error(message)
+				throw new CytomineException(404, message)
 			}
 
 			// search in the annotations for "114156768" (has predecessor and successor!)
