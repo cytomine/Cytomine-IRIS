@@ -109,6 +109,9 @@ class AnnotationController {
 				irisAnnList.add(irisAnn)
 			}
 
+			// TODO compute a JSON object, where each position contains the annotations of a query term
+			
+			
 			render (irisAnnList as JSON)
 
 		} catch(CytomineException e1){

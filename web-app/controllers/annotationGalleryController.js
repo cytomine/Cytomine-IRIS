@@ -12,7 +12,7 @@ iris.controller("annotationGalleryCtrl", function($scope, $http, $filter,
 	helpService.setContentUrl("content/help/annGalleryHelp.html");
 	
 	$scope.annotation = {
-		groups : [{termName: "Group 01"},{termName: "Group 02"}], // this variable 
+		groups : [{termName: "Group 01", termID: 123},{termName: "Group 02", termID: 563}], // this variable holds all term 
 		error : {}
 	};
 	

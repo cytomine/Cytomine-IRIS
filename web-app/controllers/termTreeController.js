@@ -58,7 +58,11 @@ iris.controller("termTreeCtrl", function($scope, $timeout, $log, sessionService,
         // if the term is checked, it is in the checked list
         var idx = checkedTerms.indexOf(id);
         var chbx = document.getElementById(chbxID);
-        if (idx === -1){
+        
+        if (isNaN(id)){
+        	$log.debug("Nothing has been selected.");
+        }
+        else if (idx === -1){
         	// add the term
         	checkedTerms.push(id);
         	// select the checkbox
@@ -70,7 +74,7 @@ iris.controller("termTreeCtrl", function($scope, $timeout, $log, sessionService,
         	chbx.checked = false;
         }
         
-        //$log.debug("Active Terms: {" + checkedTerms.toString() + "}.");
+        $log.debug("Active Terms: {" + checkedTerms.toString() + "}.");
     };
     
     $scope.clearSelected = function() {
