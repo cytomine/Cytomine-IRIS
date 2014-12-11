@@ -4,7 +4,7 @@ iris.config(function($logProvider) {
 	$logProvider.debugEnabled(true);
 });
 
-iris.controller("annotationGalleryCtrl", function($scope, $http, $filter,
+iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $filter, $log,
 		$location, hotkeys, helpService, annotationService, sessionService, sharedService, $routeParams) {
 	console.log("annotationGalleryCtrl");
 
@@ -12,10 +12,13 @@ iris.controller("annotationGalleryCtrl", function($scope, $http, $filter,
 	helpService.setContentUrl("content/help/annGalleryHelp.html");
 	
 	$scope.annotation = {
-		groups : [{termName: "Group 01", termID: 123},{termName: "Group 02", termID: 563}], // this variable holds all term 
+		groups : [],//[{termName: "Group 01", termID: 123},{termName: "Group 02", termID: 563}], // this variable holds all term 
 		error : {}
 	};
 	
+	var selectedTerms = [];
+	var selectedImages = [];
+		
 	$scope.projectName = sessionService.getCurrentProject().cmName;
 	
 	$scope.annotations=[ 
@@ -36,15 +39,21 @@ iris.controller("annotationGalleryCtrl", function($scope, $http, $filter,
 
 	// TODO implement drag and drop feature
     $scope.droppedObjects = [];
-    $scope.onDropComplete=function(data,evt){
-        var index = $scope.droppedObjects.indexOf(data);
+    $scope.onDropComplete=function(data,evt,termID){
+    	var index = $scope.droppedObjects.indexOf(data);
         if (index == -1){
+        	// add the item
         	$scope.droppedObjects.push(data);
         }
+
+        // TODO handle the 0 term (remove term)
+        $log.debug("TODO assigning unique term " + $rootScope.termList[termID] +
+        		" to annotation " + data.cmID);
     };
     $scope.onDragSuccess=function(data,evt){
         var index = $scope.droppedObjects.indexOf(data);
         if (index > -1) {
+        	// remove the item
             $scope.droppedObjects.splice(index, 1);
         }
     };
@@ -64,4 +73,111 @@ iris.controller("annotationGalleryCtrl", function($scope, $http, $filter,
     
     //$scope.fetchAllAnnotations();
 	
+    $scope.fetchAnnotations = function(termIDs, imageIDs){
+    	
+    	if (imageIDs.length === 0){
+    		$log.debug("No images to retrieve annotations for.");
+    		return;
+    	}
+    	
+    	if (termIDs.length === 0){
+    		$log.debug("No terms to retrieve annotations for.");
+    		return;
+    	}
+
+    	$log.debug("Fetching annotations for terms " + termIDs + " for " + imageIDs.length + " images.");
+    	
+    	
+//    	TODO perform the queryannotationService.fetchUserAnnotationsByTerm(projectID, imageIDs, termID, function(data){
+//    	},
+//				function(data,status,header,config){
+//    	});
+    };
+    
+    $scope.showOrHideNoLabelWarning = function(){
+    	$scope.warn = {
+    			noLabel : {}
+    	};
+    	if (selectedTerms.length === 0){
+    		$scope.warn.noLabel = {
+    				message : "There is no label term selected, please choose at least one from the ontology on the left side."
+    		}
+    		$log.info("No terms selected, won't fetch any annotations, but show warning.");
+    	} else {
+    		delete $scope.warn.noLabel;
+    	}
+    }
+    
+    $scope.showOrHideNoImageWarning = function(){
+    	$scope.warn = {
+    			noImage : {}
+    	};
+    	if (selectedImages.length === 0){
+    		$scope.warn.noImage = {
+    				message : "There is no image selected, please choose at least one from the image list on the left side."
+    		}
+    		$log.info("No image(s) selected, won't fetch any annotations, but show warning.");
+    	} else {
+    		delete $scope.warn.noImage;
+    	}
+    }
+    
+    $scope.$on("termFilterChange", function(event, object){
+    	var action = object.action;
+    	$log.debug(event.name + "::" + action + ": "  + object.name + " [" + object.id + "].");
+    	
+    	if (action === 'add'){
+    		// TODO incremental fetching
+    		// fetch the selected term for the selected images
+    		var obj = {termName: "Group " + $rootScope.termList[object.id], termID: object.id};
+    		selectedTerms.push(object.id);
+    		$scope.annotation.groups.push(obj);
+    		$scope.fetchAnnotations([object.id], selectedImages);
+    	} else if (action === 'remove'){
+    		var obj = {termName: "Group " + $rootScope.termList[object.id], termID: object.id};
+    		// remove the selected term
+    		selectedTerms.splice(selectedTerms.indexOf(object.id), 1)
+    		
+    		// remove the group from the 'groups' array
+    		for (var idx = 0; idx < $scope.annotation.groups.length; idx++){
+    			if ($scope.annotation.groups[idx].termID == object.id){
+    				$scope.annotation.groups.splice(idx,1);
+    				break;
+    			}
+    		}
+    	} else if (action === 'addAll'){
+    		// here the id is the entire array
+    		selectedTerms = object.id; 
+    		
+    		// build the groups
+    		$scope.annotation.groups = [];
+    		for (var idx = 0; idx < selectedTerms.length; idx++){
+    			var obj = {termName: "Group " + $rootScope.termList[selectedTerms[idx]], termID: selectedTerms[idx]};
+    			$scope.annotation.groups.push(obj);
+    		}
+    		$scope.fetchAnnotations(selectedTerms, selectedImages);
+    	} else if (action === 'removeAll'){
+    		// reset the stuff
+    		selectedTerms = [];
+    		$scope.annotation.groups = [];
+    	}
+    });
+    
+    
+    
+    // react to changes in the image filter panel
+    $scope.$on("imageFilterChange", function(event, imageList){
+    	var action = imageList.action;
+//    	$log.debug(event.name + "::" + action + ": "  + imageList.ids + ".");
+    	
+    	if (action === 'selectedImages'){
+    		// get the selected images list
+    		selectedImages = imageList.ids;
+
+    		// perform the query using the currently selected terms
+    		$scope.fetchAnnotations(selectedTerms, selectedImages);
+    	} else {
+    		$log.error("Unrecognized image filter action: '" + action + "'");
+    	}
+    });
 });

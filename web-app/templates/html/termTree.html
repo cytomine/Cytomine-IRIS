@@ -13,8 +13,17 @@
 		<div ng-show="showTree"
 			treecontrol="" class="tree-light" tree-model="treeData" on-node-toggle="showToggle(node, expanded)"
 			options="treeOptions" on-selection="selectOrUnselectTerm(event)" expanded-nodes="expandedNodes">
-			<span id="{{ 'treeTermColorPanel-' + node.id }}" ng-hide="node.isFolder" style="background:{{node.color}}" class="colorbox">&nbsp;&nbsp;&nbsp;&nbsp;</span><input id="{{ 'chbxTerm-' + node.id }}" ng-hide="node.hideCheckbox" ng-class="{'colorbox-checkbox': !node.isFolder}" type="checkbox">
-			<span id="{{ 'treeTermLabel-' + node.id }}">{{ node.name }}</span>
+			<span ng-switch="node.isFolder">
+				<span ng-switch-when="true">
+					<span id="{{ 'treeTermLabel-' + node.id }}">{{ node.name }}</span>
+				</span>
+				<span ng-switch-when="false">
+					<span id="{{ 'dropTarget-' + node.id }}" ng-drop="true" ng-drop-success="onDropComplete($data,$event,node.id)">
+						<span id="{{ 'treeTermColorPanel-' + node.id }}" style="background:{{node.color}}" class="colorbox">&nbsp;&nbsp;&nbsp;&nbsp;</span><input id="{{ 'chbxTerm-' + node.id }}" class="colorbox-checkbox" type="checkbox">
+						<span id="{{ 'treeTermLabel-' + node.id }}">{{ node.name }}</span>
+					</span>
+				</span>
+			</span>
 		</div>
 		<!-- end ontology tree -->
 		

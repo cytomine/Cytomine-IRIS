@@ -1,6 +1,6 @@
 var iris = angular.module("irisApp");
 
-iris.controller("termTreeCtrl", function($scope, $timeout, $log, sessionService, projectService, sharedService){
+iris.controller("termTreeCtrl", function($rootScope, $scope, $timeout, $log, sessionService, projectService, sharedService){
 	
 	console.log("termTreeCtrl");
 	
@@ -8,9 +8,10 @@ iris.controller("termTreeCtrl", function($scope, $timeout, $log, sessionService,
 
 	var checkedTerms = [];
 	
+	$rootScope.termList = {};
+	
 	$scope.tree = {
 		loading : true,
-		// TODO add a variable for transporting the selected terms ---> filter: {}
 	};
 	
 	var initTree = function(){
@@ -29,8 +30,6 @@ iris.controller("termTreeCtrl", function($scope, $timeout, $log, sessionService,
 	}, function(data, status){
 		sharedService.addAlert("Cannot retrieve ontology. Status " + status + ".", "danger");
 	})
-	
-	
 	
 	$scope.selectedNode = {};
 	$scope.expandedNodes = [];
@@ -67,11 +66,17 @@ iris.controller("termTreeCtrl", function($scope, $timeout, $log, sessionService,
         	checkedTerms.push(id);
         	// select the checkbox
         	chbx.checked = true;
+        	
+        	// notify other instances about the change
+        	$rootScope.$broadcast("termFilterChange", { id : id, name : $scope.termList[id], action : 'add' });
         }else {
         	// remove the term from the array
         	checkedTerms.splice(idx,1);
         	// unselect the checkbox
         	chbx.checked = false;
+        	
+        	// notify other instances about the change
+        	$rootScope.$broadcast("termFilterChange", { id : id, name : $scope.termList[id], action : 'remove' });
         }
         
         $log.debug("Active Terms: {" + checkedTerms.toString() + "}.");
@@ -90,7 +95,10 @@ iris.controller("termTreeCtrl", function($scope, $timeout, $log, sessionService,
 	    		nodeArray.push(child);
 	    		// recurse
 	    		searchForExpandableNode(child, nodeArray);
-	    	} 
+	    	} else {
+	    		// add the child to the local object of term ids and names
+	    		$rootScope.termList[child.id] = child.name
+	    	}
 	    }
     	return nodeArray;
     };
@@ -124,6 +132,7 @@ iris.controller("termTreeCtrl", function($scope, $timeout, $log, sessionService,
     // expand all nodes by default and reselect the nodes
 	$scope.expandAll = function() {
 	    $scope.expandedNodes = [];
+	    // the following statement also constructs the list of assignable terms
 	    searchForExpandableNode($scope.treeData, $scope.expandedNodes);
 	    $timeout(function(){ selectCheckboxes(checkedTerms, true);}, 50);  
 	};
@@ -137,19 +146,23 @@ iris.controller("termTreeCtrl", function($scope, $timeout, $log, sessionService,
     	checkedTerms = [];
     	searchForSelectableNode($scope.treeData, checkedTerms);
     	selectCheckboxes(checkedTerms, true);    
-    	//$log.debug("Active Terms: {" + checkedTerms.toString() + "}.");
+    	
+    	$rootScope.$broadcast("termFilterChange", { id : checkedTerms, action : 'addAll' });
+    	
+    	$log.debug("Active Terms: {" + checkedTerms.toString() + "}.");
     	//$log.debug("checked all terms: " + checkedTerms.length);
     };
-    
+
     $scope.uncheckAllTerms = function(){
     	checkedTerms = [];
     	searchForSelectableNode($scope.treeData, checkedTerms);
     	selectCheckboxes(checkedTerms, false);
     	checkedTerms = [];
-    	//$log.debug("Active Terms: {" + checkedTerms.toString() + "}.");
-    	//$log.debug("UNchecked all terms.")
     	
-    	// TODO hide all panels
+    	$rootScope.$broadcast("termFilterChange", { id : checkedTerms, action : 'removeAll' });
+
+    	$log.debug("Active Terms: {" + checkedTerms.toString() + "}.");
+    	//$log.debug("UNchecked all terms.")
     };
     
     // select the terms in the tree
@@ -166,9 +179,12 @@ iris.controller("termTreeCtrl", function($scope, $timeout, $log, sessionService,
     	}
     };
     
-    // applies a filter using the checked terms and the checked images
-    var applyFilter = function(checkedTerms, checkedImages){
-    	// TODO continue implementation
-    }
+    // if an element has been dropped on the list element
+    $scope.onDropComplete=function(annotation,evt,termID){
+    	// TODO handle the 0 term
+    	
+        $log.debug("TODO assigning unique term " + $rootScope.termList[termID] +
+        		" to annotation " + annotation.cmID);
+    };
 	
 });

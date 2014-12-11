@@ -1,6 +1,6 @@
 var iris = angular.module("irisApp");
 
-iris.controller("imageTreeCtrl", function($scope, $timeout, $log, sessionService, imageService, projectService, sharedService){
+iris.controller("imageTreeCtrl", function($rootScope, $scope, $timeout, $log, sessionService, imageService, projectService, sharedService){
 	
 	console.log("imageTreeCtrl");
 	
@@ -65,9 +65,13 @@ iris.controller("imageTreeCtrl", function($scope, $timeout, $log, sessionService
         	checkedImages.splice(idx,1);
         	// unselect the checkbox
         	chbx.checked = false;
+        	
         }
+
+        // notify other instances about the change
+        $rootScope.$broadcast("imageFilterChange", { id : checkedImages, action : 'selectedImages' });
         
-        //$log.debug("Active Images: {" + checkedImages.toString() + "}.");
+        $log.debug("Active Images: {" + checkedImages.toString() + "}.");
     };
     
     $scope.clearSelected = function() {
@@ -77,23 +81,29 @@ iris.controller("imageTreeCtrl", function($scope, $timeout, $log, sessionService
     $scope.checkAllImages = function(){
     	checkedImages = [];
     	
-    	for (var i=0; i<$scope.treeData.length; i++){
+    	for (var i=0; i < $scope.treeData.length; i++){
     		checkedImages.push($scope.treeData[i].cmID)
     	}
     	
     	selectCheckboxes(checkedImages, true);    
-    	//$log.debug("Active Images: {" + checkedImages.toString() + "}.");
+    	
+    	$rootScope.$broadcast("imageFilterChange", { ids : checkedImages, action : 'selectedImages' });
+    	
+    	$log.debug("Active Images: {" + checkedImages.toString() + "}.");
     	//$log.debug("checked all images: " + checkedImages.length);
     };
     
     $scope.uncheckAllImages = function(){
     	checkedImages = [];
+    	
     	for (var i=0; i<$scope.treeData.length; i++){
     		checkedImages.push($scope.treeData[i].cmID)
     	}
     	selectCheckboxes(checkedImages, false);
     	checkedImages = [];
-    	//$log.debug("Active Images: {" + checkedImages.toString() + "}.");
+
+    	$rootScope.$broadcast("imageFilterChange", { ids : checkedImages, action : 'selectedImages' });
+    	$log.debug("Active Images: {" + checkedImages.toString() + "}.");
     	//$log.debug("UNchecked all images.")
     };
     
@@ -111,8 +121,4 @@ iris.controller("imageTreeCtrl", function($scope, $timeout, $log, sessionService
     	}
     };
     
-    // applies a filter using the checked terms and the checked images
-    var applyFilter = function(checkedTerms, checkedImages){
-    	// TODO continue implementation
-    }
 });
