@@ -19,7 +19,37 @@ class AnnotationService {
 			//println currentUser.get("id") + ", " + assignment.get("user")
 			if (user.cmID in assignment.get("user")){
 				String cmTermName = terms.list.find{it.id == assignment.get("term")}.get("name")
-				//log.debug(user.cmUserName + " assigned " + cmTermName)
+				log.debug(user.cmUserName + " assigned " + cmTermName)
+
+				// store the properties in the irisAnnotation
+				irisAnn.setCmUserID(user.cmID)
+				irisAnn.setCmTermID(assignment.get("term"))
+				irisAnn.setCmTermName(cmTermName)
+				irisAnn.setCmOntology(ontologyID)
+				irisAnn.setAlreadyLabeled(true)
+
+				break
+			}
+		}
+
+		return irisAnn
+	}
+	
+	be.cytomine.apps.iris.Annotation resolveTermsByUser(long ontologyID, 
+			TermCollection terms, User user, Annotation annotation, 
+			be.cytomine.apps.iris.Annotation irisAnn, def assignedTerms){
+		// grab all terms from all users for the current annotation
+		List userByTermList = annotation.getList("userByTerm");
+
+		for (assignment in userByTermList){
+			//println currentUser.get("id") + ", " + assignment.get("user")
+			if (user.cmID in assignment.get("user")){
+				// if the annotation has the very same label by the user
+				def termID = assignment.get("term");
+				// TODO check if the user has assigned one of the terms in the list
+				
+				String cmTermName = terms.list.find{it.id == assignment.get("term")}.get("name")
+				log.debug(user.cmUserName + " assigned " + cmTermName)
 
 				// store the properties in the irisAnnotation
 				irisAnn.setCmUserID(user.cmID)

@@ -65,14 +65,14 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 			if (termIDs.indexOf(0) != -1){
 				url += ("&noTerm=true");
 				// remove the '0' from the terms
-				termIDs.splice(0,1);
+				termIDs.splice(termIDs.indexOf(0),1);
 			} 
 			url += ("&term=" + termIDs.toString().replace("[","").replace("]",""));
 
 			// execute the http get request to the IRIS server
 			$http.get(url).success(function(data) {
 				// console.log("success on $http.get(" + url + ")");
-				$log.debug(data)
+				//$log.debug(data)
 				if (callbackSuccess) {
 					callbackSuccess(data);
 				}

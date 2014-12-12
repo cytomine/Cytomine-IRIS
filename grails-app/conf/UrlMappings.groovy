@@ -92,9 +92,10 @@ class UrlMappings {
 		 * 		image = [imageID#1,imageID#2,...]
 		 */
 		"/api/session/$sessionID/project/$cmProjectID/annotations.$format"(controller:"annotation"){
-			action = [GET: "getAnnotations"]
+			action = [GET: "getAnnotationsByUser"]
+			// TODO make mapping to getAllAnnotations
 		}
-
+		
 		/*
 		 * Get a 3-tuple of annotations for an image in a project
 		 * Optional parameters

@@ -88,10 +88,12 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     	$log.debug("Fetching annotations for terms " + termIDs + " for " + imageIDs.length + " images.");
     	
     	
-//    	TODO perform the queryannotationService.fetchUserAnnotationsByTerm(projectID, imageIDs, termID, function(data){
-//    	},
-//				function(data,status,header,config){
-//    	});
+    	// perform the query
+    	annotationService.fetchUserAnnotationsByTerm(sessionService.getCurrentProject().cmID, imageIDs, termIDs, function(data){
+    		$log.debug(data);
+    	}, function(data,status,header,config){
+    		$log.error(status);
+    	});
     };
     
     $scope.showOrHideNoLabelWarning = function(){
@@ -172,7 +174,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     	
     	if (action === 'selectedImages'){
     		// get the selected images list
-    		selectedImages = imageList.ids;
+    		selectedImages = imageList.id;
 
     		// perform the query using the currently selected terms
     		$scope.fetchAnnotations(selectedTerms, selectedImages);

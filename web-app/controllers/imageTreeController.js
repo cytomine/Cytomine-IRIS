@@ -87,7 +87,7 @@ iris.controller("imageTreeCtrl", function($rootScope, $scope, $timeout, $log, se
     	
     	selectCheckboxes(checkedImages, true);    
     	
-    	$rootScope.$broadcast("imageFilterChange", { ids : checkedImages, action : 'selectedImages' });
+    	$rootScope.$broadcast("imageFilterChange", { id : checkedImages, action : 'selectedImages' });
     	
     	$log.debug("Active Images: {" + checkedImages.toString() + "}.");
     	//$log.debug("checked all images: " + checkedImages.length);
@@ -102,7 +102,7 @@ iris.controller("imageTreeCtrl", function($rootScope, $scope, $timeout, $log, se
     	selectCheckboxes(checkedImages, false);
     	checkedImages = [];
 
-    	$rootScope.$broadcast("imageFilterChange", { ids : checkedImages, action : 'selectedImages' });
+    	$rootScope.$broadcast("imageFilterChange", { id : checkedImages, action : 'selectedImages' });
     	$log.debug("Active Images: {" + checkedImages.toString() + "}.");
     	//$log.debug("UNchecked all images.")
     };
