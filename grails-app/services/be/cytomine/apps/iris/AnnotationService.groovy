@@ -1,5 +1,7 @@
 package be.cytomine.apps.iris
 
+import org.json.simple.JSONObject;
+
 import grails.converters.JSON;
 import grails.transaction.Transactional
 import be.cytomine.client.collections.AnnotationCollection;
@@ -34,32 +36,76 @@ class AnnotationService {
 
 		return irisAnn
 	}
-	
-	be.cytomine.apps.iris.Annotation resolveTermsByUser(long ontologyID, 
-			TermCollection terms, User user, Annotation annotation, 
-			be.cytomine.apps.iris.Annotation irisAnn, def assignedTerms){
+
+	be.cytomine.apps.iris.Annotation resolveTermsByUser(long ontologyID,
+			TermCollection terms, User user, Annotation annotation,
+			be.cytomine.apps.iris.Annotation irisAnn, boolean searchForNoTerm,
+			def queryTerms, JSONObject annotationMap){
 		// grab all terms from all users for the current annotation
 		List userByTermList = annotation.getList("userByTerm");
 
-		for (assignment in userByTermList){
-			//println currentUser.get("id") + ", " + assignment.get("user")
-			if (user.cmID in assignment.get("user")){
-				// if the annotation has the very same label by the user
-				def termID = assignment.get("term");
-				// TODO check if the user has assigned one of the terms in the list
-				
-				String cmTermName = terms.list.find{it.id == assignment.get("term")}.get("name")
-				log.debug(user.cmUserName + " assigned " + cmTermName)
+//		println userByTermList
 
-				// store the properties in the irisAnnotation
-				irisAnn.setCmUserID(user.cmID)
-				irisAnn.setCmTermID(assignment.get("term"))
-				irisAnn.setCmTermName(cmTermName)
-				irisAnn.setCmOntology(ontologyID)
-				irisAnn.setAlreadyLabeled(true)
-
-				break
+		// if no assignment at all is done, add the
+		if (userByTermList.isEmpty()){
+			log.debug("This annotation does not have any terms assigned at all [" + annotation.id + "]")
+			if (searchForNoTerm){
+				annotationMap["-99"].add(irisAnn)
 			}
+		} else {
+		// TODO FIX LOGICAL BUG!
+//			boolean hasAssignment = false
+//
+//			// search the assignments for a match "user" and "term"
+//			for (assignment in userByTermList){
+////				println ("user is in assignment: " + (user.cmID in assignment.get("user")))
+//
+//				// if the user has assessed this annotation
+//				if (user.cmID in assignment.get("user")){
+//
+//					// check, if the assessed term ID is in the query list
+//					long termID = assignment.get("term")
+//
+//					// if the user has assigned one of the queryTerms (USER CAN ONLY SET UNIQUE LABELS)
+//					if (queryTerms.contains(""+termID)){
+//						String cmTermName = terms.list.find{it.id == assignment.get("term")}.get("name")
+//						println user.cmUserName + " assigned a query term " + cmTermName + " (" + termID + ") to [" + annotation.id + "]"
+//
+//						// store the properties in the irisAnnotation
+//						irisAnn.setCmUserID(user.cmID)
+//						irisAnn.setCmTermID(assignment.get("term"))
+//						irisAnn.setCmTermName(cmTermName)
+//						irisAnn.setCmOntology(ontologyID)
+//						irisAnn.setAlreadyLabeled(true)
+//
+//						// add to map
+//						annotationMap[termID+""].add(irisAnn)
+//						hasAssignment = true
+//						break
+//					} else {
+//						if (!searchForNoTerm){
+//							println user.cmUserName + " assigned NO term to [" + annotation.id + "]"
+//							hasAssignment = false
+//						} else {
+//							println user.cmUserName + " did not assign any query term to [" + annotation.id + "]"
+//							// if querying annotations 'without terms' and the user has none of the terms in the list
+//							// count this as hit
+//							hasAssignment = true
+//						}
+//					}
+//				}
+//
+//				// if the user is not in this assignment, continue searching in the other ones
+//				else {
+//					hasAssignment = false
+//				}
+//			}
+//
+//			// if the user does not have an assignment and we are searching for 'noTerms'
+//			// add it to the no term list
+//			if (searchForNoTerm && !hasAssignment){
+//				annotationMap["-99"].add(irisAnn)
+//			}
 		}
 
 		return irisAnn
@@ -72,7 +118,7 @@ class AnnotationService {
 		def currIrisAnn = null
 
 		DomainMapper dm = new DomainMapper(grailsApplication)
-		
+
 		// DETERMINE THE CURRENT ANNOTATION
 		curr = annotations.get(startIdx)
 		assert curr != null
@@ -80,7 +126,7 @@ class AnnotationService {
 		currIrisAnn = resolveTerms(ontologyID, terms, user, curr, currIrisAnn)
 
 		def origIrisAnn = currIrisAnn
-		
+
 		if (hideCompleted){
 			if (currIrisAnn.isAlreadyLabeled()){
 				// if already labeled move to first unlabeled annotation in this list
@@ -95,9 +141,9 @@ class AnnotationService {
 		image.setCurrentCmAnnotationID(currIrisAnn.cmID)
 		image.getPrefs().putAt("annotations.hideCompleted", String.valueOf(hideCompleted))
 		image.save(failOnError:true, flush:true)
-		
+
 		assert currIrisAnn != null
-		
+
 		log.debug("############ CURRENT ANNOTATION RESOLVED")
 
 		return currIrisAnn

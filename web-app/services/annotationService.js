@@ -61,12 +61,7 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 				url += ("&image=" + imageIDs.toString().replace("[","").replace("]",""));
 			}
 			
-			// add the term IDs
-			if (termIDs.indexOf(0) != -1){
-				url += ("&noTerm=true");
-				// remove the '0' from the terms
-				termIDs.splice(termIDs.indexOf(0),1);
-			} 
+			// add the terms of interest to the query
 			url += ("&term=" + termIDs.toString().replace("[","").replace("]",""));
 
 			// execute the http get request to the IRIS server
@@ -78,7 +73,40 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 				}
 			}).error(function(data, status, headers, config) {
 				// on error log the error
-				console.log(callbackError)
+//				console.log(callbackError)
+				if (callbackError) {
+					callbackError(data, status, headers, config);
+				}
+			})
+		},
+		
+		// get the annotations for a given project, images and WITHOUT any term for the querying user
+		fetchUserAnnotationsWithoutTerm : function(projectID, imageIDs, callbackSuccess,
+				callbackError) {
+			var sessionID = sessionService.getSession().id
+			$log.debug("Getting user annotations without terms: " + sessionID + " - "
+					+ projectID + " - " + imageIDs)
+					
+			// modify the parameters
+			var url = cytomineService.addKeys(userAnnURL).replace(
+					"{sessionID}", sessionID).replace("{projectID}", projectID);
+			
+			if (imageIDs !== null){
+				url += ("&image=" + imageIDs.toString().replace("[","").replace("]",""));
+			}
+			
+			url += ("&term=-99");
+
+			// execute the http get request to the IRIS server
+			$http.get(url).success(function(data) {
+				// console.log("success on $http.get(" + url + ")");
+				//$log.debug(data)
+				if (callbackSuccess) {
+					callbackSuccess(data);
+				}
+			}).error(function(data, status, headers, config) {
+				// on error log the error
+//				console.log(callbackError)
 				if (callbackError) {
 					callbackError(data, status, headers, config);
 				}

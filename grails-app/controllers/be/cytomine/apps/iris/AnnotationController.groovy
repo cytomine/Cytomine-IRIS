@@ -70,7 +70,7 @@ class AnnotationController {
 			if (params['multipleTerm'] != null && params['multipleTerm'].equals("true")){
 				filters.put("multipleTerm", "true")
 			}
-			
+
 			// TODO implement pagination
 			int max = (params['max']==null?0:params.int('max'))
 
@@ -128,7 +128,7 @@ class AnnotationController {
 			render errorMsg as JSON
 		}
 	}
-	
+
 	/**
 	 * Get all annotations for a specific project and its images, 
 	 * where a specific user has assigned one or more special terms.
@@ -137,42 +137,54 @@ class AnnotationController {
 	 */
 	def getAnnotationsByUser(){
 		try {
+			// ##################################################
 			Cytomine cytomine = request['cytomine']
 			String publicKey = params['publicKey']
 
 			long sessionID = params.long('sessionID')
 			long projectID = params.long('cmProjectID')
 
-			// filter for a specific project/image/term
+			// ##################################################
+			// default filter for a specific project/image/term
 			Map<String,String> filters = new HashMap<String,String>()
 			filters.put("project", String.valueOf(projectID))
 			filters.put("showGIS", "true") // show the centroid information on the location
 			filters.put("showMeta", "true") // show the meta informations
 			filters.put("showTerm", "true") // show the term informations
 
+			// if images == null, the parameter will be missing on the filter map
+			// and this causes searching in the entire project (all images)
 			String imageIDs = params['image']
-			if (imageIDs != null){
+			if (imageIDs != null && !imageIDs.equals("")){
+				// if the image parameters is not null, put it on the filtermap
 				filters.put("image", String.valueOf(imageIDs))
 			}
-
-			// filter for terms
-			// TODO HINT: putting no "term" on the filter retrieves all annotations for the selected images
-			String termIDs = params['term']
-			if (termIDs != null && !termIDs.equals("")){
-				filters.put("term", String.valueOf(termIDs))
-			}
-//			// additionally check for termID 0, this will be annotations without terms
-//			boolean noTerm = (params['noTerm'] != null && params['noTerm'].equals("true"))
-//			if (noTerm){
-//				filters.put("noTerm", "true")
-//			}
-//			// check for multiple terms
-//			if (params['multipleTerm'] != null && params['multipleTerm'].equals("true")){
-//				filters.put("multipleTerm", "true")
-//			}
 			
-			// TODO implement pagination
-//			int max = (params['max']==null?0:params.int('max'))
+			// #####################################################################################
+			// NEVER RETRIEVE NOTERM=TRUE, BECAUSE THIS DOES NOT ENSURE THAT THIS USER DOES NOT HAVE
+			// YET LABELED THE ANNOTATION, BUT JUST SAYS THAT THE ANNOTATION HAS NO LABEL AT ALL!
+			// #####################################################################################
+
+			// HINT: putting no "term" on the filter map retrieves all annotations for the selected images
+			String termIDs = params['term']
+			boolean termsEmpty = (termIDs == null || termIDs.equals(""))
+			// split the list in the params
+			def queryTerms = String.valueOf(termIDs).split(",") as List
+			
+			boolean searchForNoTerm = false
+			if (!termsEmpty){
+				//  check if '-99' is on the list ('no terms assigned')
+				if (queryTerms.contains('-99')){
+					searchForNoTerm = true
+					log.info("Querying all annotations and search for 'no term' (-99)...")
+				} else {
+					filters.put("term", String.valueOf(termIDs))
+					log.info("Querying selected terms...")
+				}
+			}
+
+			// print the filtermap
+			log.debug(filters)
 
 			// get the session and the user
 			Session sess = Session.get(sessionID)
@@ -184,46 +196,45 @@ class AnnotationController {
 
 			// fetch the terms from the ontology
 			TermCollection terms = cytomine.getTermsByOntology(ontologyID)
-			
+
 			// get all annotations according to the filter
 			AnnotationCollection annotations = cytomine.getAnnotations(filters)
 			// create a new domain mapper
 			DomainMapper dm = new DomainMapper(grailsApplication)
-			
-			// store all filtered annotations in a map, where key = termID and value = list of objects
-			def annotationMap = new JSONObject()
 
-			// pre-allocate the object's attributes
-			boolean hasTerms = !termIDs.equals("");
-//			int nTerms = noTerm?termIDs.split(",").size()+1:termIDs.split(",").size()
-			println termIDs.equals("")
-			
-			def irisAnnList = new JSONArray()
+			// store all filtered annotations in a map,
+			// where key = termID and value = array/list of annotations
+			JSONObject annotationMap = new JSONObject()
+			// prepare the annotation map
+			for (termID in queryTerms){
+				annotationMap.put(termID, new JSONArray())
+			}
+			log.debug("Finished preparation of annotation map: " + annotationMap)
 
-			for(int i=0;i<annotations.size();i++) {
+			log.info("Retrieved " + annotations.size() + " annotations.")
+			
+			// resolve each annotation into the annotation map 
+			for(int i=0;i < annotations.size();i++) {
 				Annotation annotation = annotations.get(i)
 
 				// map the annotation to the IRIS model
 				be.cytomine.apps.iris.Annotation irisAnn = dm.mapAnnotation(annotation, null)
 
-				irisAnn = annotationService.resolveTerms(ontologyID, terms, user, annotation, irisAnn)
+				// resolve the terms for a user according to the query terms
+				irisAnn = annotationService.resolveTermsByUser(ontologyID, terms, user,
+						annotation, irisAnn, searchForNoTerm, queryTerms, annotationMap)
 
-				// add the iris annotation to the list at the position
-				
 				// ######################################################################################
 				// IMPORTANT: do NOT inject the cytomine annotation, because they contain information on
 				// mappings done by other users
 				// ######################################################################################
 				// add the annotation to the result and use the AnnotationMarshaller in order to
 				// serialize the domain objects
-				irisAnnList.add(irisAnn)
 			}
 
-			// TODO compute a JSON object, where each position contains the annotations of a query term
-			
-			println "Query resulted in " << irisAnnList.size() << " annotations."
-			
-			render (irisAnnList as JSON)
+			println "Annotation query resulted in " << annotationMap.size() << " terms."
+
+			render (annotationMap as JSON)
 
 		} catch(CytomineException e1){
 			// exceptions from the cytomine java client
@@ -432,15 +443,15 @@ class AnnotationController {
 			// if no annotations are available for this image
 			if (annotations.isEmpty()){
 				String message = ""
-				
+
 				// check if the image does exist for the project
 				ImageInstance img = cytomine.getImageInstance(cmImageID)
 				if (img.getAttr().getAt("project") != cmProjectID){
 					message = "The image (ID: " + cmImageID + ") is not available in the selected project."
 					log.error(message)
 					throw new CytomineException(412, message)
-				} 
-				
+				}
+
 				// otherwise throw another exception
 				message = "No annotations found for that query."
 				log.error(message)

@@ -87,7 +87,6 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
 
     	$log.debug("Fetching annotations for terms " + termIDs + " for " + imageIDs.length + " images.");
     	
-    	
     	// perform the query
     	annotationService.fetchUserAnnotationsByTerm(sessionService.getCurrentProject().cmID, imageIDs, termIDs, function(data){
     		$log.debug(data);
@@ -129,7 +128,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     	$log.debug(event.name + "::" + action + ": "  + object.name + " [" + object.id + "].");
     	
     	if (action === 'add'){
-    		// TODO incremental fetching
+    		// incremental fetching
     		// fetch the selected term for the selected images
     		var obj = {termName: "Group " + $rootScope.termList[object.id], termID: object.id};
     		selectedTerms.push(object.id);

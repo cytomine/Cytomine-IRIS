@@ -8,7 +8,7 @@ iris.controller("termTreeCtrl", function($rootScope, $scope, $timeout, $log, ses
 
 	var checkedTerms = [];
 	
-	$rootScope.termList = {};
+	$rootScope.termList = {"-99" : "no term assigned" };
 	
 	$scope.tree = {
 		loading : true,
@@ -51,8 +51,8 @@ iris.controller("termTreeCtrl", function($rootScope, $scope, $timeout, $log, ses
         }
         
         // get the ID of the clicked term
-        var id = Number(targ.id.split("-")[1]);
-        var chbxID = "chbxTerm-"+id;
+        var id = Number(targ.id.split(":")[1]);
+        var chbxID = "chbxTerm:"+id;
                
         // if the term is checked, it is in the checked list
         var idx = checkedTerms.indexOf(id);
@@ -169,7 +169,7 @@ iris.controller("termTreeCtrl", function($rootScope, $scope, $timeout, $log, ses
     var selectCheckboxes = function(checkedTerms, select){
     	for (var i = 0; i < checkedTerms.length; i++){
     		var termID = checkedTerms[i];
-    		var chbxID = "chbxTerm-"+termID;
+    		var chbxID = "chbxTerm:"+termID;
     		var chbx = document.getElementById(chbxID);
     		try {
     			chbx.checked = select;

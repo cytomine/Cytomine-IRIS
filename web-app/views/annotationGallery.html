@@ -28,7 +28,7 @@
 			 <div class="row" ng-repeat="group in annotation.groups">
 			 	<div id="{{ 'panel-group-' + group.termName }}" class="panel panel-default">
 					<div id="{{ 'panel-heading-' + group.termName }}" class="panel-heading" ng-drop="true" ng-drop-success="onDropComplete($data,$event,group.termID)">
-						<h4 class="panel-title">{{ group.termName || 'TODO Term Name' }} [{{ group.termID || 'TODO Term ID' }}]</h4>
+						<h4 class="panel-title">{{ group.termName || 'TODO Term Name' }} [{{ group.termID }}]</h4>
 					</div>
 					<div id="{{ 'panel-body-' + group.termName }}" class="panel-body">
 <!-- 					TODO implement pagination of objects in the panel -->
