@@ -118,21 +118,49 @@ input[type="checkbox"].colorbox-checkbox {
 }
 
 .draggable {
-	
+
 }
 
-/*style of any draggable element*/
-[ng-drag] {
+.context-menu {
+	z-index: 11;
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	margin: auto;
+}
+
+.drag-checkbox {
+	z-index: 10;
+	position: absolute;
+	margin-left: 10px;
+}
+
+.drag-handle {
+	z-index: 5;
+	cursor: move;
+	position: absolute;
+	background: url(/images/drag-icon.png);
+	background-color: rgba(255,255,255,0.75);
+	background-repeat: repeat-y;
+	height: 90px;
+	width: 7px;
+	vertical-align: middle;
+}
+
+/*style of any draggable container*/
+.draggable-container {
 	width: 100px;
 	height: 100px;
-	background: rgba(255, 0, 0, 0.2);
-	color: white;
-/* 	text-align: center; */
-	/*padding-top: 0px; */
+	vertical-align: middle;  
 	display: block;
-	margin: 10px;
+	margin: 5px;
 	float: left;
-	/*cursor: move; */
+	position: relative;
+}
+
+/*style of any draggable element */
+[ng-drag] {
+	cursor: move;
 }
 
 /* when the dragged component enters the drop area*/

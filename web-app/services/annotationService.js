@@ -201,9 +201,9 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 			}).error(function(data, status, headers, config) {
 				// on error log the error
 				$log.error(status)
-						if (callbackError) {
-							callbackError(data, status, headers, config);
-						}
+				if (callbackError) {
+					callbackError(data, status, headers, config);
+				}
 			})
 		},
 	}

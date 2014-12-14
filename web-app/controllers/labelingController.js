@@ -191,7 +191,7 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 	$scope.showOrHideCompleted = function() {
 		$log.debug($scope.labeling.hideCompleted);
 		
-		// TODO fetch new tuple
+		// fetch new tuple
 		$scope.fetchNewTuple($scope.labeling.annotationTuple.currentAnnotation.cmID, true);
 	};
 		

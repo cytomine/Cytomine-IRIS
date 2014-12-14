@@ -23,18 +23,35 @@
 			<div ng-show="warn.noImage" class="alert alert-info text-center">
 				{{ warn.noImage.message }}
 			</div>
+			<div ng-show="error" class="alert alert-danger text-center">
+				{{ error.message }}
+			</div>
 		
-			 <!-- TODO implement the ng-repeat for all filtered terms -->
-			 <div class="row" ng-repeat="group in annotation.groups">
-			 	<div id="{{ 'panel-group-' + group.termName }}" class="panel panel-default">
-					<div id="{{ 'panel-heading-' + group.termName }}" class="panel-heading" ng-drop="true" ng-drop-success="onDropComplete($data,$event,group.termID)">
-						<h4 class="panel-title">{{ group.termName || 'TODO Term Name' }} [{{ group.termID }}]</h4>
+			 <div ng-hide="error" class="row" ng-repeat="group in annotation.groups">
+			 	<div id="{{ 'panel-group' + group.termID }}" class="panel panel-default">
+					<div id="{{ 'panel-heading' + group.termID }}" class="panel-heading" ng-drop="true" ng-drop-success="onDropComplete($data,$event,group.termID)">
+						<h4 class="panel-title">{{ group.termName || 'TODO Term Name' }} <span class="text-muted" style="font-size: 12px">{{ group.termID }}</span>
+						<span class="text-muted pull-right">
+							{{ group.annotations.length }} Annotation{{ group.annotations.length == 1?'':'s' }}
+						</span>
+						</h4>
 					</div>
-					<div id="{{ 'panel-body-' + group.termName }}" class="panel-body">
+					<div id="{{ 'panel-body' + group.termID }}" class="panel-body">
 <!-- 					TODO implement pagination of objects in the panel -->
-						<div ng-repeat="item in annotations" id="{{ 'item-' + item.cmID }}">
-							<div ng-drag="true" ng-drag-data="item">Drag Handle</div>
-<!-- 							<img id="{{ 'thumb-' + item.cmID }}" src="{{ item.cmSmallCropURL }}" style="max-height:100px; max-width:100px" alt=""/> -->
+						<div ng-repeat="item in group.annotations" id="{{ 'item-' + item.cmID }}">
+							<div class="draggable-container thumbnail">
+								<span class="drag-checkbox"><input type="checkbox" ng-model="selectedAnnotations" ng-change="selectAnnotation(item)"></span>
+								<span class="drag-handle" ng-drag="true" ng-drag-data="item"></span>
+								<div class="context-menu btn-group dropup" dropdown>
+									<button type="button" class="btn btn-default btn-xs dropdown-toggle" role="button" href="#">
+										<span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="">TODO Assign another term...</a>
+									</ul>
+								</div>
+								<a href="{{ item.cmImageURL }}" target="_blank"><img id="{{ 'thumb-' + item.cmID }}" src="{{ item.cmSmallCropURL }}" style="max-height:90px; max-width:90px; position:absolute;" alt=""/></a>
+							</div>
 						</div>
 					</div>
 					<!-- END BODY -->
