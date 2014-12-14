@@ -75,6 +75,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
 	
     $scope.fetchAnnotations = function(termIDs, imageIDs){
     	
+    	$scope.showOrHideNoImageWarning();
     	if (imageIDs.length === 0){
     		$log.debug("No images to retrieve annotations for.");
     		return;

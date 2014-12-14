@@ -52,15 +52,15 @@ class AnnotationController {
 			filters.put("showMeta", "true") // show the meta informations
 			filters.put("showTerm", "true") // show the term informations
 
-			String imageIDs = params['image']
+			String imageIDs = params['images']
 			if (imageIDs != null){
-				filters.put("image", String.valueOf(imageIDs))
+				filters.put("images", String.valueOf(imageIDs))
 			}
 
 			// filter for terms
-			String termIDs = params['term']
+			String termIDs = params['terms']
 			if (termIDs != null){
-				filters.put("term", String.valueOf(termIDs))
+				filters.put("terms", String.valueOf(termIDs))
 			}
 			// additionally check for termID 0, this will be annotations without terms
 			if (params['noTerm'] != null && params['noTerm'].equals("true")){
@@ -140,6 +140,7 @@ class AnnotationController {
 			// ##################################################
 			Cytomine cytomine = request['cytomine']
 			String publicKey = params['publicKey']
+			String privateKey = params['privateKey']
 
 			long sessionID = params.long('sessionID')
 			long projectID = params.long('cmProjectID')
@@ -154,10 +155,10 @@ class AnnotationController {
 
 			// if images == null, the parameter will be missing on the filter map
 			// and this causes searching in the entire project (all images)
-			String imageIDs = params['image']
+			String imageIDs = params['images']
 			if (imageIDs != null && !imageIDs.equals("")){
 				// if the image parameters is not null, put it on the filtermap
-				filters.put("image", String.valueOf(imageIDs))
+				filters.put("images", String.valueOf(imageIDs))
 			}
 			
 			// #####################################################################################
@@ -166,7 +167,7 @@ class AnnotationController {
 			// #####################################################################################
 
 			// HINT: putting no "term" on the filter map retrieves all annotations for the selected images
-			String termIDs = params['term']
+			String termIDs = params['terms']
 			boolean termsEmpty = (termIDs == null || termIDs.equals(""))
 			// split the list in the params
 			def queryTerms = String.valueOf(termIDs).split(",") as List
@@ -178,18 +179,24 @@ class AnnotationController {
 					searchForNoTerm = true
 					log.info("Querying all annotations and search for 'no term' (-99)...")
 				} else {
-					filters.put("term", String.valueOf(termIDs))
+					filters.put("terms", String.valueOf(termIDs))
 					log.info("Querying selected terms...")
 				}
 			}
 
 			// print the filtermap
 			log.debug(filters)
-
+			
 			// get the session and the user
 			Session sess = Session.get(sessionID)
 			User user = sess.getUser()
 
+			// the calling user has to be the owner of the session
+			if (!(user.cmPublicKey == publicKey && user.cmPrivateKey == privateKey)){
+				log.error("The calling user does not match the session owner.")
+				throw new CytomineException(400, "The calling user does not match the session owner.")
+			}
+			
 			// find the project
 			Project p = sess.getProjects().find { it.cmID == projectID }
 			long ontologyID = p.getCmOntology();
@@ -210,12 +217,12 @@ class AnnotationController {
 				annotationMap.put(termID, new JSONArray())
 			}
 			log.debug("Finished preparation of annotation map: " + annotationMap)
-
 			log.info("Retrieved " + annotations.size() + " annotations.")
 			
 			// resolve each annotation into the annotation map 
 			for(int i=0;i < annotations.size();i++) {
 				Annotation annotation = annotations.get(i)
+				log.debug("Resolving annotation " + annotation.id)
 
 				// map the annotation to the IRIS model
 				be.cytomine.apps.iris.Annotation irisAnn = dm.mapAnnotation(annotation, null)

@@ -128,7 +128,9 @@ iris.controller(
 						page : 1, // show first page
 						count : 10, // count per page
 						sorting : {
-							userProgress : 'asc' // initial sorting
+							 // initial sorting
+							originalFilename : 'asc',
+//							userProgress : 'asc'
 						},
 						filter : {
 							// applies filter to the "data" object before sorting

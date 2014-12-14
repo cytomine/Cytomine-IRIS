@@ -44,68 +44,76 @@ class AnnotationService {
 		// grab all terms from all users for the current annotation
 		List userByTermList = annotation.getList("userByTerm");
 
-//		println userByTermList
+		log.debug(userByTermList)
+		log.debug("Searching for 'no Term': " + searchForNoTerm + ". Query terms: " + queryTerms)
 
-		// if no assignment at all is done, add the
+		// if no assignment at all is done 
+		// add the annotation to the map at -99 ('no term assigned'), if the query contains termID=-99
 		if (userByTermList.isEmpty()){
 			log.debug("This annotation does not have any terms assigned at all [" + annotation.id + "]")
 			if (searchForNoTerm){
 				annotationMap["-99"].add(irisAnn)
 			}
 		} else {
-		// TODO FIX LOGICAL BUG!
-//			boolean hasAssignment = false
-//
-//			// search the assignments for a match "user" and "term"
-//			for (assignment in userByTermList){
-////				println ("user is in assignment: " + (user.cmID in assignment.get("user")))
-//
-//				// if the user has assessed this annotation
-//				if (user.cmID in assignment.get("user")){
-//
-//					// check, if the assessed term ID is in the query list
-//					long termID = assignment.get("term")
-//
-//					// if the user has assigned one of the queryTerms (USER CAN ONLY SET UNIQUE LABELS)
-//					if (queryTerms.contains(""+termID)){
-//						String cmTermName = terms.list.find{it.id == assignment.get("term")}.get("name")
-//						println user.cmUserName + " assigned a query term " + cmTermName + " (" + termID + ") to [" + annotation.id + "]"
-//
-//						// store the properties in the irisAnnotation
-//						irisAnn.setCmUserID(user.cmID)
-//						irisAnn.setCmTermID(assignment.get("term"))
-//						irisAnn.setCmTermName(cmTermName)
-//						irisAnn.setCmOntology(ontologyID)
-//						irisAnn.setAlreadyLabeled(true)
-//
-//						// add to map
-//						annotationMap[termID+""].add(irisAnn)
-//						hasAssignment = true
-//						break
-//					} else {
-//						if (!searchForNoTerm){
-//							println user.cmUserName + " assigned NO term to [" + annotation.id + "]"
-//							hasAssignment = false
-//						} else {
-//							println user.cmUserName + " did not assign any query term to [" + annotation.id + "]"
-//							// if querying annotations 'without terms' and the user has none of the terms in the list
-//							// count this as hit
-//							hasAssignment = true
-//						}
-//					}
-//				}
-//
-//				// if the user is not in this assignment, continue searching in the other ones
-//				else {
-//					hasAssignment = false
-//				}
-//			}
-//
-//			// if the user does not have an assignment and we are searching for 'noTerms'
-//			// add it to the no term list
-//			if (searchForNoTerm && !hasAssignment){
-//				annotationMap["-99"].add(irisAnn)
-//			}
+			boolean userAssignedOntologyTerm = false
+
+			// search the assignments for a match both "user" and "term"
+			for (assignment in userByTermList){
+				
+				//log.debug("Querying user is " + user.cmUserName + " (" + user.cmID + ")")
+
+				// if the user has assessed this annotation
+				if (user.cmID in assignment.get("user")){
+					log.debug("user " + user.cmUserName + " has assignment: " + (user.cmID in assignment.get("user")))
+					
+					// check, if the assessed term ID is in the query list
+					long ontologyTermID = assignment.get("term")
+
+					// if the user has assigned one of the queryTerms 
+					// ASSUMPTION: USER CAN ONLY SET UNIQUE LABELS
+					if (queryTerms.contains(""+ontologyTermID)){
+						String cmTermName = terms.list.find{it.id == ontologyTermID}.get("name")
+						log.debug(user.cmUserName + " assigned an ontology term " 
+							+ cmTermName + " (" + ontologyTermID + ") to [" + annotation.id + "]")
+
+						// store the properties in the irisAnnotation
+						irisAnn.setCmUserID(user.cmID)
+						irisAnn.setCmTermID(assignment.get("term"))
+						irisAnn.setCmTermName(cmTermName)
+						irisAnn.setCmOntology(ontologyID)
+						irisAnn.setAlreadyLabeled(true)
+
+						// add the annotation to the corresponding list in the map
+						annotationMap[ontologyTermID+""].add(irisAnn)
+						userAssignedOntologyTerm = true
+						break
+					} else {
+						log.debug(user.cmUserName + " did not assign any ontology term to [" + annotation.id 
+							+ "], checking for 'no term' query")
+						if (!searchForNoTerm){
+							log.debug(user.cmUserName + " did not assign any term to [" + annotation.id + "]")
+							userAssignedOntologyTerm = false
+						} else {
+							log.debug(user.cmUserName + " did not assign any query term to [" + annotation.id + "], skipping annotation")
+							// if querying annotations 'without terms' and the user has none of the terms in the list
+							// count this as hit such that the annotation does not get added to the response
+							userAssignedOntologyTerm = true
+						}
+					}
+				}
+
+				// if the user is not in this assignment, continue searching in the other ones
+				else {
+					log.debug("User " + user.cmUserName + " is not in this assignment, continuing search...")
+					userAssignedOntologyTerm = false
+				}
+			}
+
+			// if the user does not have an assignment and we are searching for 'noTerms'
+			// add it to the no term list
+			if (searchForNoTerm && !userAssignedOntologyTerm){
+				annotationMap["-99"].add(irisAnn)
+			}
 		}
 
 		return irisAnn

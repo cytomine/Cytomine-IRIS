@@ -44,7 +44,7 @@ iris.controller("termTreeCtrl", function($rootScope, $scope, $timeout, $log, ses
         if (!evt) {
             var evt = window.event;
         }
-        if (evt.target) {
+        if (evt.target) { // TODO BUG IN FIREFOX!!!
             targ=evt.target;
         } else if (evt.srcElement) {
             targ=evt.srcElement;

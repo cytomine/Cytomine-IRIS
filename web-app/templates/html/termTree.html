@@ -12,7 +12,7 @@
 		<!-- the ontology tree -->
 		<div ng-show="showTree"
 			treecontrol="" class="tree-light" tree-model="treeData" on-node-toggle="showToggle(node, expanded)"
-			options="treeOptions" on-selection="selectOrUnselectTerm(event)" expanded-nodes="expandedNodes">
+			options="treeOptions" on-selection="selectOrUnselectTerm($event)" expanded-nodes="expandedNodes">
 			<span ng-switch="node.isFolder">
 				<span ng-switch-when="true">
 					<span id="{{ 'treeTermLabel:' + node.id }}">{{ node.name }}</span>

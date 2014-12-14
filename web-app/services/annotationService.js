@@ -50,7 +50,7 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 		fetchUserAnnotationsByTerm : function(projectID, imageIDs, termIDs, callbackSuccess,
 				callbackError) {
 			var sessionID = sessionService.getSession().id
-			$log.debug("Getting user annotations by term: " + sessionID + " - "
+			$log.debug("Getting user annotations by terms: " + sessionID + " - "
 					+ projectID + " - " + imageIDs + " - " + termIDs)
 					
 			// modify the parameters
@@ -58,11 +58,11 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 					"{sessionID}", sessionID).replace("{projectID}", projectID);
 			
 			if (imageIDs !== null){
-				url += ("&image=" + imageIDs.toString().replace("[","").replace("]",""));
+				url += ("&images=" + imageIDs.toString().replace("[","").replace("]",""));
 			}
 			
 			// add the terms of interest to the query
-			url += ("&term=" + termIDs.toString().replace("[","").replace("]",""));
+			url += ("&terms=" + termIDs.toString().replace("[","").replace("]",""));
 
 			// execute the http get request to the IRIS server
 			$http.get(url).success(function(data) {
