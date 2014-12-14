@@ -177,10 +177,10 @@ class AnnotationController {
 				//  check if '-99' is on the list ('no terms assigned')
 				if (queryTerms.contains('-99')){
 					searchForNoTerm = true
-					log.info("Querying all annotations and search for 'no term' (-99)...")
+					log.debug("Querying all annotations and search for 'no term' (-99)...")
 				} else {
 					filters.put("terms", String.valueOf(termIDs))
-					log.info("Querying selected terms...")
+					log.debug("Querying selected terms...")
 				}
 			}
 
