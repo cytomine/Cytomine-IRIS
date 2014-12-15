@@ -5,7 +5,7 @@ iris.config(function($logProvider) {
 });
 
 iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $filter, $log,
-		$location, hotkeys, helpService, annotationService, sessionService, sharedService, $routeParams) {
+		$location, hotkeys, helpService,navService, annotationService, sessionService, sharedService, $routeParams) {
 	console.log("annotationGalleryCtrl");
 
 	// set content url for the help page
@@ -47,7 +47,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
         	$scope.droppedObjects.push(data);
         }
 
-        // TODO handle the 0 term (remove term)
+        // TODO handle the -99 term (remove term)
         $log.debug("TODO assigning unique term " + $rootScope.termList[termID] +
         		" to annotation " + data.cmID);
     };
@@ -62,17 +62,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
         var index = array.indexOf(obj);
     };
     
-    $scope.fetchAllAnnotations = function(){
-    	annotationService.fetchUserAnnotations(sessionService.getCurrentProject().cmID, null, 
-    		function(data){
-    			$scope.annotations = data;
-		    }, function(data,status){
-		    	sharedService.addAlert("Retrieving annotations failed. Status " + status + ".", "danger");
-		    });
-    };
-    	
     $scope.fetchAnnotations = function(termIDs, imageIDs){
-    	
     	$scope.showOrHideNoImageWarning();
     	if (imageIDs.length === 0){
     		$log.debug("No images to retrieve annotations for.");
@@ -85,6 +75,8 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     	}
 
     	$log.debug("Fetching annotations for terms " + termIDs + " for " + imageIDs.length + " images.");
+    	
+    	$scope.loading = true;
     	
     	// perform the query
     	annotationService.fetchUserAnnotationsByTerm(sessionService.getCurrentProject().cmID, 
@@ -116,12 +108,14 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
   
     		// finally delete the error message
     		delete $scope.error
+    		delete $scope.loading;
     	}, function(data,status,header,config){
     		$scope.error = {
     			message : data.error.message,
     			status : status
     		};
     		$log.error(status);
+    		delete $scope.loading;
     	});
     };
     
@@ -215,6 +209,57 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     	
     	$log.debug($scope.selectedAnnotations);
     };    
+    
+    // opens the labeling interface and jumps to the current annotation
+    $scope.labelAnnotation = function(ann){
+    	$log.debug("Computing URL for annotation " +  ann.cmID);
+    	
+    	sessionService.touchImage(ann.cmProjectID, ann.cmImageID, function(data){
+    		sessionService.setCurrentAnnotationID(ann.cmID);
+			$log.debug("Successfully touched image " + ann.cmImageID);
+			navService.navToLabelingPage(ann.cmProjectID, ann.cmImageID);
+			delete $scope.error;
+		}, function(data,status){
+			$scope.error = {
+    			message : data.error.message,
+    			status : status
+    		};
+    		$log.error(status);
+			sharedService.addAlert("Cannot update image. Error " + status + ".", "danger");
+		});
+    };
+    
+    $scope.selectAllAnnotations = function(termID){
+    	$log.debug("Checking all annotations of group " +  $rootScope.termList[termID]);
+    	var annIDs = getGroup($scope.annotation.groups, termID).annotations;
+    	for (var idx = 0; idx < annIDs.length; idx++){
+    		var chbx = document.getElementById("checkbox-" + annIDs[idx].cmID);
+    		// overwrite the selection state
+    		$scope.selectedAnnotations[annIDs[idx].cmID] = true;
+    		chbx.checked = true;
+    	}
+    	
+    	$log.debug($scope.selectedAnnotations);
+    }; 
+    
+    
+    $scope.unSelectAllAnnotations = function(termID){
+    	$log.debug("UNChecking all annotations of group " +  $rootScope.termList[termID]);
+    	var annIDs = getGroup($scope.annotation.groups, termID).annotations;
+    	for (var idx = 0; idx < annIDs.length; idx++){
+    		var chbx = document.getElementById("checkbox-" + annIDs[idx].cmID);
+        	delete $scope.selectedAnnotations[annIDs[idx].cmID];
+    		chbx.checked = false;
+    	}
+    	$log.debug($scope.selectedAnnotations);
+    }; 
+    
+    // reload all annotations
+    $scope.refreshPage = function() {
+    	$log.debug("Refreshing page");
+    	$scope.fetchAnnotations(selectedTerms, selectedImages);
+    }
+    
 });
 
 function sortGroups(a, b) {
@@ -223,4 +268,15 @@ function sortGroups(a, b) {
 	if (a.termName > b.termName)
 		return 1;
 	return 0;
+};
+
+function getGroup(groups, termID) {
+	// search for the object in the array
+	for (var idx = 0; idx < groups.length; idx++){
+		var existingObj = groups[idx];
+		if (existingObj.termID == termID){
+			return groups[idx];
+		}
+	}
+	return null;
 };

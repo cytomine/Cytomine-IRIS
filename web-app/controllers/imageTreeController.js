@@ -42,7 +42,7 @@ iris.controller("imageTreeCtrl", function($rootScope, $scope, $timeout, $log, se
         if (!evt) {
             var evt = window.event;
         }
-        if (evt.target) {
+        if (evt.target) { // TODO EVENT BUG IN FIREFOX!!!
             targ=evt.target;
         } else if (evt.srcElement) {
             targ=evt.srcElement;

@@ -43,13 +43,15 @@ iris.controller("termTreeCtrl", function($rootScope, $scope, $timeout, $log, ses
         var targ;
         if (!evt) {
             var evt = window.event;
+        }else {
+        	var evt = evt;
         }
-        if (evt.target) { // TODO BUG IN FIREFOX!!!
+        if (evt.target) { // TODO EVENT BUG IN FIREFOX!!!
             targ=evt.target;
         } else if (evt.srcElement) {
             targ=evt.srcElement;
-        }
-        
+        } 
+       
         // get the ID of the clicked term
         var id = Number(targ.id.split(":")[1]);
         var chbxID = "chbxTerm:"+id;

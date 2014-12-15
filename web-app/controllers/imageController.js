@@ -63,7 +63,7 @@ iris.controller(
 					navService.navToLabelingPage($scope.projectID, image.id);
 				}, function(data,status){
 					sharedService.addAlert("Cannot update image. Error " + status + ".", "danger");
-				})
+				});
 			};
 			
 			$scope.annotationGallery = function(image){
