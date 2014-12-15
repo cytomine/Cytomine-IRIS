@@ -242,7 +242,7 @@ class AnnotationController {
 			// compute total number of resolved annotations
 			int nAnn = 0
 			annotationMap.each { key, value -> nAnn+=value.size() }
-			log.debug("Annotation query resulted in " + nAnn + " terms.")
+			log.debug("Query resulted in " + nAnn + " annotations.")
 			
 			render (annotationMap as JSON)
 
