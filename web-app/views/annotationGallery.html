@@ -36,11 +36,11 @@
 			 <div ng-hide="error || loading" class="row" ng-repeat="group in annotation.groups">
 			 	<div id="{{ 'panel-group' + group.termID }}" class="panel panel-default">
 					<div id="{{ 'panel-heading' + group.termID }}" class="panel-heading" ng-drop="true" ng-drop-success="onDropComplete($data,$event,group.termID)">
-						<h4 class="panel-title">{{ group.termName || 'TODO Term Name' }} <span class="text-muted" style="font-size: 12px">{{ group.termID }}</span>
+						<h4 class="panel-title">{{ group.termName }} <span class="text-muted" style="font-size: 12px">{{ group.termID }}</span>
 						<span class="pull-right">
 							<span class=text-muted>
 									{{ group.annotations.length }} Annotation{{ group.annotations.length == 1?'':'s' }}
-<!-- 								{{  }} TODO print number of selected items in this group -->
+<!-- 								{{ ... }} TODO print number of selected items in this group -->
 							</span>
 							<span>
 								<button id="{{ 'selectAll' + group.termID }}" type="button" class="btn btn-xs btn-info" ng-click="selectAllAnnotations(group.termID)">Check all</button>
@@ -60,14 +60,13 @@
 										<span class="caret"></span>
 									</button>
 									<ul class="dropdown-menu" role="menu">
-										<li><a href="">TODO Assign another term...</a></li>
+										<li><a href="" ng-click="labelAnnotation(item)">Assign another label...</a></li>
 										<hr class="separator" style="margin:5px;"/>
 										<li><a href="{{ item.cmImageURL }}" target="_blank">View in Cytomine</a></li>
 									</ul>
 								</div>
 								<span>
-<!-- 								TODO make link to the annotation -->
-									<a href="" target="_blank" ng-click="labelAnnotation(item)"><img id="{{ 'thumb-' + item.cmID }}" src="{{ item.cmSmallCropURL }}" style="max-height:90px; max-width:90px; position:absolute;" alt=""/></a>
+									<a href="" ng-click="labelAnnotation(item)"><img id="{{ 'thumb-' + item.cmID }}" src="{{ item.cmSmallCropURL }}" style="max-height:90px; max-width:90px; position:relative;" alt=""/></a>
 								</span>
 							</div>
 						</div>
@@ -86,5 +85,22 @@
 			 </div>
 			 <!-- END GROUPS -->
 		</div>
-	</div>	
+	</div>
+	<div id="tools-container" class="clearfix">
+		<div id="tools" class="galleryTools clearfix">
+			<span class="tool">
+				<select ng-model="chosenTerm" ng-options="value for (key, value) in $root.termList">
+					<option value="">-- choose a label for assignment --</option>
+				</select>
+				<button type="button" class="btn btn-danger btn-xs" ng-click="assignTermToSelectedItems()" ng-class="{ 'disabled' : !(chosenTerm && hasSelections())}">Apply to selection</button>
+				<button type="button" class="btn btn-default btn-xs" ng-click="clearAllSelectedItems()" ng-class="{ 'disabled' : !hasSelections() }">Clear selection</button>
+			</span>
+			<span class="divider-vertical"></span>
+			<span class="tool">
+				<button class="btn btn-primary btn-xs" ng-click="refreshPage()">
+					<span class="glyphicon glyphicon-refresh"></span> Refresh filter
+				</button>
+			</span>
+		</div>
+	</div>
 </div>

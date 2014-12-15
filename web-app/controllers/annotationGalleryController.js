@@ -12,19 +12,18 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
 	helpService.setContentUrl("content/help/annGalleryHelp.html");
 	
 	$scope.annotation = {
-		groups : [] // this variable holds all terms
+		groups : [] // this variable holds all terms and their annotations
 	};
 
+	// selected terms for filtering
 	var selectedTerms = [];
+	// selected images for filtering
 	var selectedImages = [];
-	// create empty set
+	// selected annotations (e.g. for drag-and-drop)
 	$scope.selectedAnnotations = {};
 
+	$scope.projectID = $routeParams["projectID"];
 	$scope.projectName = sessionService.getCurrentProject().cmName;
-	
-//	$scope.annotations=[ 
-//	  {"class":"be.cytomine.apps.iris.Annotation","id":null,"cmID":140736277,"cmProjectID":93519082,"cmImageID":94255021,"cmCreatorUserID":16,"cmImageURL":"http://beta.cytomine.be/#tabs-image-93519082-94255021-140736277","cmCropURL":"http://beta.cytomine.be/api/userannotation/140736277/crop.jpg","drawIncreasedAreaURL":"http://beta.cytomine.be/api/annotation/140736277/crop.png?increaseArea=8&maxSize=256&draw=true","cmSmallCropURL":"http://beta.cytomine.be/api/userannotation/140736277/crop.png?maxSize=256","cmTermID":0,"cmTermName":null,"cmOntology":0,"cmUserID":0,"prefs":{},"image":null,"location":null,"x":21712.0,"y":26280.5},{"class":"be.cytomine.apps.iris.Annotation","id":null,"cmID":140736270,"cmProjectID":93519082,"cmImageID":94255021,"cmCreatorUserID":16,"cmImageURL":"http://beta.cytomine.be/#tabs-image-93519082-94255021-140736270","cmCropURL":"http://beta.cytomine.be/api/userannotation/140736270/crop.jpg","drawIncreasedAreaURL":"http://beta.cytomine.be/api/annotation/140736270/crop.png?increaseArea=8&maxSize=256&draw=true","cmSmallCropURL":"http://beta.cytomine.be/api/userannotation/140736270/crop.png?maxSize=256","cmTermID":0,"cmTermName":null,"cmOntology":0,"cmUserID":0,"prefs":{},"image":null,"location":null,"x":39680.0,"y":33000.5},{"class":"be.cytomine.apps.iris.Annotation","id":null,"cmID":140736262,"cmProjectID":93519082,"cmImageID":94255021,"cmCreatorUserID":16,"cmImageURL":"http://beta.cytomine.be/#tabs-image-93519082-94255021-140736262","cmCropURL":"http://beta.cytomine.be/api/userannotation/140736262/crop.jpg","drawIncreasedAreaURL":"http://beta.cytomine.be/api/annotation/140736262/crop.png?increaseArea=8&maxSize=256&draw=true","cmSmallCropURL":"http://beta.cytomine.be/api/userannotation/140736262/crop.png?maxSize=256","cmTermID":0,"cmTermName":null,"cmOntology":0,"cmUserID":0,"prefs":{},"image":null,"location":null,"x":22608.0,"y":26984.5},{"class":"be.cytomine.apps.iris.Annotation","id":null,"cmID":140688172,"cmProjectID":93519082,"cmImageID":100117637,"cmCreatorUserID":107758862,"cmImageURL":"http://beta.cytomine.be/#tabs-image-93519082-100117637-140688172","cmCropURL":"http://beta.cytomine.be/api/userannotation/140688172/crop.jpg","drawIncreasedAreaURL":"http://beta.cytomine.be/api/annotation/140688172/crop.png?increaseArea=8&maxSize=256&draw=true","cmSmallCropURL":"http://beta.cytomine.be/api/userannotation/140688172/crop.png?maxSize=256","cmTermID":0,"cmTermName":null,"cmOntology":0,"cmUserID":0,"prefs":{},"image":null,"location":null,"x":22212.5,"y":11048.000000000002},{"class":"be.cytomine.apps.iris.Annotation","id":null,"cmID":140688165,"cmProjectID":93519082,"cmImageID":100117637,"cmCreatorUserID":107758862,"cmImageURL":"http://beta.cytomine.be/#tabs-image-93519082-100117637-140688165","cmCropURL":"http://beta.cytomine.be/api/userannotation/140688165/crop.jpg","drawIncreasedAreaURL":"http://beta.cytomine.be/api/annotation/140688165/crop.png?increaseArea=8&maxSize=256&draw=true","cmSmallCropURL":"http://beta.cytomine.be/api/userannotation/140688165/crop.png?maxSize=256","cmTermID":0,"cmTermName":null,"cmOntology":0,"cmUserID":0,"prefs":{},"image":null,"location":null,"x":22184.499999999996,"y":11105.999999999996},{"class":"be.cytomine.apps.iris.Annotation","id":null,"cmID":140688158,"cmProjectID":93519082,"cmImageID":100117637,"cmCreatorUserID":107758862,"cmImageURL":"http://beta.cytomine.be/#tabs-image-93519082-100117637-140688158","cmCropURL":"http://beta.cytomine.be/api/userannotation/140688158/crop.jpg","drawIncreasedAreaURL":"http://beta.cytomine.be/api/annotation/140688158/crop.png?increaseArea=8&maxSize=256&draw=true","cmSmallCropURL":"http://beta.cytomine.be/api/userannotation/140688158/crop.png?maxSize=256","cmTermID":0,"cmTermName":null,"cmOntology":0,"cmUserID":0,"prefs":{},"image":null,"location":null,"x":22139.482211350005,"y":11155.816230617},{"class":"be.cytomine.apps.iris.Annotation","id":null,"cmID":140688137,"cmProjectID":93519082,"cmImageID":100117637,"cmCreatorUserID":107758862,"cmImageURL":"http://beta.cytomine.be/#tabs-image-93519082-100117637-140688137","cmCropURL":"http://beta.cytomine.be/api/userannotation/140688137/crop.jpg","drawIncreasedAreaURL":"http://beta.cytomine.be/api/annotation/140688137/crop.png?increaseArea=8&maxSize=256&draw=true","cmSmallCropURL":"http://beta.cytomine.be/api/userannotation/140688137/crop.png?maxSize=256","cmTermID":0,"cmTermName":null,"cmOntology":0,"cmUserID":0,"prefs":{},"image":null,"location":null,"x":22120.575855042494,"y":11182.838905629778}
-//	  ];
 	
 	// put all valid shortcuts for this page here
 	hotkeys.bindTo($scope)
@@ -35,12 +34,15 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
 			helpService.showHelp();
 		}
 	});
-	
-	$scope.projectID = $routeParams["projectID"];
 
-	// TODO implement drag and drop feature
+	// TODO implement drag and drop feature for single annotations
     $scope.droppedObjects = [];
     $scope.onDropComplete=function(data,evt,termID){
+    	// if the term ID does not change, skip the element(s)
+        if (data.cmTermID == termID){
+        	return;
+        }
+    	
     	var index = $scope.droppedObjects.indexOf(data);
         if (index == -1){
         	// add the item
@@ -58,10 +60,8 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
             $scope.droppedObjects.splice(index, 1);
         }
     };
-    var inArray = function(array, obj) {
-        var index = array.indexOf(obj);
-    };
     
+    // load annotations from the server
     $scope.fetchAnnotations = function(termIDs, imageIDs){
     	$scope.showOrHideNoImageWarning();
     	if (imageIDs.length === 0){
@@ -76,6 +76,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
 
     	$log.debug("Fetching annotations for terms " + termIDs + " for " + imageIDs.length + " images.");
     	
+    	// set the loading spinner
     	$scope.loading = true;
     	
     	// perform the query
@@ -108,6 +109,8 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
   
     		// finally delete the error message
     		delete $scope.error
+    		
+    		// disable the loading spinner
     		delete $scope.loading;
     	}, function(data,status,header,config){
     		$scope.error = {
@@ -115,6 +118,8 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     			status : status
     		};
     		$log.error(status);
+    		
+    		// disable the loading spinner
     		delete $scope.loading;
     	});
     };
@@ -242,7 +247,6 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     	$log.debug($scope.selectedAnnotations);
     }; 
     
-    
     $scope.unSelectAllAnnotations = function(termID){
     	$log.debug("UNChecking all annotations of group " +  $rootScope.termList[termID]);
     	var annIDs = getGroup($scope.annotation.groups, termID).annotations;
@@ -257,8 +261,41 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     // reload all annotations
     $scope.refreshPage = function() {
     	$log.debug("Refreshing page...");
+    	$scope.clearAllSelectedItems();
     	$scope.fetchAnnotations(selectedTerms, selectedImages);
-    }
+    };
+    
+    // assign a selected term to all selected annotations
+    $scope.assignTermToSelectedItems = function(){
+    	var termID = getKey($rootScope.termList, $scope.chosenTerm);
+    	var nSelections = getSize($scope.selectedAnnotations);
+    	if (termID === undefined || nSelections === 0) {
+    		$log.debug("No term chosen or no item selected, returning.");
+    		return;
+    	}
+    	$log.debug("Assigning term " + $scope.chosenTerm + "(" + termID + ") to " + nSelections + " annotations.");
+    	
+    	// TODO implement server calls
+    };
+    
+    // checks for selected items
+    $scope.hasSelections = function(){
+    	return !(getSize($scope.selectedAnnotations) === 0);
+    };
+    
+    // clears all selected items
+    $scope.clearAllSelectedItems = function(){
+    	var keys = Object.keys($scope.selectedAnnotations);
+    	
+    	for (var idx = 0; idx < keys.length; idx++){
+    		var id = keys[idx];
+    		var chbx = document.getElementById("checkbox-" + id);
+    		chbx.checked = false;
+    	}
+    	
+    	// clear selections
+    	$scope.selectedAnnotations = {};
+    };
 });
 
 function sortGroups(a, b) {
@@ -278,4 +315,22 @@ function getGroup(groups, termID) {
 		}
 	}
 	return null;
+};
+
+function getKey(object, value){
+	// search for the object in the array
+	for( var prop in object ) {
+        if( object.hasOwnProperty( prop ) ) {
+             if( object[ prop ] === value )
+                 return prop;
+        }
+    }
+};
+
+function getSize(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
 };

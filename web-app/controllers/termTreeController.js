@@ -8,7 +8,7 @@ iris.controller("termTreeCtrl", function($rootScope, $scope, $timeout, $log, ses
 
 	var checkedTerms = [];
 	
-	$rootScope.termList = {"-99" : "no term assigned" };
+	$rootScope.termList = {"-99" : "No term assigned" };
 	
 	$scope.tree = {
 		loading : true,
@@ -145,9 +145,9 @@ iris.controller("termTreeCtrl", function($rootScope, $scope, $timeout, $log, ses
 	}
 	
     $scope.checkAllTerms = function(){
-    	checkedTerms = [];
+    	checkedTerms = [-99];
     	searchForSelectableNode($scope.treeData, checkedTerms);
-    	selectCheckboxes(checkedTerms, true);    
+    	selectCheckboxes(checkedTerms, true); 
     	
     	$rootScope.$broadcast("termFilterChange", { id : checkedTerms, action : 'addAll' });
     	
@@ -156,7 +156,7 @@ iris.controller("termTreeCtrl", function($rootScope, $scope, $timeout, $log, ses
     };
 
     $scope.uncheckAllTerms = function(){
-    	checkedTerms = [];
+    	checkedTerms = [-99];
     	searchForSelectableNode($scope.treeData, checkedTerms);
     	selectCheckboxes(checkedTerms, false);
     	checkedTerms = [];
@@ -181,12 +181,30 @@ iris.controller("termTreeCtrl", function($rootScope, $scope, $timeout, $log, ses
     	}
     };
     
+    $scope.droppedObjects = [];
     // if an element has been dropped on the list element
     $scope.onDropComplete=function(annotation,evt,termID){
-    	// TODO handle the 0 term
+    	// if the term ID does not change, skip the element(s)
+        if (data.cmTermID == termID){
+        	return;
+        }
     	
+    	var index = $scope.droppedObjects.indexOf(data);
+        if (index == -1){
+        	// add the item
+        	$scope.droppedObjects.push(data);
+        }
+
+        // TODO handle the -99 term (remove term)
         $log.debug("TODO assigning unique term " + $rootScope.termList[termID] +
-        		" to annotation " + annotation.cmID);
+        		" to annotation " + data.cmID);
     };
-	
+    
+    $scope.onDragSuccess=function(data,evt){
+        var index = $scope.droppedObjects.indexOf(data);
+        if (index > -1) {
+        	// remove the item
+            $scope.droppedObjects.splice(index, 1);
+        }
+    };
 });

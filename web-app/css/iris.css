@@ -50,7 +50,7 @@ Map controls.
 /*map controls end*/
 .container-100 {
 	width: 100% !important;
-	padding-left: 25px;
+	padding-left: 20px;
 	padding-right: 20px;
 }
 
@@ -118,7 +118,7 @@ input[type="checkbox"].colorbox-checkbox {
 }
 
 .draggable {
-
+	
 }
 
 .context-menu {
@@ -140,7 +140,7 @@ input[type="checkbox"].colorbox-checkbox {
 	cursor: move;
 	position: absolute;
 	background: url(/images/drag-icon.png);
-	background-color: rgba(255,255,255,0.75);
+	background-color: rgba(255, 255, 255, 0.75);
 	background-repeat: repeat-y;
 	height: 90px;
 	width: 7px;
@@ -151,7 +151,7 @@ input[type="checkbox"].colorbox-checkbox {
 .draggable-container {
 	width: 100px;
 	height: 100px;
-	vertical-align: middle;  
+	vertical-align: middle;
 	display: block;
 	margin: 5px;
 	float: left;
@@ -173,6 +173,44 @@ input[type="checkbox"].colorbox-checkbox {
 	opacity: 0.5;
 }
 
+.galleryTools {
+	padding: 7px 0px;
+	background-image: -webkit-linear-gradient(top, rgba(60, 60, 60, 0.9) 0%, rgba(34, 34, 34, 0.9) 100%);
+	background-image: linear-gradient(to bottom, rgba(60, 60, 60, 0.9) 0%, rgba(34, 34, 34, 0.9) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e63c3c3c',
+		endColorstr='#e6222222', GradientType=0);
+	filter: progid:DXImageTransform.Microsoft.gradient(enabled= false);
+	background-repeat: repeat-x;
+}
+
+#tools-container {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0; width : 100% !important;
+	z-index: 2300;
+	width: 100% !important;
+}
+
+.divider-vertical {
+	margin: 0 10px;
+	width: 1px;
+	border-right: 1px solid #f2f2f2;
+}
+
+#tools {
+	position: relative; bottom : 0px;
+	z-index: 2301;
+	text-align: center;
+	width: 100%;
+	vertical-align: middle;
+	bottom: 0px;
+}
+
+#tools .tool {
+	position: relative;
+}
+
 /*drop area style*/
 [ng-drop] {
 	/* 	background: rgba(0, 255, 0, 0.5); */
@@ -183,6 +221,7 @@ input[type="checkbox"].colorbox-checkbox {
 	/* 	display: block; */
 	/* 	margin: 20px auto; */
 	/* 	position: relative; */
+	
 }
 
 /*highlight the drop area on enter*/
@@ -209,8 +248,8 @@ input[type="checkbox"].colorbox-checkbox {
 
 .dropshadowimg {
 	border: 1px solid #bfbfbf;
-	-moz-box-shadow : 5px 5px 10px #999;
+	-moz-box-shadow: 5px 5px 10px #999;
 	-webkit-box-shadow: 5px 5px 10px #999;
 	box-shadow: 5px 5px 10px #999;
-	margin-bottom: 20px; 
+	margin-bottom: 20px;
 }
