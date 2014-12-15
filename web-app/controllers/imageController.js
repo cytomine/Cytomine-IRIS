@@ -48,14 +48,6 @@ iris.controller(
 				}
 			});
 			
-//			// proceed to the labeling page and resume labeling
-//			$scope.resumeLabeling = function(image) {
-//				sessionService.setCurrentImage(image);
-//				// TODO load the "next" annotation from the session and 
-//				// append it to the URL
-//				$location.url("/project/"+$scope.projectID+"/image/"+image.id+"/label");
-//			};
-			
 			// proceed to the labeling page
 			$scope.startLabeling = function(image) {
 				sessionService.touchImage($scope.projectID, image.id, function(data){
@@ -115,7 +107,9 @@ iris.controller(
 					}
 					
 //					$log.debug(data)
-					
+		    		// #######################
+		    		// TODO PAGINATION
+		    		// #######################
 //					console.log("hideCompleted (session): " + sessionService.getCurrentProject().prefs['images.hideCompleted']);
 					
 					// get user preferences from session

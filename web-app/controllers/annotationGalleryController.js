@@ -35,25 +35,83 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
 		}
 	});
 
-	// TODO implement drag and drop feature for single annotations
+	// implement drag and drop feature for single annotations
     $scope.droppedObjects = [];
-    $scope.onDropComplete=function(data,evt,termID){
+    $scope.onDropComplete = function(item,evt,targetTermID){
     	// if the term ID does not change, skip the element(s)
-        if (data.cmTermID == termID){
+        if (item.cmTermID == targetTermID || (item.cmTermID == 0 && targetTermID == -99)){
         	return;
         }
-    	
-    	var index = $scope.droppedObjects.indexOf(data);
+        
+		var index = $scope.droppedObjects.indexOf(item);
         if (index == -1){
         	// add the item
-        	$scope.droppedObjects.push(data);
+        	$scope.droppedObjects.push(item);
         }
-
-        // TODO handle the -99 term (remove term)
-        $log.debug("TODO assigning unique term " + $rootScope.termList[termID] +
-        		" to annotation " + data.cmID);
+    	
+        // handle the -99 term (remove term)
+        if (targetTermID == -99){
+        	var termName = $rootScope.termList[item.cmTermID];
+        	
+        	$log.debug("Removing term " + termName +
+        			" from annotation " + item.cmID);
+        	
+        	// perform server call
+        	annotationService.deleteAnnotationTerm(item.cmProjectID, item.cmImageID, item.cmID, targetTermID,
+    				function(data){
+    			// if call was successful, remove the term from the source group and add it to the target group
+    			var _srcGroupAnnList = getGroup($scope.annotation.groups, item.cmTermID).annotations;
+    			var _srcAnnIdx = getAnnotationIndex($scope.annotation.groups, item.cmTermID, item.cmID);
+    			
+    			_srcGroupAnnList.splice(_srcAnnIdx, 1);
+    			
+    			var _targetGroupAnnList = getGroup($scope.annotation.groups, targetTermID).annotations;
+    			// remove the information from the local object
+    			item.cmTermName = null;
+    			item.cmTermID = 0;
+    			item.cmOntologyID = 0;
+    			
+    			_targetGroupAnnList.push(item)
+    			
+    			sharedService.addAlert("Term '" + termName + "' has been removed.");
+    			
+    		}, function(data, status, config, header){
+    			// don't do anything to the local stuff if an error occurs
+    			sharedService.addAlert("Cannot remove term '" + termName + "'. Status " + status + ".", "danger");
+    		});
+        } else {
+        	var termName = $rootScope.termList[targetTermID];
+        	
+        	$log.debug("Assigning term " + termName +
+        			" to annotation " + item.cmID);
+        	
+        	// perform the server call
+        	annotationService.setAnnotationTerm(item.cmProjectID, item.cmImageID, item.cmID, targetTermID, 
+        			function(data){
+        		
+        		// if call was successful, remove the term from the source group and add it to the target group
+    			var _srcGroupAnnList = getGroup($scope.annotation.groups, item.cmTermID).annotations;
+    			var _srcAnnIdx = getAnnotationIndex($scope.annotation.groups, item.cmTermID, item.cmID);
+    			
+    			_srcGroupAnnList.splice(_srcAnnIdx, 1);
+    			
+    			
+    			var _targetGroupAnnList = getGroup($scope.annotation.groups, targetTermID).annotations;
+    			// remove the information from the local object
+    			item.cmTermName = termName;
+    			item.cmTermID = targetTermID;
+    			// don't change the ontology ID within a project!
+    			
+    			_targetGroupAnnList.push(item)
+        		
+        		
+        		sharedService.addAlert("Term '" + termName + "' has been assigned.");
+        	}, function(data, status, config, header){
+        		sharedService.addAlert("Cannot assign term '" + termName + "'. Status " + status + ".", "danger");
+        	});
+        }
     };
-    $scope.onDragSuccess=function(data,evt){
+    $scope.onDragSuccess = function(data,evt){
         var index = $scope.droppedObjects.indexOf(data);
         if (index > -1) {
         	// remove the item
@@ -84,6 +142,10 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     			imageIDs, termIDs, function(data){
     		
     		//$log.debug(data);
+    		
+    		// #######################
+    		// TODO PAGINATION
+    		// #######################
     		
     		// resolve the map data to the groups
     		for (var termID in data) {
@@ -315,6 +377,23 @@ function getGroup(groups, termID) {
 		}
 	}
 	return null;
+};
+
+function getAnnotationIndex(groups, termID, annID) {
+	// search for the object in the array
+	for (var idx = 0; idx < groups.length; idx++){
+		var existingObj = groups[idx];
+		if (existingObj.termID == termID){
+			var annList = existingObj.annotations;
+			for (var i = 0; i < annList.length; i++){
+				var ann = annList[i];
+				if (ann.cmID == annID){
+					return i;
+				}
+			}
+		}
+	}
+	return -1;
 };
 
 function getKey(object, value){

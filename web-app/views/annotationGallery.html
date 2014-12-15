@@ -53,6 +53,9 @@
 <!-- 					TODO implement pagination of objects in the panel -->
 						<div ng-repeat="item in group.annotations" id="{{ 'item-' + item.cmID }}">
 							<div class="draggable-container thumbnail">
+								<span>
+									<a href="" ng-click="labelAnnotation(item)"><img id="{{ 'thumb-' + item.cmID }}" src="{{ item.cmSmallCropURL }}" class="gallery-image" alt=""/></a>
+								</span>
 								<span class="drag-checkbox"><input id="{{ 'checkbox-' + item.cmID }}" type="checkbox" ng-model="selectedAnnotations" ng-change="selectAnnotation(item)"></span>
 								<span class="drag-handle" ng-drag="true" ng-drag-data="item"></span>
 								<div class="context-menu btn-group dropup" dropdown>
@@ -65,9 +68,6 @@
 										<li><a href="{{ item.cmImageURL }}" target="_blank">View in Cytomine</a></li>
 									</ul>
 								</div>
-								<span>
-									<a href="" ng-click="labelAnnotation(item)"><img id="{{ 'thumb-' + item.cmID }}" src="{{ item.cmSmallCropURL }}" style="max-height:90px; max-width:90px; position:relative;" alt=""/></a>
-								</span>
 							</div>
 						</div>
 					</div>

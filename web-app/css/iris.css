@@ -19,15 +19,17 @@
 }
 
 #alerts {
-	position: absolute;
-	bottom: 10px;
-	z-index: 2200;
+	position: relative;
+	bottom: 20px;
+	z-index: 2400;
 	margin-left: -200px;
 	left: 50%;
 }
 
 #alerts .alert {
 	width: 400px;
+	position: relative;
+	z-index: 2400;
 }
 
 #alert-container {
@@ -103,12 +105,11 @@ input[type="checkbox"].colorbox-checkbox {
 }
 
 /*ngDraggable*/
-* {
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-}
-
+/* * { */
+/* 	-moz-box-sizing: border-box; */
+/* 	-webkit-box-sizing: border-box; */
+/* 	box-sizing: border-box; */
+/* } */
 [ng-drag] {
 	-moz-user-select: -moz-none;
 	-khtml-user-select: none;
@@ -117,12 +118,12 @@ input[type="checkbox"].colorbox-checkbox {
 	user-select: none;
 }
 
-.draggable {
-	
+.gallery-image {
+	max-height: 90px;
+	max-width: 90px;
 }
 
 .context-menu {
-	z-index: 11;
 	position: absolute;
 	right: 5px;
 	top: 5px;
@@ -130,13 +131,12 @@ input[type="checkbox"].colorbox-checkbox {
 }
 
 .drag-checkbox {
-	z-index: 10;
 	position: absolute;
-	margin-left: 10px;
+	margin-left: 7px;
+	top: 0px;
 }
 
 .drag-handle {
-	z-index: 5;
 	cursor: move;
 	position: absolute;
 	background: url(/images/drag-icon.png);
@@ -145,6 +145,7 @@ input[type="checkbox"].colorbox-checkbox {
 	height: 90px;
 	width: 7px;
 	vertical-align: middle;
+	top: 4px;
 }
 
 /*style of any draggable container*/
@@ -175,8 +176,10 @@ input[type="checkbox"].colorbox-checkbox {
 
 .galleryTools {
 	padding: 7px 0px;
-	background-image: -webkit-linear-gradient(top, rgba(60, 60, 60, 0.9) 0%, rgba(34, 34, 34, 0.9) 100%);
-	background-image: linear-gradient(to bottom, rgba(60, 60, 60, 0.9) 0%, rgba(34, 34, 34, 0.9) 100%);
+	background-image: -webkit-linear-gradient(top, rgba(60, 60, 60, 0.9) 0%,
+		rgba(34, 34, 34, 0.9) 100%);
+	background-image: linear-gradient(to bottom, rgba(60, 60, 60, 0.9) 0%,
+		rgba(34, 34, 34, 0.9) 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e63c3c3c',
 		endColorstr='#e6222222', GradientType=0);
 	filter: progid:DXImageTransform.Microsoft.gradient(enabled= false);
@@ -187,7 +190,8 @@ input[type="checkbox"].colorbox-checkbox {
 	position: fixed;
 	bottom: 0;
 	left: 0;
-	right: 0; width : 100% !important;
+	right: 0;
+	width: 100% !important;
 	z-index: 2300;
 	width: 100% !important;
 }
@@ -199,7 +203,8 @@ input[type="checkbox"].colorbox-checkbox {
 }
 
 #tools {
-	position: relative; bottom : 0px;
+	position: relative;
+	bottom: 0px;
 	z-index: 2301;
 	text-align: center;
 	width: 100%;

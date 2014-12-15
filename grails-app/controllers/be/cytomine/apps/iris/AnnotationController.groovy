@@ -272,7 +272,8 @@ class AnnotationController {
 	 * @return
 	 */
 	def setUniqueTerm(){
-		try {Cytomine cytomine = request['cytomine']
+		try {
+			Cytomine cytomine = request['cytomine']
 			CytomineX cX = new CytomineX(cytomine.host, cytomine.publicKey, cytomine.privateKey, cytomine.basePath)
 
 			long sessionID = params.long('sessionID')
@@ -351,6 +352,7 @@ class AnnotationController {
 	def deleteTerm(){
 		try {
 			Cytomine cytomine = request['cytomine']
+			CytomineX cX = new CytomineX(cytomine.host, cytomine.publicKey, cytomine.privateKey, cytomine.basePath)
 
 			long sessionID = params.long('sessionID')
 			long cmProjectID = params.long('cmProjectID')
@@ -358,21 +360,28 @@ class AnnotationController {
 			long cmAnnID = params.long('cmAnnID')
 			long cmTermID = params.long('cmTermID')
 
-			cytomine.deleteAnnotationTerm(cmAnnID, cmTermID)
+			if (cmTermID != -99){
+				cytomine.deleteAnnotationTerm(cmAnnID, cmTermID)
+			} else {
+				// TODO implement removing of all terms
+				throw new CytomineException(503, "This service is not yet implemented.")
+			}
 
 			render new JSONObject().put("message", "The term has been deleted.");
-
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(e1.httpCode)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(GroovyCastException e2) {
+			log.error(e2)
 			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
 			JSONObject errorMsg = new Utils().resolveException(e2, 400)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)
@@ -384,6 +393,7 @@ class AnnotationController {
 	def deleteAllTerms(){
 		try {
 			Cytomine cytomine = request['cytomine']
+			CytomineX cX = new CytomineX(cytomine.host, cytomine.publicKey, cytomine.privateKey, cytomine.basePath)
 
 			long sessionID = params.long('sessionID')
 			long cmProjectID = params.long('cmProjectID')
@@ -391,6 +401,7 @@ class AnnotationController {
 			long cmAnnID = params.long('cmAnnID')
 
 			// TODO implement deleting all terms by assigning a unique term and deleting it immediately
+			
 
 			render new JSONObject().put("message", "All terms have been deleted.");
 		} catch(CytomineException e1){
