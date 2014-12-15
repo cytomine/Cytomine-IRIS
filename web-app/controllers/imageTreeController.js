@@ -47,6 +47,7 @@ iris.controller("imageTreeCtrl", function($rootScope, $scope, $timeout, $log, se
         } else if (evt.srcElement) {
             targ=evt.srcElement;
         }
+        $log.debug(targ);
         
         // get the ID of the clicked image
         var id = Number(targ.id.split("-")[1]);
@@ -55,7 +56,10 @@ iris.controller("imageTreeCtrl", function($rootScope, $scope, $timeout, $log, se
         // if the image is checked, it is in the checked list
         var idx = checkedImages.indexOf(id);
         var chbx = document.getElementById(chbxID);
-        if (idx === -1){
+        if (isNaN(id)){
+        	$log.debug("Nothing has been selected.");
+        }
+        else if (idx === -1){
         	// add the image
         	checkedImages.push(id);
         	// select the checkbox

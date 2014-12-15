@@ -90,13 +90,23 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     	annotationService.fetchUserAnnotationsByTerm(sessionService.getCurrentProject().cmID, 
     			imageIDs, termIDs, function(data){
     		
-    		$log.debug(data);
-    		// TODO resolve the map data to the groups
+    		//$log.debug(data);
     		
+    		// resolve the map data to the groups
     		for (var termID in data) {
     		    if (data.hasOwnProperty(termID)) {
 //    		    	$log.debug("Resolving group for term '" + $rootScope.termList[termID] + "'")
 		    		var obj = {termName: $rootScope.termList[termID], termID: termID, annotations : data[termID]};
+		    		
+		    		// search for the object in the array and remove it
+		    		for (var idx = 0; idx < $scope.annotation.groups.length; idx++){
+		    			var existingObj = $scope.annotation.groups[idx];
+		    			if (existingObj.termID == termID){
+		    				$scope.annotation.groups.splice(idx,1);
+		    				break;
+		    			}
+		    		}
+		    		// then add the new objects
 		    		$scope.annotation.groups.push(obj);
     		    }
     		}
@@ -134,6 +144,8 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     			noImage : {}
     	};
     	if (selectedImages.length === 0){
+    		// reset the groups
+    		$scope.annotation.groups = [];
     		$scope.warn.noImage = {
     				message : "There is no image selected, please choose at least one from the image list on the left side."
     		}
