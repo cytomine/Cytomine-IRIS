@@ -256,10 +256,9 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     
     // reload all annotations
     $scope.refreshPage = function() {
-    	$log.debug("Refreshing page");
+    	$log.debug("Refreshing page...");
     	$scope.fetchAnnotations(selectedTerms, selectedImages);
     }
-    
 });
 
 function sortGroups(a, b) {
