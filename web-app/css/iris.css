@@ -260,4 +260,5 @@ input[type="checkbox"].colorbox-checkbox {
 	-webkit-box-shadow: 5px 5px 10px #999;
 	box-shadow: 5px 5px 10px #999;
 	margin-bottom: 20px;
+	margin-top: 10px;
 }
