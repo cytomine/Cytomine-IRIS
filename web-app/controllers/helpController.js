@@ -63,6 +63,10 @@ iris.controller("helpCtrl", function($rootScope, $scope, $modal, $log, helpServi
 		$scope.cancel = function() {
 			$modalInstance.dismiss('cancel');
 		};
+		
+		$scope.showShortcuts = function(){
+			// TODO implement trigger of '?'
+		};
 	}
 });
 		
