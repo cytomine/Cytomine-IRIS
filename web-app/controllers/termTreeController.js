@@ -180,31 +180,4 @@ iris.controller("termTreeCtrl", function($rootScope, $scope, $timeout, $log, ses
     		}
     	}
     };
-    
-    $scope.droppedObjects = [];
-    // if an element has been dropped on the list element
-    $scope.onDropComplete=function(annotation,evt,termID){
-    	// if the term ID does not change, skip the element(s)
-        if (data.cmTermID == termID){
-        	return;
-        }
-    	
-    	var index = $scope.droppedObjects.indexOf(data);
-        if (index == -1){
-        	// add the item
-        	$scope.droppedObjects.push(data);
-        }
-
-        // TODO handle the -99 term (remove term)
-        $log.debug("TODO assigning unique term " + $rootScope.termList[termID] +
-        		" to annotation " + data.cmID);
-    };
-    
-    $scope.onDragSuccess=function(data,evt){
-        var index = $scope.droppedObjects.indexOf(data);
-        if (index > -1) {
-        	// remove the item
-            $scope.droppedObjects.splice(index, 1);
-        }
-    };
 });

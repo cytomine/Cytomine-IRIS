@@ -103,7 +103,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
         }
         return true;
 	};
-
+	
 	// drag and drop feature for single annotations
     $scope.droppedObjects = [];
     $scope.onDropComplete = function(item,evt,targetTermID){
