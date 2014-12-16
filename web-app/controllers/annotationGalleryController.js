@@ -58,13 +58,18 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     			
     			_srcGroupAnnList.splice(_srcAnnIdx, 1);
     			
-    			var _targetGroupAnnList = getGroup($scope.annotation.groups, targetTermID).annotations;
-    			// change the information in the local object
-    			item.cmTermName = null;
-    			item.cmTermID = -99;
-    			item.cmOntologyID = 0;
-    			
-    			_targetGroupAnnList.push(item)
+    			try {
+
+    				var _targetGroupAnnList = getGroup($scope.annotation.groups, targetTermID).annotations;
+    				// change the information in the local object
+    				item.cmTermName = null;
+    				item.cmTermID = -99;
+    				item.cmOntologyID = 0;
+
+    				_targetGroupAnnList.push(item)
+    			} catch (e) {
+    				$log.debug("Term has been removed, but group is not filtered.");
+    			}
     			
     			sharedService.addAlert("Term '" + termName + "' has been removed.");
     			
@@ -87,15 +92,18 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     			var _srcAnnIdx = getAnnotationIndex($scope.annotation.groups, item.cmTermID, item.cmID);
     			
     			_srcGroupAnnList.splice(_srcAnnIdx, 1);
-    			
-    			var _targetGroupAnnList = getGroup($scope.annotation.groups, targetTermID).annotations;
-    			// remove the information from the local object
-    			item.cmTermName = termName;
-    			item.cmTermID = targetTermID;
-    			// don't change the ontology ID within a project!
-    			
-    			_targetGroupAnnList.push(item)
-        		
+    			try {
+	    			var _targetGroupAnnList = getGroup($scope.annotation.groups, targetTermID).annotations;
+	    			// remove the information from the local object
+	    			item.cmTermName = termName;
+	    			item.cmTermID = targetTermID;
+	    			// don't change the ontology ID within a project!
+	    			
+	    			_targetGroupAnnList.push(item)
+    			} catch (e) {
+					$log.debug("Term has been assigned, but group is not filtered.");
+				}
+        		        		
         		sharedService.addAlert("Term '" + termName + "' has been assigned.");
         	}, function(data, status, config, header){
         		sharedService.addAlert("Cannot assign term '" + termName + "'. Status " + status + ".", "danger");
@@ -452,7 +460,11 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     	for (var idx = 0; idx < keys.length; idx++){
     		var id = keys[idx];
     		var chbx = document.getElementById("checkbox-" + id);
-    		chbx.checked = false;
+    		try {
+    			chbx.checked = false;
+    		} catch (e) {
+    			log.warn(e);
+    		}
     	}
     	
     	// clear selections

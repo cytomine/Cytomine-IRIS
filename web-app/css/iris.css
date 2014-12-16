@@ -62,11 +62,14 @@ Map controls.
 }
 
 /*Elements outside a tree control, but with same indent.*/
-.leaf-like {
-	line-height: 25px;
-	padding: 5px;
+.leaf-like-container {
 	left: 20px;
 	position: relative;
+}
+
+.leaf-style {
+	line-height: 25px;
+	padding: 5px;
 }
 
 [treecontrol] li {
