@@ -19,7 +19,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
 	var selectedTerms = [];
 	// selected images for filtering
 	var selectedImages = [];
-	// selected annotations (e.g. for drag-and-drop)
+	// selected annotations (via check box)
 	$scope.selectedAnnotations = {};
 
 	$scope.projectID = $routeParams["projectID"];
@@ -227,7 +227,11 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     		$scope.fetchAnnotations([object.id], selectedImages);
     	} else if (action === 'remove'){
     		// remove the selected term
-    		selectedTerms.splice(selectedTerms.indexOf(object.id), 1)
+    		selectedTerms.splice(selectedTerms.indexOf(object.id), 1);
+    		
+    		// check if any annotations of this term were selected and remove them from the object
+    		$scope.unSelectAllAnnotations(object.id);
+    		
     		// remove the group from the 'groups' array
     		for (var idx = 0; idx < $scope.annotation.groups.length; idx++){
     			if ($scope.annotation.groups[idx].termID == object.id){
@@ -235,7 +239,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     				break;
     			}
     		}
-    		// no need to reorder array, since we just remove from a sorted list
+    		// INFO: no need to reorder array, since we just remove from a sorted 
     	} else if (action === 'addAll'){
     		// here the id is the entire array
     		selectedTerms = object.id; 
@@ -243,9 +247,10 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     		$scope.annotation.groups = [];
     		$scope.fetchAnnotations(selectedTerms, selectedImages);
     	} else if (action === 'removeAll'){
-    		// reset the stuff
+    		// reset all stuff
     		selectedTerms = [];
     		$scope.annotation.groups = [];
+    		$scope.selectedAnnotations = {};
     	}
     });
     
@@ -284,8 +289,8 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     	sessionService.touchImage(ann.cmProjectID, ann.cmImageID, function(data){
     		sessionService.setCurrentAnnotationID(ann.cmID);
 			$log.debug("Successfully touched image " + ann.cmImageID);
-			navService.navToLabelingPage(ann.cmProjectID, ann.cmImageID);
 			delete $scope.error;
+			navService.navToLabelingPage(ann.cmProjectID, ann.cmImageID);
 		}, function(data,status){
 			$scope.error = {
     			message : data.error.message,
@@ -338,6 +343,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     	$log.debug("Assigning term " + $scope.chosenTerm + "(" + termID + ") to " + nSelections + " annotations.");
     	
     	// TODO implement server calls
+    	
     };
     
     // checks for selected items
