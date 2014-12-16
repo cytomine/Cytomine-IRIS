@@ -112,16 +112,19 @@ class AnnotationController {
 			render (irisAnnList as JSON)
 
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(e1.httpCode)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(GroovyCastException e2) {
+			log.error(e2)
 			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
 			JSONObject errorMsg = new Utils().resolveException(e2, 400)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)
@@ -172,12 +175,14 @@ class AnnotationController {
 			// split the list in the params
 			def queryTerms = String.valueOf(termIDs).split(",") as List
 			
+			
+			
 			boolean searchForNoTerm = false
 			if (!termsEmpty){
-				//  check if '-99' is on the list ('no terms assigned')
-				if (queryTerms.contains('-99')){
+				//  check if 'no terms assigned' is on the list
+				if (queryTerms.contains(IRISConstants.ANNOTATION_NO_TERM_ASSIGNED.toString())){
 					searchForNoTerm = true
-					log.debug("Querying all annotations and search for 'no term' (-99)...")
+					log.debug("Querying all annotations and search for 'no term' (" + IRISConstants.ANNOTATION_NO_TERM_ASSIGNED + ")...")
 				} else {
 					filters.put("terms", String.valueOf(termIDs))
 					log.debug("Querying selected terms...")
@@ -332,16 +337,19 @@ class AnnotationController {
 
 			render irisAnn as JSON
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(e1.httpCode)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(GroovyCastException e2) {
+			log.error(e2)
 			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
 			JSONObject errorMsg = new Utils().resolveException(e2, 400)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)
@@ -349,10 +357,13 @@ class AnnotationController {
 		}
 	}
 
+	/**
+	 * Deletes a specific term for a given user.
+	 * @return
+	 */
 	def deleteTerm(){
 		try {
 			Cytomine cytomine = request['cytomine']
-			CytomineX cX = new CytomineX(cytomine.host, cytomine.publicKey, cytomine.privateKey, cytomine.basePath)
 
 			long sessionID = params.long('sessionID')
 			long cmProjectID = params.long('cmProjectID')
@@ -360,11 +371,11 @@ class AnnotationController {
 			long cmAnnID = params.long('cmAnnID')
 			long cmTermID = params.long('cmTermID')
 
-			if (cmTermID != -99){
-				cytomine.deleteAnnotationTerm(cmAnnID, cmTermID)
+			if (cmTermID == IRISConstants.ANNOTATION_NO_TERM_ASSIGNED){
+				// get the annotation and delete all terms in a loop
+				annotationService.deleteAllTermsByUser(cytomine, sessionID, cmProjectID, cmImageID, cmAnnID)
 			} else {
-				// TODO implement removing of all terms
-				throw new CytomineException(503, "This service is not yet implemented.")
+				cytomine.deleteAnnotationTerm(cmAnnID, cmTermID)
 			}
 
 			render new JSONObject().put("message", "The term has been deleted.");
@@ -389,32 +400,32 @@ class AnnotationController {
 		}
 	}
 
-
 	def deleteAllTerms(){
 		try {
 			Cytomine cytomine = request['cytomine']
-			CytomineX cX = new CytomineX(cytomine.host, cytomine.publicKey, cytomine.privateKey, cytomine.basePath)
 
 			long sessionID = params.long('sessionID')
 			long cmProjectID = params.long('cmProjectID')
 			long cmImageID = params.long('cmImageID')
 			long cmAnnID = params.long('cmAnnID')
 
-			// TODO implement deleting all terms by assigning a unique term and deleting it immediately
-			
+			annotationService.deleteAllTermsByUser(cytomine, sessionID, cmProjectID, cmImageID, cmAnnID)
 
 			render new JSONObject().put("message", "All terms have been deleted.");
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(e1.httpCode)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(GroovyCastException e2) {
+			log.error(e2)
 			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
 			JSONObject errorMsg = new Utils().resolveException(e2, 400)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)
@@ -422,6 +433,10 @@ class AnnotationController {
 		}
 	}
 
+	/**
+	 * Gets predecessor (if any), query annotation, successor (if any).
+	 * @return
+	 */
 	def getAnnotation3Tuple(){
 		try {
 			Cytomine cytomine = request['cytomine']
@@ -542,16 +557,19 @@ class AnnotationController {
 			render (result as JSON)
 
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(e1.httpCode)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(GroovyCastException e2) {
+			log.error(e2)
 			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
 			JSONObject errorMsg = new Utils().resolveException(e2, 400)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)

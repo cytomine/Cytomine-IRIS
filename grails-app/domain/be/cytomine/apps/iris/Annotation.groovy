@@ -30,7 +30,10 @@ class Annotation {
 	Double cmCentroidY = null
 	
 	// the assigned Cytomine term ID by the user // TODO implement multiple terms
-	Long cmTermID = 0L
+	/**
+	 * Default term ID is -99 (no term assigned).
+	 */
+	Long cmTermID = IRISConstants.ANNOTATION_NO_TERM_ASSIGNED
 	String cmTermName = null
 	Long cmOntology = 0L
 	// the Cytomine user ID of the person who assigned this term

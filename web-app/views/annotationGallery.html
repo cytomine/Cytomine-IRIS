@@ -1,5 +1,5 @@
 <div class="container-100" ng-controller="annotationGalleryCtrl">
-	<div class="row">
+	<div class="row" style="margin-bottom:20px">
 		<div class="col-xs-3">
 			<div class="panel panel-default">
 				<div class="panel-heading">
@@ -53,10 +53,12 @@
 <!-- 					TODO implement pagination of objects in the panel -->
 						<div ng-repeat="item in group.annotations" id="{{ 'item-' + item.cmID }}">
 							<div class="draggable-container thumbnail">
-								<span>
-									<a href="" ng-click="labelAnnotation(item)"><img id="{{ 'thumb-' + item.cmID }}" src="{{ item.cmSmallCropURL }}" class="gallery-image" alt=""/></a>
-								</span>
-								<span class="drag-checkbox"><input id="{{ 'checkbox-' + item.cmID }}" type="checkbox" ng-model="selectedAnnotations" ng-change="selectAnnotation(item)"></span>
+<!-- 								<span> -->
+<!-- 									<a href="" ng-click="labelAnnotation(item)"> -->
+									<img id="{{ 'thumb-' + item.cmID }}" src="{{ item.cmSmallCropURL }}" class="gallery-image" alt=""/>
+<!-- 									</a> -->
+<!-- 								</span> -->
+								<span class="drag-checkbox"><input id="{{ 'checkbox-' + item.cmID }}" type="checkbox" ng-click="selectAnnotation(item)"></span>
 								<span class="drag-handle" ng-drag="true" ng-drag-data="item"></span>
 								<div class="context-menu btn-group dropup" dropdown>
 									<button type="button" class="btn btn-default btn-xs dropdown-toggle" role="button" href="#">

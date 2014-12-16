@@ -34,21 +34,14 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
 			helpService.showHelp();
 		}
 	});
-
-	// implement drag and drop feature for single annotations
-    $scope.droppedObjects = [];
-    $scope.onDropComplete = function(item,evt,targetTermID){
-    	// if the term ID does not change, skip the element(s)
-        if (item.cmTermID == targetTermID || (item.cmTermID == 0 && targetTermID == -99)){
-        	return;
+	
+	// assigns a new term to an annotation
+	$scope.assignNewTerm = function(item,targetTermID){
+		// if the term ID does not change, skip the element(s)
+        if (item.cmTermID == targetTermID){
+        	return false;
         }
         
-		var index = $scope.droppedObjects.indexOf(item);
-        if (index == -1){
-        	// add the item
-        	$scope.droppedObjects.push(item);
-        }
-    	
         // handle the -99 term (remove term)
         if (targetTermID == -99){
         	var termName = $rootScope.termList[item.cmTermID];
@@ -66,9 +59,9 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     			_srcGroupAnnList.splice(_srcAnnIdx, 1);
     			
     			var _targetGroupAnnList = getGroup($scope.annotation.groups, targetTermID).annotations;
-    			// remove the information from the local object
+    			// change the information in the local object
     			item.cmTermName = null;
-    			item.cmTermID = 0;
+    			item.cmTermID = -99;
     			item.cmOntologyID = 0;
     			
     			_targetGroupAnnList.push(item)
@@ -95,7 +88,6 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     			
     			_srcGroupAnnList.splice(_srcAnnIdx, 1);
     			
-    			
     			var _targetGroupAnnList = getGroup($scope.annotation.groups, targetTermID).annotations;
     			// remove the information from the local object
     			item.cmTermName = termName;
@@ -104,12 +96,27 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     			
     			_targetGroupAnnList.push(item)
         		
-        		
         		sharedService.addAlert("Term '" + termName + "' has been assigned.");
         	}, function(data, status, config, header){
         		sharedService.addAlert("Cannot assign term '" + termName + "'. Status " + status + ".", "danger");
         	});
         }
+        return true;
+	};
+
+	// drag and drop feature for single annotations
+    $scope.droppedObjects = [];
+    $scope.onDropComplete = function(item,evt,targetTermID){
+    	// assign the new term 
+    	var success = $scope.assignNewTerm(item, targetTermID);
+    	
+    	if (success === true){
+    		var index = $scope.droppedObjects.indexOf(item);
+    		if (index == -1){
+    			// add the item
+    			$scope.droppedObjects.push(item);
+    		}
+    	}
     };
     $scope.onDragSuccess = function(data,evt){
         var index = $scope.droppedObjects.indexOf(data);
@@ -276,7 +283,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     		// remove it
     		delete $scope.selectedAnnotations[ann.cmID];
     	} else {
-    		$scope.selectedAnnotations[ann.cmID] = true;
+    		$scope.selectedAnnotations[ann.cmID] = ann.cmTermID;
     	}
     	
     	$log.debug($scope.selectedAnnotations);
@@ -307,7 +314,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     	for (var idx = 0; idx < annIDs.length; idx++){
     		var chbx = document.getElementById("checkbox-" + annIDs[idx].cmID);
     		// overwrite the selection state
-    		$scope.selectedAnnotations[annIDs[idx].cmID] = true;
+    		$scope.selectedAnnotations[annIDs[idx].cmID] = termID;
     		chbx.checked = true;
     	}
     	
@@ -334,16 +341,103 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     
     // assign a selected term to all selected annotations
     $scope.assignTermToSelectedItems = function(){
-    	var termID = getKey($rootScope.termList, $scope.chosenTerm);
+    	var targetTermID = getKey($rootScope.termList, $scope.chosenTerm);
     	var nSelections = getSize($scope.selectedAnnotations);
-    	if (termID === undefined || nSelections === 0) {
+    	if (targetTermID === undefined || nSelections === 0) {
     		$log.debug("No term chosen or no item selected, returning.");
     		return;
     	}
-    	$log.debug("Assigning term " + $scope.chosenTerm + "(" + termID + ") to " + nSelections + " annotations.");
     	
-    	// TODO implement server calls
+    	$log.debug("Assigning term " + $scope.chosenTerm + "(" + targetTermID + ") to " + 
+    			nSelections + " annotation" + ((nSelections===1)?".":"s."));
     	
+    	// for each selected annotation, do the server call
+    	var keys = Object.keys($scope.selectedAnnotations);
+    	for (var idx = 0; idx < nSelections; idx++){
+    		// assign a term to the annotation
+    		var id = keys[idx];
+    		var oldTermID = $scope.selectedAnnotations[id];
+    		var item = getAnnotation($scope.annotation.groups, oldTermID, id);
+    		
+    		// if the term ID does not change, skip the element(s)
+            if (item.cmTermID == targetTermID){
+            	$log.debug("No change in assignment, skipping element.");
+            	continue;
+            }
+            
+            // handle the -99 term (remove term)
+            if (targetTermID == -99){
+            	var termName = $rootScope.termList[item.cmTermID];
+            	
+            	$log.debug("Removing term " + termName +
+            			" from annotation " + item.cmID);
+            	
+            	// perform server call
+            	annotationService.deleteAnnotationTerm(item.cmProjectID, item.cmImageID, item.cmID, targetTermID,
+        				function(data, item){
+            		
+            		// if call was successful, remove the term from the source group and add it to the target group
+        			var _srcGroupAnnList = getGroup($scope.annotation.groups, item.cmTermID).annotations;
+        			var _srcAnnIdx = getAnnotationIndex($scope.annotation.groups, item.cmTermID, item.cmID);
+        			
+        			$log.debug("length src group annlist: " + _srcGroupAnnList.length + ", try to remove index --> " + _srcAnnIdx);
+        			_srcGroupAnnList.splice(_srcAnnIdx, 1);
+        			
+        			try {
+        				var _targetGroupAnnList = getGroup($scope.annotation.groups, targetTermID).annotations;
+        				// remove the information from the local object
+        				item.cmTermName = null;
+        				item.cmTermID = -99;
+        				item.cmOntologyID = 0;
+        				
+        				_targetGroupAnnList.push(item)
+        			} catch (e) {
+        				$log.debug("Term has been removed, but group is not filtered.");
+					}
+        			
+        			sharedService.addAlert("Term '" + termName + "' has been removed.");
+        			
+        		}, function(data, status, config, header){
+        			// don't do anything to the local stuff if an error occurs
+        			sharedService.addAlert("Cannot remove term '" + termName + "'. Status " + status + ".", "danger");
+        		}, item);
+            } else {
+            	var termName = $rootScope.termList[targetTermID];
+            	
+            	$log.debug("Assigning term " + termName +
+            			" to annotation " + item.cmID);
+            	
+            	// perform the server call
+            	annotationService.setAnnotationTerm(item.cmProjectID, item.cmImageID, item.cmID, targetTermID, 
+            			function(data, item){
+            		
+            		// if call was successful, remove the term from the source group and add it to the target group
+        			var _srcGroupAnnList = getGroup($scope.annotation.groups, item.cmTermID).annotations;
+        			var _srcAnnIdx = getAnnotationIndex($scope.annotation.groups, item.cmTermID, item.cmID);
+        			
+        			$log.debug("length src group annlist: " + _srcGroupAnnList.length + ", try to remove index --> " + _srcAnnIdx);
+        			_srcGroupAnnList.splice(_srcAnnIdx, 1);
+        			try {
+        				var _targetGroupAnnList = getGroup($scope.annotation.groups, targetTermID).annotations;
+        				// change the information in the local object
+        				item.cmTermName = termName;
+        				item.cmTermID = targetTermID;
+        				// don't change the ontology ID within a project!
+        				
+        				_targetGroupAnnList.push(item)
+					} catch (e) {
+						$log.debug("Term has been assigned, but group is not filtered.");
+					}
+            		
+            		sharedService.addAlert("Term '" + termName + "' has been assigned.");
+            	}, function(data, status, config, header){
+            		sharedService.addAlert("Cannot assign term '" + termName + "'. Status " + status + ".", "danger");
+            	}, item);
+            }
+   		}
+    	
+    	// clear selected annotations and check boxes
+    	$scope.clearAllSelectedItems();
     };
     
     // checks for selected items
@@ -364,6 +458,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     	// clear selections
     	$scope.selectedAnnotations = {};
     };
+    
 });
 
 function sortGroups(a, b) {
@@ -400,6 +495,23 @@ function getAnnotationIndex(groups, termID, annID) {
 		}
 	}
 	return -1;
+};
+
+function getAnnotation(groups, termID, annID) {
+	// search for the object in the array
+	for (var idx = 0; idx < groups.length; idx++){
+		var existingObj = groups[idx];
+		if (existingObj.termID == termID){
+			var annList = existingObj.annotations;
+			for (var i = 0; i < annList.length; i++){
+				var ann = annList[i];
+				if (ann.cmID == annID){
+					return ann;
+				}
+			}
+		}
+	}
+	return null;
 };
 
 function getKey(object, value){

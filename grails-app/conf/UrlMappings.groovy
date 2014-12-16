@@ -123,7 +123,7 @@ class UrlMappings {
 		}
 		
 		/*
-		 * Removes all terms from the annotation
+		 * Removes all terms of a user from the annotation
 		 */
 		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/terms.$format"(controller:"annotation"){
 			action = [DELETE: "deleteAllTerms"]

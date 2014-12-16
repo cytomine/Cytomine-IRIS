@@ -8,7 +8,7 @@ iris.controller("termTreeCtrl", function($rootScope, $scope, $timeout, $log, ses
 
 	var checkedTerms = [];
 	
-	$rootScope.termList = {"-99" : "No term assigned" };
+	$rootScope.termList = { "-99" : "No term assigned" };
 	
 	$scope.tree = {
 		loading : true,

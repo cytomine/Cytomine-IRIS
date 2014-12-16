@@ -1,12 +1,16 @@
 package be.cytomine.apps.iris
 
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException;
 import org.json.simple.JSONObject;
 
 import grails.converters.JSON;
 import grails.transaction.Transactional
+import be.cytomine.client.Cytomine;
+import be.cytomine.client.CytomineException;
 import be.cytomine.client.collections.AnnotationCollection;
 import be.cytomine.client.collections.TermCollection
 import be.cytomine.client.models.Annotation
+import be.cytomine.clientx.CytomineX;
 
 @Transactional
 class AnnotationService {
@@ -47,34 +51,34 @@ class AnnotationService {
 		log.debug(userByTermList)
 		log.debug("Searching for 'no Term': " + searchForNoTerm + ". Query terms: " + queryTerms)
 
-		// if no assignment at all is done 
-		// add the annotation to the map at -99 ('no term assigned'), if the query contains termID=-99
+		// if no assignment at all is done
+		// add the annotation to the map at -99 ('no term assigned'), if the query contains termID=IRISConstants.ANNOTATION_NO_TERM_ASSIGNED
 		if (userByTermList.isEmpty()){
 			log.debug("This annotation does not have any terms assigned at all [" + annotation.id + "]")
 			if (searchForNoTerm){
-				annotationMap["-99"].add(irisAnn)
+				annotationMap[IRISConstants.ANNOTATION_NO_TERM_ASSIGNED.toString()].add(irisAnn)
 			}
 		} else {
 			boolean userAssignedOntologyTerm = false
 
 			// search the assignments for a match both "user" and "term"
 			for (assignment in userByTermList){
-				
+
 				//log.debug("Querying user is " + user.cmUserName + " (" + user.cmID + ")")
 
 				// if the user has assessed this annotation
 				if (user.cmID in assignment.get("user")){
 					log.debug("user " + user.cmUserName + " has assignment: " + (user.cmID in assignment.get("user")))
-					
+
 					// check, if the assessed term ID is in the query list
 					long ontologyTermID = assignment.get("term")
 
-					// if the user has assigned one of the queryTerms 
+					// if the user has assigned one of the queryTerms
 					// ASSUMPTION: USER CAN ONLY SET UNIQUE LABELS
 					if (queryTerms.contains(""+ontologyTermID)){
 						String cmTermName = terms.list.find{it.id == ontologyTermID}.get("name")
-						log.debug(user.cmUserName + " assigned an ontology term " 
-							+ cmTermName + " (" + ontologyTermID + ") to [" + annotation.id + "]")
+						log.debug(user.cmUserName + " assigned an ontology term "
+								+ cmTermName + " (" + ontologyTermID + ") to [" + annotation.id + "]")
 
 						// store the properties in the irisAnnotation
 						irisAnn.setCmUserID(user.cmID)
@@ -88,8 +92,8 @@ class AnnotationService {
 						userAssignedOntologyTerm = true
 						break
 					} else {
-						log.debug(user.cmUserName + " did not assign any ontology term to [" + annotation.id 
-							+ "], checking for 'no term' query")
+						log.debug(user.cmUserName + " did not assign any ontology term to [" + annotation.id
+								+ "], checking for 'no term' query")
 						if (!searchForNoTerm){
 							log.debug(user.cmUserName + " did not assign any term to [" + annotation.id + "]")
 							userAssignedOntologyTerm = false
@@ -112,7 +116,7 @@ class AnnotationService {
 			// if the user does not have an assignment and we are searching for 'noTerms'
 			// add it to the no term list
 			if (searchForNoTerm && !userAssignedOntologyTerm){
-				annotationMap["-99"].add(irisAnn)
+				annotationMap[IRISConstants.ANNOTATION_NO_TERM_ASSIGNED.toString()].add(irisAnn)
 			}
 		}
 
@@ -235,5 +239,35 @@ class AnnotationService {
 		log.debug("############ PREDECESSOR ANNOTATION RESOLVED: has predecessor " + foundPredecessor)
 
 		return predIrisAnn
+	}
+
+	boolean deleteAllTermsByUser(Cytomine cytomine, long sessionID, long cmProjectID, long cmImageID, long cmAnnID) throws CytomineException, GroovyCastException, Exception{
+		// get session and user
+		Session sess = Session.get(sessionID)
+		User user = sess.getUser()
+		
+		Map<String,String> filters = new HashMap<String,String>()
+		filters.put("project", String.valueOf(cmProjectID))
+		filters.put("image", String.valueOf(cmImageID))
+		filters.put("showTerm", "true")
+
+		// fetch the annotation
+		AnnotationCollection annotations = cytomine.getAnnotations(filters)
+				
+		//provoke error
+		Annotation annotation = annotations.get( annotations.list.indexOf( annotations.list.find { ann -> ann.id == cmAnnID } ))
+		
+		// remove all terms
+		List userByTermList = annotation.getList("userByTerm");
+		// look for user in all assignments
+		for (assignment in userByTermList){
+			if (user.cmID in assignment.get("user")){
+				long cmTermID = Long.valueOf(assignment.get("term"))
+				cytomine.deleteAnnotationTerm(cmAnnID, cmTermID)
+				log.debug("Removed term: " + cmTermID + " from annotation [" + annotation.getId() + "]")
+			}
+		}
+		
+		return true;
 	}
 }

@@ -1,13 +1,5 @@
 package be.cytomine.apps.iris
 
-import org.apache.log4j.Logger;
-import org.codehaus.groovy.grails.commons.GrailsApplication;
-import org.springframework.aop.aspectj.RuntimeTestWalker.ThisInstanceOfResidueTestVisitor;
-
-import be.cytomine.apps.iris.Image;
-import be.cytomine.apps.iris.Project;
-import be.cytomine.apps.iris.User;
-import grails.converters.JSON;
 
 /**
  * This class maps from the client domain models to the IRIS 
@@ -108,7 +100,7 @@ class DomainMapper {
 	 * @param irisAnnotation
 	 * @return
 	 */
-	Annotation mapAnnotation(be.cytomine.client.models.Annotation cmAnnotation, Annotation irisAnnotation){
+	Annotation mapAnnotation(be.cytomine.client.models.Annotation cmAnnotation, Annotation irisAnnotation) throws Exception{
 		if (irisAnnotation == null){
 			irisAnnotation = new Annotation()
 		}
@@ -130,7 +122,7 @@ class DomainMapper {
 		try {
 			irisAnnotation.setCmLocation(cmAnnotation.getStr("location"))
 		} catch(Exception e){
-			e.printStackTrace()
+			log.warn("'Location' information does not exist for this instance of " + cmAnnotation.getClass() + ".")
 		}
 			
 		// the centroid can be in a distinct object, or in extra coordinates
