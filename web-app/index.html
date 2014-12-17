@@ -89,54 +89,66 @@
 </head>
 <body ng-controller="mainCtrl">
 
-	<div class="navbar navbar-inverse" role="navigation">
+	<nav class="navbar navbar-inverse" role="navigation">
 
 		<div class="navbar-header">
-			<a class="navbar-brand" href="#/">Cytomine {{main.appName}}
-				(v{{main.appVersion}})</a>
+			<a class="navbar-brand" href="#/">Cytomine IRIS</a>
+			<button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
+            	<span class="sr-only ">Toggle navigation</span>
+            	<span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
 		</div>
 		
-		<div class="navbar-collapse collapse" ng-controller="navCtrl">
+		<div id="navbarCollapse" class="navbar-collapse collapse" ng-controller="navCtrl">
 			<ul class="nav navbar-nav navbar-left">
 				<li ng-class="{ active: isActive('/projects')}"><a
 					id="user-nav-button" href ng-click="projects()"><span
-						class="glyphicon glyphicon-list-alt"></span> Projects</a></li>
+						class="glyphicon glyphicon-list-alt"></span>&nbsp;Projects</a></li>
 				<li ng-class="{ active: isActive('/images')}"><a
 					id="user-nav-button" href ng-click="images()"><span
-						class="glyphicon glyphicon-picture"></span> Images</a></li>
+						class="glyphicon glyphicon-picture"></span>&nbsp;Images</a></li>
 				<li ng-class="{ active: isActive('/label')}"><a
 					id="user-nav-button" href ng-click="labeling()"><span
-						class="glyphicon glyphicon-tag"></span> Labeling</a></li>
+						class="glyphicon glyphicon-tag"></span>&nbsp;Labeling</a></li>
 				<li ng-class="{ active: isActive('/gallery')}"><a
 					id="user-nav-button" href ng-click="annotations()"><span
-						class="glyphicon glyphicon-th"></span> Annotations</a></li>
+						class="glyphicon glyphicon-th"></span>&nbsp;Annotations</a></li>
 			</ul>
-				<div class="navbar-header navbar-right">
-				<ul class="nav navbar-nav navbar-right">
-					<li><a id="help-button" href ng-click="showHelp()"> <span
-							class="glyphicon glyphicon-question-sign"></span> Help
-					</a></li>
-
-					<!-- USER DROPDOWN MENU -->
-					<li class="dropdown"><a href="#" class="dropdown-toggle"
-						data-toggle="dropdown"> <span class="glyphicon glyphicon-user"></span>
-							{{main.user.lastname}} {{main.user.firstname}}
-							({{main.user.username}})&nbsp;<span class="caret"></span>&nbsp;
+			
+			<ul class="nav navbar-nav navbar-right">
+				<li>
+					<a id="help-button" href ng-click="showHelp()"> <span
+						class="glyphicon glyphicon-question-sign"></span>&nbsp;Help
 					</a>
-						<ul class="dropdown-menu" role="menu">
-							<!-- <li><a id="user-nav-button" href="{{main.cytomineHost}}"
-								target="_blank"><span class="glyphicon glyphicon-user"></span>
-									Login</a></li>-->
-							<li><a id="user-nav-button" href="#" ng-click="changeKeys()">
-									<span class="glyphicon glyphicon-random"></span> Change keys
-							</a></li>
-						</ul></li>
-				</ul>
-			</div>
+				</li>
+
+				<!-- USER DROPDOWN MENU -->
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" dropdown> 
+						<span class="glyphicon glyphicon-user"></span>
+							<span ng-show="main.user.username">
+								{{main.user.lastname}} {{main.user.firstname}} ({{main.user.username}})
+							</span>
+							<span ng-hide="main.user.username">
+								Login
+							</span>
+						&nbsp;<span class="caret"></span>&nbsp;
+					</a>
+					<ul class="dropdown-menu" role="menu">
+						<li>
+							<a id="user-nav-button" href="#" ng-click="changeKeys()">
+								<span class="glyphicon glyphicon-random"></span>&nbsp;Change keys
+							</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
 		</div>
-	</div>
+	</nav>
 	
-<!--  In order to use full width use the div class .container-fluid -->
 	<div role="main">
 		<div ng-show="publicKey">
 			<ng-view></ng-view>
