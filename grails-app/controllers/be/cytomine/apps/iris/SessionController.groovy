@@ -53,8 +53,16 @@ class SessionController {
 	 * @return the Session as JSON object
 	 */
 	def getSession(){
-		def sessJSON = sessionService.get(request["cytomine"], params["publicKey"]) as JSON
-		render sessJSON
+		try {
+			def sessJSON = sessionService.getSession(request["cytomine"], params["publicKey"]) as JSON
+			render sessJSON
+		} catch(Exception e3){
+			log.error(e3)
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
+		}
 	}
 
 	/**
@@ -69,16 +77,19 @@ class SessionController {
 			def projJSON = sessionService.getProject(request["cytomine"], sID, pID) as JSON
 			render projJSON
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(e1.httpCode)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(GroovyCastException e2) {
-			// send back 400 if the ID is other than long format
+			log.error(e2)
+			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
 			JSONObject errorMsg = new Utils().resolveException(e2, 400)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)
@@ -90,8 +101,22 @@ class SessionController {
 	 * Deletes a session.
 	 */
 	def deleteSession(){
-		long sessID = params.long('sessionID')
-		sessionService.delete(sessID)
+		try {
+			long sessID = params.long('sessionID')
+			sessionService.delete(sessID)
+		} catch(GroovyCastException e2) {
+			log.error(e2)
+			// send back 400 if the project ID is other than long format
+			response.setStatus(400)
+			JSONObject errorMsg = new Utils().resolveException(e2, 400)
+			render errorMsg as JSON
+		} catch(Exception e3){
+			log.error(e3)
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
+		}
 	}
 
 	/**
@@ -100,15 +125,36 @@ class SessionController {
 	 * @return the updated session
 	 */
 	def updateSession(){
-		// parse the payload of the PUT request
-		def sess = request.JSON
+		try {
+			// parse the payload of the POST request
+			def sess = request.JSON
 
-		// fetch the session from the DB
-		Session s = Session.get(sess.id)
+			// fetch the session from the DB
+			Session s = Session.get(sess.id)
 
-		s = s.updateByJSON(sess)
+			s = s.updateByJSON(sess)
 
-		render s as JSON
+			render s as JSON
+
+		} catch(CytomineException e1){
+			log.error(e1)
+			// exceptions from the cytomine java client
+			response.setStatus(e1.httpCode)
+			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+			render errorMsg as JSON
+		} catch(GroovyCastException e2) {
+			log.error(e2)
+			// send back 400 if the project ID is other than long format
+			response.setStatus(400)
+			JSONObject errorMsg = new Utils().resolveException(e2, 400)
+			render errorMsg as JSON
+		} catch(Exception e3){
+			log.error(e3)
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
+		}
 	}
 
 	/**
@@ -148,12 +194,25 @@ class SessionController {
 			}
 
 			render (irisProject as JSON)
-		}catch(CytomineException e){
-			// TODO redirect to an error page or send back 404 and message
-			log.error("Error updating project!",e)
-		}catch(Exception ex){
-			// TODO redirect to an error page or send back 400
-			log.error("Error updating project!",ex)
+			
+		} catch(CytomineException e1){
+			log.error(e1)
+			// exceptions from the cytomine java client
+			response.setStatus(e1.httpCode)
+			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+			render errorMsg as JSON
+		} catch(GroovyCastException e2) {
+			log.error(e2)
+			// send back 400 if the project ID is other than long format
+			response.setStatus(400)
+			JSONObject errorMsg = new Utils().resolveException(e2, 400)
+			render errorMsg as JSON
+		} catch(Exception e3){
+			log.error(e3)
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
 		}
 	}
 
@@ -171,12 +230,24 @@ class SessionController {
 			def irisProject = sessionService.touchProject(cytomine, sessionID, cmProjectID)
 
 			render irisProject as JSON
-		}catch(CytomineException e){
-			log.error("Could not touch project!",e)
-			// TODO redirect to an error page or send back 404 and message
-		}catch(Exception ex){
-			log.error("Could not touch project!",ex)
-			// TODO redirect to an error page or send back 400
+		} catch(CytomineException e1){
+			log.error(e1)
+			// exceptions from the cytomine java client
+			response.setStatus(e1.httpCode)
+			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+			render errorMsg as JSON
+		} catch(GroovyCastException e2) {
+			log.error(e2)
+			// send back 400 if the project ID is other than long format
+			response.setStatus(400)
+			JSONObject errorMsg = new Utils().resolveException(e2, 400)
+			render errorMsg as JSON
+		} catch(Exception e3){
+			log.error(e3)
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
 		}
 	}
 
@@ -196,16 +267,19 @@ class SessionController {
 
 			render irisImage as JSON
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(e1.httpCode)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(GroovyCastException e2) {
+			log.error(e2)
 			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
 			JSONObject errorMsg = new Utils().resolveException(e2, 400)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)
@@ -235,31 +309,24 @@ class SessionController {
 			JSONObject annInfo = utils.getUserProgress(cytomine, cmProjectID, cmImageID, u.getCmID())
 			render annInfo as JSON
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(e1.httpCode)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(GroovyCastException e2) {
+			log.error(e2)
 			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
 			JSONObject errorMsg = new Utils().resolveException(e2, 400)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)
 			render errorMsg as JSON
 		}
-	}
-
-	def delProj(){
-		//		Project toDelete = Project.get(2)
-		//		println toDelete
-		//		toDelete.delete()
-
-		//		Preference pr = Preference.get(307)
-		//		pr.delete()
-		render "ok"
 	}
 
 	/**
@@ -283,16 +350,19 @@ class SessionController {
 			}
 			render imageList as JSON
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(e1.httpCode)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(GroovyCastException e2) {
+			log.error(e2)
 			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
 			JSONObject errorMsg = new Utils().resolveException(e2, 400)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)
@@ -315,16 +385,19 @@ class SessionController {
 
 			render image as JSON
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(e1.httpCode)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(GroovyCastException e2) {
+			log.error(e2)
 			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
 			JSONObject errorMsg = new Utils().resolveException(e2, 400)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)
@@ -366,26 +439,4 @@ class SessionController {
 
 		render sessJSON as JSON
 	}
-
-	//	/**
-	//	 *
-	//	 *
-	//	 * @param cytomine a Cytomine instance
-	//	 * @param cmProjectID the Cytomine project ID
-	//	 * @param publicKey the public key of the user
-	//	 *
-	//	 * @return a list of IRIS images
-	//	 *
-	//	 * @throws CytomineException if the user is not found
-	//	 */
-	//	def getImagesWithProgressDEV() {
-	//		Cytomine cytomine = request['cytomine']
-	//		long cmProjectID = params.long('pid')
-	//		String publicKey = params['publicKey']
-	//
-	//		def imageList = imageService.getImagesWithProgress(request['cytomine'], cmProjectID, publicKey)
-	//
-	//		render imageList as JSON
-	//
-	//	}
 }

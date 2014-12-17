@@ -1,5 +1,3 @@
-import java.awt.Desktop.Action;
-
 class UrlMappings {
 
 	static mappings = {
@@ -16,7 +14,6 @@ class UrlMappings {
 		"/"(view:"/iris")
 		"/iris"(view:"/iris")
 		"500"(view:'/error')
-
 
 		/*
 		 * ###########################
@@ -76,16 +73,10 @@ class UrlMappings {
 			action = [GET: "getTile"]
 		}
 		
-//		///image/tile?zoomify=/data/beta.cytomine.be/93518990/93518990/1389785459805/HE_32911_12_converted.tif/
-//		"/image/tile"(controller:"cytomine"){
-//			action = [GET: "dev"]
-//		}
-
 		/*
 		 * annotationController
 		 * - communicates annotation CRUD operations to the core via the Java client
 		 */
-	
 		/*
 		 * Get all annotations for a project.
 		 * Optional parameters
@@ -93,7 +84,6 @@ class UrlMappings {
 		 */
 		"/api/session/$sessionID/project/$cmProjectID/annotations.$format"(controller:"annotation"){
 			action = [GET: "getAnnotationsByUser"]
-			// TODO make mapping to getAllAnnotations
 		}
 		
 		/*
@@ -202,7 +192,6 @@ class UrlMappings {
 		 * ProjectController
 		 * Retrieves information on and instances of Cytomine projects.
 		 */
-		
 		/*
 		 *  checks the availability of a project
 		 *  	$projectID = Cytomine project ID

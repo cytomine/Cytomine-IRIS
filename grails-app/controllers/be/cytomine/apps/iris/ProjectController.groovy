@@ -42,16 +42,19 @@ class ProjectController {
 			response.setContentType("text/plain")
 			render available
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(e1.httpCode)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(GroovyCastException e2) {
+			log.error(e2)
 			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
 			JSONObject errorMsg = new Utils().resolveException(e2, 400)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)
@@ -73,16 +76,19 @@ class ProjectController {
 			def projectList = projectService.getProjects(cytomine, resolveOntology)
 			render projectList as JSON
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(e1.httpCode)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(GroovyCastException e2) {
+			log.error(e2)
 			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
 			JSONObject errorMsg = new Utils().resolveException(e2, 400)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)
@@ -101,16 +107,19 @@ class ProjectController {
 			def description = projectService.getProjectDescription(request['cytomine'], params.long('projectID'))
 			render description as JSON
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(e1.httpCode)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(GroovyCastException e2) {
+			log.error(e2)
 			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
 			JSONObject errorMsg = new Utils().resolveException(e2, 400)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)

@@ -59,16 +59,19 @@ class CytomineController {
 				render ontology.getAttr() as JSON
 			}
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(e1.httpCode)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(GroovyCastException e2) {
+			log.error(e2)
 			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
 			JSONObject errorMsg = new Utils().resolveException(e2, 400)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)
@@ -89,11 +92,13 @@ class CytomineController {
 
 			render user.getAt("attr") as JSON
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(404)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)
@@ -116,16 +121,19 @@ class CytomineController {
 			// render URLs to client
 			render urls;
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(e1.httpCode)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(GroovyCastException e2) {
+			log.error(e2)
 			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
 			JSONObject errorMsg = new Utils().resolveException(e2, 400)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)
@@ -199,16 +207,19 @@ class CytomineController {
 			response.outputStream.leftShift(is)
 
 		} catch(CytomineException e1){
+			log.error(e1)
 			// exceptions from the cytomine java client
 			response.setStatus(e1.httpCode)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(GroovyCastException e2) {
+			log.error(e2)
 			// send back 400 if the project ID is other than long format
 			response.setStatus(400)
 			JSONObject errorMsg = new Utils().resolveException(e2, 400)
 			render errorMsg as JSON
 		} catch(Exception e3){
+			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)
