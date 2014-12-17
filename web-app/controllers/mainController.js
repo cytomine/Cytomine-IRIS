@@ -14,8 +14,6 @@ iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
 	
 	// declare variables for expression
 	$scope.main = {
-		user : {},
-		error : {}
 	};
 	
 	// TODO remove debug keys
@@ -36,32 +34,33 @@ iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
 	// set the keys each time the main controller loads
 	cytomineService.setKeys($scope.publicKey, $scope.privateKey);
 
-	// retrieve the application name
-	$scope.getAppName = function() {
-		cytomineService.getAppName(appNameUrl, function(appName) {
-			$scope.main.appName = appName;
-		});
-	}
-	$scope.getAppName();
-
-	// retrieve the application version
-	$scope.getAppVersion = function() {
-		cytomineService.getAppVersion(appVersionUrl, function(appVersion) {
-			$scope.main.appVersion = appVersion;
-		});
-	}
-	$scope.getAppVersion();
-
-	
-
 	// save the keys in the local storage
 	$scope.saveKeys = function() {
-		localStorage.setItem("publicKey", $scope.publicKeyCurrent);
-		localStorage.setItem("privateKey", $scope.privateKeyCurrent);
-		$scope.publicKey = $scope.publicKeyCurrent;
-		$scope.privateKey = $scope.privateKeyCurrent;
-		cytomineService.setKeys($scope.publicKey, $scope.privateKey);
-		window.location.reload();
+		if ($scope.publicKeyCurrent != "" && $scope.privatKeyCurrent != ""){
+			localStorage.setItem("publicKey", $scope.publicKeyCurrent);
+			localStorage.setItem("privateKey", $scope.privateKeyCurrent);
+			$scope.publicKey = $scope.publicKeyCurrent;
+			$scope.privateKey = $scope.privateKeyCurrent;
+			cytomineService.setKeys($scope.publicKey, $scope.privateKey);
+			
+			cytomineService.getUserByPublicKey($scope.publicKeyCurrent,function(data){
+				// user callback was successful
+				$scope.main.user = data;
+				
+				delete $scope.error;
+				window.location.reload();
+			},function(data, status){
+				$scope.error = {
+						message : "Public or private keys are incorrect!",
+					}
+				$scope.changeKeys();
+			});
+		}else {
+			$scope.error = {
+				message : "The keys must not be empty!",
+			}
+			$scope.changeKeys();
+		}
 	}
 
 	$scope.changeKeys = function() {
@@ -73,34 +72,21 @@ iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
 		$scope.privateKey = "";
 		$scope.publicKeyCurrent = "";
 		$scope.privateKeyCurrent = "";
+		delete $scope.main.user;
 		localStorage.removeItem("publicKey");
 		localStorage.removeItem("privateKey");
+		localStorage.removeItem("session");
 	});
-
-	$scope.throwEx = function() {
-		throw {
-			message : 'error occurred!'
-		}
-	};
 	
-	// add an alert to the 
+	// add an alert 
 	$scope.addAlert = function(message) {
 		sharedService.addAlert(message);		
 	};
 	
-	// update the current user information according to the public key
-	$scope.getUser = function(publicKey){
-		cytomineService.getUserByPublicKey(publicKey,function(data){
-			// user callback was successful
-			$scope.main.user = data;
-		},function(data, status){
-			$log.error(status + ": " + data);
-		});
-	}, 
-	// TODO 
-	$scope.getUser(cytomineService.getPublicKey());
-	
-	// TODO debug fetching the URLs for the openlayers
-	//imageService.fetchImageServerURLs(94255014,94255021);
-	
+	cytomineService.getUserByPublicKey($scope.publicKey,function(data){
+		// user callback was successful
+		$scope.main.user = data;
+	},function(data, status){
+		// do nothing
+	});
 });

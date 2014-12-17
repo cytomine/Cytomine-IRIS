@@ -84,13 +84,13 @@ class CytomineController {
 		try {
 			Cytomine cytomine = request['cytomine']
 			String publicKey = params['pubKey']
-
+			
 			User user = cytomine.getUser(publicKey)
 
 			render user.getAt("attr") as JSON
 		} catch(CytomineException e1){
 			// exceptions from the cytomine java client
-			response.setStatus(e1.httpCode)
+			response.setStatus(404)
 			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
 			render errorMsg as JSON
 		} catch(Exception e3){
