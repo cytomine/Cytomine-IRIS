@@ -86,6 +86,10 @@ class UrlMappings {
 			action = [GET: "getAnnotationsByUser"]
 		}
 		
+		"/api/session/$sessionID/project/$cmProjectID/annotations/pagination.$format"(controller:"annotation"){
+			action = [GET: "getAnnotations"]
+		}
+		
 		/*
 		 * Get a 3-tuple of annotations for an image in a project
 		 * Optional parameters

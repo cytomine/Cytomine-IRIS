@@ -73,6 +73,7 @@ class AnnotationController {
 
 			// TODO implement pagination
 			int max = (params['max']==null?0:params.int('max'))
+			int offset = (params['offset']==null?0:params.int('offset'))
 
 			// get the session and the user
 			Session sess = Session.get(sessionID)
@@ -85,6 +86,9 @@ class AnnotationController {
 			// fetch the terms from the ontology
 			TermCollection terms = cytomine.getTermsByOntology(ontologyID)
 
+//			cytomine.setOffset(offset);
+			cytomine.setMax(max);
+			
 			// get all annotations according to the filter
 			AnnotationCollection annotations = cytomine.getAnnotations(filters)
 			def irisAnnList = new JSONArray()
@@ -209,8 +213,11 @@ class AnnotationController {
 			// fetch the terms from the ontology
 			TermCollection terms = cytomine.getTermsByOntology(ontologyID)
 
+			long start = System.currentTimeMillis()
 			// get all annotations according to the filter
 			AnnotationCollection annotations = cytomine.getAnnotations(filters)
+			long diff = System.currentTimeMillis() - start
+			
 			// create a new domain mapper
 			DomainMapper dm = new DomainMapper(grailsApplication)
 
@@ -247,7 +254,7 @@ class AnnotationController {
 			// compute total number of resolved annotations
 			int nAnn = 0
 			annotationMap.each { key, value -> nAnn+=value.size() }
-			log.debug("Query resulted in " + nAnn + " annotations.")
+			log.debug("Query resulted in " + nAnn + " annotations, took " + diff + " ms.")
 			
 			render (annotationMap as JSON)
 

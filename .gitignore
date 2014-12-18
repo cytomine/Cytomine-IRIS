@@ -1,6 +1,7 @@
 /RemoteSystemsTempFiles/
 
 target/
+tmp/
 
 ######################
 # Eclipse IDE Files ##
@@ -28,3 +29,8 @@ Thumbs.db
 *.iml
 *.iws
 *.ipr
+
+######################
+# Backup files #######
+######################
+*~
