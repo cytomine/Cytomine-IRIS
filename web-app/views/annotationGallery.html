@@ -33,9 +33,9 @@
 		  		<img class="img-responsive center-block" src="images/ajax-loader.gif" alt=""/>
 			</div>
 		
-			 <div ng-hide="error || loading" class="row" ng-repeat="group in annotation.groups">
+			 <div ng-hide="error || loading" class="row" ng-repeat="group in annotation.groups track by $index">
 			 	<div id="{{ 'panel-group' + group.termID }}" class="panel panel-default">
-					<div id="{{ 'panel-heading' + group.termID }}" class="panel-heading" ng-drop="true" ng-drop-success="onDropComplete($data,$event,group.termID)">
+					<div id="{{ 'panel-heading' + group.termID }}" class="panel-heading clearfix" ng-drop="true" ng-drop-success="onDropComplete($data,$event,group.termID)">
 						<h4 class="panel-title">{{ group.termName }} <span class="text-muted" style="font-size: 12px">{{ group.termID }}</span>
 						<span class="pull-right">
 							<span class=text-muted>
@@ -46,6 +46,23 @@
 								<button id="{{ 'unSelectAll' + group.termID }}" type="button" class="btn btn-xs btn-default" ng-click="unSelectAllAnnotations(group.termID)">Uncheck all</button>
 							</span>
 						</span>
+						<div class="text-center" ng-show="group.annotations.length > pagination.global.itemsPerPage">
+<!-- 								TODO change the ng-model to the settings object -->
+							<pagination 
+								id="{{ 'pagination-term:' + group.termID }}" 
+								total-items="pagination.settings[$index].totalItems" 
+								items-per-page="pagination.global.itemsPerPage"
+								max-size="3"
+								ng-model="pagination.settings[$index].currentPage"
+								ng-change="pageChanged($event, group.termID)"
+								class="pagination-sm" 
+								boundary-links="true" 
+								previous-text="&lsaquo;" 
+								next-text="&rsaquo;" 
+								first-text="&laquo;" 
+								last-text="&raquo;">
+							</pagination>
+						</div>
 						</h4>
 					</div>
 					<div id="{{ 'panel-body' + group.termID }}" class="panel-body">

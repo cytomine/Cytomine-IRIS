@@ -42,6 +42,16 @@
 	margin: 5px 0px;
 }
 
+.pagination {
+	position: absolute;
+	margin: -5px 0px;
+	top: -15px;
+}
+
+.pagination > li > a {
+	padding: 2px 8px;
+}
+
 /*
 Map controls.
 */

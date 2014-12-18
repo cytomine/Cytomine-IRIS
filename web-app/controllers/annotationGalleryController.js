@@ -14,7 +14,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
 	$scope.annotation = {
 		groups : [] // this variable holds all terms and their annotations
 	};
-
+	
 	// selected terms for filtering
 	var selectedTerms = [];
 	// selected images for filtering
@@ -181,9 +181,13 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     		    }
     		}
     		
+    		
     		// sort the groups according to the newly added elements
     		$scope.annotation.groups.sort(sortGroups);
-  
+
+    		// TODO insert the pagination settings at the correct position of the $scope.pagination.settings array
+    		// after sorting, such that the sort order of the groups matches the settings order
+    		
     		// finally delete the error message
     		delete $scope.error
     		
@@ -251,10 +255,15 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     		for (var idx = 0; idx < $scope.annotation.groups.length; idx++){
     			if ($scope.annotation.groups[idx].termID == object.id){
     				$scope.annotation.groups.splice(idx,1);
+    				
+    				// TODO remove the pagination settings at the correct position of the $scope.pagination.settings array
+    				// after sorting
     				break;
     			}
     		}
-    		// INFO: no need to reorder array, since we just remove from a sorted 
+    		// INFO: no need to reorder array, since we just remove from a sorted
+    		
+    		
     	} else if (action === 'addAll'){
     		// here the id is the entire array
     		selectedTerms = object.id; 
@@ -470,6 +479,30 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     	// clear selections
     	$scope.selectedAnnotations = {};
     };
+    
+    // #########################################
+    // pagination
+    // #########################################
+   
+    // allocate the pagination settings object
+    // each filtered group is associated with the index position
+    // in the 'settings' array
+	$scope.pagination = {
+		settings : [{
+			// each settings object is build the following way
+//			id : TODO ID of the term,
+//			currentPage : 1,
+//			totalItems : TODO total number of annotations in this group ,
+		}],
+		global : {
+			itemsPerPage : 2,
+		}
+	};
+	
+	$scope.pageChanged = function(event, termID, index) {
+		$log.debug('Page of term ' +  termID + ' changed to: ' + $scope.pagination.settings[index].currentPage);
+		// TODO perform call for next/previous annotation page for that term
+	};
     
 });
 

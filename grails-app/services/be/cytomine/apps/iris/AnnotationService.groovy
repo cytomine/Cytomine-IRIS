@@ -56,6 +56,7 @@ class AnnotationService {
 		if (userByTermList.isEmpty()){
 			log.debug("This annotation does not have any terms assigned at all [" + annotation.id + "]")
 			if (searchForNoTerm){
+				// TODO access the NEW annotation array
 				annotationMap[IRISConstants.ANNOTATION_NO_TERM_ASSIGNED.toString()].add(irisAnn)
 			}
 		} else {
@@ -88,6 +89,7 @@ class AnnotationService {
 						irisAnn.setAlreadyLabeled(true)
 
 						// add the annotation to the corresponding list in the map
+						// TODO access the NEW annotation array
 						annotationMap[ontologyTermID+""].add(irisAnn)
 						userAssignedOntologyTerm = true
 						break
@@ -116,6 +118,7 @@ class AnnotationService {
 			// if the user does not have an assignment and we are searching for 'noTerms'
 			// add it to the no term list
 			if (searchForNoTerm && !userAssignedOntologyTerm){
+				// TODO access the NEW annotation array
 				annotationMap[IRISConstants.ANNOTATION_NO_TERM_ASSIGNED.toString()].add(irisAnn)
 			}
 		}

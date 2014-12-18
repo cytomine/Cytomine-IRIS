@@ -86,7 +86,7 @@ class AnnotationController {
 			// fetch the terms from the ontology
 			TermCollection terms = cytomine.getTermsByOntology(ontologyID)
 
-//			cytomine.setOffset(offset);
+			cytomine.setOffset(offset);
 			cytomine.setMax(max);
 			
 			// get all annotations according to the filter
@@ -226,6 +226,13 @@ class AnnotationController {
 			JSONObject annotationMap = new JSONObject()
 			// prepare the annotation map
 			for (termID in queryTerms){
+				JSONObject termInformation = new JSONObject()
+				termInformation.put("termID", termID)
+				termInformation.put("totalItems", 0) // TODO overwrite total annotations
+				termInformation.put("currentPage", 0) // TODO overwrite current page
+				termInformation.put("annotations", new JSONArray()) // TODO let the JS client get the annotations from this field!
+				
+				// TODO put the limited number of annotations to the array (SERVICE!!)
 				annotationMap.put(termID, new JSONArray())
 			}
 			log.debug("Finished preparation of annotation map: " + annotationMap)
@@ -255,6 +262,8 @@ class AnnotationController {
 			int nAnn = 0
 			annotationMap.each { key, value -> nAnn+=value.size() }
 			log.debug("Query resulted in " + nAnn + " annotations, took " + diff + " ms.")
+			
+			// TODO add the pagination information for each annotation term (as new parameter in the map)
 			
 			render (annotationMap as JSON)
 
