@@ -50,7 +50,7 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 		
 		// get the annotations for a given project, images and a single term
 		fetchUserAnnotationsByTerm : function(projectID, imageIDs, termIDs, callbackSuccess,
-				callbackError) {
+				callbackError, offset, max) {
 			var sessionID = sessionService.getSession().id
 			$log.debug("Getting user annotations by terms: " + sessionID + " - "
 					+ projectID + " - " + imageIDs + " - " + termIDs)
@@ -65,6 +65,15 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 			
 			// add the terms of interest to the query
 			url += ("&terms=" + termIDs.toString().replace("[","").replace("]",""));
+			
+			// add pagination parameters
+			if (offset) {
+				// 0 offset is counted as missing parameter and causes loading of first page
+				url += "&offset=" + offset;
+			}
+			if (max) {
+				url += "&max=" + max;
+			}
 
 			// execute the http get request to the IRIS server
 			$http.get(url).success(function(data) {

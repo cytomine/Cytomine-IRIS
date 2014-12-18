@@ -35,25 +35,25 @@
 		
 			 <div ng-hide="error || loading" class="row" ng-repeat="group in annotation.groups track by $index">
 			 	<div id="{{ 'panel-group' + group.termID }}" class="panel panel-default">
-					<div id="{{ 'panel-heading' + group.termID }}" class="panel-heading clearfix" ng-drop="true" ng-drop-success="onDropComplete($data,$event,group.termID)">
+					<div id="{{ 'panel-heading' + group.termID }}" style="margin-bottom: 10px;" class="panel-heading clearfix" ng-drop="true" ng-drop-success="onDropComplete($data,$event,group.termID)">
 						<h4 class="panel-title">{{ group.termName }} <span class="text-muted" style="font-size: 12px">{{ group.termID }}</span>
 						<span class="pull-right">
 							<span class=text-muted>
-									{{ group.annotations.length }} Annotation{{ group.annotations.length == 1?'':'s' }}
+									{{ group.totalItems }} Annotation{{ group.totalItems == 1?'':'s' }}
 							</span>
 							<span>
 								<button id="{{ 'selectAll' + group.termID }}" type="button" class="btn btn-xs btn-info" ng-click="selectAllAnnotations(group.termID)">Check all</button>
 								<button id="{{ 'unSelectAll' + group.termID }}" type="button" class="btn btn-xs btn-default" ng-click="unSelectAllAnnotations(group.termID)">Uncheck all</button>
 							</span>
 						</span>
-						<div class="text-center" ng-show="group.annotations.length > pagination.global.itemsPerPage">
+						<div class="container-pagination-group text-center" ng-show="group.totalItems > pagination.global.itemsPerPage">
 <!-- 								TODO change the ng-model to the settings object -->
 							<pagination 
 								id="{{ 'pagination-term:' + group.termID }}" 
-								total-items="pagination.settings[$index].totalItems" 
+								total-items="group.totalItems" 
 								items-per-page="pagination.global.itemsPerPage"
-								max-size="3"
-								ng-model="pagination.settings[$index].currentPage"
+								max-size="5"
+								ng-model="group.currentPage"
 								ng-change="pageChanged($event, group.termID)"
 								class="pagination-sm" 
 								boundary-links="true" 

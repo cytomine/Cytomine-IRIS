@@ -6,6 +6,8 @@ import org.codehaus.groovy.runtime.typehandling.GroovyCastException;
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 
+import com.google.gson.JsonArray;
+
 import be.cytomine.client.Cytomine
 import be.cytomine.client.CytomineException;
 import be.cytomine.client.collections.AnnotationCollection;
@@ -179,7 +181,8 @@ class AnnotationController {
 			// split the list in the params
 			def queryTerms = String.valueOf(termIDs).split(",") as List
 			
-			
+			int offset = (params['offset']==null?0:params.int('offset'))
+			int max = (params['max']==null?0:params.int('max'))
 			
 			boolean searchForNoTerm = false
 			if (!termsEmpty){
@@ -227,13 +230,10 @@ class AnnotationController {
 			// prepare the annotation map
 			for (termID in queryTerms){
 				JSONObject termInformation = new JSONObject()
-				termInformation.put("termID", termID)
-				termInformation.put("totalItems", 0) // TODO overwrite total annotations
-				termInformation.put("currentPage", 0) // TODO overwrite current page
+				termInformation.put("termID", Long.valueOf(termID))
 				termInformation.put("annotations", new JSONArray()) // TODO let the JS client get the annotations from this field!
 				
-				// TODO put the limited number of annotations to the array (SERVICE!!)
-				annotationMap.put(termID, new JSONArray())
+				annotationMap.put(termID, termInformation)
 			}
 			log.debug("Finished preparation of annotation map: " + annotationMap)
 			log.info("Retrieved " + annotations.size() + " annotations.")
@@ -247,7 +247,7 @@ class AnnotationController {
 				be.cytomine.apps.iris.Annotation irisAnn = dm.mapAnnotation(annotation, null)
 
 				// resolve the terms for a user according to the query terms
-				irisAnn = annotationService.resolveTermsByUser(ontologyID, terms, user,
+				annotationService.resolveTermsByUser(ontologyID, terms, user,
 						annotation, irisAnn, searchForNoTerm, queryTerms, annotationMap)
 
 				// ######################################################################################
@@ -257,13 +257,47 @@ class AnnotationController {
 				// add the annotation to the result and use the AnnotationMarshaller in order to
 				// serialize the domain objects
 			}
+			
+			// for each map entry, just take the elements from offset to max and compute the page
+			Set keys = annotationMap.keySet()
+			for (key in keys){
+				JSONObject mapEntry = annotationMap[key]
+				long termID = mapEntry["termID"]
+				JSONArray anns = mapEntry["annotations"]
+				
+				int totalItems = anns.size()
+				int localMax = (max==0?totalItems:max)
+
+				int pages = 0
+				int currentPage = 0
+				
+				def anns_crop = []
+				
+				if (totalItems != 0 && offset < totalItems) {
+					// compute the start and end index of the sub list
+					int startIdx = Math.min(offset, totalItems)
+					int endIdx = Math.min(totalItems, (offset+localMax))
+
+					// get the sublist as page
+					anns_crop = anns.subList(startIdx, endIdx)
+
+					// compute pages
+					pages = Math.ceil(totalItems/localMax)
+					currentPage = (offset/localMax) + 1
+				} 
+				
+				mapEntry.put("totalItems", totalItems) // overwrite total annotations
+				mapEntry.put("currentPage", currentPage) // overwrite current page
+				mapEntry.put("pages", pages) // overwrite total number of pages
+				mapEntry.put("annotations", anns_crop) // set the cropped array
+				mapEntry.put("offset", offset)
+				mapEntry.put("max", localMax)
+			}
 
 			// compute total number of resolved annotations
 			int nAnn = 0
 			annotationMap.each { key, value -> nAnn+=value.size() }
 			log.debug("Query resulted in " + nAnn + " annotations, took " + diff + " ms.")
-			
-			// TODO add the pagination information for each annotation term (as new parameter in the map)
 			
 			render (annotationMap as JSON)
 

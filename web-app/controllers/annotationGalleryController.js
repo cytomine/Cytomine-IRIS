@@ -135,7 +135,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     };
     
     // load annotations from the server
-    $scope.fetchAnnotations = function(termIDs, imageIDs){
+    $scope.fetchAnnotations = function(termIDs, imageIDs, offset){
     	$scope.showOrHideNoImageWarning();
     	if (imageIDs.length === 0){
     		$log.debug("No images to retrieve annotations for.");
@@ -166,27 +166,31 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     		for (var termID in data) {
     		    if (data.hasOwnProperty(termID)) {
 //    		    	$log.debug("Resolving group for term '" + $rootScope.termList[termID] + "'")
-		    		var obj = {termName: $rootScope.termList[termID], termID: termID, annotations : data[termID]};
+		    		var group = data[termID];
+		    		// resolve the term name
+    		    	group.termName = $rootScope.termList[termID];
 		    		
+		    		var removedIndex = -1;
 		    		// search for the object in the array and remove it
 		    		for (var idx = 0; idx < $scope.annotation.groups.length; idx++){
 		    			var existingObj = $scope.annotation.groups[idx];
 		    			if (existingObj.termID == termID){
 		    				$scope.annotation.groups.splice(idx,1);
+		    				removedIndes = idx;
 		    				break;
 		    			}
 		    		}
 		    		// then add the new objects
-		    		$scope.annotation.groups.push(obj);
+		    		$scope.annotation.groups.push(group);
     		    }
     		}
-    		
     		
     		// sort the groups according to the newly added elements
     		$scope.annotation.groups.sort(sortGroups);
 
     		// TODO insert the pagination settings at the correct position of the $scope.pagination.settings array
     		// after sorting, such that the sort order of the groups matches the settings order
+//    		$scope.pagination.settings.splice[removedIndex, 0, settings ];
     		
     		// finally delete the error message
     		delete $scope.error
@@ -202,7 +206,9 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     		
     		// disable the loading spinner
     		delete $scope.loading;
-    	});
+    	}, 
+    	offset, // variable offset
+    	$scope.pagination.global.itemsPerPage); // max stays constant
     };
     
     $scope.showOrHideNoLabelWarning = function(){
@@ -243,7 +249,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     		// incremental fetching
     		// fetch the selected term for the selected images
     		selectedTerms.push(object.id);
-    		$scope.fetchAnnotations([object.id], selectedImages);
+    		$scope.fetchAnnotations([object.id], selectedImages, 0);
     	} else if (action === 'remove'){
     		// remove the selected term
     		selectedTerms.splice(selectedTerms.indexOf(object.id), 1);
@@ -263,13 +269,12 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     		}
     		// INFO: no need to reorder array, since we just remove from a sorted
     		
-    		
     	} else if (action === 'addAll'){
     		// here the id is the entire array
     		selectedTerms = object.id; 
     		// clear the groups
     		$scope.annotation.groups = [];
-    		$scope.fetchAnnotations(selectedTerms, selectedImages);
+    		$scope.fetchAnnotations(selectedTerms, selectedImages, 0);
     	} else if (action === 'removeAll'){
     		// reset all stuff
     		selectedTerms = [];
@@ -288,7 +293,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     		selectedImages = imageList.id;
 
     		// perform the query using the currently selected terms
-    		$scope.fetchAnnotations(selectedTerms, selectedImages);
+    		$scope.fetchAnnotations(selectedTerms, selectedImages, 0);
     	} else {
     		$log.error("Unrecognized image filter action: '" + action + "'");
     	}
@@ -353,7 +358,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     $scope.refreshPage = function() {
     	$log.debug("Refreshing page...");
     	$scope.clearAllSelectedItems();
-    	$scope.fetchAnnotations(selectedTerms, selectedImages);
+    	$scope.fetchAnnotations(selectedTerms, selectedImages, 0);
     };
     
     // assign a selected term to all selected annotations
@@ -472,7 +477,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     		try {
     			chbx.checked = false;
     		} catch (e) {
-    			log.warn(e);
+    			$log.warn(e);
     		}
     	}
     	
@@ -488,20 +493,21 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     // each filtered group is associated with the index position
     // in the 'settings' array
 	$scope.pagination = {
-		settings : [{
-			// each settings object is build the following way
-//			id : TODO ID of the term,
-//			currentPage : 1,
-//			totalItems : TODO total number of annotations in this group ,
-		}],
 		global : {
-			itemsPerPage : 2,
+			itemsPerPage : 10,
 		}
 	};
 	
 	$scope.pageChanged = function(event, termID, index) {
-		$log.debug('Page of term ' +  termID + ' changed to: ' + $scope.pagination.settings[index].currentPage);
-		// TODO perform call for next/previous annotation page for that term
+		var pageToFetch = getGroup($scope.annotation.groups, termID).currentPage;
+		$log.debug('Page of term ' +  termID + ' changed to: ' + pageToFetch);
+		
+		// compute the offset from page
+		var max = $scope.pagination.global.itemsPerPage
+		var offset = (pageToFetch-1)*max;
+		
+		// perform call for next/previous annotation page for that term
+		$scope.fetchAnnotations([termID], selectedImages, offset);
 	};
     
 });
