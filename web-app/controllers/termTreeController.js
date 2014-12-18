@@ -39,14 +39,14 @@ iris.controller("termTreeCtrl", function($rootScope, $scope, $timeout, $log, ses
 		    dirSelectable: false
 		};
 	
-    $scope.selectOrUnselectTerm = function(evt) {
-        var targ;
+    $scope.selectOrUnselectTerm = function(evt, termID) {
+    	var targ;
         if (!evt) {
             var evt = window.event;
         }else {
         	var evt = evt;
         }
-        if (evt.target) { // TODO EVENT BUG IN FIREFOX!!!
+        if (evt.target) {
             targ=evt.target;
         } else if (evt.srcElement) {
             targ=evt.srcElement;

@@ -40,7 +40,6 @@
 						<span class="pull-right">
 							<span class=text-muted>
 									{{ group.annotations.length }} Annotation{{ group.annotations.length == 1?'':'s' }}
-<!-- 								{{ ... }} TODO print number of selected items in this group -->
 							</span>
 							<span>
 								<button id="{{ 'selectAll' + group.termID }}" type="button" class="btn btn-xs btn-info" ng-click="selectAllAnnotations(group.termID)">Check all</button>
@@ -58,7 +57,7 @@
 									<img id="{{ 'thumb-' + item.cmID }}" src="{{ item.cmSmallCropURL }}" class="gallery-image" alt=""/>
 <!-- 									</a> -->
 <!-- 								</span> -->
-								<span class="drag-checkbox"><input id="{{ 'checkbox-' + item.cmID }}" type="checkbox" ng-click="selectAnnotation(item)"></span>
+								<span class="drag-checkbox"><input id="{{ 'checkbox:' + item.cmID }}" type="checkbox" ng-click="selectAnnotation(item)"></span>
 								<span class="drag-handle" ng-drag="true" ng-drag-data="item"></span>
 								<div class="context-menu btn-group dropup" dropdown>
 									<button type="button" class="btn btn-default btn-xs dropdown-toggle" role="button" href="#">

@@ -217,6 +217,7 @@ input[type="checkbox"].colorbox-checkbox {
 
 #tools .tool {
 	position: relative;
+	z-index: 2305;
 }
 
 /*drop area style*/

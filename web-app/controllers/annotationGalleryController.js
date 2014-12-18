@@ -320,7 +320,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     	$log.debug("Checking all annotations of group " +  $rootScope.termList[termID]);
     	var annIDs = getGroup($scope.annotation.groups, termID).annotations;
     	for (var idx = 0; idx < annIDs.length; idx++){
-    		var chbx = document.getElementById("checkbox-" + annIDs[idx].cmID);
+    		var chbx = document.getElementById("checkbox:" + annIDs[idx].cmID);
     		// overwrite the selection state
     		$scope.selectedAnnotations[annIDs[idx].cmID] = termID;
     		chbx.checked = true;
@@ -333,7 +333,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     	$log.debug("UNChecking all annotations of group " +  $rootScope.termList[termID]);
     	var annIDs = getGroup($scope.annotation.groups, termID).annotations;
     	for (var idx = 0; idx < annIDs.length; idx++){
-    		var chbx = document.getElementById("checkbox-" + annIDs[idx].cmID);
+    		var chbx = document.getElementById("checkbox:" + annIDs[idx].cmID);
         	delete $scope.selectedAnnotations[annIDs[idx].cmID];
     		chbx.checked = false;
     	}
@@ -459,7 +459,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
     	
     	for (var idx = 0; idx < keys.length; idx++){
     		var id = keys[idx];
-    		var chbx = document.getElementById("checkbox-" + id);
+    		var chbx = document.getElementById("checkbox:" + id);
     		try {
     			chbx.checked = false;
     		} catch (e) {

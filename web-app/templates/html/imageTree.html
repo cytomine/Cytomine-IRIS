@@ -9,10 +9,10 @@
 	<div ng-hide="tree.loading">
 		<h5>Images&nbsp;<a href="" ng-click="showTree=!showTree"><span class="label label-default" ng-show="showTree" tooltip-placement="right" tooltip="hide the images tree">hide</span><span class="label label-default" ng-show="!showTree" tooltip-placement="right" tooltip="show the images tree">show</span></a></h5>
 		<div ng-show="showTree"
-			treecontrol="" class="tree-light" tree-model="treeData" options="treeOptions" on-selection="selectOrUnselectImage(event)">
-			<span id="{{ 'clickableControl-' + node.cmID }}">
-				<input id="{{ 'chbxImage-' + node.cmID }}" type="checkbox" ng-checked="true">
-				<span id="{{ 'treeImageLabel-' + node.cmID }}">{{ node.originalFilename }}</span>
+			treecontrol="" class="tree-light" tree-model="treeData" options="treeOptions">
+			<span id="{{ 'clickableControl:' + node.cmID }}" ng-click="selectOrUnselectImage($event, node.cmID)">
+				<input id="{{ 'chbxImage:' + node.cmID }}" type="checkbox" ng-checked="true">
+				<span id="{{ 'treeImageLabel:' + node.cmID }}">{{ node.originalFilename }}</span>
 			</span>
 		</div>
 		<div class="row" style="margin-top:20px">

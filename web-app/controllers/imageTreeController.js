@@ -37,12 +37,14 @@ iris.controller("imageTreeCtrl", function($rootScope, $scope, $timeout, $log, se
 		    dirSelectable: false
 		};
 	
-    $scope.selectOrUnselectImage = function(evt) {
+    $scope.selectOrUnselectImage = function(evt, imageID) {
         var targ;
         if (!evt) {
             var evt = window.event;
+        } else {
+        	var evt = evt;
         }
-        if (evt.target) { // TODO EVENT BUG IN FIREFOX!!!
+        if (evt.target) { 
             targ=evt.target;
         } else if (evt.srcElement) {
             targ=evt.srcElement;
@@ -50,9 +52,9 @@ iris.controller("imageTreeCtrl", function($rootScope, $scope, $timeout, $log, se
         $log.debug(targ);
         
         // get the ID of the clicked image
-        var id = Number(targ.id.split("-")[1]);
-        var chbxID = "chbxImage-"+id;
-               
+        var id = Number(targ.id.split(":")[1]);
+        var chbxID = "chbxImage:"+id;
+        
         // if the image is checked, it is in the checked list
         var idx = checkedImages.indexOf(id);
         var chbx = document.getElementById(chbxID);
@@ -115,7 +117,7 @@ iris.controller("imageTreeCtrl", function($rootScope, $scope, $timeout, $log, se
     var selectCheckboxes = function(checkedImages, select){
     	for (var i = 0; i < checkedImages.length; i++){
     		var imageID = checkedImages[i];
-    		var chbxID = "chbxImage-"+imageID;
+    		var chbxID = "chbxImage:"+imageID;
     		var chbx = document.getElementById(chbxID);
     		try {
     			chbx.checked = select;
