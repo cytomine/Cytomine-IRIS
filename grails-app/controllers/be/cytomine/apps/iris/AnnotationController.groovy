@@ -290,6 +290,7 @@ class AnnotationController {
 				mapEntry.put("currentPage", currentPage) // overwrite current page
 				mapEntry.put("pages", pages) // overwrite total number of pages
 				mapEntry.put("annotations", anns_crop) // set the cropped array
+				mapEntry.put("pageItems", anns_crop.size()) // set the cropped array
 				mapEntry.put("offset", offset)
 				mapEntry.put("max", localMax)
 			}

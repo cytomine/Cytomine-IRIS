@@ -35,7 +35,7 @@
 		
 			 <div ng-hide="error || loading" class="row" ng-repeat="group in annotation.groups track by $index">
 			 	<div id="{{ 'panel-group' + group.termID }}" class="panel panel-default">
-					<div id="{{ 'panel-heading' + group.termID }}" style="margin-bottom: 10px;" class="panel-heading clearfix" ng-drop="true" ng-drop-success="onDropComplete($data,$event,group.termID)">
+					<div id="{{ 'panel-heading' + group.termID }}" class="panel-heading clearfix" ng-drop="true" ng-drop-success="onDropComplete($data,$event,group.termID)">
 						<h4 class="panel-title">{{ group.termName }} <span class="text-muted" style="font-size: 12px">{{ group.termID }}</span>
 						<span class="pull-right">
 							<span class=text-muted>
@@ -46,8 +46,11 @@
 								<button id="{{ 'unSelectAll' + group.termID }}" type="button" class="btn btn-xs btn-default" ng-click="unSelectAllAnnotations(group.termID)">Uncheck all</button>
 							</span>
 						</span>
+						</h4>
+					</div>
+					<div id="{{ 'panel-body' + group.termID }}" class="panel-body">
+<!-- 					pagination of objects in the panel -->
 						<div class="container-pagination-group text-center" ng-show="group.totalItems > pagination.global.itemsPerPage">
-<!-- 								TODO change the ng-model to the settings object -->
 							<pagination 
 								id="{{ 'pagination-term:' + group.termID }}" 
 								total-items="group.totalItems" 
@@ -63,18 +66,14 @@
 								last-text="&raquo;">
 							</pagination>
 						</div>
-						</h4>
-					</div>
-					<div id="{{ 'panel-body' + group.termID }}" class="panel-body">
-<!-- 					TODO implement pagination of objects in the panel -->
-						<div ng-repeat="item in group.annotations" id="{{ 'item-' + item.cmID }}">
+						<div ng-repeat="item in group.annotations" id="{{ 'item' + item.cmID }}">
 							<div class="draggable-container thumbnail">
 <!-- 								<span> -->
 <!-- 									<a href="" ng-click="labelAnnotation(item)"> -->
 									<img id="{{ 'thumb-' + item.cmID }}" src="{{ item.cmSmallCropURL }}" class="gallery-image" alt=""/>
 <!-- 									</a> -->
 <!-- 								</span> -->
-								<span class="drag-checkbox"><input id="{{ 'checkbox:' + item.cmID }}" type="checkbox" ng-click="selectAnnotation(item)"></span>
+								<span class="drag-checkbox"><input id="{{ 'checkbox:' + item.cmID }}" ng-model="item.checked" type="checkbox" ng-click="selectAnnotation(item)"></span>
 								<span class="drag-handle" ng-drag="true" ng-drag-data="item"></span>
 								<div class="context-menu btn-group dropup" dropdown>
 									<button type="button" class="btn btn-default btn-xs dropdown-toggle" role="button" href="#">
