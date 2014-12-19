@@ -59,6 +59,10 @@ iris.controller(
 			};
 			
 			$scope.annotationGallery = function(image){
+				if (image.numberOfAnnotations=='0') {
+					return;
+				}
+				
 				sessionService.touchImage($scope.projectID, image.id, function(data){
 					// handle success promise
 					// forward to the annotation gallery of this image

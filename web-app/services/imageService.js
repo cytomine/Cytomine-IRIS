@@ -13,9 +13,20 @@ iris.factory("imageService", function($http, $log, imageURL, imageServerURLs,
 	return {
 		
 		// get the images with their progress for a project
-		fetchImages : function(projectID, computeProgress, callbackSuccess, callbackError) {
+		fetchImages : function(projectID, computeProgress, callbackSuccess, callbackError, offset, max) {
 			var url = cytomineService.addKeys(imageURL).replace("{projectID}",
-					projectID) + "&computeProgress=" + computeProgress;
+					projectID);
+			
+			url += "&computeProgress=" + computeProgress;
+			
+			// add pagination parameters
+			if (offset) {
+				// 0 offset is counted as missing parameter and causes loading of first page
+				url += "&offset=" + offset;
+			}
+			if (max) {
+				url += "&max=" + max;
+			}
 
 			// execute the get request to the server
 			$http.get(url).success(function(data) {
@@ -26,7 +37,7 @@ iris.factory("imageService", function($http, $log, imageURL, imageServerURLs,
 				if (callbackError) {
 					callbackError(data, status);
 				}
-			})
+			});
 		},
 
 		// get the image server URLs for the OpenLayers map viewer
@@ -42,7 +53,6 @@ iris.factory("imageService", function($http, $log, imageURL, imageServerURLs,
 				var urls = data.imageServersURLs;
 				//console.log(urls)
 				var randomServer = urls[Math.round(Math.random()*urls.length)];
-				console.log(randomServer)
 				//////////////////////////////////////
 				
 				if (callbackSuccess) {
@@ -52,7 +62,7 @@ iris.factory("imageService", function($http, $log, imageURL, imageServerURLs,
 				if (callbackError) {
 					callbackError(data, status);
 				}
-			})
+			});
 		},
 	};
 });
