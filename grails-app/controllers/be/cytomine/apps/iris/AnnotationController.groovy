@@ -213,13 +213,14 @@ class AnnotationController {
 			Project p = sess.getProjects().find { it.cmID == projectID }
 			long ontologyID = p.getCmOntology();
 
+			// time the duration of computing the states
+			long start = System.currentTimeMillis()
+
 			// fetch the terms from the ontology
 			TermCollection terms = cytomine.getTermsByOntology(ontologyID)
-
-			long start = System.currentTimeMillis()
+			
 			// get all annotations according to the filter
 			AnnotationCollection annotations = cytomine.getAnnotations(filters)
-			long diff = System.currentTimeMillis() - start
 			
 			// create a new domain mapper
 			DomainMapper dm = new DomainMapper(grailsApplication)
@@ -231,7 +232,7 @@ class AnnotationController {
 			for (termID in queryTerms){
 				JSONObject termInformation = new JSONObject()
 				termInformation.put("termID", Long.valueOf(termID))
-				termInformation.put("annotations", new JSONArray()) // TODO let the JS client get the annotations from this field!
+				termInformation.put("annotations", new JSONArray())
 				
 				annotationMap.put(termID, termInformation)
 			}
@@ -294,11 +295,11 @@ class AnnotationController {
 				mapEntry.put("offset", offset)
 				mapEntry.put("max", localMax)
 			}
-
+			
+			long diff = System.currentTimeMillis() - start
+			
 			// compute total number of resolved annotations
-			int nAnn = 0
-			annotationMap.each { key, value -> nAnn+=value.size() }
-			log.debug("Query resulted in " + nAnn + " annotations, took " + diff + " ms.")
+			log.info("Computation of annotation filter took " + diff + " ms.")
 			
 			render (annotationMap as JSON)
 

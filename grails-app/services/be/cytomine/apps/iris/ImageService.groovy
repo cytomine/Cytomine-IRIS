@@ -229,14 +229,14 @@ class ImageService {
 			else
 				nSplits = splitIndices.size()
 
-		println "Splitting the image array " << nSplits << "x"
+		log.debug("Splitting the image array " + nSplits + "x")
 
 		int startIdx = 0;
 		int endIdx = 0;
 
 		// kick off the threads to work on each list
 		for (int i = 0; i <= nSplits; i++){
-			println "#### Running part " << i << " of the image list ###"
+			log.debug("#### Running part " + i + " of the image list ###")
 
 			boolean islastrun = (i == nSplits)
 
@@ -249,19 +249,19 @@ class ImageService {
 						@Override
 						public void run() {
 							// compute the progress for each item in a list
-							println "Worker " << Thread.currentThread().getName() << " processes " << this.sIdx << "-" << this.eIdx
+							log.debug("Worker " + Thread.currentThread().getName() + " processes " + this.sIdx + "-" + this.eIdx)
 
 							// operate on the lists
 							for (int j = this.sIdx; j <= this.eIdx; j++) {
 								ImageInstance cmImage = cmImageCollection.get(j)
-								println "Processing image " << j
+								log.debug("Processing image " + j)
 
 								// map the client image to the IRIS image
 								Image irisImage = new DomainMapper().mapImage(cmImage, null, blindMode)
 
 								//for each image, add a goToURL property containing the full URL to open the image in the core Cytomine instance
 								irisImage.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImage.getId() + "-")
-								// TODO this performs an synchronous GET request to the cytomine server
+								// this performs an synchronous GET request to the cytomine server
 								// and may thus hamper performance
 								if (withTileURL) {
 									irisImage.setOlTileServerURL(imageService.getImageServerURL(cytomine, cmImage.get("baseImage"), cmImage.getId()));
