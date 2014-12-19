@@ -342,13 +342,21 @@ class SessionController {
 			Boolean withProgress = Boolean.parseBoolean(params['computeProgress'])
 			Boolean withTiles = Boolean.parseBoolean(params['withTileURL'])
 
-			def imageList
+			int offset = (params['offset']==null?0:params.int('offset'))
+			int max = (params['max']==null?0:params.int('max'))
+			
+			// set the client properties for pagination
+			cytomine.setOffset(offset)
+			cytomine.setMax(max)
+			
+			def imageObject
 			if (withProgress){
-				imageList = imageService.getImagesWithProgress(cytomine, projectID, params.get("publicKey"), withTiles)
+				imageObject = imageService.getImagesWithProgress(cytomine, projectID, params.get("publicKey"), withTiles, offset, max)
 			} else {
-				imageList = imageService.getImages(cytomine, projectID, withTiles)
+				imageObject = imageService.getImages(cytomine, projectID, withTiles)
 			}
-			render imageList as JSON
+			
+			render imageObject as JSON
 		} catch(CytomineException e1){
 			log.error(e1)
 			// exceptions from the cytomine java client

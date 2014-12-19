@@ -77,8 +77,8 @@ iris.controller(
 				navService.navToProjects();
 			};
 			
-			// get all the images for the current project 
-			$scope.getAllImages = function(callbackSuccess) {
+			// get all images (limited by offset and max) for the current project 
+			$scope.getImages = function(offset, max, callbackSuccess) {
 				imageService.fetchImages($scope.projectID, true, function(data) {
 					callbackSuccess(data);
 				}, function(data, status) {
@@ -87,78 +87,105 @@ iris.controller(
 						message : data.error.message
 					};
 					$scope.loading = false;
-				});
+				}, 
+				offset, // offset 
+				max); // max
 			};
+			
+			// pagination settings
+			$scope.pagination = {
+				global : {
+					itemsPerPage : 2,
+				}	
+			};
+			
+			// resolves the JSON object into a table with pagination
+			$scope.resolveImagePages = function(data){
+				// get the meta information
+				$scope.image.images = data.images;
+				$scope.image.currentPage = data.currentPage;
+				$scope.image.pageItems = data.pageItems;
+				$scope.image.total = data.totalItems;
+				
+				if (data.totalItems < 1){
+					$scope.image.error.empty= {
+							message : "This project does not have any images.",
+						};
+					$scope.loading = false;
+					return;
+				} else {
+					delete $scope.image.error;
+				}
+				
+				$log.debug(data)
+//				console.log("hideCompleted (session): " + sessionService.getCurrentProject().prefs['images.hideCompleted']);
+				
+				// get user preferences from session
+				$scope.hide = (sessionService.getCurrentProject().prefs['images.hideCompleted'] === 'true');
+				
+				// build the data table
+				$scope.tableParams = new ngTableParams(
+				{
+					// define the parameters
+					page : 1, // show first page
+					count : $scope.pagination.global.itemsPerPage, // count per page 
+					sorting : {
+						 // initial sorting
+						originalFilename : 'asc',
+//						userProgress : 'asc'
+					},
+					filter : {
+						// applies filter to the "data" object before sorting
+					}						
+				}, {
+					// compute the pagination view
+					total : $scope.image.total, // get the total number of images
+					
+					// function to get the data
+					getData : function($defer, params) {
+						
+						$log.debug(params.page());
+						
+						var newData = $scope.image.images;
+						
+						// filter and order the data according to the defined config objects
+						newData = params.filter() ? $filter('filter')(newData,
+								params.filter()) : newData;
+						newData = params.sorting() ? $filter('orderBy')(
+								newData, params.orderBy()) : newData;
+								
+						// $scope.data is the new data object
+						$scope.data = newData.slice(
+								(params.page() - 1) * params.count(), // start index
+								params.page() * params.count()); // end index
+						
+						params.total($scope.image.total); // set total for recalc pagination
+						
+						// provide the data to the view
+						$defer.resolve($scope.data);
+					},
+					filterDelay : 0,
+				});
+				$log.info("image refresh successful");
+				
+				// hide or show the completed images
+				$scope.hideCompleted($scope.hide)
+				$scope.loading = false;
+				
+			}
 			
 			// refresh the page
 			$scope.refreshPage = function(){
 				$scope.loading = true;
-				console.time('loading all images');
-				$scope.getAllImages(function(data) {
-					console.timeEnd('loading all images');
+				console.time('loading images');
+				
+				$scope.getImages(
+						0, 
+						$scope.pagination.global.itemsPerPage, 
+						function(data) {
+					console.timeEnd('loading images');
 					
-					$scope.image.images = data; // this should be an IRIS image list
-					$scope.image.total = data.length;
-					
-					if (data.length < 1){
-						$scope.image.error.empty= {
-								message : "This project does not have any images.",
-							};
-						$scope.loading = false;
-						return;
-					} else {
-						delete $scope.image.error;
-					}
-					
-//					$log.debug(data)
-		    		// #######################
-		    		// TODO PAGINATION
-		    		// #######################
-//					console.log("hideCompleted (session): " + sessionService.getCurrentProject().prefs['images.hideCompleted']);
-					
-					// get user preferences from session
-					$scope.hide = (sessionService.getCurrentProject().prefs['images.hideCompleted'] === 'true');
-					
-					// build the data table
-					$scope.tableParams = new ngTableParams(
-					{
-						// define the parameters
-						page : 1, // show first page
-						count : 10, // count per page
-						sorting : {
-							 // initial sorting
-							originalFilename : 'asc',
-//							userProgress : 'asc'
-						},
-						filter : {
-							// applies filter to the "data" object before sorting
-						}						
-					}, {
-						// compute the pagination view
-						total : $scope.image.images.length, // number of images
-						getData : function($defer, params) {
-							// use build-in angular filter
-							var newData = $scope.image.images;
-							// use build-in angular filter
-							newData = params.filter() ? $filter('filter')(newData,
-									params.filter()) : newData;
-							newData = params.sorting() ? $filter('orderBy')(
-									newData, params.orderBy()) : newData;
-							
-							$scope.data = newData.slice((params.page() - 1)
-									* params.count(), params.page()
-									* params.count());
-							params.total(newData.length); // set total for recalc pagination
-							
-							$defer.resolve($scope.data);
-						},
-						filterDelay : 0,
-					});
-					$log.info("image refresh successful");
-					
-					// hide or show the completed images
-					$scope.hideCompleted($scope.hide)
-					$scope.loading = false;
+					$scope.resolveImagePages(data);
 				});
 			};
 

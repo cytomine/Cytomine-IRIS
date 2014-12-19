@@ -9,6 +9,8 @@ import java.util.concurrent.TimeUnit
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 
+import com.google.gson.JsonObject;
+
 import be.cytomine.client.Cytomine
 import be.cytomine.client.CytomineException
 import be.cytomine.client.collections.ImageInstanceCollection
@@ -105,72 +107,8 @@ class ImageService {
 	 * 
 	 * @throws CytomineException if the user is not found
 	 */
-	def getImagesWithProgress(Cytomine cytomine, long cmProjectID, String publicKey, boolean withTileURL) throws CytomineException{
-
-		// SERIAL IMPLEMENTATION
-		//		long userID = cytomine.getUser(publicKey).getId()
-		//
-		//		// important for blinding image names
-		//		boolean blindMode = false
-		//
-		//		// find the session of the calling user
-		//		User u = User.findByCmID(userID)
-		//
-		//		// get the session
-		//		Session sess = u.getSession();
-		//
-		//		// search for the requested project in the session
-		//		Project irisProject = sess.getProjects().find { it.cmID == cmProjectID }
-		//
-		//		if (irisProject == null){
-		//			def cmProject = cytomine.getProject(cmProjectID)
-		//			// update the project in the local database
-		//			irisProject = new DomainMapper().mapProject(cmProject, irisProject)
-		//			irisProject.save(flush:true,failOnError:true)
-		//
-		//			// get the blind mode
-		//			blindMode = cmProject.get("blindMode")
-		//		} else {
-		//			blindMode = irisProject.cmBlindMode
-		//		}
-		//
-		//		ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)
-		//		int nImages = Math.min(cmImageCollection.size(), 5)
-		////		int nImages = cmImageCollection.size()
-		//		def irisImageList = new JSONArray()
-		//		Utils utils = new Utils()
-		//
-		//		def start = System.currentTimeMillis()
-		//		for (int i = 0; i < nImages; i++) {
-		//			ImageInstance cmImage = cmImageCollection.get(i)
-		//
-		//			// map the client image to the IRIS image
-		//			Image irisImage = new DomainMapper().mapImage(cmImage, null, blindMode)
-		//
-		//			//for each image, add a goToURL property containing the full URL to open the image in the core Cytomine instance
-		//			irisImage.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImage.getId() + "-")
-		//			if (withTileURL){
-		//				irisImage.setOlTileServerURL(imageService.getImageServerURL(cytomine, cmImage.get("baseImage"), cmImage.getId()));
-		//			}
-		//
-		//			// retrieve the user's progress on each image and return it in the object
-		//			JSONObject annInfo = utils.getUserProgress(cytomine, cmProjectID, cmImage.getId(), userID)
-		//			// resolving the values from the JSONObject to each image as property
-		//			irisImage.setLabeledAnnotations(annInfo.get("labeledAnnotations"))
-		//			irisImage.setUserProgress(annInfo.get("userProgress"))
-		//			irisImage.setNumberOfAnnotations(annInfo.get("totalAnnotations"))
-		//
-		//			// set the Cytomine image as "cytomine" property in the irisImage
-		//			def imageJSON = sessionService.injectCytomineImageInstance(cytomine, irisImage, cmImage, blindMode)
-		//
-		//			// add it to the result list
-		//			irisImageList.add(imageJSON)
-		//		}
-		//		println "Resolving image status for " + nImages +  " images lasted " + (System.currentTimeMillis()-start)/1000 + " seconds."
-		//
-		//		return irisImageList
-
-
+	def getImagesWithProgress(Cytomine cytomine, long cmProjectID, String publicKey, boolean withTileURL, int offset, int max) throws CytomineException{
+		
 		// ######################## PARALLEL IMPLEMENTATION
 		long userID = cytomine.getUser(publicKey).getId()
 
@@ -187,17 +125,11 @@ class ImageService {
 		// search for the requested project in the session
 		Project irisProject = sess.getProjects().find { it.cmID == cmProjectID }
 
-		if (irisProject == null){
-			def cmProject = cytomine.getProject(cmProjectID)
-			// update the project in the local database
-			irisProject = new DomainMapper().mapProject(cmProject, irisProject)
-			irisProject.save(flush:true,failOnError:true)
-
-			// get the blind mode
-			blindMode = cmProject.get("blindMode")
-		} else {
-			blindMode = irisProject.cmBlindMode
-		}
+		// update the project in the local database
+		def cmProject = cytomine.getProject(cmProjectID)
+		irisProject = new DomainMapper().mapProject(cmProject, irisProject)
+		irisProject.save(flush:true,failOnError:true)
+		blindMode = irisProject.cmBlindMode
 
 		def start = System.currentTimeMillis()
 
@@ -306,8 +238,29 @@ class ImageService {
 
 		println "Resolving image status for " + nImages +  " images lasted " +
 				(System.currentTimeMillis()-start)/1000 + " seconds."
-
-		return irisImageList
+				
+		// the collection object
+		JSONObject collection = new JSONObject()
+		
+		int totalItems = irisProject.cmNumberOfImages
+		max = (max==0?totalItems:max)
+		
+		int pages = 0
+		int currentPage = 0
+		
+		if (totalItems != 0 && offset < totalItems) {
+			// compute pages
+			pages = Math.ceil(totalItems/max)
+			currentPage = (offset/max) + 1
+		}
+		
+		collection.put("currentPage", currentPage) // overwrite current page
+		collection.put("pages", pages) // overwrite total number of pages
+		collection.put("totalItems", irisProject.cmNumberOfImages) // overwrite total images
+		collection.put("images", irisImageList) // set the list of IRIS images
+		collection.put("pageItems", irisImageList.size()) // number of page items
+				
+		return collection
 	}
 
 	def getImageServerURL(Cytomine cytomine, long abstrImgID, long imgInstID){

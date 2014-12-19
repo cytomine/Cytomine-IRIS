@@ -67,6 +67,7 @@ class DomainMapper {
 		irisProject.setCmName(cmProject.getStr("name"))
 		irisProject.setCmBlindMode(cmProject.getBool("blindMode"))
 		irisProject.setCmOntology(cmProject.getLong("ontology"))
+		irisProject.setCmNumberOfImages(cmProject.getInt("numberOfImages"))
 
 		return irisProject
 	}
