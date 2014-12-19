@@ -10,19 +10,12 @@ iris.config(function($logProvider) {
 iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
 		$log, welcomeUrl, appNameUrl, appVersionUrl, cytomineService,
 		projectService, imageService, sharedService) {
-	console.log("mainCtrl");
+	$log.debug("mainCtrl");
 	
 	// declare variables for expression
 	$scope.main = {
 	};
 	
-	// TODO remove debug keys
-//	function setKeys() {
-//		localStorage.setItem("publicKey", "0880e4b4-fe26-4967-8169-f15ed2f9be5c");
-//		localStorage.setItem("privateKey", "a511a35c-5941-4932-9b40-4c8c4c76c7e7");
-//	}
-	//setKeys();
-
 	// get the key from the local HTML5 storage
 	$scope.publicKey = (localStorage.getItem("publicKey") ? localStorage
 			.getItem("publicKey") : "");

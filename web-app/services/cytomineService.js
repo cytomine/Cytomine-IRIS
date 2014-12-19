@@ -45,50 +45,54 @@ iris.factory("cytomineService", function($http, cytomineHostUrl, cytomineWebUrl,
 		},
 
 		// get the application name and execute the callback
-		getAppName : function(url, callback) {
+		getAppName : function(url, callbackSuccess, callbackError) {
 			$http.get(this.addKeys(url)).success(function(data) {
-				callback(data);
+				if (callbackSuccess){
+					callbackSuccess(data);
+				}
 			}).error(function(data, status, headers, config) {
-				callback({
-					status : status,
-					message : data.errors
-				});
+				if (callbackError){
+					callbackError(data, status);
+				}
 			})
 		},
 
 		// get the application version number and execute the callback
-		getAppVersion : function(url, callback) {
+		getAppVersion : function(url, callbackSuccess, callbackError) {
 			$http.get(this.addKeys(url)).success(function(data) {
-				callback(data);
+				if (callbackSuccess){
+					callbackSuccess(data);
+				}
 			}).error(function(data, status, headers, config) {
-				callback({
-					status : status,
-					message : data.errors
-				});
+				if (callbackError){
+					callbackError(data, status);
+				}
 			})
 		},
 
 		// get the cytomine host address
-		getCytomineHost : function(callback) {
+		getCytomineHost : function(callbackSuccess, callbackError) {
 			$http.get(this.addKeys(cytomineHostUrl)).success(function(data) {
-				callback(data);
+				if (callbackSuccess){
+					callbackSuccess(data);
+				}
 			}).error(function(data, status, headers, config) {
-				callback({
-					status : status,
-					message : data.errors
-				});
+				if (callbackError){
+					callbackError(data, status);
+				}
 			})
 		},
 
 		// get the cytomine web address and execute the callback
-		getCytomineWeb : function(callback) {
+		getCytomineWeb : function(callbackSuccess, callbackError) {
 			$http.get(this.addKeys(cytomineWebUrl)).success(function(data) {
-				callback(data);
+				if (callbackSuccess){
+					callbackSuccess(data);
+				}
 			}).error(function(data, status, headers, config) {
-				callback({
-					status : status,
-					message : data.errors
-				});
+				if (callbackError){
+					callbackError(data, status);
+				}
 			})
 		}, 
 		

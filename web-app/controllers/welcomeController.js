@@ -4,17 +4,12 @@ iris.constant("welcomeUrl", "/api/welcome.json");
 
 iris.controller("welcomeCtrl", function($rootScope, $scope, $log, $http, $location,
 		helpService, cytomineService, welcomeUrl, hotkeys, sessionService) {
-	console.log("welcomeCtrl");
+	$log.debug("welcomeCtrl");
 	
-	// try to fetch a session for the user
-//	sessionService.fetchSession();
-
 	// set the help variable for this page
 	helpService.setContentUrl("content/help/welcomeHelp.html");
 
-	$scope.welcome = {
-		errors : {}
-	}
+	$scope.welcome = {};
 
 	// put all valid shortcuts for this page here
 	hotkeys.bindTo($scope)
@@ -25,43 +20,18 @@ iris.controller("welcomeCtrl", function($rootScope, $scope, $log, $http, $locati
 			helpService.showHelp();
 		}
 	})
-//	.add({
-//		combo : '*',
-//		description : 'Navigate to the available projects',
-//		callback : function() {
-//			$location.url("/projects");
-//		}
-//	});
-
-	// retrieve the welcome text
-	$scope.getWelcome = function() {
-		$http.get(welcomeUrl).success(function(data, status, headers, config) {
-			// console.log(data);
-			$scope.welcome.welcome = data;
-		}).error(function(data, status, headers, config) {
-			$scope.welcome.error.retrieve = {
-				status : status,
-				message : data.errors
-			};
-		})
-	};
-	$scope.getWelcome();
 
 	// retrieve the Cytomine host address
 	$scope.getCytomineHost = function() {
 		cytomineService.getCytomineHost(function(cytomineHost) {
 			$scope.welcome.cytomineHost = cytomineHost;
-			// console.log("Cytomine Host: " + $scope.main.cytomineHost)
-		})
+			delete $scope.welcome.error;
+		}, function(data, status){
+			$scope.welcome.error = {
+				status: status,
+				message: data.error.message
+			}
+		});
 	};
 	$scope.getCytomineHost();
-
-	// retrieve the Cytomine web address
-	$scope.getCytomineWeb = function() {
-		cytomineService.getCytomineWeb(function(cytomineWeb) {
-			$scope.welcome.cytomineWeb = cytomineWeb;
-			// console.log("Cytomine Web: " + $scope.main.cytomineWeb)
-		})
-	};
-	$scope.getCytomineWeb();
 });

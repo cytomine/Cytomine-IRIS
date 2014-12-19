@@ -1,19 +1,23 @@
 <div ng-controller="welcomeCtrl" class="container">
-	<div class="jumbotron rounded-corners">
+	<div class="alert alert-danger text-center" ng-show="welcome.error">
+		<b>{{ welcome.error.message }}</b>
+	</div>
+	
+	<div class="jumbotron rounded-corners" ng-hide="welcome.error">
 		<div class="row">
-			<div class="col-xs-6">
-				<h2>{{welcome.welcome}}</h2>
+			<div class="col-xs-6 text-center">
+				<h2>Welcome to Cytomine IRIS</h2>
 				<p>
 					<b style="color: #428bca">I</b>nterobserver <b
 						style="color: #428bca">R</b>el<b style="color: #428bca">i</b>ability
 					<b style="color: #428bca">S</b>tudy Module
 				</p>
 				<p>
-					<a href="#/projects" class="btn btn-primary btn-lg" role="button">Show
-						Available Projects &raquo;</a>
+					<a href="#/projects"><button class="btn btn-primary btn-lg" style="width:100%" type="button">Start &raquo;</button></a>
 				</p>
 				<p>
-					<a href="{{welcome.cytomineWeb}}" class="btn btn-primary btn-lg" target="_blank" role="button">Visit Cytomine &raquo;</a>
+					<a href="{{ welcome.cytomineHost }}"><button class="btn btn-default btn-xs" target="_blank" type="button">Visit Cytomine</button></a>
+					<a href="http://www.cytomine.be"><button class="btn btn-default btn-xs" target="_blank" type="button">Learn more about the Cytomine project</button></a>
 				</p>
 			</div>
 			<div class="col-xs-6" style="text-align: center">

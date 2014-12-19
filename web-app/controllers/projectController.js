@@ -6,7 +6,7 @@ iris.config(function($logProvider) {
 
 iris.controller("projectCtrl", function($rootScope, $scope, $http, $filter, $location, $document,
 		$modal, $log, hotkeys, projectService, helpService, sharedService, sessionService, ngTableParams) {
-	console.log("projectCtrl");
+	$log.debug("projectCtrl");
 	
 	// fetch the session for the user
 	sessionService.fetchSession()
