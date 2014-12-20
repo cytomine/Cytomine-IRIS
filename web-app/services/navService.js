@@ -42,10 +42,15 @@ iris.factory("navService", function($http, $rootScope, $location, $window,
 			}
 		},
 
-		navToAnnotationGallery : function() {
+		navToAnnotationGallery : function(imageID) {
 			try {
 				var projectID = sessionService.getCurrentProject().cmID;
-				$location.url("/project/" + projectID + "/gallery");
+				
+				if (imageID){
+					$location.url("/project/" + projectID + "/image/" + imageID + "/gallery");
+				} else {
+					$location.url("/project/" + projectID + "/gallery");
+				}
 			} catch (e) {
 				this.fallbackToProjects()
 			}

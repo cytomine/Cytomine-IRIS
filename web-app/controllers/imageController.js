@@ -67,7 +67,8 @@ iris.controller(
 					// handle success promise
 					// forward to the annotation gallery of this image
 					$log.debug("successfully touched image " + image.id);
-					navService.navToAnnotationGallery();
+					// navigate to annotation gallery of selected image (predefine filter)
+					navService.navToAnnotationGallery(image.id);
 				}, function(data,status){
 					sharedService.addAlert("Cannot update image. Error " + status + ".", "danger");
 				})

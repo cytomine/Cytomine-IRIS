@@ -11,7 +11,7 @@
 		<div ng-show="showTree"
 			treecontrol="" class="tree-light" tree-model="treeData" options="treeOptions">
 			<span id="{{ 'clickableControl:' + node.cmID }}" ng-click="selectOrUnselectImage($event, node.cmID)">
-				<input id="{{ 'chbxImage:' + node.cmID }}" type="checkbox" ng-checked="true">
+				<input id="{{ 'chbxImage:' + node.cmID }}" type="checkbox" ng-model="node.checked">
 				<span id="{{ 'treeImageLabel:' + node.cmID }}">{{ node.originalFilename }}</span>
 			</span>
 		</div>

@@ -1,6 +1,6 @@
 var iris = angular.module("irisApp");
 
-iris.controller("imageTreeCtrl", function($rootScope, $scope, $timeout, $log, sessionService, imageService, projectService, sharedService){
+iris.controller("imageTreeCtrl", function($rootScope, $scope, $routeParams, $timeout, $log, sessionService, imageService, projectService, sharedService){
 	
 	console.log("imageTreeCtrl");
 	
@@ -8,13 +8,20 @@ iris.controller("imageTreeCtrl", function($rootScope, $scope, $timeout, $log, se
 
 	var checkedImages = [];
 	
+	var singleImageID = $routeParams["imageID"];
+	
 	$scope.tree = {
 		loading: true,
 	};
 	
 	var initTree = function(){
-		$scope.showTree = false;
-		$scope.checkAllImages();
+		if (singleImageID){
+			$scope.showTree = true;
+			$scope.checkSingleImage(Number(singleImageID));
+		} else {
+			$scope.showTree = false;
+			$scope.checkAllImages();
+		}
 	}
 	
 	// get the images and initialize the tree
@@ -27,8 +34,7 @@ iris.controller("imageTreeCtrl", function($rootScope, $scope, $timeout, $log, se
 		initTree();
 	}, function(data, status){
 		sharedService.addAlert("Cannot retrieve images. Status " + status + ".", "danger");
-	})
-	
+	});
 	
 	$scope.selectedNode = {};
 	
@@ -37,22 +43,44 @@ iris.controller("imageTreeCtrl", function($rootScope, $scope, $timeout, $log, se
 		    dirSelectable: false
 		};
 	
+	$scope.checkSingleImage = function(imageID){
+    	checkedImages = [];
+    	try {
+    		var img = getImage($scope.treeData, imageID);
+    		img.checked = true;
+    		checkedImages.push(imageID);
+    	} catch (e){
+    		$log.error("Trying to select unknown image [" + imageID + "]");
+    		checkedImages = [];
+    	}
+    	
+    	$rootScope.$broadcast("imageFilterChange", { id : checkedImages, action : 'selectedImages' });
+    	
+    	$log.debug("Active Images: {" + checkedImages.toString() + "}.");
+    };
+	
     $scope.selectOrUnselectImage = function(evt, imageID) {
         var targ;
+        
         if (!evt) {
             var evt = window.event;
         } else {
         	var evt = evt;
         }
-        if (evt.target) { 
-            targ=evt.target;
-        } else if (evt.srcElement) {
-            targ=evt.srcElement;
-        }
-        $log.debug(targ);
+        
+    	if (evt.target) { 
+    		targ=evt.target;
+    	} else if (evt.srcElement) {
+    		targ=evt.srcElement;
+    	}
+    	$log.debug(targ);
         
         // get the ID of the clicked image
         var id = Number(targ.id.split(":")[1]);
+        
+        // find the image in the tree data
+        var image = getImage($scope.treeData, id);
+        
         var chbxID = "chbxImage:"+id;
         
         // if the image is checked, it is in the checked list
@@ -65,13 +93,12 @@ iris.controller("imageTreeCtrl", function($rootScope, $scope, $timeout, $log, se
         	// add the image
         	checkedImages.push(id);
         	// select the checkbox
-        	chbx.checked = true;
+        	image.checked = true;
         }else {
         	// remove the image from the array
         	checkedImages.splice(idx,1);
         	// unselect the checkbox
-        	chbx.checked = false;
-        	
+        	image.checked = false;        	
         }
 
         // notify other instances about the change
@@ -88,10 +115,9 @@ iris.controller("imageTreeCtrl", function($rootScope, $scope, $timeout, $log, se
     	checkedImages = [];
     	
     	for (var i=0; i < $scope.treeData.length; i++){
+    		$scope.treeData[i].checked = true;
     		checkedImages.push($scope.treeData[i].cmID)
     	}
-    	
-    	selectCheckboxes(checkedImages, true);    
     	
     	$rootScope.$broadcast("imageFilterChange", { id : checkedImages, action : 'selectedImages' });
     	
@@ -103,28 +129,23 @@ iris.controller("imageTreeCtrl", function($rootScope, $scope, $timeout, $log, se
     	checkedImages = [];
     	
     	for (var i=0; i<$scope.treeData.length; i++){
-    		checkedImages.push($scope.treeData[i].cmID)
+    		$scope.treeData[i].checked = false;
     	}
-    	selectCheckboxes(checkedImages, false);
-    	checkedImages = [];
 
     	$rootScope.$broadcast("imageFilterChange", { id : checkedImages, action : 'selectedImages' });
     	$log.debug("Active Images: {" + checkedImages.toString() + "}.");
     	//$log.debug("UNchecked all images.")
     };
     
-    // select the images in the tree
-    var selectCheckboxes = function(checkedImages, select){
-    	for (var i = 0; i < checkedImages.length; i++){
-    		var imageID = checkedImages[i];
-    		var chbxID = "chbxImage:"+imageID;
-    		var chbx = document.getElementById(chbxID);
-    		try {
-    			chbx.checked = select;
-    		}catch(e){
-    			$log.warn(e.message);
-    		}
-    	}
-    };
-    
+      
 });
+
+function getImage(imageList, id){
+	for (var i=0; i<imageList.length; i++){
+		var obj = imageList[i];
+		if (obj.cmID == id) {
+			return obj;
+		}
+	}
+	return null;
+};

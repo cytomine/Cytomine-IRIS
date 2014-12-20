@@ -28,9 +28,6 @@ iris.config(function($routeProvider, $locationProvider) {
 	$routeProvider.when("/map", {
 		templateUrl : "views/map.html",
 	});
-	$routeProvider.when("/login", {
-		templateUrl : "views/login.html",
-	});
 	$routeProvider.when("/keys", {
 		templateUrl : "views/keys.html"
 	});
@@ -46,11 +43,14 @@ iris.config(function($routeProvider, $locationProvider) {
 //	$routeProvider.when("/project/:projectID/image/:imageID/label/:annID", {
 //		templateUrl : "views/labeling.html"
 //	});
+	$routeProvider.when("/project/:projectID/image/:imageID/gallery", {
+		templateUrl : "views/annotationGallery.html"
+	});
 	$routeProvider.when("/project/:projectID/gallery", {
 		templateUrl : "views/annotationGallery.html"
 	});
 	// default route
-//	$routeProvider.otherwise({
-//		templateUrl : "views/welcome.html"
-//	});
+	$routeProvider.otherwise({
+		templateUrl : "views/404.html"
+	});
 });
