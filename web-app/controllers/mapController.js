@@ -95,7 +95,7 @@ iris.controller(
 
 					var animateMap = false;
 					var currImg = sessionService.getCurrentImage();
-
+					
 					var imgWidth = currImg.cytomine.width;// 56640;
 					var imgHeight = currImg.cytomine.height;// 39163;
 					var imgCenter = [ imgWidth / 2, - imgHeight / 2 ];
@@ -112,7 +112,8 @@ iris.controller(
 						})
 					});
 
-					var url = currImg.olTileServerURL;// "http://localhost:8080/image/tile?zoomify=/data/beta.cytomine.be/93518990/93518990/1389785459805/HE_32911_12_converted.tif/";
+					var host = $location.protocol() + "://" + $location.host() + ":" + $location.port()
+					var url = host + currImg.olTileServerURL;// "http://localhost:8080/image/tile?zoomify=/data/beta.cytomine.be/93518990/93518990/1389785459805/HE_32911_12_converted.tif/";
 
 					var crossOrigin = 'anonymous';
 

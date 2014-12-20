@@ -281,14 +281,15 @@ class ImageService {
 		// TODO hard-code the tile urls for performance improvement
 		String urls = cytomine.doGet("/api/abstractimage/" + abstrImgID + "/imageservers.json?imageinstance=" + imgInstID)
 
-		//		obj = {"imageServersURLs":["http://image3.cytomine.be/image/tile?zoomify=/data/beta.cytomine.be/93518990//1412329489945/BM_GRAZ_HE_0006.svs/","http://image4.cytomine.be/image/tile?zoomify=/data/beta.cytomine.be/93518990//1412329489945/BM_GRAZ_HE_0006.svs/","http://image5.cytomine.be/image/tile?zoomify=/data/beta.cytomine.be/93518990//1412329489945/BM_GRAZ_HE_0006.svs/","http://image.cytomine.be/image/tile?zoomify=/data/beta.cytomine.be/93518990//1412329489945/BM_GRAZ_HE_0006.svs/"]}
+		//	obj = {"imageServersURLs":["http://image3.cytomine.be/image/tile?zoomify=/data/beta.cytomine.be/93518990//1412329489945/BM_GRAZ_HE_0006.svs/","http://image4.cytomine.be/image/tile?zoomify=/data/beta.cytomine.be/93518990//1412329489945/BM_GRAZ_HE_0006.svs/","http://image5.cytomine.be/image/tile?zoomify=/data/beta.cytomine.be/93518990//1412329489945/BM_GRAZ_HE_0006.svs/","http://image.cytomine.be/image/tile?zoomify=/data/beta.cytomine.be/93518990//1412329489945/BM_GRAZ_HE_0006.svs/"]}
 
 		// urls are a long string, so break them up in a JSONarray
 		org.codehaus.groovy.grails.web.json.JSONObject obj = new org.codehaus.groovy.grails.web.json.JSONObject(urls)
 
 		// imageServersURLs is a property of the object
 		def newUrls = obj.imageServersURLs.collect {
-			irisHost + "/image/tile" + it.substring(it.indexOf("?"), it.length())
+			// TODO do not add the irisHost to the URL (currently this errors in saving the image in the DB)
+			"/image/tile" + it.substring(it.indexOf("?"), it.length())
 		}
 		obj.putAt("imageServersURLs", newUrls)
 
