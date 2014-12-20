@@ -95,29 +95,12 @@ iris.controller(
 			// pagination settings
 			$scope.pagination = {
 				global : {
-					itemsPerPage : 2,
+					itemsPerPage : 6,
 				}	
 			};
 			
 			// resolves the JSON object into a table with pagination
-			$scope.resolveImagePages = function(data){
-				// get the meta information
-				$scope.image.images = data.images;
-				$scope.image.currentPage = data.currentPage;
-				$scope.image.pageItems = data.pageItems;
-				$scope.image.total = data.totalItems;
-				
-				if (data.totalItems < 1){
-					$scope.image.error.empty= {
-							message : "This project does not have any images.",
-						};
-					$scope.loading = false;
-					return;
-				} else {
-					delete $scope.image.error;
-				}
-				
-				$log.debug(data)
+			$scope.resolveImagePages = function(){
 //				console.log("hideCompleted (session): " + sessionService.getCurrentProject().prefs['images.hideCompleted']);
 				
 				// get user preferences from session
@@ -138,55 +121,76 @@ iris.controller(
 						// applies filter to the "data" object before sorting
 					}						
 				}, {
-					// compute the pagination view
-					total : $scope.image.total, // get the total number of images
+					counts : [], // deactivate the 'counts' on each page in the table
 					
 					// function to get the data
 					getData : function($defer, params) {
+						var pageToFetch = params.page();
+
+						$log.debug("Fetching page #" + pageToFetch);
 						
-						$log.debug(params.page());
+						// show the loading button
+						$scope.loading = true;
 						
-						var newData = $scope.image.images;
+						// compute offset and max
+						var max = $scope.pagination.global.itemsPerPage
+						var offset = (pageToFetch-1)*max;
 						
-						// filter and order the data according to the defined config objects
-						newData = params.filter() ? $filter('filter')(newData,
-								params.filter()) : newData;
-						newData = params.sorting() ? $filter('orderBy')(
-								newData, params.orderBy()) : newData;
+						console.time('loading images');
+						
+						$scope.getImages(
+								offset, 
+								max, 
+								function(data) {
+							console.timeEnd('loading images');
+							
+							// SUCCESS PROMISE
+							// get the meta information
+							$scope.image.images = data.images;
+							$scope.image.currentPage = data.currentPage;
+							$scope.image.pageItems = data.pageItems;
+							$scope.image.total = data.totalItems;
+							$scope.image.pageItemMin = offset + 1;
+							$scope.image.pageItemMax = offset + data.pageItems;
+							
+							if (data.totalItems < 1){
+								$scope.image.error.empty= {
+										message : "This project does not have any images.",
+									};
+								$scope.loading = false;
+								return;
+							} else {
+								delete $scope.image.error;
+							}
+							
+							var newData = $scope.image.images;
+							
+							// filter and order the data according to the defined config objects
+							newData = params.filter() ? $filter('filter')(newData,
+									params.filter()) : newData;
+							newData = params.sorting() ? $filter('orderBy')(
+									newData, params.orderBy()) : newData;
 								
-						// $scope.data is the new data object
-						$scope.data = newData.slice(
-								(params.page() - 1) * params.count(), // start index
-								params.page() * params.count()); // end index
-						
-						params.total($scope.image.total); // set total for recalc pagination
-						
-						// provide the data to the view
-						$defer.resolve($scope.data);
+							$scope.data = newData;
+							params.total($scope.image.total); // set total for pagination
+							
+							// provide the data to the view
+							$defer.resolve($scope.data);
+							
+							//hide or show the completed images
+//							$scope.hideCompleted($scope.hide) 
+							$scope.loading = false;
+							$log.info("Image page fetching successful.");
+						});
 					},
 					filterDelay : 0,
 				});
-				$log.info("image refresh successful");
-				
-				// hide or show the completed images
-				$scope.hideCompleted($scope.hide)
-				$scope.loading = false;
 				
 			}
 			
 			// refresh the page
 			$scope.refreshPage = function(){
-				$scope.loading = true;
-				console.time('loading images');
-				
-				$scope.getImages(
-						0, 
-						$scope.pagination.global.itemsPerPage, 
-						function(data) {
-					console.timeEnd('loading images');
-					
-					$scope.resolveImagePages(data);
-				});
+				$scope.resolveImagePages();
 			};
 
 			// execute actual image loading at startup

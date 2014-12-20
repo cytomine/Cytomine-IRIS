@@ -24,7 +24,9 @@ class Utils {
 	 * @return
 	 */
 	public JSONObject getUserProgress(Cytomine cytomine, long projectID, long imageID, long userID){
-		JSONObject jsonResult = new JSONObject();
+		JSONObject jsonResult = new JSONObject()
+		// clone the object and retrieve every object without pagination
+		Cytomine cm = new Cytomine(cytomine.host, cytomine.publicKey, cytomine.privateKey, cytomine.basePath)
 
 		int totalAnnotations = 0
 		int labeledAnnotations = 0
@@ -33,9 +35,9 @@ class Utils {
 		Map<String,String> filters = new HashMap<String,String>()
 		filters.put("project", String.valueOf(projectID))
 		filters.put("image", String.valueOf(imageID))
-
+		
 		// get the annotations of this image (as batch, causes 1 access per image)
-		AnnotationCollection annotations = cytomine.getAnnotations(filters)
+		AnnotationCollection annotations = cm.getAnnotations(filters)
 
 		// total annotations in a given image
 		totalAnnotations = annotations.size();
