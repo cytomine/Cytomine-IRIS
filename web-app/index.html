@@ -85,6 +85,7 @@
 <script type="text/javascript" src="controllers/labelingController.js"></script>
 <script type="text/javascript" src="controllers/termTreeController.js"></script>
 <script type="text/javascript" src="controllers/imageTreeController.js"></script>
+<script type="text/javascript" src="controllers/videoController.js"></script>
 
 </head>
 <body ng-controller="mainCtrl">
@@ -159,5 +160,12 @@
 	<!-- INCLUDE Templates -->
 	<div ng-include="'templates/html/helpModal.html'" ng-controller="helpCtrl"></div>
 	<div ng-include="'templates/html/alerts.html'"></div>
+
+	<!-- VIDEOGULAR FILES -->
+	<script type="text/javascript" src="lib/videogular/videogular.min.js"></script>
+	<script type="text/javascript" src="lib/videogular/controls.min.js"></script>
+	<script type="text/javascript" src="lib/videogular/overlay-play.min.js"></script>
+	<script type="text/javascript" src="lib/videogular/poster.min.js"></script>
+	<script type="text/javascript" src="lib/videogular/buffering.min.js"></script>
 </body>
 </html>

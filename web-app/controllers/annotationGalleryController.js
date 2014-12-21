@@ -49,20 +49,22 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
         	annotationService.deleteAnnotationTerm(item.cmProjectID, item.cmImageID, item.cmID, targetTermID,
     				function(data){
     			// if call was successful, remove the term from the source group and add it to the target group
-    			var _srcGroupAnnList = getGroup($scope.annotation.groups, item.cmTermID).annotations;
+        		var _srcGroup = getGroup($scope.annotation.groups, item.cmTermID);
+    			var _srcGroupAnnList = _srcGroup.annotations;
     			var _srcAnnIdx = getAnnotationIndex($scope.annotation.groups, item.cmTermID, item.cmID);
     			
     			_srcGroupAnnList.splice(_srcAnnIdx, 1);
-    			
+    			_srcGroup.totalItems = _srcGroup.totalItems - 1;
     			try {
-
-    				var _targetGroupAnnList = getGroup($scope.annotation.groups, targetTermID).annotations;
+    				var _targetGroup = getGroup($scope.annotation.groups, targetTermID);
+    				var _targetGroupAnnList = _targetGroup.annotations;
     				// change the information in the local object
     				item.cmTermName = null;
     				item.cmTermID = -99;
     				item.cmOntologyID = 0;
 
     				_targetGroupAnnList.push(item)
+    				_targetGroup.totalItems = _targetGroup.totalItems + 1;
     			} catch (e) {
     				$log.debug("Term has been removed, but group is not filtered.");
     			}
@@ -84,18 +86,22 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
         			function(data){
         		
         		// if call was successful, remove the term from the source group and add it to the target group
-    			var _srcGroupAnnList = getGroup($scope.annotation.groups, item.cmTermID).annotations;
+        		var _srcGroup = getGroup($scope.annotation.groups, item.cmTermID);
+        		var _srcGroupAnnList = _srcGroup.annotations;
     			var _srcAnnIdx = getAnnotationIndex($scope.annotation.groups, item.cmTermID, item.cmID);
     			
     			_srcGroupAnnList.splice(_srcAnnIdx, 1);
+    			_srcGroup.totalItems = _srcGroup.totalItems - 1;
     			try {
-	    			var _targetGroupAnnList = getGroup($scope.annotation.groups, targetTermID).annotations;
+    				var _targetGroup = getGroup($scope.annotation.groups, targetTermID);
+	    			var _targetGroupAnnList = _targetGroup.annotations;
 	    			// remove the information from the local object
 	    			item.cmTermName = termName;
 	    			item.cmTermID = targetTermID;
 	    			// don't change the ontology ID within a project!
 	    			
 	    			_targetGroupAnnList.push(item)
+	    			_targetGroup.totalItems = _targetGroup.totalItems + 1;
     			} catch (e) {
 					$log.debug("Term has been assigned, but group is not filtered.");
 				}
@@ -410,20 +416,23 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
         				function(data, item){
             		
             		// if call was successful, remove the term from the source group and add it to the target group
-        			var _srcGroupAnnList = getGroup($scope.annotation.groups, item.cmTermID).annotations;
+            		var _srcGroup = getGroup($scope.annotation.groups, item.cmTermID);
+        			var _srcGroupAnnList = _srcGroup.annotations;
         			var _srcAnnIdx = getAnnotationIndex($scope.annotation.groups, item.cmTermID, item.cmID);
         			
         			$log.debug("length src group annlist: " + _srcGroupAnnList.length + ", try to remove index --> " + _srcAnnIdx);
         			_srcGroupAnnList.splice(_srcAnnIdx, 1);
-        			
+        			_srcGroup.totalItems = _srcGroup.totalItems - 1;
         			try {
-        				var _targetGroupAnnList = getGroup($scope.annotation.groups, targetTermID).annotations;
+        				var _targetGroup = getGroup($scope.annotation.groups, targetTermID);
+        				var _targetGroupAnnList = _targetGroup.annotations;
         				// remove the information from the local object
         				item.cmTermName = null;
         				item.cmTermID = -99;
         				item.cmOntologyID = 0;
         				
-        				_targetGroupAnnList.push(item)
+        				_targetGroupAnnList.push(item);
+        				_targetGroup.totalItems = _targetGroup.totalItems + 1;
         			} catch (e) {
         				$log.debug("Term has been removed, but group is not filtered.");
 					}
@@ -445,19 +454,23 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
             			function(data, item){
             		
             		// if call was successful, remove the term from the source group and add it to the target group
-        			var _srcGroupAnnList = getGroup($scope.annotation.groups, item.cmTermID).annotations;
+            		var _srcGroup = getGroup($scope.annotation.groups, item.cmTermID);
+        			var _srcGroupAnnList = _srcGroup.annotations;
         			var _srcAnnIdx = getAnnotationIndex($scope.annotation.groups, item.cmTermID, item.cmID);
         			
         			$log.debug("length src group annlist: " + _srcGroupAnnList.length + ", try to remove index --> " + _srcAnnIdx);
         			_srcGroupAnnList.splice(_srcAnnIdx, 1);
+        			_srcGroup.totalItems = _srcGroup.totalItems - 1;
         			try {
-        				var _targetGroupAnnList = getGroup($scope.annotation.groups, targetTermID).annotations;
+        				var _targetGroup = getGroup($scope.annotation.groups, targetTermID);
+        				var _targetGroupAnnList = _targetGroup.annotations;
         				// change the information in the local object
         				item.cmTermName = termName;
         				item.cmTermID = targetTermID;
         				// don't change the ontology ID within a project!
         				
-        				_targetGroupAnnList.push(item)
+        				_targetGroupAnnList.push(item);
+        				_targetGroup.totalItems = _targetGroup.totalItems + 1;
 					} catch (e) {
 						$log.debug("Term has been assigned, but group is not filtered.");
 					}

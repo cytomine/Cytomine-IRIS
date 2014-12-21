@@ -25,7 +25,7 @@
 #alerts {
 	position: relative;
 	bottom: 20px;
-	z-index: 2400;
+	z-index: 400;
 	margin-left: -200px;
 	left: 50%;
 }
@@ -33,7 +33,7 @@
 #alerts .alert {
 	width: 400px;
 	position: relative;
-	z-index: 2400;
+	z-index: 400;
 }
 
 #alert-container {
@@ -220,7 +220,7 @@ input[type="checkbox"].colorbox-checkbox {
 	left: 0;
 	right: 0;
 	width: 100% !important;
-	z-index: 2300;
+	z-index: 300;
 	width: 100% !important;
 }
 
@@ -233,7 +233,7 @@ input[type="checkbox"].colorbox-checkbox {
 #tools {
 	position: relative;
 	bottom: 0px;
-	z-index: 2301;
+	z-index: 301;
 	text-align: center;
 	width: 100%;
 	vertical-align: middle;
@@ -242,7 +242,7 @@ input[type="checkbox"].colorbox-checkbox {
 
 #tools .tool {
 	position: relative;
-	z-index: 2305;
+	z-index: 305;
 }
 
 /*drop area style*/
@@ -287,4 +287,13 @@ input[type="checkbox"].colorbox-checkbox {
 	box-shadow: 5px 5px 10px #999;
 	margin-bottom: 20px;
 	margin-top: 10px;
+}
+
+
+/*VIDEO CONTAINER*/
+.videogular-container-sm {
+	width: 50%;
+	height: 250px;
+	margin: auto;
+	overflow: hidden;
 }
