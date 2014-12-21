@@ -109,7 +109,6 @@ class AnnotationService {
 				// if the user is not in this assignment, continue searching in the other ones
 				else {
 					log.debug("User " + user.cmUserName + " is not in this assignment, continuing search...")
-					userAssignedOntologyTerm = false
 				}
 			}
 
