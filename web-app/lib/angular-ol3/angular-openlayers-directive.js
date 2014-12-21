@@ -72,7 +72,7 @@ angular.module("openlayers-directive", []).directive('openlayers', ["$log", "$q"
             }
             
             if (!isDefined(attrs.center)) {
-            	console.log("setting VIEW!!")
+            	$log.debug("setting VIEW!!");
                 map.setView(new ol.View({
                 	center: [ defaults.center.lon, defaults.center.lat ],
                     zoom: defaults.center.zoom,
@@ -131,7 +131,7 @@ angular.module("openlayers-directive").directive('center', ["$log", "$location",
                 		&& isDefined(center.projection.getCode())
                 		&& center.projection.getCode() === 'Zoomify'){
                 		
-                		console.log("setting zoomify view")
+                		$log.debug("setting zoomify view")
                 		var view = new ol.View({
                 			projection: center.projection,
                 			center: [ center.lon, center.lat ],
@@ -140,7 +140,7 @@ angular.module("openlayers-directive").directive('center', ["$log", "$location",
                 			minZoom: defaults.minZoom
                 		});
                 } else {
-                	console.log("setting EPSG:3857 view")
+                	$log.debug("setting EPSG:3857 view")
 //                	var view = new ol.View({
 //                		center: ol.proj.transform([ center.lon, center.lat ], 'EPSG:4326', 'EPSG:3857'),
 //                		zoom: center.zoom,
@@ -192,7 +192,7 @@ angular.module("openlayers-directive").directive('center', ["$log", "$location",
 
                 var geolocation;
                 olScope.$watch("center", function(center) {
-                	//console.log("$watch(center)");
+                	//$log.debug("$watch(center)");
                     if (center.autodiscover) {
                         if (!geolocation) {
                             geolocation = new ol.Geolocation({
@@ -246,7 +246,7 @@ angular.module("openlayers-directive").directive('center', ["$log", "$location",
 
                 view.on('change:resolution', function() {
                     safeApply(olScope, function(scope) {
-                    	//console.log("change:resolution");
+                    	//$log.debug("change:resolution");
                         scope.center.zoom = view.getZoom();
 
                         // Calculate the bounds if needed
@@ -265,7 +265,7 @@ angular.module("openlayers-directive").directive('center', ["$log", "$location",
 
                 view.on("change:center", function() {
                     safeApply(olScope, function(scope) {
-                    	//console.log("change:center");
+                    	//$log.debug("change:center");
                     	
                     	var center = map.getView().getCenter();
                     	var projection = view.getProjection();

@@ -1,10 +1,6 @@
 var iris = angular.module("irisApp");
 
-iris.config(function($logProvider) {
-	$logProvider.debugEnabled(true);
-});
-
-iris.controller("projectCtrl", function($rootScope, $scope, $http, $filter, $location, $document,
+iris.controller("projectCtrl", function($rootScope, $routeParams, $scope, $http, $filter, $location, $document,
 		$modal, $log, hotkeys, projectService, helpService, sharedService, sessionService, ngTableParams) {
 	$log.debug("projectCtrl");
 	

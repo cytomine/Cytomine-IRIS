@@ -89,7 +89,7 @@ iris.factory("projectService", function($http, $log,
 							.replace("{projectID}", cmProjectID);
 			
 			$http.get(url).success(function(data) {
-				console.log("success on $http.get(" + url + ")");
+				$log.debug("success on $http.get(" + url + ")");
 				if (callbackSuccess) {
 					callbackSuccess(data);
 				}

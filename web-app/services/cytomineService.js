@@ -10,7 +10,7 @@ iris.constant("userPublicKeyUrl", "/api/user/publicKey/{pubKey}.json");
 /**
  * This service is responsible for communicating HTTP requests to the IRIS server. 
  */
-iris.factory("cytomineService", function($http, cytomineHostUrl, cytomineWebUrl, userPublicKeyUrl) {
+iris.factory("cytomineService", function($http, $log, cytomineHostUrl, cytomineWebUrl, userPublicKeyUrl) {
 
 	var publicKey; 
 	var privateKey; 
@@ -29,7 +29,7 @@ iris.factory("cytomineService", function($http, cytomineHostUrl, cytomineWebUrl,
 
 		// sets the keys
 		setKeys : function(publicK, privateK) {
-			console.log("set key=" + publicK + " " + privateK);
+			$log.debug("set key=" + publicK + " " + privateK);
 			publicKey = publicK;
 			privateKey = privateK;
 		},

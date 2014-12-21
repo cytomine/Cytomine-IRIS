@@ -66,9 +66,14 @@ class ImageService {
 	 * @param withTileURL optionally compute the tile URLs for each image
 	 * @return a list of (blinded) IRIS images for the project
 	 */
-	def getImages(Cytomine cytomine, long cmProjectID, boolean withTileURL){
+	def getImages(Cytomine cytomine, long cmProjectID, boolean withTileURL) throws CytomineException{
 		ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)
 		def cmProject = cytomine.getProject(cmProjectID)
+		
+		if (cmProject.getAttr().getAt("success") != null){
+			throw new CytomineException(404, "The requested project is not available.");
+		}
+		
 		boolean blindMode = cmProject.get("blindMode")
 		int nImages = cmImageCollection.size()
 
@@ -127,6 +132,10 @@ class ImageService {
 
 		// update the project in the local database
 		def cmProject = cytomine.getProject(cmProjectID)
+		if (cmProject.getAttr().getAt("success") != null){
+			throw new CytomineException(404, "The requested project is not available.");
+		}
+				
 		irisProject = new DomainMapper().mapProject(cmProject, irisProject)
 		irisProject.save(flush:true,failOnError:true)
 		blindMode = irisProject.cmBlindMode
@@ -234,10 +243,10 @@ class ImageService {
 		// wait for the threads to finish
 		threadPool.shutdown()
 		threadPool.awaitTermination(5L, TimeUnit.MINUTES)
-		println "Finished all threads " << threadPool.isTerminated()
+		log.debug("Finished all threads " + threadPool.isTerminated())
 
-		println "Resolving image status for " + nImages +  " images lasted " +
-				(System.currentTimeMillis()-start)/1000 + " seconds."
+		log.debug("Resolving image status for " + nImages +  " images lasted " +
+				(System.currentTimeMillis()-start)/1000 + " seconds.")
 				
 		// the collection object
 		JSONObject collection = new JSONObject()

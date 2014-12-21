@@ -1,14 +1,10 @@
 var iris = angular.module("irisApp");
 
-iris.config(function($logProvider) {
-	$logProvider.debugEnabled(true);
-});
-
 iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $timeout,
 		$routeParams, $log, hotkeys, ngTableParams, helpService, annotationService,
 		projectService, sessionService, sharedService, navService, imageService,
 		cytomineService) {
-	console.log("labelingCtrl");
+	$log.debug("labelingCtrl");
 
 	// preallocate the objects
 	$scope.labeling = {

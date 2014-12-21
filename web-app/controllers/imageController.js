@@ -1,18 +1,14 @@
 var iris = angular.module("irisApp");
 
-iris.config(function($logProvider) {
-	$logProvider.debugEnabled(true);
-});
-
 iris.controller(
 		"imageCtrl",
 		function($rootScope, $scope, $http, $filter, 
-				$document, $timeout, $location, 
+				$document, $timeout, $location, $route,
 				$routeParams, $log, hotkeys,
 				projectService, imageService, sessionService, 
 				helpService, sharedService, navService, annotationService, 
 				ngTableParams) {
-			console.log("imageCtrl");
+			$log.debug("imageCtrl");
 			
 			// retrieve the project parameter from the URL
 			$scope.projectID = $routeParams["projectID"];
@@ -191,11 +187,15 @@ iris.controller(
 			
 			// refresh the page
 			$scope.refreshPage = function(){
-				$scope.resolveImagePages();
+				try {
+					$scope.tableParams.reload();
+				} catch (e){
+					$route.reload();
+				}
 			};
 
 			// execute actual image loading at startup
-			$scope.refreshPage();
+			$scope.resolveImagePages();
 			
 			// //////////////////////////////////////////
 			// declare additional methods
@@ -234,7 +234,9 @@ iris.controller(
 				// POSTING UPDATE TO SERVER
 				var cPrj = sessionService.getCurrentProject();
 				cPrj.prefs['images.hideCompleted'] = hideCompleted;
-				sessionService.updateProject(cPrj)
+				
+				// TODO BUG in updating the project!
+//				sessionService.updateProject(cPrj);
 				
 				if (hideCompleted == false){
 					$timeout(function() {

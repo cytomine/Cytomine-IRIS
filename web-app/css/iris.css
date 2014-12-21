@@ -61,6 +61,12 @@
 	padding: 2px 8px;
 }
 
+/*Preview images for the image table*/
+img.image-preview {
+	max-width: 150px;
+	max-height: 50px;
+}
+
 /*
 Map controls.
 */

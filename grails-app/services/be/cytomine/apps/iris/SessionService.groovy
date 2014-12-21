@@ -61,7 +61,6 @@ class SessionService {
 		// save the user and the session
 		user.save(flush:true,failOnError:true)
 
-
 		// ############################################
 		// inject non-IRIS objects into the session
 		def sessJSON = new Utils().modelToJSON(userSession);
@@ -171,6 +170,9 @@ class SessionService {
 		// fetch the Cytomine project instance
 		if (cmProject == null){
 			cmProject = cytomine.getProject(irisProject.cmID)
+			if (cmProject == null){
+				throw new CytomineException(404, "The requested project is not available.");
+			}
 			projectJSON.cytomine = cmProject.getAttr()
 		} else {
 			if (cmProject['attr'] != null){

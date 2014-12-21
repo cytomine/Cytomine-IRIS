@@ -17,6 +17,7 @@ import be.cytomine.client.models.User;
  * @author Philipp Kainz
  *
  */
+@SuppressWarnings({ "unused", "unchecked", "rawtypes" })
 public class IRIS {
 
 	private Cytomine cytomine;

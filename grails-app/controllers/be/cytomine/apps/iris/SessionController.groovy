@@ -57,6 +57,14 @@ class SessionController {
 			def sessJSON = sessionService.getSession(request["cytomine"], params["publicKey"]) as JSON
 			render sessJSON
 		} catch(Exception e3){
+			// if retrieving session fails, delete the session from the DB by removing the user
+			try {
+				User user = User.findByCmPublicKey(params["publicKey"])
+				user.delete()
+			} catch (Exception e) {
+				log.error(e)
+			}
+		
 			log.error(e3)
 			// on any other exception render 500
 			response.setStatus(500)

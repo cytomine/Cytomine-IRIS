@@ -1,12 +1,8 @@
 var iris = angular.module("irisApp");
 
-iris.config(function($logProvider) {
-	$logProvider.debugEnabled(true);
-});
-
 iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $filter, $log,
 		$location, hotkeys, helpService,navService, annotationService, sessionService, sharedService, $routeParams) {
-	console.log("annotationGalleryCtrl");
+	$log.debug("annotationGalleryCtrl");
 
 	// set content url for the help page
 	helpService.setContentUrl("content/help/annGalleryHelp.html");

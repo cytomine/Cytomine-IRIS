@@ -1,12 +1,10 @@
 var iris = angular.module("irisApp");
 
-iris.constant("image")
-
 iris.controller(
 				"mapCtrl",
 				function($scope, $route, $timeout, $log, $location, $http, olData, navService, sharedService,
 						sessionService, imageService, projectService) {
-					console.log("mapCtrl");
+					$log.debug("mapCtrl");
 					
 					// top right
 					// $scope.annotation =
@@ -108,6 +106,19 @@ iris.controller(
 						}),
 						stroke : new ol.style.Stroke({
 							width : 5,
+//							color : [ 0x5b, 0xc0, 0xde, 0.75 ]
+//							color : [ 0x00, 0x00, 0x00, 0.5 ]
+							color : [ 0xff, 0xff, 0xff, 1 ]
+						})
+					});
+					
+					var overlayStyle = new ol.style.Style({
+						fill : new ol.style.Fill({
+							color : [ 0xff, 0xff, 0xff, 0.0 ]
+						}),
+						stroke : new ol.style.Stroke({
+							width : 3,
+//							color : [ 0x5b, 0xc0, 0xde, 0.75 ]
 							color : [ 0x00, 0x00, 0x00, 0.5 ]
 						})
 					});
@@ -164,6 +175,26 @@ iris.controller(
 
 									}
 								},
+								overlay : {
+									opacity : 1,
+									type : 'Vector',
+									source : {
+										type : 'Vector',
+									},
+									style : {
+										fill : {
+											color : overlayStyle.getFill()
+													.getColor()
+										},
+										stroke : {
+											width : overlayStyle.getStroke()
+													.getWidth(),
+											color : overlayStyle.getStroke()
+													.getColor()
+										}
+
+									}
+								},
 							},
 
 							// initially move to image center
@@ -210,7 +241,7 @@ iris.controller(
 							coords[i] = coords[i] - imgHeight;
 						}
 
-						console.log("Transformed Center: " + coords[0] + ", "
+						$log.debug("Transformed Center: " + coords[0] + ", "
 								+ coords[1]);
 
 						// write out the extent
@@ -219,23 +250,23 @@ iris.controller(
 					};
 
 					// move to the annotation and draw the shape
-					var setFeature = function(feature, layer) {
+					var setFeature = function(feature, layer, style) {
 						// construct the layer if it its null
 						if (layer) {
-							console.log(layer.get('name'))
+							$log.debug(layer.get('name'))
 							// add the feature to the source
 							layer.getSource().clear();
 							layer.getSource().addFeature(feature);
-							
 						} else {
-							console.log("#########NEWLAYER")
+							$log.debug("#########NEWLAYER")
 							var layer = new ol.layer.Vector({
 								source : new ol.source.Vector({
 									features : [ feature ]
 								}),
-								style : annStyle
+								style : style
 							});
 						}
+						
 						return feature;
 					};
 					
@@ -244,7 +275,7 @@ iris.controller(
 						olData.getMap().then(
 								function(map) {
 									var view = map.getView();
-									console.log(view.getProjection().getCode())
+									$log.debug(view.getProjection().getCode())
 									if (view.getProjection().getCode() !== 'Zoomify'){
 										// workaround for openlayers problem with refreshing page
 										// on browser history navigation
@@ -291,8 +322,9 @@ iris.controller(
 										y : annotation.y
 									};
 								feature = createAnnotationFeature($scope.annotation); 
-								setFeature(feature, layers.annotations)
-								$scope.resetView(true)
+								setFeature(feature, layers.annotations, annStyle);
+								setFeature(feature, layers.overlay, overlayStyle);
+								$scope.resetView(true);
 							});
 						});
 					};

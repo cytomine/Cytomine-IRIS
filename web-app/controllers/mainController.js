@@ -3,18 +3,13 @@ var iris = angular.module("irisApp");
 iris.constant("appNameUrl", "/api/appName.json");
 iris.constant("appVersionUrl", "/api/appVersion.json");
 
-iris.config(function($logProvider) {
-	$logProvider.debugEnabled(true);
-});
-
 iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
 		$log, welcomeUrl, appNameUrl, appVersionUrl, cytomineService,
 		projectService, imageService, sharedService) {
 	$log.debug("mainCtrl");
 	
 	// declare variables for expression
-	$scope.main = {
-	};
+	$scope.main = {};
 	
 	// get the key from the local HTML5 storage
 	$scope.publicKey = (localStorage.getItem("publicKey") ? localStorage

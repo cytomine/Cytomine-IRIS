@@ -53,7 +53,7 @@ class MainController {
 				throw new UnknownHostException("The cytomine host is currently not available!")
 			}
 			render grailsApplication.config.grails.cytomine.host
-		}catch(UnknownHostException e1){
+		} catch(UnknownHostException e1){
 			log.error(e1)
 			// throw host unavailable exception
 			response.setStatus(503)
