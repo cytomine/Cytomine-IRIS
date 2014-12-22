@@ -3,9 +3,9 @@
  */
 var iris = angular.module("irisApp");
 
-iris.constant("imageURL", "/api/project/{projectID}/images.json");
+iris.constant("imageURL", "api/project/{projectID}/images.json");
 iris.constant("imageServerURLs",
-				"/api/abstractimage/{abstractImageID}/imageinstance/{imageInstanceID}/imageservers.json");
+				"api/abstractimage/{abstractImageID}/imageinstance/{imageInstanceID}/imageservers.json");
 
 iris.factory("imageService", function($http, $log, imageURL, imageServerURLs,
 		cytomineService) {

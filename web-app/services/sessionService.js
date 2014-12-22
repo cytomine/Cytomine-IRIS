@@ -1,16 +1,16 @@
 var iris = angular.module("irisApp");
 
-iris.constant("sessionURL", "/api/session.json");
+iris.constant("sessionURL", "api/session.json");
 iris.constant("touchProjectURL",
-		"/api/session/{sessionID}/project/{projectID}/touch");
+		"api/session/{sessionID}/project/{projectID}/touch");
 iris.constant("updateProjectURL",
-		"/api/session/{sessionID}/project/{projectID}");
+		"api/session/{sessionID}/project/{projectID}");
 iris.constant("touchImageURL",
-		"/api/session/{sessionID}/project/{projectID}/image/{imageID}/touch");
+		"api/session/{sessionID}/project/{projectID}/image/{imageID}/touch");
 iris.constant("labelingProgressURL",
-		"/api/session/{sessionID}/project/{projectID}/image/{imageID}/progress");
+		"api/session/{sessionID}/project/{projectID}/image/{imageID}/progress");
 iris.constant("touchAnnotationURL",
-		"/api/session/{sessionID}/project/{projectID}/image/{imageID}/annotation/{annID}/touch");
+		"api/session/{sessionID}/project/{projectID}/image/{imageID}/annotation/{annID}/touch");
 
 // A generic service for handling client sessions.
 iris.factory("sessionService", function($http, $log, $location, sessionURL,

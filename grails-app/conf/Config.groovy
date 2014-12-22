@@ -13,7 +13,6 @@
 
 grails.project.groupId = be.cytomine.apps.iris // change this to alter the default package name and Maven publishing destination
 
-grails.cytomine.apps.iris.host = "http://localhost:8080"
 grails.cytomine.image.host = "http://image{serverID}.cytomine.be"
 grails.cytomine.host = "http://beta.cytomine.be"
 grails.cytomine.web = "http://www.cytomine.be"
@@ -96,10 +95,12 @@ grails.hibernate.cache.queries = false
 environments {
     development {
         grails.logging.jul.usebridge = true
+		grails.cytomine.apps.iris.host = "http://localhost:8080/"
     }
     production {
         grails.logging.jul.usebridge = false
-        // TODO: grails.serverURL = "http://www.changeme.com"
+        grails.serverURL = "https://leonardo.medunigraz.at/iris"
+		grails.cytomine.apps.iris.host = grails.serverURL
     }
 }
 

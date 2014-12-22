@@ -295,10 +295,13 @@ class ImageService {
 		// urls are a long string, so break them up in a JSONarray
 		org.codehaus.groovy.grails.web.json.JSONObject obj = new org.codehaus.groovy.grails.web.json.JSONObject(urls)
 
+		// prepend the application context on the server
+		String appContext = grailsApplication.metadata['app.context']
+		
 		// imageServersURLs is a property of the object
 		def newUrls = obj.imageServersURLs.collect {
 			// TODO do not add the irisHost to the URL (currently this errors in saving the image in the DB)
-			"/image/tile" + it.substring(it.indexOf("?"), it.length())
+			appContext + "/image/tile" + it.substring(it.indexOf("?"), it.length())
 		}
 		obj.putAt("imageServersURLs", newUrls)
 

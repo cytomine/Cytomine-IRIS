@@ -3,9 +3,9 @@
  */
 var iris = angular.module("irisApp");
 
-iris.constant("cytomineHostUrl", "/api/cytomineHost.json");
-iris.constant("cytomineWebUrl", "/api/cytomineWeb.json");
-iris.constant("userPublicKeyUrl", "/api/user/publicKey/{pubKey}.json");
+iris.constant("cytomineHostUrl", "api/cytomineHost.json");
+iris.constant("cytomineWebUrl", "api/cytomineWeb.json");
+iris.constant("userPublicKeyUrl", "api/user/publicKey/{pubKey}.json");
 
 /**
  * This service is responsible for communicating HTTP requests to the IRIS server. 

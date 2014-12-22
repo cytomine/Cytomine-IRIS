@@ -3,10 +3,10 @@
  */
 var iris = angular.module("irisApp");
 
-iris.constant("projectURL", "/api/projects.json");
-iris.constant("projectDescrURL", "/api/project/{id}/description.json");
-iris.constant("ontologyURL", "/api/ontology/{ontologyID}.json");
-iris.constant("projectAvailURL", "/api/project/{projectID}/availability");
+iris.constant("projectURL", "api/projects.json");
+iris.constant("projectDescrURL", "api/project/{id}/description.json");
+iris.constant("ontologyURL", "api/ontology/{ontologyID}.json");
+iris.constant("projectAvailURL", "api/project/{projectID}/availability");
 
 iris.factory("projectService", function($http, $log,
 		projectURL, 

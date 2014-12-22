@@ -1,16 +1,16 @@
 var iris = angular.module("irisApp");
 
-iris.constant("userAnnURL", "/api/session/{sessionID}/project/"
+iris.constant("userAnnURL", "api/session/{sessionID}/project/"
 		+ "{projectID}/annotations.json?");
-iris.constant("userAnn3TupleURL", "/api/session/{sessionID}/project/"
+iris.constant("userAnn3TupleURL", "api/session/{sessionID}/project/"
 		+ "{projectID}/image/{imageID}/annotations/tuple.json");
-iris.constant("setAnnTermURL", "/api/session/{sessionID}/project/"
+iris.constant("setAnnTermURL", "api/session/{sessionID}/project/"
 		+ "{projectID}/image/{imageID}/annotation/{annID}/term/{termID}/clearBefore.json");
-iris.constant("addAnnTermURL", "/api/session/{sessionID}/project/"
+iris.constant("addAnnTermURL", "api/session/{sessionID}/project/"
 		+ "{projectID}/image/{imageID}/annotation/{annID}/term/{termID}.json");
-iris.constant("delAnnTermURL", "/api/session/{sessionID}/project/"
+iris.constant("delAnnTermURL", "api/session/{sessionID}/project/"
 		+ "{projectID}/image/{imageID}/annotation/{annID}/term/{termID}.json");
-iris.constant("delAllAnnURL", "/api/session/{sessionID}/project/" 
+iris.constant("delAllAnnURL", "api/session/{sessionID}/project/" 
 		+ "{cmProjectID}/image/{cmImageID}/annotation/{cmAnnID}/terms.json");
 
 iris.factory("annotationService", function($http, $log, cytomineService,
