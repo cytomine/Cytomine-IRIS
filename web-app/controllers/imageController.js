@@ -5,7 +5,7 @@ iris.controller(
 		function($rootScope, $scope, $http, $filter, 
 				$document, $timeout, $location, $route,
 				$routeParams, $log, hotkeys,
-				projectService, imageService, sessionService, 
+				cytomineService, projectService, imageService, sessionService, 
 				helpService, sharedService, navService, annotationService, 
 				ngTableParams) {
 			$log.debug("imageCtrl");
@@ -217,6 +217,10 @@ iris.controller(
 					return "success";
 				}
 			};
+			
+			$scope.addKeys = function(url){
+				return cytomineService.addKeys(url);
+			}
 			
 			getBtnAllProgresses = function() {
 				return document.getElementById("allProgresses");

@@ -49,7 +49,7 @@ class SessionService {
 
 		// generate a new user, if the user does not yet exist, otherwise update the
 		// user information from cytomine
-		user = new DomainMapper().mapUser(cmUser, user)
+		user = new DomainMapper(grailsApplication).mapUser(cmUser, user)
 
 		// try to fetch the session for this user
 		Session userSession = user.getSession()
@@ -109,7 +109,7 @@ class SessionService {
 		// fetch the Cytomine project instance
 		def cmProject = cytomine.getProject(cmProjectID)
 
-		projectForUpdate = new DomainMapper().mapProject(cmProject, projectForUpdate)
+		projectForUpdate = new DomainMapper(grailsApplication).mapProject(cmProject, projectForUpdate)
 		projectForUpdate.updateLastActivity()
 
 		// save the project in order to have the ID returned in the response
@@ -337,7 +337,7 @@ class SessionService {
 		def cmImage = cytomine.getImageInstance(cmImageID)
 
 		// Map the client model to the IRIS model
-		imageForUpdate = new DomainMapper().mapImage(cmImage, imageForUpdate, irisProject.getCmBlindMode())
+		imageForUpdate = new DomainMapper(grailsApplication).mapImage(cmImage, imageForUpdate, irisProject.getCmBlindMode())
 		imageForUpdate.updateLastActivity()
 		// set the "goToURL"
 		imageForUpdate.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImageID + "-")

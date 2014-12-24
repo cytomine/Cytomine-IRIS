@@ -11,9 +11,15 @@ iris
 									sources : [
 											{
 												src : $sce
-														.trustAsResourceUrl("videos/iris-gallery-dnd-tree.mov"),
+														.trustAsResourceUrl("videos/iris-gallery-dnd-tree.mp4"),
 												type : "video/mp4"
-											}, ],
+											},
+											{
+												src : $sce
+														.trustAsResourceUrl("videos/iris-gallery-dnd-tree.webm"),
+												type : "video/webm"
+											}
+											],
 									tracks : [
 									// {
 									// src:

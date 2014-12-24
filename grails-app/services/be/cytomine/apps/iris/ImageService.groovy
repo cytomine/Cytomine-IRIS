@@ -39,7 +39,7 @@ class ImageService {
 		Project p = Project.find { cmID == cmProjectID }
 		User user = User.find { cmPublicKey == publicKey}
 
-		Image irisImage = new DomainMapper().mapImage(cmImage, null, p.getCmBlindMode())
+		Image irisImage = new DomainMapper(grailsApplication).mapImage(cmImage, null, p.getCmBlindMode())
 
 		//for each image, add a goToURL property containing the full URL to open the image in the core Cytomine instance
 		irisImage.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImage.getId() + "-")
@@ -82,7 +82,7 @@ class ImageService {
 			ImageInstance cmImage = cmImageCollection.get(i)
 
 			// map the client image to the IRIS image
-			Image irisImage = new DomainMapper().mapImage(cmImage, null, blindMode)
+			Image irisImage = new DomainMapper(grailsApplication).mapImage(cmImage, null, blindMode)
 
 			//for each image, add a goToURL property containing the full URL to open the image in the core Cytomine instance
 			irisImage.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImage.getId() + "-")
@@ -136,7 +136,7 @@ class ImageService {
 			throw new CytomineException(404, "The requested project is not available.");
 		}
 				
-		irisProject = new DomainMapper().mapProject(cmProject, irisProject)
+		irisProject = new DomainMapper(grailsApplication).mapProject(cmProject, irisProject)
 		irisProject.save(flush:true,failOnError:true)
 		blindMode = irisProject.cmBlindMode
 
@@ -198,7 +198,7 @@ class ImageService {
 								log.debug("Processing image " + j)
 
 								// map the client image to the IRIS image
-								Image irisImage = new DomainMapper().mapImage(cmImage, null, blindMode)
+								Image irisImage = new DomainMapper(grailsApplication).mapImage(cmImage, null, blindMode)
 
 								//for each image, add a goToURL property containing the full URL to open the image in the core Cytomine instance
 								irisImage.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImage.getId() + "-")

@@ -74,6 +74,24 @@ class UrlMappings {
 		}
 		
 		/*
+		 * Optional Parameters:
+		 * 		maxWidth
+		 */
+		//http://beta.cytomine.be/api/abstractimage/140850906/associated/macro.png?maxWidth=512
+		"/api/abstractimage/$abstractImageID/associated/macro(.$format)?"(controller:"cytomine"){
+			action = [GET: "getMacroImage"]
+		}
+		
+		/*
+		 * Optional Parameters:
+		 * 		maxSize
+		 */
+		//http://beta.cytomine.be/api/userannotation/151650613/crop.png?maxSize=256
+		"/api/userannotation/$annotationID/crop(.$format)?"(controller:"cytomine"){
+			action = [GET: "getCropImage"]
+		}
+		
+		/*
 		 * annotationController
 		 * - communicates annotation CRUD operations to the core via the Java client
 		 */

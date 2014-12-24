@@ -1,7 +1,7 @@
 var iris = angular.module("irisApp");
 
 iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $filter, $log,
-		$location, hotkeys, helpService,navService, annotationService, sessionService, sharedService, $routeParams) {
+		$location, hotkeys, helpService, cytomineService, navService, annotationService, sessionService, sharedService, $routeParams) {
 	$log.debug("annotationGalleryCtrl");
 
 	// set content url for the help page
@@ -524,6 +524,10 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
 		// perform call for next/previous annotation page for that term
 		$scope.fetchAnnotations([termID], selectedImages, offset, true);
 	};
+	
+	$scope.addKeys = function(url){
+		return cytomineService.addKeys(url);
+	}
 });
 
 function sortGroups(a, b) {

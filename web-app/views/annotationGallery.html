@@ -70,7 +70,7 @@
 							<div class="draggable-container thumbnail">
 <!-- 								<span> -->
 <!-- 									<a href="" ng-click="labelAnnotation(item)"> -->
-									<img id="{{ 'thumb-' + item.cmID }}" src="{{ item.cmSmallCropURL }}" class="gallery-image" alt=""/>
+									<img id="{{ 'thumb-' + item.cmID }}" src="{{ addKeys(item.smallCropURL) }}" class="gallery-image" alt=""/>
 <!-- 									</a> -->
 <!-- 								</span> -->
 								<span class="drag-checkbox"><input id="{{ 'checkbox:' + item.cmID }}" ng-model="item.checked" type="checkbox" ng-click="selectAnnotation(item)"></span>

@@ -95,7 +95,8 @@ grails.hibernate.cache.queries = false
 environments {
     development {
         grails.logging.jul.usebridge = true
-		grails.cytomine.apps.iris.host = "http://localhost:8080/"
+		grails.serverURL = "http://localhost:8080/iris"
+		grails.cytomine.apps.iris.host = grails.serverURL
     }
     production {
         grails.logging.jul.usebridge = false

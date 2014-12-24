@@ -29,6 +29,8 @@ class Annotation {
 	Double cmCentroidX = null
 	Double cmCentroidY = null
 	
+	String smallCropURL = null
+	
 	// the assigned Cytomine term ID by the user // TODO implement multiple terms
 	/**
 	 * Default term ID is -99 (no term assigned).

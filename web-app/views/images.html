@@ -32,7 +32,7 @@
 		    <table ng-table="tableParams" show-filter="true" class="table table-hover table-bordered">
 		        <tr ng-repeat="item in data" class="{{rowClass(userProgress)}}">
 		            <td data-title="'ID'" sortable="'cytomine.id'">{{item.cytomine.id}}</td>
-		            <td data-title="'Preview'" class="text-center"><img class="img-rounded image-preview" src="{{item.cytomine.macroURL}}"/></td>
+		            <td data-title="'Preview'" class="text-center"><img class="img-rounded image-preview" src="{{ addKeys(item.macroURL) }}"/></td>
 		            <td data-title="'Name'" sortable="'originalFilename'" filter="{ 'originalFilename': 'text' }">
 		            	 {{item.originalFilename}} 
 		            	 <span ng-show="({{today}} - {{item.cytomine.created}}) <= {{image.stillNew}}" class="label label-success pull-right">New!</span>

@@ -17,6 +17,7 @@ class Image implements Comparable<Image>, Updateable{
 	String originalFilename = "defaultImage"
 	String goToURL = null
 	String olTileServerURL = null
+	String macroURL = null
 	
 	Long numberOfAnnotations = 0L
 	Long labeledAnnotations = 0L

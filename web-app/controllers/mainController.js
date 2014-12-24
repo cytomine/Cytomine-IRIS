@@ -77,4 +77,9 @@ iris.controller("mainCtrl", function($scope, $http, $route, $location, $modal,
 	},function(data, status){
 		// do nothing
 	});
+	
+	$scope.isIE = function(){
+		$log.info($.browser.msie);
+		return $.browser.msie;
+	}
 });

@@ -1,5 +1,10 @@
 package be.cytomine.apps.iris
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+
+import javax.imageio.ImageIO;
+
 import grails.converters.JSON
 
 import org.apache.http.HttpEntity
@@ -140,6 +145,75 @@ class CytomineController {
 			render errorMsg as JSON
 		}
 	}
+	
+	/**
+	 * Retrieves the macro image for the image list (preview).
+	 * @return
+	 */
+	def getMacroImage() {
+		try {
+			Cytomine cytomine = request['cytomine']
+			long abstractImageID = params.long('abstractImageID')
+			int maxWidth = params.int("maxWidth")?params.int("maxWidth"):512
+			
+			String cmHost = grailsApplication.config.grails.cytomine.host
+			String macroURL = cmHost + "/api/abstractimage/" + 
+					abstractImageID + "/associated/macro.png?maxWidth=" + maxWidth
+					
+		    long start = System.currentTimeMillis()
+
+			log.debug(macroURL)
+
+			be.cytomine.client.HttpClient client = new be.cytomine.client.HttpClient(cytomine.publicKey, cytomine.privateKey, cmHost)
+			
+			BufferedImage macroImage = client.readBufferedImageFromURL(macroURL)
+			
+			log.debug("fetched image from server in " + (System.currentTimeMillis() - start)/1000 + " seconds")
+			start = System.currentTimeMillis()
+			
+			// get the image as byte[]
+			ByteArrayOutputStream baos = new ByteArrayOutputStream()
+			
+			ImageIO.write(macroImage, "png", baos)
+			baos.flush()
+			byte[] imageInByte = baos.toByteArray()
+			baos.close()
+			
+			log.debug("converted image to byte[] in " + (System.currentTimeMillis() - start)/1000 + " seconds") 
+			
+			response.setStatus(200)
+			response.setContentType("image/png")
+
+			int contentLength = imageInByte.length
+			response.setContentLength(contentLength)
+
+			response.setHeader("Access-Control-Allow-Methods", "GET")
+			response.setHeader("Access-Control-Allow-Origin", "*")
+
+			// render image back to client
+			response.outputStream.write(imageInByte)
+			log.debug("rendered response in " + (System.currentTimeMillis() - start)/1000 + " seconds")
+			
+		} catch(CytomineException e1){
+			log.error(e1)
+			// exceptions from the cytomine java client
+			response.setStatus(e1.httpCode)
+			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+			render errorMsg as JSON
+		} catch(GroovyCastException e2) {
+			log.error(e2)
+			// send back 400 if the project ID is other than long format
+			response.setStatus(400)
+			JSONObject errorMsg = new Utils().resolveException(e2, 400)
+			render errorMsg as JSON
+		} catch(Exception e3){
+			log.error(e3)
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
+		}
+	}
 
 	/**
 	 * Gets the tile for a zoomify image
@@ -206,6 +280,75 @@ class CytomineController {
 			// render image back to client
 			response.outputStream.leftShift(is)
 
+		} catch(CytomineException e1){
+			log.error(e1)
+			// exceptions from the cytomine java client
+			response.setStatus(e1.httpCode)
+			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+			render errorMsg as JSON
+		} catch(GroovyCastException e2) {
+			log.error(e2)
+			// send back 400 if the project ID is other than long format
+			response.setStatus(400)
+			JSONObject errorMsg = new Utils().resolveException(e2, 400)
+			render errorMsg as JSON
+		} catch(Exception e3){
+			log.error(e3)
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
+		}
+	}
+	
+	/**
+	 * Retrieves the cropped image for an annoation.
+	 * @return
+	 */
+	def getCropImage() {
+		try {
+			Cytomine cytomine = request['cytomine']
+			long annID = params.long('annotationID')
+			int maxSize = params.int("maxSize")?params.int("maxSize"):256
+			
+			String cmHost = grailsApplication.config.grails.cytomine.host
+			String cropURL = cmHost + "/api/userannotation/" +
+					annID + "/crop.png?maxSize=" + maxSize
+					
+			long start = System.currentTimeMillis()
+
+			log.debug(cropURL)
+
+			be.cytomine.client.HttpClient client = new be.cytomine.client.HttpClient(cytomine.publicKey, cytomine.privateKey, cmHost)
+			
+			BufferedImage macroImage = client.readBufferedImageFromURL(cropURL)
+			
+			log.debug("fetched image from server in " + (System.currentTimeMillis() - start)/1000 + " seconds")
+			start = System.currentTimeMillis()
+			
+			// get the image as byte[]
+			ByteArrayOutputStream baos = new ByteArrayOutputStream()
+			
+			ImageIO.write(macroImage, "jpg", baos)
+			baos.flush()
+			byte[] imageInByte = baos.toByteArray()
+			baos.close()
+			
+			log.debug("converted image to byte[] in " + (System.currentTimeMillis() - start)/1000 + " seconds")
+			
+			response.setStatus(200)
+			response.setContentType("image/jpeg")
+
+			int contentLength = imageInByte.length
+			response.setContentLength(contentLength)
+
+			response.setHeader("Access-Control-Allow-Methods", "GET")
+			response.setHeader("Access-Control-Allow-Origin", "*")
+
+			// render image back to client
+			response.outputStream.write(imageInByte)
+			log.debug("rendered response in " + (System.currentTimeMillis() - start)/1000 + " seconds")
+			
 		} catch(CytomineException e1){
 			log.error(e1)
 			// exceptions from the cytomine java client

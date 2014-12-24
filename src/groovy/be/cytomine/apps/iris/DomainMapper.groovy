@@ -12,9 +12,13 @@ class DomainMapper {
 
 	def grailsApplication
 	def log
+	String cmHost
+	String irisHost
 
 	DomainMapper(def grailsApplication){
 		this.grailsApplication = grailsApplication
+		this.cmHost = grailsApplication.config.grails.cytomine.host
+		this.irisHost = grailsApplication.config.grails.cytomine.apps.iris.host
 	}
 
 	/**
@@ -85,6 +89,11 @@ class DomainMapper {
 
 		// TODO map required properties from the client model
 		irisImage.setCmID(cmImage.getId())
+		
+		// replace the host in the macro url
+		irisImage.setMacroURL(cmImage.get("macroURL").toString()
+				.replace(cmHost,irisHost))
+		
 		if (blindMode){
 			irisImage.setOriginalFilename("[BLIND]" + cmImage.getId())
 		} else {
@@ -118,6 +127,8 @@ class DomainMapper {
 							+ cmAnnotation.getId()
 							+ "/crop.png?increaseArea=8&maxSize=256&draw=true")
 		irisAnnotation.setCmSmallCropURL(cmAnnotation.getStr("smallCropURL"))
+		irisAnnotation.setSmallCropURL(cmAnnotation.getStr("smallCropURL").toString()
+				.replace(cmHost,irisHost))
 		
 		// map centroid and location object
 		try {
