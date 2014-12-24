@@ -53,17 +53,19 @@
 						<div class="container-pagination-group text-center" ng-show="group.totalItems > pagination.global.itemsPerPage">
 							<pagination 
 								id="{{ 'pagination-term:' + group.termID }}" 
+								class="pagination-sm" 
+								ng-model="group.currentPage"
+								ng-change="pageChanged($event, group.termID)"
 								total-items="group.totalItems" 
 								items-per-page="pagination.global.itemsPerPage"
 								max-size="5"
-								ng-model="group.currentPage"
-								ng-change="pageChanged($event, group.termID)"
-								class="pagination-sm" 
 								boundary-links="true" 
 								previous-text="&lsaquo;" 
 								next-text="&rsaquo;" 
 								first-text="&laquo;" 
-								last-text="&raquo;">
+								last-text="&raquo;"
+								num-pages="group.pages"
+								rotate="false">
 							</pagination>
 						</div>
 						<div ng-repeat="item in group.annotations" id="{{ 'item' + item.cmID }}">
