@@ -347,8 +347,10 @@ class SessionController {
 		try {
 			Cytomine cytomine = request['cytomine']
 			long projectID = params.long("projectID")
+			String publicKey = params.get("publicKey")
 			Boolean withProgress = Boolean.parseBoolean(params['computeProgress'])
 			Boolean withTiles = Boolean.parseBoolean(params['withTileURL'])
+			Boolean hideCompleted = Boolean.parseBoolean(params['hideCompleted'])
 
 			int offset = (params['offset']==null?0:params.int('offset'))
 			int max = (params['max']==null?0:params.int('max'))
@@ -357,14 +359,14 @@ class SessionController {
 			cytomine.setOffset(offset)
 			cytomine.setMax(max)
 			
-			def imageObject
+			def imagesObject
 			if (withProgress){
-				imageObject = imageService.getImagesWithProgress(cytomine, projectID, params.get("publicKey"), withTiles, offset, max)
+				imagesObject = imageService.getImagesWithProgress(cytomine, projectID, publicKey, withTiles, offset, max, hideCompleted)
 			} else {
-				imageObject = imageService.getImages(cytomine, projectID, withTiles)
+				imagesObject = imageService.getImages(cytomine, projectID, withTiles)
 			}
 			
-			render imageObject as JSON
+			render imagesObject as JSON
 		} catch(CytomineException e1){
 			log.error(e1)
 			// exceptions from the cytomine java client

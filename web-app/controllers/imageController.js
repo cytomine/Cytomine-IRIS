@@ -1,7 +1,13 @@
 var iris = angular.module("irisApp");
 
 iris.controller(
-		"imageCtrl",
+		"imageCtrl", [
+"$rootScope", "$scope", "$http", "$filter", 
+"$document", "$timeout", "$location", "$route",
+"$routeParams", "$log", "hotkeys",
+"cytomineService", "projectService", "imageService", "sessionService", 
+"helpService", "sharedService", "navService", "annotationService", 
+"ngTableParams",
 		function($rootScope, $scope, $http, $filter, 
 				$document, $timeout, $location, $route,
 				$routeParams, $log, hotkeys,
@@ -261,4 +267,4 @@ iris.controller(
 //				console.log("hideCompleted (scope after update): " + $scope.hide);
 				
 			};
-		});
+		}]);

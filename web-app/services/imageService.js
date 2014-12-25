@@ -7,8 +7,9 @@ iris.constant("imageURL", "api/project/{projectID}/images.json");
 iris.constant("imageServerURLs",
 				"api/abstractimage/{abstractImageID}/imageinstance/{imageInstanceID}/imageservers.json");
 
-iris.factory("imageService", function($http, $log, imageURL, imageServerURLs,
-		cytomineService) {
+iris.factory("imageService", [
+	"$http", "$log", "imageURL", "imageServerURLs", "cytomineService", 
+	function($http, $log, imageURL, imageServerURLs, cytomineService) {
 
 	return {
 		
@@ -65,4 +66,4 @@ iris.factory("imageService", function($http, $log, imageURL, imageServerURLs,
 			});
 		},
 	};
-});
+}]);

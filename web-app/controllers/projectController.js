@@ -1,6 +1,9 @@
 var iris = angular.module("irisApp");
 
-iris.controller("projectCtrl", function($rootScope, $routeParams, $scope, $http, $filter, $location, $document,
+iris.controller("projectCtrl", [
+"$rootScope", "$routeParams", "$scope", "$http", "$filter", "$location", "$document",
+"$modal", "$log", "hotkeys", "projectService", "helpService", "sharedService", "sessionService", "ngTableParams",
+	    function($rootScope, $routeParams, $scope, $http, $filter, $location, $document,
 		$modal, $log, hotkeys, projectService, helpService, sharedService, sessionService, ngTableParams) {
 	$log.debug("projectCtrl");
 	
@@ -186,4 +189,4 @@ iris.controller("projectCtrl", function($rootScope, $routeParams, $scope, $http,
 	};
 	// END PROJECT DESCRIPTION MODAL DIALOG
 	// ###############################################################
-});
+}]);

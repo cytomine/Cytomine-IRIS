@@ -1,7 +1,9 @@
 var iris = angular.module("irisApp");
 
 iris.controller(
-				"mapCtrl",
+				"mapCtrl", [
+"$scope", "$route", "$timeout", "$log", "$location", "$http", "olData", "navService", "sharedService",
+"sessionService", "imageService", "projectService",
 				function($scope, $route, $timeout, $log, $location, $http, olData, navService, sharedService,
 						sessionService, imageService, projectService) {
 					$log.debug("mapCtrl");
@@ -368,4 +370,4 @@ iris.controller(
 					
 					// test the annotation
 					//$timeout(function(){$scope.annotation = annotation; },3000)					
-				});
+				}]);

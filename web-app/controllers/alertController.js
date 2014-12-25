@@ -1,6 +1,6 @@
 var iris = angular.module("irisApp");
 
-iris.controller("alertCtrl", function($rootScope, $scope, $timeout) {
+iris.controller("alertCtrl", ["$rootScope","$scope","$timeout", function($rootScope, $scope, $timeout) {
 	
 	// limit the number of alerts to 8
 	var maxAlerts = 8;
@@ -30,4 +30,4 @@ iris.controller("alertCtrl", function($rootScope, $scope, $timeout) {
 		$scope.alerts.splice(index, 1);
 	};
 	
-});
+}]);

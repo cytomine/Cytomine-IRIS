@@ -3,7 +3,9 @@ var iris = angular.module("irisApp");
 /**
  * This service provides common (shared) functionality for the client.
  */
-iris.factory("sharedService", function($http, $rootScope, $location, $window, $log, cytomineService) {
+iris.factory("sharedService", [
+	"$http", "$rootScope", "$location", "$window", "$log", "cytomineService",
+	function($http, $rootScope, $location, $window, $log, cytomineService) {
 	
 		return {
 			// firing an alert which will be handled by the alertCtrl
@@ -49,4 +51,4 @@ iris.factory("sharedService", function($http, $rootScope, $location, $window, $l
 			},
 		};
 		
-	});
+	}]);

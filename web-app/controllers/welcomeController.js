@@ -1,9 +1,8 @@
 var iris = angular.module("irisApp");
 
-iris.constant("welcomeUrl", "/api/welcome.json");
-
-iris.controller("welcomeCtrl", function($rootScope, $scope, $log, $http, $location,
-		helpService, cytomineService, welcomeUrl, hotkeys, sessionService, $routeParams, $route, navService) {
+iris.controller("welcomeCtrl", 
+		["$scope", "$log", "helpService", "hotkeys", "cytomineService", 
+		 function($scope, $log, helpService, hotkeys, cytomineService) {
 	$log.debug("welcomeCtrl");
 	
 	// set the help variable for this page
@@ -34,4 +33,4 @@ iris.controller("welcomeCtrl", function($rootScope, $scope, $log, $http, $locati
 		});
 	};
 	$scope.getCytomineHost();
-});
+}]);

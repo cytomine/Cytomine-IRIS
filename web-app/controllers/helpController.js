@@ -1,6 +1,7 @@
 var iris = angular.module("irisApp");
 
-iris.controller("helpCtrl", function($rootScope, $scope, $modal, $log, helpService) {
+iris.controller("helpCtrl", ["$rootScope", "$scope", "$modal", "$log", "helpService", 
+                             function($rootScope, $scope, $modal, $log, helpService) {
 
 	// shared object of the help controller and the modal dialog
 	// which will display the help page
@@ -68,8 +69,4 @@ iris.controller("helpCtrl", function($rootScope, $scope, $modal, $log, helpServi
 			// TODO implement trigger of '?'
 		};
 	}
-});
-		
-
-		
-	
+}]);

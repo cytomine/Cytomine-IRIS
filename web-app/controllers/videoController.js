@@ -2,7 +2,8 @@ var iris = angular.module("irisApp");
 
 iris
 		.controller(
-				"videoCtrl",
+				"videoCtrl", [
+				"$scope", "$rootScope", "$log", "$sce",
 				function($scope, $rootScope, $log, $sce) {
 					$scope.video = {
 						dnd : {
@@ -43,7 +44,8 @@ iris
 												src : $sce
 														.trustAsResourceUrl("videos/iris-gallery-dnd-panel.mov"),
 												type : "video/mp4"
-											}, ],
+											}, 
+											],
 									tracks : [
 									// {
 									// src:
@@ -68,7 +70,8 @@ iris
 											src : $sce
 													.trustAsResourceUrl("videos/iris-gallery-multi-assignment.mov"),
 											type : "video/mp4"
-										}, ],
+										}, 
+										],
 								tracks : [
 								// {
 								// src:
@@ -86,4 +89,4 @@ iris
 							}
 						}
 					}
-				});
+				}]);

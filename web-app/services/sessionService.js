@@ -13,7 +13,11 @@ iris.constant("touchAnnotationURL",
 		"api/session/{sessionID}/project/{projectID}/image/{imageID}/annotation/{annID}/touch");
 
 // A generic service for handling client sessions.
-iris.factory("sessionService", function($http, $log, $location, sessionURL,
+iris.factory("sessionService", [
+"$http", "$log", "$location", "sessionURL",
+"touchProjectURL", "updateProjectURL", "touchImageURL", "labelingProgressURL", "touchAnnotationURL", "sharedService",
+"cytomineService",
+	    function($http, $log, $location, sessionURL,
 		touchProjectURL, updateProjectURL, touchImageURL, labelingProgressURL, touchAnnotationURL, sharedService,
 		cytomineService) {
 
@@ -275,4 +279,4 @@ iris.factory("sessionService", function($http, $log, $location, sessionURL,
 	// END SESSION MANAGEMENT
 	// ###############################################################
 	}
-});
+}]);

@@ -8,7 +8,15 @@ iris.constant("projectDescrURL", "api/project/{id}/description.json");
 iris.constant("ontologyURL", "api/ontology/{ontologyID}.json");
 iris.constant("projectAvailURL", "api/project/{projectID}/availability");
 
-iris.factory("projectService", function($http, $log,
+iris.factory("projectService", [
+"$http", "$log",
+"projectURL", 
+"projectDescrURL", 
+"ontologyURL", 
+"projectAvailURL",
+"sessionService",
+"cytomineService", 
+	    function($http, $log,
 		projectURL, 
 		projectDescrURL, 
 		ontologyURL, 
@@ -101,4 +109,4 @@ iris.factory("projectService", function($http, $log,
 			})
 		},
 	};
-});
+}]);

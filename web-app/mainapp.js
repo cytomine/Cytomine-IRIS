@@ -7,16 +7,16 @@ var iris = angular.module("irisApp", [ "ngRoute", "ngResource", "ngTable",
                         		       "com.2fdevs.videogular.plugins.poster" ]);
 
 // include application wide route-specific cheat sheets
-iris.config(function(hotkeysProvider) {
+iris.config(["hotkeysProvider", function(hotkeysProvider) {
     hotkeysProvider.includeCheatSheet = true;
-});
+}]);
 
 // log configuration
-iris.config(function($logProvider){
+iris.config(["$logProvider", function($logProvider){
 	$logProvider.debugEnabled(false);
-});
+}]);
 
-iris.run(['$route', '$rootScope', '$location', function ($route, $rootScope, $location) {
+iris.run(["$route", "$rootScope", "$location", function ($route, $rootScope, $location) {
     var original = $location.path;
     $location.path = function (path, reload) {
         if (reload === false) {
@@ -30,7 +30,7 @@ iris.run(['$route', '$rootScope', '$location', function ($route, $rootScope, $lo
     };
 }]);
 
-iris.config(function($routeProvider, $locationProvider) {
+iris.config(["$routeProvider", "$locationProvider", function($routeProvider, $locationProvider) {
 	$routeProvider.when("/", {
 		templateUrl : "views/welcome.html",
 	});
@@ -62,4 +62,4 @@ iris.config(function($routeProvider, $locationProvider) {
 	$routeProvider.otherwise({
 		templateUrl : "views/404.html"
 	});
-});
+}]);

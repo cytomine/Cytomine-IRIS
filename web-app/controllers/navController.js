@@ -1,6 +1,9 @@
 var iris = angular.module("irisApp");
 
-iris.controller("navCtrl", function($scope, $window, $route, $location, $log, sharedService, navService,
+iris.controller("navCtrl", [
+"$scope", "$window", "$route", "$location", "$log", "sharedService", "navService",
+"projectService", "helpService", "sessionService", "imageService",
+        function($scope, $window, $route, $location, $log, sharedService, navService,
 		projectService, helpService, sessionService, imageService) {
 	$log.debug("navCtrl");
 
@@ -50,4 +53,4 @@ iris.controller("navCtrl", function($scope, $window, $route, $location, $log, sh
 	$scope.showHelp = function() {
 		helpService.showHelp();
 	}
-});
+}]);

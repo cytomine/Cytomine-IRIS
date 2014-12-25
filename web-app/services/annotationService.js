@@ -13,7 +13,10 @@ iris.constant("delAnnTermURL", "api/session/{sessionID}/project/"
 iris.constant("delAllAnnURL", "api/session/{sessionID}/project/" 
 		+ "{cmProjectID}/image/{cmImageID}/annotation/{cmAnnID}/terms.json");
 
-iris.factory("annotationService", function($http, $log, cytomineService,
+iris.factory("annotationService", [
+"$http", "$log", "cytomineService",
+"sessionService", "userAnnURL", "sharedService", "userAnn3TupleURL", "setAnnTermURL", "addAnnTermURL", "delAnnTermURL", "delAllAnnURL",
+                                   function($http, $log, cytomineService,
 		sessionService, userAnnURL, sharedService, userAnn3TupleURL, setAnnTermURL, addAnnTermURL, delAnnTermURL, delAllAnnURL) {
 
 	return {
@@ -258,5 +261,4 @@ iris.factory("annotationService", function($http, $log, cytomineService,
 			})
 		},
 	}
-
-});
+}]);

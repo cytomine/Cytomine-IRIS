@@ -1,6 +1,8 @@
 var iris = angular.module("irisApp");
 
-iris.controller("termTreeCtrl", function($rootScope, $scope, $timeout, $log, sessionService, projectService, sharedService){
+iris.controller("termTreeCtrl", 
+		["$rootScope", "$scope", "$timeout", "$log", "sessionService", "projectService", "sharedService",
+		function($rootScope, $scope, $timeout, $log, sessionService, projectService, sharedService){
 	
 	$log.debug("termTreeCtrl");
 	
@@ -180,7 +182,7 @@ iris.controller("termTreeCtrl", function($rootScope, $scope, $timeout, $log, ses
     		}
     	}
     };
-});
+}]);
 
 function getTerm(termList, id){
 	for (var i=0; i<termList.length; i++){

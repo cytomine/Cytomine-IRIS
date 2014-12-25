@@ -1,6 +1,8 @@
 var iris = angular.module("irisApp");
 
-iris.controller("imageTreeCtrl", function($rootScope, $scope, $routeParams, $timeout, $log, sessionService, imageService, projectService, sharedService){
+iris.controller("imageTreeCtrl", [
+"$rootScope", "$scope", "$routeParams", "$timeout", "$log", "sessionService", "imageService", "projectService", "sharedService",
+                                  function($rootScope, $scope, $routeParams, $timeout, $log, sessionService, imageService, projectService, sharedService){
 	
 	$log.debug("imageTreeCtrl");
 	
@@ -138,7 +140,7 @@ iris.controller("imageTreeCtrl", function($rootScope, $scope, $routeParams, $tim
     };
     
       
-});
+}]);
 
 function getImage(imageList, id){
 	for (var i=0; i<imageList.length; i++){

@@ -3,7 +3,10 @@ var iris = angular.module("irisApp");
 /**
  * This service provides navigation functionality for the client.
  */
-iris.factory("navService", function($http, $rootScope, $location, $window,
+iris.factory("navService", [
+"$http", "$rootScope", "$location", "$window",
+"$log", "cytomineService", "sessionService", "sharedService",
+	    function($http, $rootScope, $location, $window,
 		$log, cytomineService, sessionService, sharedService) {
 
 	return {
@@ -69,4 +72,4 @@ iris.factory("navService", function($http, $rootScope, $location, $window,
 		}
 	};
 
-});
+}]);

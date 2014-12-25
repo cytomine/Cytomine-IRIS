@@ -1,6 +1,10 @@
 var iris = angular.module("irisApp");
 
-iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $filter, $log,
+iris.controller("annotationGalleryCtrl", [
+"$rootScope", "$scope", "$http", "$filter", "$log",
+"$location", "hotkeys", "helpService", "cytomineService", 
+"navService", "annotationService", "sessionService", "sharedService", "$routeParams",
+                                          function($rootScope, $scope, $http, $filter, $log,
 		$location, hotkeys, helpService, cytomineService, navService, annotationService, sessionService, sharedService, $routeParams) {
 	$log.debug("annotationGalleryCtrl");
 
@@ -528,7 +532,7 @@ iris.controller("annotationGalleryCtrl", function($rootScope, $scope, $http, $fi
 	$scope.addKeys = function(url){
 		return cytomineService.addKeys(url);
 	}
-});
+}]);
 
 function sortGroups(a, b) {
 	if (a.termName < b.termName)

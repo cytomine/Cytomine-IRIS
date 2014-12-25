@@ -181,7 +181,12 @@ class UrlMappings {
 			action = [GET: "getImage"]
 		}
 		
-		// optional parameters (progress = true | false)
+		/*
+		 *  optional parameters 
+		 *  	computeProgress = true | false
+		 *  	withTileURL = true | false
+		 *  	hideCompleted = true | false TODO implement!!
+		 */
 		"/api/project/$projectID/images.$format"(controller:"session"){
 			action = [GET: "getImages"]
 		}

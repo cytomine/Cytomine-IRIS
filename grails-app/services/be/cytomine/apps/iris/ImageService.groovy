@@ -107,12 +107,13 @@ class ImageService {
 	 * @param cmProjectID the Cytomine project ID
 	 * @param publicKey the public key of the user
 	 * @param withTileURL optionally compute the tile URLs for each image
+	 * @param hideCompleted optionally hide completed images (progress = 100%)
 	 * 
 	 * @return a list of IRIS images
 	 * 
 	 * @throws CytomineException if the user is not found
 	 */
-	def getImagesWithProgress(Cytomine cytomine, long cmProjectID, String publicKey, boolean withTileURL, int offset, int max) throws CytomineException{
+	def getImagesWithProgress(Cytomine cytomine, long cmProjectID, String publicKey, boolean withTileURL, int offset, int max, boolean hideCompleted) throws CytomineException{
 		
 		// ######################## PARALLEL IMPLEMENTATION
 		long userID = cytomine.getUser(publicKey).getId()

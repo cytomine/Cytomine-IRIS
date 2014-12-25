@@ -1,6 +1,10 @@
 var iris = angular.module("irisApp");
 
-iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $timeout,
+iris.controller("labelingCtrl", [
+"$scope", "$http", "$filter", "$location", "$timeout",
+"$routeParams", "$log", "hotkeys", "ngTableParams", "helpService", "annotationService",
+"projectService", "sessionService", "sharedService", "navService", "imageService",
+"cytomineService", function($scope, $http, $filter, $location, $timeout,
 		$routeParams, $log, hotkeys, ngTableParams, helpService, annotationService,
 		projectService, sessionService, sharedService, navService, imageService,
 		cytomineService) {
@@ -323,4 +327,4 @@ iris.controller("labelingCtrl", function($scope, $http, $filter, $location, $tim
 	$scope.navToImages = function(){
 		navService.navToImages();
 	};
-});
+}]);
