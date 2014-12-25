@@ -233,21 +233,24 @@ iris.controller(
 						// name: 'annotation center'
 						// });
 
-						var coords = feature.getGeometry().flatCoordinates;
-
+						var geometry = feature.getGeometry();
+						var coords = geometry.getCoordinates();
+						
 						// transform the coordinates
 						// TODO a better solution would be writing a custom
 						// ol.proj.addCoordinateTransforms(source, destination,
 						// forward, inverse) function
-						for (var i = 1; i <= coords.length; i += 2) {
-							coords[i] = coords[i] - imgHeight;
+						for (var i = 0; i < coords[0].length; i++) {
+							var xy = coords[0][i];
+							xy[1] = xy[1] - imgHeight;
 						}
 
-						$log.debug("Transformed Center: " + coords[0] + ", "
-								+ coords[1]);
-
+						geometry.setCoordinates(coords, geometry.getLayout());
+						
+						$log.debug("Transformed coordinates of feature");
+						
 						// write out the extent
-						$scope.extent = feature.getGeometry().getExtent();
+						$scope.extent = geometry.getExtent();
 						return feature;
 					};
 
