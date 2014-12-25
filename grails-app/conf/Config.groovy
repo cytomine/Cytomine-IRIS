@@ -97,6 +97,9 @@ environments {
         grails.logging.jul.usebridge = true
 		grails.serverURL = "http://localhost:8080/iris"
 		grails.cytomine.apps.iris.host = grails.serverURL
+		
+		// closure compiler settings
+		//grails.resources.mappers.googleclosurecompiler.disable = true
     }
     production {
         grails.logging.jul.usebridge = false
