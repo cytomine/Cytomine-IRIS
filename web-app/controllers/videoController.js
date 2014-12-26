@@ -5,7 +5,7 @@ iris
 				"videoCtrl", [
 				"$scope", "$rootScope", "$log", "$sce",
 				function($scope, $rootScope, $log, $sce) {
-					var defaultTheme = "lib/videogular/videogular.css";
+					var defaultTheme = "lib/videogular/videogular.min.css";
 					
 					$scope.video = {
 						dnd : {
