@@ -5,6 +5,8 @@ iris
 				"videoCtrl", [
 				"$scope", "$rootScope", "$log", "$sce",
 				function($scope, $rootScope, $log, $sce) {
+					var defaultTheme = "lib/videogular/videogular.css";
+					
 					$scope.video = {
 						dnd : {
 							galleryTree : {
@@ -12,28 +14,19 @@ iris
 									sources : [
 											{
 												src : $sce
-														.trustAsResourceUrl("videos/iris-gallery-dnd-tree.mp4"),
+														.trustAsResourceUrl("videos/help/gallery/iris-gallery-dnd-tree.mp4"),
 												type : "video/mp4"
 											},
 											{
 												src : $sce
-														.trustAsResourceUrl("videos/iris-gallery-dnd-tree.webm"),
+														.trustAsResourceUrl("videos/help/gallery/iris-gallery-dnd-tree.webm"),
 												type : "video/webm"
 											}
 											],
-									tracks : [
-									// {
-									// src:
-									// "http://www.videogular.com/assets/subs/pale-blue-dot.vtt",
-									// kind: "subtitles",
-									// srclang: "en",
-									// label: "English",
-									// default: ""
-									// }
-									],
-									theme : "lib/videogular/videogular.css",
+									tracks : [],
+									theme : defaultTheme,
 									plugins : {
-										poster : "videos/poster.png"
+										poster : "videos/help/gallery/thumbnails/iris-gallery-dnd-tree.png"
 									}
 								}
 							},
@@ -42,23 +35,19 @@ iris
 									sources : [
 											{
 												src : $sce
-														.trustAsResourceUrl("videos/iris-gallery-dnd-panel.mov"),
+														.trustAsResourceUrl("videos/help/gallery/iris-gallery-dnd-panel.mp4"),
 												type : "video/mp4"
-											}, 
+											},
+											{
+												src : $sce
+														.trustAsResourceUrl("videos/help/gallery/iris-gallery-dnd-panel.webm"),
+												type : "video/webm"
+											}
 											],
-									tracks : [
-									// {
-									// src:
-									// "http://www.videogular.com/assets/subs/pale-blue-dot.vtt",
-									// kind: "subtitles",
-									// srclang: "en",
-									// label: "English",
-									// default: ""
-									// }
-									],
-									theme : "lib/videogular/videogular.css",
+									tracks : [],
+									theme : defaultTheme,
 									plugins : {
-										poster : "videos/poster.png"
+										poster : "videos/help/gallery/thumbnails/iris-gallery-dnd-panel.png"
 									}
 								}
 							}
@@ -67,24 +56,20 @@ iris
 							config : {
 								sources : [
 										{
-											src : $sce
-													.trustAsResourceUrl("videos/iris-gallery-multi-assignment.mov"),
-											type : "video/mp4"
-										}, 
+												src : $sce
+														.trustAsResourceUrl("videos/help/gallery/iris-gallery-multi-assignment.mp4"),
+												type : "video/mp4"
+											},
+											{
+												src : $sce
+														.trustAsResourceUrl("videos/help/gallery/iris-gallery-multi-assignment.webm"),
+												type : "video/webm"
+											}
 										],
-								tracks : [
-								// {
-								// src:
-								// "http://www.videogular.com/assets/subs/pale-blue-dot.vtt",
-								// kind: "subtitles",
-								// srclang: "en",
-								// label: "English",
-								// default: ""
-								// }
-								],
-								theme : "lib/videogular/videogular.css",
+								tracks : [],
+								theme : defaultTheme,
 								plugins : {
-									poster : "videos/poster.png"
+									poster : "videos/help/gallery/thumbnails/iris-gallery-multi-assignment.png"
 								}
 							}
 						}
