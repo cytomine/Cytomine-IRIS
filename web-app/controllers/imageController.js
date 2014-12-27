@@ -113,82 +113,85 @@ iris.controller(
 
 			// construct the table parameters
 			$scope.tableParams = new ngTableParams(
-					{
-						// define the parameters
-						page : 1, // show first page
-						count : $scope.pagination.global.itemsPerPage, // count per page 
-						sorting : {
-							// initial sorting
-							originalFilename : 'asc',
+			{
+				// define the parameters
+				page : 1, // show first page
+				count : $scope.pagination.global.itemsPerPage, // count per page 
+				sorting : {
+					// initial sorting
+					originalFilename : 'asc',
 //							userProgress : 'asc'
-						},
-						filter : {
-							// applies filter to the "data" object before sorting
-						}						
-					}, {
-						counts : [], // deactivate the 'counts' in the table
+				},
+				filter : {
+					// applies filter to the "data" object before sorting
+				}						
+			}, {
+				counts : [], // deactivate the 'counts' in the table
 
-						// function to get the data
-						getData : function($defer, params) {
-							var pageToFetch = params.page();
-							
-							$log.debug("Fetching page #" + pageToFetch);
+				// function to get the data
+				getData : function($defer, params) {
+					
+					$log.debug(params.url());
+					
+					var pageToFetch = params.page();
+					
+					$log.debug("Fetching page #" + pageToFetch);
 
-							// show the loading button
-							$scope.loading = true;
+					// show the loading button
+					$scope.loading = true;
 
-							// compute offset and max
-							var max = $scope.pagination.global.itemsPerPage
-							var offset = (pageToFetch-1)*max;
+					// compute offset and max
+					var max = $scope.pagination.global.itemsPerPage
+					var offset = (pageToFetch-1)*max;
 
-							console.time('loading images');
+					console.time('loading images');
 
-							$scope.getImages(
-									offset, 
-									max, 
-									function(data) {
-										console.timeEnd('loading images');
+					$scope.getImages(
+							offset, 
+							max, 
+							function(data) {
+								console.timeEnd('loading images');
 
-										// SUCCESS PROMISE
-										// get the meta information
-										$scope.image.images = data.images;
-										$scope.image.currentPage = data.currentPage;
-										$scope.image.pageItems = data.pageItems;
-										$scope.image.total = data.totalItems;
-										$scope.image.pageItemMin = offset + 1;
-										$scope.image.pageItemMax = offset + data.pageItems;
+								// SUCCESS PROMISE
+								// get the meta information
+								$scope.image.images = data.images;
+								$scope.image.currentPage = data.currentPage;
+								$scope.image.pageItems = data.pageItems;
+								$scope.image.total = data.totalItems;
+								$scope.image.pageItemMin = offset + 1;
+								$scope.image.pageItemMax = offset + data.pageItems;
 
-										if (data.totalItems < 1){
-											$scope.image.error.empty= {
-													message : "This project does not have any images.",
-											};
-											$scope.loading = false;
-											return;
-										} else {
-											delete $scope.image.error;
-										}
+								if (data.totalItems < 1){
+									$scope.image.error.empty= {
+											message : "This project does not have any images.",
+									};
+									$scope.loading = false;
+									return;
+								} else {
+									delete $scope.image.error;
+								}
 
-										var newData = $scope.image.images;
+								var newData = $scope.image.images;
 
-										// filter and order the data according to the defined config objects
-										newData = params.filter() ? $filter('filter')(newData,
-												params.filter()) : newData;
-										newData = params.sorting() ? $filter('orderBy')(
-												newData, params.orderBy()) : newData;
-		
-										$scope.data = newData;
-										params.total($scope.image.total); // set total for pagination
+								// filter and order the data according to the defined config objects
+								newData = params.filter() ? $filter('filter')(newData,
+										params.filter()) : newData;
+								newData = params.sorting() ? $filter('orderBy')(
+										newData, params.orderBy()) : newData;
 
-										// provide the data to the view
-										$defer.resolve($scope.data);
+								$scope.data = newData;
+								params.total($scope.image.total); // set total for pagination
 
-										$scope.loading = false;
-										$log.info("Image page (" + pageToFetch +
-												") fetching successful.");
-									});
-						},
-						filterDelay : 0,
-					});
+								// provide the data to the view
+								$defer.resolve($scope.data);
+
+								$scope.loading = false;
+								$log.info("Image page (" + pageToFetch +
+										") fetching successful.");
+							});
+				},
+				filterDelay : 0,
+			});
 			
 			// //////////////////////////////////////////
 			// declare additional methods
