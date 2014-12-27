@@ -65,7 +65,7 @@
 		            </td>
 		        </tr>
 		    </table>
-		    <span class="label label-danger" ng-show="hide" tooltip="You are currently hiding all finished images.">filtered</span> <span>Showing image {{ image.pageItemMin }} to {{ image.pageItemMax }} (<strong>{{ image.total }}</strong> in total)</span>
+		    <span ng-show="hide"><span class="label label-danger" tooltip="You are currently hiding all finished images.">filtered</span>&nbsp;&nbsp;</span><span>Showing image {{ image.pageItemMin }} to {{ image.pageItemMax }} (<strong>{{ image.total }}</strong> in total)</span>
 		    <script type="text/ng-template" id="ng-table/filters/userProgressFilter.html">
 				<div class="btn btn-xs" ng-class="{ 'active' : !hide, 'btn-info' : !hide, 'btn-default' : hide}" ng-click="hideCompleted(false)">Show all</div>
 				<div class="btn btn-xs" ng-class="{ 'active' : hide, 'btn-info' : hide, 'btn-default' : !hide}" ng-click="hideCompleted(true)">Hide completed</div>

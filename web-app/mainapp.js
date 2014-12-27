@@ -13,7 +13,7 @@ iris.config(["hotkeysProvider", function(hotkeysProvider) {
 
 // log configuration
 iris.config(["$logProvider", function($logProvider){
-	$logProvider.debugEnabled(false);
+	$logProvider.debugEnabled(true);
 }]);
 
 iris.run(["$route", "$rootScope", "$location", function ($route, $rootScope, $location) {

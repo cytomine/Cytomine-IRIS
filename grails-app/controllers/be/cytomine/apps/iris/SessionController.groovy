@@ -350,20 +350,16 @@ class SessionController {
 			String publicKey = params.get("publicKey")
 			Boolean withProgress = Boolean.parseBoolean(params['computeProgress'])
 			Boolean withTiles = Boolean.parseBoolean(params['withTileURL'])
-			Boolean hideCompleted = Boolean.parseBoolean(params['hideCompleted'])
+			Boolean hideCompleted = Boolean.parseBoolean(params['hideCompleted']) // TODO not yet implemented on server side!
 
 			int offset = (params['offset']==null?0:params.int('offset'))
 			int max = (params['max']==null?0:params.int('max'))
-			
-			// set the client properties for pagination
-			cytomine.setOffset(offset)
-			cytomine.setMax(max)
 			
 			def imagesObject
 			if (withProgress){
 				imagesObject = imageService.getImagesWithProgress(cytomine, projectID, publicKey, withTiles, offset, max, hideCompleted)
 			} else {
-				imagesObject = imageService.getImages(cytomine, projectID, withTiles)
+				imagesObject = imageService.getImages(cytomine, projectID, withTiles, offset, max, false)
 			}
 			
 			render imagesObject as JSON

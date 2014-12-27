@@ -66,7 +66,12 @@ class ImageService {
 	 * @param withTileURL optionally compute the tile URLs for each image
 	 * @return a list of (blinded) IRIS images for the project
 	 */
-	def getImages(Cytomine cytomine, long cmProjectID, boolean withTileURL) throws CytomineException{
+	def getImages(Cytomine cytomine, long cmProjectID, boolean withTileURL, int offset, int max, boolean hideCompleted) throws CytomineException{
+		
+		// set the client properties for pagination
+		cytomine.setOffset(offset)
+		cytomine.setMax(max)
+		
 		ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)
 		def cmProject = cytomine.getProject(cmProjectID)
 		
@@ -114,6 +119,10 @@ class ImageService {
 	 * @throws CytomineException if the user is not found
 	 */
 	def getImagesWithProgress(Cytomine cytomine, long cmProjectID, String publicKey, boolean withTileURL, int offset, int max, boolean hideCompleted) throws CytomineException{
+		
+		// set the client properties for pagination
+		cytomine.setOffset(offset)
+		cytomine.setMax(max)
 		
 		// ######################## PARALLEL IMPLEMENTATION
 		long userID = cytomine.getUser(publicKey).getId()
@@ -269,6 +278,7 @@ class ImageService {
 		collection.put("totalItems", irisProject.cmNumberOfImages) // overwrite total images
 		collection.put("images", irisImageList) // set the list of IRIS images
 		collection.put("pageItems", irisImageList.size()) // number of page items
+		collection.put("hideCompleted", hideCompleted) // TODO not yet implemented on server side!
 				
 		return collection
 	}
