@@ -22,6 +22,10 @@
 	margin: 10px 0;	
 }
 
+#main {
+	margin-bottom: 40px;
+}
+
 #alerts {
 	position: relative;
 	bottom: 20px;
