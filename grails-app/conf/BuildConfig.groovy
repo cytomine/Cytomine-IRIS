@@ -59,6 +59,8 @@ grails.project.dependency.resolution = {
         // plugins for the compile step
         compile ":scaffolding:2.0.1"
         compile ":cache:1.1.1"
+		compile ":quartz:1.0.2"
+		compile ":mail:1.0.7"
 		//compile ":rest:0.8"
 		
         // plugins needed at runtime but not for compilation
