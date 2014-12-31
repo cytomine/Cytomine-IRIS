@@ -133,3 +133,26 @@ log4j = {
 grails.gorm.default.constraints = {
 	'*'(nullable: true)
 }
+
+grails {
+	mail {
+	  host = "smtp.world4you.com"
+	  port = 587
+	  username = "cytomine-iris@pkainz.com"
+	  password = "remasT6#"
+	  props = [
+		  	   "mail.smtp.starttls.enable":"true",
+			   "mail.smtp.port":"587", 
+			   "mail.smtp.from":"cytomine-iris@pkainz.com",
+			   ]
+	}
+ }
+// send a mail using 
+//sendMail {
+//	async true
+//	from "cytomine-iris@pkainz.com"
+//	to "rcpt@domain.com"
+//	subject "the subject"
+//	body 'the body'
+//}
+
