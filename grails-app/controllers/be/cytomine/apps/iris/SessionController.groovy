@@ -294,7 +294,6 @@ class SessionController {
 		}
 	}
 
-
 	/**
 	 * Gets the labeling progress for a specific image in a project.
 	 * The user is determined by the session.
@@ -314,6 +313,7 @@ class SessionController {
 			Utils utils = new Utils()
 			// retrieve the user's progress on each image and return it in the object
 			JSONObject annInfo = utils.getUserProgress(cytomine, cmProjectID, cmImageID, u.getCmID())
+			
 			render annInfo as JSON
 		} catch(CytomineException e1){
 			log.error(e1)
@@ -421,7 +421,7 @@ class SessionController {
 		Cytomine cytomine = request['cytomine']
 		long userID = params.long('userID')
 
-		// TODO get the current user from the DB and read the associated session
+		// get the current user from the DB and read the associated session
 		User u = User.findByCmID(userID)
 		//		User u = User.get(1)
 		Session sess = u.getSession()

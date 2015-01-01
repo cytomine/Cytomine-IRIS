@@ -20,6 +20,24 @@ iris.controller("aboutCtrl",
 //		}
 //	});
 
+	$scope.supportLink = function(){
+		var coded = "oa2u2oo.Ww2PT@sJEpP2MlwT.wR"
+			var key = "shxv2YSJKy1bjToGBO3XkIuHcnRLafrdDgNm7FViq0eAUZ6WzpQ4P89w5lECMt"
+				var shift=coded.length
+				var link=""
+					for (i=0; i<coded.length; i++) {
+						if (key.indexOf(coded.charAt(i))==-1) {
+							ltr = coded.charAt(i)
+							link += (ltr)
+						}
+						else {     
+							ltr = (key.indexOf(coded.charAt(i))-shift+key.length) % key.length
+							link += (key.charAt(ltr))
+						}
+					}
+		return link
+	}
+
 	// retrieve the Cytomine IRIS application information
 	$scope.getAppInfo = function() {
 		cytomineService.getAppInfo(function(appInfo) {

@@ -233,6 +233,12 @@ input[type="checkbox"].colorbox-checkbox {
 	width: 100% !important;
 }
 
+.muted-links {
+	position: relative;
+	display: block;
+	text-align: center;
+}
+
 .divider-vertical {
 	margin: 0 10px;
 	width: 1px;

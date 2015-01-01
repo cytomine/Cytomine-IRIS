@@ -2,26 +2,23 @@ package be.cytomine.apps.iris
 
 import grails.converters.JSON
 
-import org.codehaus.groovy.runtime.typehandling.GroovyCastException;
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 
-import com.google.gson.JsonArray;
-
 import be.cytomine.client.Cytomine
-import be.cytomine.client.CytomineException;
-import be.cytomine.client.collections.AnnotationCollection;
-import be.cytomine.client.collections.TermCollection;
-import be.cytomine.client.models.Annotation;
-import be.cytomine.client.models.AnnotationTerm;
-import be.cytomine.client.models.ImageInstance;
-import be.cytomine.client.models.Ontology
-import be.cytomine.clientx.CytomineX;
+import be.cytomine.client.CytomineException
+import be.cytomine.client.collections.AnnotationCollection
+import be.cytomine.client.collections.TermCollection
+import be.cytomine.client.models.Annotation
+import be.cytomine.client.models.AnnotationTerm
+import be.cytomine.client.models.ImageInstance
 
 
 /**
- * 
+ * Controller for managing annotations.
  * @author Philipp Kainz
+ * @since 0.4
  *
  */
 class AnnotationController {
@@ -29,114 +26,116 @@ class AnnotationController {
 	def grailsApplication
 	def sessionService
 	def annotationService
-
+	def activityService
+	
 	def beforeInterceptor = {
 		log.debug("Executing action $actionName with params $params")
+		activityService.log(User.findByCmPublicKey(params['publicKey']), "Executing action $actionName with params $params")
 	}
 
-	/**
-	 * Get all annotations for a specific project and image.
-	 * 
-	 * @return the annotations as JSON array
-	 */
-	def getAnnotations(){
-		try {
-			Cytomine cytomine = request['cytomine']
-			String publicKey = params['publicKey']
-
-			long sessionID = params.long('sessionID')
-			long projectID = params.long('cmProjectID')
-
-			// filter for a specific project/image/term
-			Map<String,String> filters = new HashMap<String,String>()
-			filters.put("project", String.valueOf(projectID))
-			filters.put("showGIS", "true") // show the centroid information on the location
-			filters.put("showMeta", "true") // show the meta informations
-			filters.put("showTerm", "true") // show the term informations
-
-			String imageIDs = params['images']
-			if (imageIDs != null){
-				filters.put("images", String.valueOf(imageIDs))
-			}
-
-			// filter for terms
-			String termIDs = params['terms']
-			if (termIDs != null){
-				filters.put("terms", String.valueOf(termIDs))
-			}
-			// additionally check for termID 0, this will be annotations without terms
-			if (params['noTerm'] != null && params['noTerm'].equals("true")){
-				filters.put("noTerm", "true")
-			}
-			// check for multiple terms
-			if (params['multipleTerm'] != null && params['multipleTerm'].equals("true")){
-				filters.put("multipleTerm", "true")
-			}
-
-			// TODO implement pagination
-			int max = (params['max']==null?0:params.int('max'))
-			int offset = (params['offset']==null?0:params.int('offset'))
-
-			// get the session and the user
-			Session sess = Session.get(sessionID)
-			User user = sess.getUser()
-
-			// find the project
-			Project p = sess.getProjects().find { it.cmID == projectID }
-			long ontologyID = p.getCmOntology();
-
-			// fetch the terms from the ontology
-			TermCollection terms = cytomine.getTermsByOntology(ontologyID)
-
-			cytomine.setOffset(offset);
-			cytomine.setMax(max);
-			
-			// get all annotations according to the filter
-			AnnotationCollection annotations = cytomine.getAnnotations(filters)
-			def irisAnnList = new JSONArray()
-
-			// create a new domain mapper
-			DomainMapper dm = new DomainMapper(grailsApplication)
-
-			for(int i=0;i<annotations.size();i++) {
-				Annotation annotation = annotations.get(i)
-
-				// map the annotation to the IRIS model
-				be.cytomine.apps.iris.Annotation irisAnn = dm.mapAnnotation(annotation, null)
-
-				irisAnn = annotationService.resolveTerms(ontologyID, terms, user, annotation, irisAnn)
-
-				// ######################################################################################
-				// IMPORTANT: do NOT inject the cytomine annotation, because they contain information on
-				// mappings done by other users
-				// ######################################################################################
-				// add the annotation to the result and use the AnnotationMarshaller in order to
-				// serialize the domain objects
-				irisAnnList.add(irisAnn)
-			}
-
-			render (irisAnnList as JSON)
-
-		} catch(CytomineException e1){
-			log.error(e1)
-			// exceptions from the cytomine java client
-			response.setStatus(e1.httpCode)
-			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
-			render errorMsg as JSON
-		} catch(GroovyCastException e2) {
-			log.error(e2)
-			// send back 400 if the project ID is other than long format
-			response.setStatus(400)
-			JSONObject errorMsg = new Utils().resolveException(e2, 400)
-			render errorMsg as JSON
-		} catch(Exception e3){
-			log.error(e3)
-			// on any other exception render 500
-			response.setStatus(500)
-			JSONObject errorMsg = new Utils().resolveException(e3, 500)
-			render errorMsg as JSON
-		}
-	}
+//	NOTE: UNUSED AS OF IRIS v1.5 
+//	/**
+//	 * Get all annotations for a specific project and image.
+//	 * 
+//	 * @return the annotations as JSON array
+//	 */
+//	def getAnnotations(){
+//		try {
+//			Cytomine cytomine = request['cytomine']
+//			String publicKey = params['publicKey']
+//
+//			long sessionID = params.long('sessionID')
+//			long projectID = params.long('cmProjectID')
+//
+//			// filter for a specific project/image/term
+//			Map<String,String> filters = new HashMap<String,String>()
+//			filters.put("project", String.valueOf(projectID))
+//			filters.put("showGIS", "true") // show the centroid information on the location
+//			filters.put("showMeta", "true") // show the meta informations
+//			filters.put("showTerm", "true") // show the term informations
+//
+//			String imageIDs = params['images']
+//			if (imageIDs != null){
+//				filters.put("images", String.valueOf(imageIDs))
+//			}
+//
+//			// filter for terms
+//			String termIDs = params['terms']
+//			if (termIDs != null){
+//				filters.put("terms", String.valueOf(termIDs))
+//			}
+//			// additionally check for termID 0, this will be annotations without terms
+//			if (params['noTerm'] != null && params['noTerm'].equals("true")){
+//				filters.put("noTerm", "true")
+//			}
+//			// check for multiple terms
+//			if (params['multipleTerm'] != null && params['multipleTerm'].equals("true")){
+//				filters.put("multipleTerm", "true")
+//			}
+//
+//			int max = (params['max']==null?0:params.int('max'))
+//			int offset = (params['offset']==null?0:params.int('offset'))
+//
+//			// get the session and the user
+//			Session sess = Session.get(sessionID)
+//			User user = sess.getUser()
+//
+//			// find the project
+//			Project p = sess.getProjects().find { it.cmID == projectID }
+//			long ontologyID = p.getCmOntology();
+//
+//			// fetch the terms from the ontology
+//			TermCollection terms = cytomine.getTermsByOntology(ontologyID)
+//
+//			cytomine.setOffset(offset);
+//			cytomine.setMax(max);
+//			
+//			// get all annotations according to the filter
+//			AnnotationCollection annotations = cytomine.getAnnotations(filters)
+//			def irisAnnList = new JSONArray()
+//
+//			// create a new domain mapper
+//			DomainMapper dm = new DomainMapper(grailsApplication)
+//
+//			for(int i=0;i<annotations.size();i++) {
+//				Annotation annotation = annotations.get(i)
+//
+//				// map the annotation to the IRIS model
+//				be.cytomine.apps.iris.Annotation irisAnn = dm.mapAnnotation(annotation, null)
+//
+//				irisAnn = annotationService.resolveTerms(ontologyID, terms, user, annotation, irisAnn)
+//
+//				// ######################################################################################
+//				// IMPORTANT: do NOT inject the cytomine annotation, because they contain information on
+//				// mappings done by other users
+//				// ######################################################################################
+//				// add the annotation to the result and use the AnnotationMarshaller in order to
+//				// serialize the domain objects
+//				irisAnnList.add(irisAnn)
+//			}
+//
+//			render (irisAnnList as JSON)
+//
+//		} catch(CytomineException e1){
+//			log.error(e1)
+//			// exceptions from the cytomine java client
+//			response.setStatus(e1.httpCode)
+//			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+//			render errorMsg as JSON
+//		} catch(GroovyCastException e2) {
+//			log.error(e2)
+//			// send back 400 if the project ID is other than long format
+//			response.setStatus(400)
+//			JSONObject errorMsg = new Utils().resolveException(e2, 400)
+//			render errorMsg as JSON
+//		} catch(Exception e3){
+//			log.error(e3)
+//			// on any other exception render 500
+//			response.setStatus(500)
+//			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+//			render errorMsg as JSON
+//		}
+//	}
 
 	/**
 	 * Get all annotations for a specific project and its images, 
@@ -331,7 +330,6 @@ class AnnotationController {
 	def setUniqueTerm(){
 		try {
 			Cytomine cytomine = request['cytomine']
-			CytomineX cX = new CytomineX(cytomine.host, cytomine.publicKey, cytomine.privateKey, cytomine.basePath)
 
 			long sessionID = params.long('sessionID')
 			long cmProjectID = params.long('cmProjectID')
@@ -348,9 +346,9 @@ class AnnotationController {
 				throw new IllegalArgumentException("The identifiers in URL and payload do not match!")
 			}
 
-			// set the term to the annotation
-			AnnotationTerm annTerm = cX.setAnnotationTerm(cmAnnID, pldTermID)
-
+			// call the service
+			AnnotationTerm annTerm = annotationService.setUniqueTermByUser(cytomine, sessionID, cmProjectID, cmImageID, cmAnnID, pldTermID)
+			
 			render (annTerm.getAttr() as JSON)
 
 		} catch(CytomineException e1){
@@ -385,7 +383,7 @@ class AnnotationController {
 			long cmImageID = params.long('cmImageID')
 			long cmAnnID = params.long('cmAnnID')
 
-			def irisAnn = sessionService.touchAnnotation(cytomine, sessionID, cmProjectID, cmImageID, cmAnnID);
+			def irisAnn = sessionService.touchAnnotation(cytomine, sessionID, cmProjectID, cmImageID, cmAnnID)
 
 			render irisAnn as JSON
 		} catch(CytomineException e1){
@@ -410,7 +408,7 @@ class AnnotationController {
 	}
 
 	/**
-	 * Deletes a specific term for a given user.
+	 * Deletes a specific term for a given user on a single annotation.
 	 * @return
 	 */
 	def deleteTerm(){
@@ -425,11 +423,12 @@ class AnnotationController {
 
 			if (cmTermID == IRISConstants.ANNOTATION_NO_TERM_ASSIGNED){
 				// get the annotation and delete all terms in a loop
-				annotationService.deleteAllTermsByUser(cytomine, sessionID, cmProjectID, cmImageID, cmAnnID)
+				// remove all terms by passing 'null' as last argument
+				annotationService.deleteTermByUser(cytomine, sessionID, cmProjectID, cmImageID, cmAnnID, null)
 			} else {
-				cytomine.deleteAnnotationTerm(cmAnnID, cmTermID)
+				annotationService.deleteTermByUser(cytomine, sessionID, cmProjectID, cmImageID, cmAnnID, cmTermID)
 			}
-
+			
 			render new JSONObject().put("message", "The term has been deleted.");
 		} catch(CytomineException e1){
 			log.error(e1)
@@ -452,6 +451,10 @@ class AnnotationController {
 		}
 	}
 
+	/**
+	 * Deletes all terms of the querying user from a specific annotation.
+	 * @return
+	 */
 	def deleteAllTerms(){
 		try {
 			Cytomine cytomine = request['cytomine']
@@ -461,7 +464,8 @@ class AnnotationController {
 			long cmImageID = params.long('cmImageID')
 			long cmAnnID = params.long('cmAnnID')
 
-			annotationService.deleteAllTermsByUser(cytomine, sessionID, cmProjectID, cmImageID, cmAnnID)
+			// last argument 'null' means delete all terms of this user
+			annotationService.deleteTermByUser(cytomine, sessionID, cmProjectID, cmImageID, cmAnnID, null)
 
 			render new JSONObject().put("message", "All terms have been deleted.");
 		} catch(CytomineException e1){
@@ -605,6 +609,8 @@ class AnnotationController {
 			result.put("labeledAnnotations", annInfo.get("labeledAnnotations"))
 			result.put("userProgress", annInfo.get("userProgress"))
 			result.put("numberOfAnnotations", annInfo.get("totalAnnotations"))
+			
+			// TODO persist the user progress information in the image
 
 			render (result as JSON)
 

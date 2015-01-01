@@ -2,7 +2,11 @@ package be.cytomine.apps.iris
 
 import java.util.Date;
 
-
+/**
+ * Activity represents an action on the server which will be persisted to the DB.
+ * @author Philipp Kainz
+ * @since 1.5
+ */
 class Activity {
 	// GRAILS auto variables
 	Date dateCreated = new Date()
@@ -10,7 +14,7 @@ class Activity {
 
     static constraints = {
 		lastActivity nullable:false, blank:false
-		description size:0..5000
+		description size:0..5000, blank:true
 		user nullable:false
 	}
 
@@ -26,4 +30,7 @@ class Activity {
 	
 	// many activities can have the same image
 	Image image
+	
+	// many activities can have the same annotation
+	Annotation annotation = null
 }
