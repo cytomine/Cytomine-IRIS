@@ -1,3 +1,5 @@
+import org.apache.log4j.RollingFileAppender
+
 // locations to search for config files that get merged into the main config;
 // config files can be ConfigSlurper scripts, Java properties files, or classes
 // in the classpath in ConfigSlurper format
@@ -95,22 +97,21 @@ grails.hibernate.cache.queries = false
 environments {
     development {
         grails.logging.jul.usebridge = true
-		grails.serverURL = "http://localhost:8080/iris"
-		grails.cytomine.apps.iris.host = grails.serverURL
+		grails.serverURL = "http://localhost:8080"
+		grails.cytomine.apps.iris.host = grails.serverURL + grailsApplication.metadata['app.context']
     }
     production {
         grails.logging.jul.usebridge = false
-        grails.serverURL = "https://leonardo.medunigraz.at/iris"
-		grails.cytomine.apps.iris.host = grails.serverURL
+        grails.serverURL = "https://leonardo.medunigraz.at"
+		grails.cytomine.apps.iris.host = grails.serverURL + grailsApplication.metadata['app.context']
     }
 }
 
 // log4j configuration
 log4j = {
-    //Example of changing the log pattern for the default console appender:
-
     appenders {
         console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+		// TODO implement file appender for production environment
     }
 
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
@@ -127,6 +128,7 @@ log4j = {
     warn  	'be.cytomine.client'
 	debug	'grails.app.controllers',	
 			'grails.app.services',
+			'grails.app.jobs',
 			'be.cytomine.apps.iris'
 }
 

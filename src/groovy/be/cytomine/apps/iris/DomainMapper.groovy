@@ -2,7 +2,7 @@ package be.cytomine.apps.iris
 
 
 /**
- * This class maps from the client domain models to the IRIS 
+ * This class maps from the Cytomine client domain models to the IRIS 
  * domain models.
  * 
  * @author Philipp Kainz
@@ -15,6 +15,11 @@ class DomainMapper {
 	String cmHost
 	String irisHost
 
+	/**
+	 * Constructor accepting a 'grailsApplication' configuration object
+	 * 
+	 * @param grailsApplication
+	 */
 	DomainMapper(def grailsApplication){
 		this.grailsApplication = grailsApplication
 		this.cmHost = grailsApplication.config.grails.cytomine.host
@@ -22,8 +27,9 @@ class DomainMapper {
 	}
 
 	/**
-	 * Map the be.cytomine.client.models.User model to the IRIS domain model of a user.
-	 * @param cmUser a Cytomine user
+	 * Map a user.
+	 * 
+	 * @param cmUser a Cytomine user (be.cytomine.client.models.User)
 	 * @param irisUser an IRIS user, or null (then a new user is generated)
 	 * @return an IRIS user instance
 	 */
@@ -55,11 +61,11 @@ class DomainMapper {
 	}
 
 	/**
+	 * Map a project.
 	 * 
-	 * 
-	 * @param cmProject
-	 * @param irisProject
-	 * @return
+	 * @param cmProject be.cytomine.client.models.Project
+	 * @param irisProject the IRIS domain model project
+	 * @return the IRIS project
 	 */
 	Project mapProject(be.cytomine.client.models.Project cmProject, Project irisProject){
 		if (irisProject == null){
@@ -72,15 +78,16 @@ class DomainMapper {
 		irisProject.setCmBlindMode(cmProject.getBool("blindMode"))
 		irisProject.setCmOntology(cmProject.getLong("ontology"))
 		irisProject.setCmNumberOfImages(cmProject.getInt("numberOfImages"))
-
+		
 		return irisProject
 	}
 
 	/**
+	 * Map an image.
 	 * 
-	 * @param cmImage
-	 * @param irisImage
-	 * @return
+	 * @param cmImage be.cytomine.client.models.ImageInstance
+	 * @param irisImage the IRIS domain model image, creates a new one, if <code>null</code>
+	 * @return the IRIS image
 	 */
 	Image mapImage(be.cytomine.client.models.ImageInstance cmImage, Image irisImage, boolean blindMode){
 		if (irisImage == null){
@@ -89,11 +96,11 @@ class DomainMapper {
 
 		// TODO map required properties from the client model
 		irisImage.setCmID(cmImage.getId())
-		
+
 		// replace the host in the macro url
 		irisImage.setMacroURL(cmImage.get("macroURL").toString()
 				.replace(cmHost,irisHost))
-		
+
 		if (blindMode){
 			irisImage.setOriginalFilename("[BLIND]" + cmImage.getId())
 		} else {
@@ -105,10 +112,11 @@ class DomainMapper {
 	}
 
 	/**
+	 * Map an annotation. 
 	 *
-	 * @param cmAnnotation
-	 * @param irisAnnotation
-	 * @return
+	 * @param cmAnnotation be.cytomine.client.models.Annotation
+	 * @param irisAnnotation the IRIS domain model annotation, if <code>null</code> a new annotation will be created
+	 * @return the IRIS annotation
 	 */
 	Annotation mapAnnotation(be.cytomine.client.models.Annotation cmAnnotation, Annotation irisAnnotation) throws Exception{
 		if (irisAnnotation == null){
@@ -123,20 +131,20 @@ class DomainMapper {
 		irisAnnotation.setCmImageURL(cmAnnotation.getStr("imageURL"))
 		irisAnnotation.setCmCropURL(cmAnnotation.getStr("cropURL"))
 		irisAnnotation.setDrawIncreasedAreaURL(grailsApplication.config.grails.cytomine.host
-							+ "/api/annotation/"
-							+ cmAnnotation.getId()
-							+ "/crop.png?increaseArea=8&maxSize=256&draw=true")
+				+ "/api/annotation/"
+				+ cmAnnotation.getId()
+				+ "/crop.png?increaseArea=8&maxSize=256&draw=true")
 		irisAnnotation.setCmSmallCropURL(cmAnnotation.getStr("smallCropURL"))
 		irisAnnotation.setSmallCropURL(cmAnnotation.getStr("smallCropURL").toString()
 				.replace(cmHost,irisHost))
-		
+
 		// map centroid and location object
 		try {
 			irisAnnotation.setCmLocation(cmAnnotation.getStr("location"))
 		} catch(Exception e){
 			log.warn("'Location' information does not exist for this instance of " + cmAnnotation.getClass() + ".")
 		}
-			
+
 		// the centroid can be in a distinct object, or in extra coordinates
 		try {
 			if (cmAnnotation.get("centroid") == null){
@@ -145,10 +153,11 @@ class DomainMapper {
 			} else {
 				irisAnnotation.setCmCentroidX(Double.valueOf(cmAnnotation.get("centroid").get("x")))
 				irisAnnotation.setCmCentroidY(Double.valueOf(cmAnnotation.get("centroid").get("y")))
-			}			
+			}
 		} catch(Exception e){
 			log.warn("'Centroid' information does not exist for this instance of " + cmAnnotation.getClass() + ".")
 		}
+		
 		return irisAnnotation
 	}
 }

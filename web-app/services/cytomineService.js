@@ -3,16 +3,19 @@
  */
 var iris = angular.module("irisApp");
 
-iris.constant("cytomineHostUrl", "api/cytomineHost.json");
-iris.constant("cytomineWebUrl", "api/cytomineWeb.json");
-iris.constant("userPublicKeyUrl", "api/user/publicKey/{pubKey}.json");
+iris.constant("appNameURL", "api/appName.json");
+iris.constant("appVersionURL", "api/appVersion.json");
+iris.constant("appInfoURL", "api/admin/appInfo.json");
+iris.constant("cytomineHostURL", "api/cytomineHost.json");
+iris.constant("cytomineWebURL", "api/cytomineWeb.json");
+iris.constant("userPublicKeyURL", "api/user/publicKey/{pubKey}.json");
 
 /**
  * This service is responsible for communicating HTTP requests to the IRIS server. 
  */
 iris.factory("cytomineService", [
-	"$http", "$log", "cytomineHostUrl", "cytomineWebUrl", "userPublicKeyUrl",
-	function($http, $log, cytomineHostUrl, cytomineWebUrl, userPublicKeyUrl) {
+	"$http", "$log", "cytomineHostURL", "cytomineWebURL", "userPublicKeyURL", "appNameURL", "appVersionURL", "appInfoURL",
+	function($http, $log, cytomineHostURL, cytomineWebURL, userPublicKeyURL, appNameURL, appVersionURL, appInfoURL) {
 
 	var publicKey; 
 	var privateKey; 
@@ -47,8 +50,8 @@ iris.factory("cytomineService", [
 		},
 
 		// get the application name and execute the callback
-		getAppName : function(url, callbackSuccess, callbackError) {
-			$http.get(this.addKeys(url)).success(function(data) {
+		getAppName : function(callbackSuccess, callbackError) {
+			$http.get(this.addKeys(appNameURL)).success(function(data) {
 				if (callbackSuccess){
 					callbackSuccess(data);
 				}
@@ -60,8 +63,21 @@ iris.factory("cytomineService", [
 		},
 
 		// get the application version number and execute the callback
-		getAppVersion : function(url, callbackSuccess, callbackError) {
-			$http.get(this.addKeys(url)).success(function(data) {
+		getAppVersion : function(callbackSuccess, callbackError) {
+			$http.get(this.addKeys(appVersionURL)).success(function(data) {
+				if (callbackSuccess){
+					callbackSuccess(data);
+				}
+			}).error(function(data, status, headers, config) {
+				if (callbackError){
+					callbackError(data, status);
+				}
+			})
+		},
+		
+		// get the application information (condensed)
+		getAppInfo : function(callbackSuccess, callbackError) {
+			$http.get(this.addKeys(appInfoURL)).success(function(data) {
 				if (callbackSuccess){
 					callbackSuccess(data);
 				}
@@ -74,7 +90,7 @@ iris.factory("cytomineService", [
 
 		// get the cytomine host address
 		getCytomineHost : function(callbackSuccess, callbackError) {
-			$http.get(this.addKeys(cytomineHostUrl)).success(function(data) {
+			$http.get(this.addKeys(cytomineHostURL)).success(function(data) {
 				if (callbackSuccess){
 					callbackSuccess(data);
 				}
@@ -87,7 +103,7 @@ iris.factory("cytomineService", [
 
 		// get the cytomine web address and execute the callback
 		getCytomineWeb : function(callbackSuccess, callbackError) {
-			$http.get(this.addKeys(cytomineWebUrl)).success(function(data) {
+			$http.get(this.addKeys(cytomineWebURL)).success(function(data) {
 				if (callbackSuccess){
 					callbackSuccess(data);
 				}
@@ -100,7 +116,7 @@ iris.factory("cytomineService", [
 		
 		// get the user by the public key
 		getUserByPublicKey : function(publicKey, callbackSuccess, callbackError){
-			var url = this.addKeys(userPublicKeyUrl.replace("{pubKey}", publicKey));
+			var url = this.addKeys(userPublicKeyURL.replace("{pubKey}", publicKey));
 			
 			$http.get(url).success(function(data) {
 				//console.log(data)

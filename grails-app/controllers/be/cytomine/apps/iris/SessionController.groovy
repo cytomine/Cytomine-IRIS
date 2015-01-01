@@ -2,14 +2,13 @@ package be.cytomine.apps.iris
 
 import grails.converters.JSON
 
-import org.codehaus.groovy.runtime.typehandling.GroovyCastException;
-import org.json.simple.JSONArray
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.json.simple.JSONObject
 
 import be.cytomine.client.Cytomine
 import be.cytomine.client.CytomineException
-import be.cytomine.client.collections.AnnotationCollection;
 import be.cytomine.client.collections.ImageInstanceCollection
+import be.cytomine.client.collections.ProjectCollection
 import be.cytomine.client.models.ImageInstance
 
 /**
@@ -236,7 +235,7 @@ class SessionController {
 			long cmProjectID = params.long('cmProjectID')
 
 			def irisProject = sessionService.touchProject(cytomine, sessionID, cmProjectID)
-
+			
 			render irisProject as JSON
 		} catch(CytomineException e1){
 			log.error(e1)
@@ -350,16 +349,15 @@ class SessionController {
 			String publicKey = params.get("publicKey")
 			Boolean withProgress = Boolean.parseBoolean(params['computeProgress'])
 			Boolean withTiles = Boolean.parseBoolean(params['withTileURL'])
-			Boolean hideCompleted = Boolean.parseBoolean(params['hideCompleted']) // TODO not yet implemented on server side!
 
 			int offset = (params['offset']==null?0:params.int('offset'))
 			int max = (params['max']==null?0:params.int('max'))
 			
 			def imagesObject
 			if (withProgress){
-				imagesObject = imageService.getImagesWithProgress(cytomine, projectID, publicKey, withTiles, offset, max, hideCompleted)
+				imagesObject = imageService.getImagesWithProgress(cytomine, projectID, publicKey, withTiles)
 			} else {
-				imagesObject = imageService.getImages(cytomine, projectID, withTiles, offset, max, false)
+				imagesObject = imageService.getImages(cytomine, projectID, withTiles, offset, max)
 			}
 			
 			render imagesObject as JSON

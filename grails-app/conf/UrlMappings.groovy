@@ -13,13 +13,11 @@ class UrlMappings {
 		 */
 		"/"(view:"/iris")
 		"/iris"(view:"/iris")
-		"500"(view:'/error')
+		"500"(view:"/error")
 
 		/*
 		 * ###########################
 		 * Action mapping (to controllers)
-		 * 
-		 * 
 		 * 
 		 * mainController
 		 * - handles information about the IRIS application
@@ -177,6 +175,9 @@ class UrlMappings {
 				]
 		}
 		
+		/*
+		 * Gets a single image
+		 */
 		"/api/project/$cmProjectID/image/$cmImageID.$format"(controller:"session"){
 			action = [GET: "getImage"]
 		}
@@ -185,7 +186,6 @@ class UrlMappings {
 		 *  optional parameters 
 		 *  	computeProgress = true | false
 		 *  	withTileURL = true | false
-		 *  	hideCompleted = true | false TODO implement!!
 		 */
 		"/api/project/$projectID/images.$format"(controller:"session"){
 			action = [GET: "getImages"]
@@ -203,17 +203,13 @@ class UrlMappings {
 				]
 		}
 		
-		"/api/sessions(.$format)"(controller:"session"){
-			action = [GET: "getAll"]
-		}
+//		"/api/sessions(.$format)"(controller:"session"){
+//			action = [GET: "getAll"]
+//		}
 		
-		"/api/deleteproject.json"(controller:"session"){
-			action = [DELETE: "delProj"]
-		}
-		
-		"/api/session/dev.json"(controller:"session"){
-			action = [GET: "dev"]
-		}
+//		"/api/deleteproject.json"(controller:"session"){
+//			action = [DELETE: "delProj"]
+//		}
 		
 		/*
 		 * ProjectController
@@ -244,5 +240,15 @@ class UrlMappings {
 			action = [GET: "getProjectDescription"]
 		}
 
+		/**
+		 * ADMIN 
+		 */
+		"/api/admin/synchronize(.$format)"(controller:"admin"){
+			action = [POST: "synchronizeUserProgress"]
+		}
+		
+		"/api/admin/appInfo(.$format)"(controller:"admin"){
+			action = [GET: "applicationInfo"]
+		}
 	}
 }

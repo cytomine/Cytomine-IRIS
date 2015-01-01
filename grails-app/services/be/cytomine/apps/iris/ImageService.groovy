@@ -6,6 +6,7 @@ import grails.transaction.Transactional
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
+import org.codehaus.groovy.grails.web.json.JSONElement;
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 
@@ -27,14 +28,14 @@ class ImageService {
 	def imageService
 
 	/**
-	 * Gets a single image from Cytomine.
+	 * Gets a single image from Cytomine and computes the user progress.
 	 *
 	 * @param cytomine a Cytomine instance
 	 * @param cmProjectID the Cytomine project ID
 	 * @param cmImageInstanceID the Cytomine imageinstance ID
 	 * @return the IRIS image
 	 */
-	def getImage(Cytomine cytomine, long cmProjectID, long cmImageInstanceID, String publicKey){
+	JSONElement getImage(Cytomine cytomine, long cmProjectID, long cmImageInstanceID, String publicKey){
 		ImageInstance cmImage = cytomine.getImageInstance(cmImageInstanceID)
 		Project p = Project.find { cmID == cmProjectID }
 		User user = User.find { cmPublicKey == publicKey}
@@ -53,7 +54,7 @@ class ImageService {
 		irisImage.setNumberOfAnnotations(annInfo.get("totalAnnotations"))
 
 		// set the Cytomine image as "cytomine" property in the irisImage
-		def imageJSON = sessionService.injectCytomineImageInstance(cytomine, irisImage, cmImage, p.getCmBlindMode())
+		JSONElement imageJSON = sessionService.injectCytomineImageInstance(cytomine, irisImage, cmImage, p.getCmBlindMode())
 
 		return imageJSON
 	}
@@ -66,7 +67,7 @@ class ImageService {
 	 * @param withTileURL optionally compute the tile URLs for each image
 	 * @return a list of (blinded) IRIS images for the project
 	 */
-	def getImages(Cytomine cytomine, long cmProjectID, boolean withTileURL, int offset, int max, boolean hideCompleted) throws CytomineException{
+	JSONArray getImages(Cytomine cytomine, long cmProjectID, boolean withTileURL, int offset, int max) throws CytomineException{
 		
 		// set the client properties for pagination
 		cytomine.setOffset(offset)
@@ -104,32 +105,22 @@ class ImageService {
 
 		return irisImageList
 	}
-
+	
 	/**
-	 * Gets the images with progress.
-	 * 
+	 * Gets the images with progress (paged from Cytomine).
+	 *
 	 * @param cytomine a Cytomine instance
 	 * @param cmProjectID the Cytomine project ID
 	 * @param publicKey the public key of the user
 	 * @param withTileURL optionally compute the tile URLs for each image
-	 * @param hideCompleted optionally hide completed images (progress = 100%)
-	 * 
+	 *
 	 * @return a list of IRIS images
-	 * 
+	 *
 	 * @throws CytomineException if the user is not found
 	 */
-	def getImagesWithProgress(Cytomine cytomine, long cmProjectID, String publicKey, boolean withTileURL, int offset, int max, boolean hideCompleted) throws CytomineException{
-		
-		// set the client properties for pagination
-		cytomine.setOffset(offset)
-		cytomine.setMax(max)
-		
+	JSONArray getImagesWithProgress(Cytomine cytomine, long cmProjectID, String publicKey, boolean withTileURL) throws CytomineException{
 		// ######################## PARALLEL IMPLEMENTATION
 		long userID = cytomine.getUser(publicKey).getId()
-
-		// important for blinding image names
-
-		boolean blindMode = false
 
 		// find the session of the calling user
 		User u = User.findByCmID(userID)
@@ -143,16 +134,92 @@ class ImageService {
 		// update the project in the local database
 		def cmProject = cytomine.getProject(cmProjectID)
 		if (cmProject.getAttr().getAt("success") != null){
-			throw new CytomineException(404, "The requested project is not available.");
+			throw new CytomineException(404, "The requested project is not available.")
 		}
 				
+		// map the project and overwrite it
 		irisProject = new DomainMapper(grailsApplication).mapProject(cmProject, irisProject)
-		irisProject.save(flush:true,failOnError:true)
-		blindMode = irisProject.cmBlindMode
+		irisProject.save(flush:true, failOnError:true)
+		
+		// important for blinding image names
+		boolean blindMode = irisProject.cmBlindMode
 
 		def start = System.currentTimeMillis()
 
-		// get the images from cytomine core server
+		// get all images for that project
+		SortedSet<Image> irisImages = irisProject.getImages()
+
+		// cytomine images of this project
+		ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)
+		
+		int nImages = cmImageCollection.size()
+		JSONArray irisImageList = new JSONArray()
+		for (int j = 0; j < nImages; j++){
+			ImageInstance cmImage = cmImageCollection.get(j)
+
+			// get the image from the list
+			Image irisImage = irisImages.find { it.cmID == cmImage.getId() }
+			// update the information
+			irisImage = new DomainMapper(grailsApplication).mapImage(cmImage, irisImage, blindMode)
+
+			irisProject.addToImages(irisImage)
+
+			// set the Cytomine image as "cytomine" property in the irisImage
+			def imageJSON = sessionService.injectCytomineImageInstance(cytomine, irisImage, cmImage, blindMode)
+
+			// add it to the result list
+			irisImageList.add(imageJSON)
+		}
+				
+		return irisImageList
+	}
+
+	/**
+	 * Gets the images with progress (paged from Cytomine).
+	 * 
+	 * @param cytomine a Cytomine instance
+	 * @param cmProjectID the Cytomine project ID
+	 * @param publicKey the public key of the user
+	 * @param withTileURL optionally compute the tile URLs for each image
+	 * 
+	 * @return a list of IRIS images
+	 * 
+	 * @throws CytomineException if the user is not found
+	 */
+	JSONObject getPagedImagesWithProgress(Cytomine cytomine, long cmProjectID, String publicKey, boolean withTileURL, int offset, int max) throws CytomineException{
+		
+		// set the client properties for pagination
+		cytomine.setOffset(offset)
+		cytomine.setMax(max)
+		
+		// ######################## PARALLEL IMPLEMENTATION
+		long userID = cytomine.getUser(publicKey).getId()
+
+		// find the session of the calling user
+		User u = User.findByCmID(userID)
+
+		// get the session
+		Session sess = u.getSession();
+
+		// search for the requested project in the session
+		Project irisProject = sess.getProjects().find { it.cmID == cmProjectID }
+
+		// update the project in the local database
+		def cmProject = cytomine.getProject(cmProjectID)
+		if (cmProject.getAttr().getAt("success") != null){
+			throw new CytomineException(404, "The requested project is not available.")
+		}
+				
+		// map the project and overwrite it
+		irisProject = new DomainMapper(grailsApplication).mapProject(cmProject, irisProject)
+		irisProject.save(flush:true, failOnError:true)
+		
+		// important for blinding image names
+		boolean blindMode = irisProject.cmBlindMode
+
+		def start = System.currentTimeMillis()
+
+		// get all images for that project from the Cytomine core server
 		ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)
 
 		int nImages = cmImageCollection.size()
@@ -278,12 +345,11 @@ class ImageService {
 		collection.put("totalItems", irisProject.cmNumberOfImages) // overwrite total images
 		collection.put("images", irisImageList) // set the list of IRIS images
 		collection.put("pageItems", irisImageList.size()) // number of page items
-		collection.put("hideCompleted", hideCompleted) // TODO not yet implemented on server side!
 				
 		return collection
 	}
 
-	def getImageServerURL(Cytomine cytomine, long abstrImgID, long imgInstID){
+	String getImageServerURL(Cytomine cytomine, long abstrImgID, long imgInstID){
 		def urls = imageService.getImageServerURLs(cytomine, abstrImgID, imgInstID)
 		def url = new org.codehaus.groovy.grails.web.json.JSONObject(urls.toString()).getAt("imageServersURLs")[0]
 		return url.toString()

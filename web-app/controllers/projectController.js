@@ -7,9 +7,6 @@ iris.controller("projectCtrl", [
 		$modal, $log, hotkeys, projectService, helpService, sharedService, sessionService, ngTableParams) {
 	$log.debug("projectCtrl");
 	
-	// fetch the session for the user
-	sessionService.fetchSession()
-	
 	// set content url for the help page
 	helpService.setContentUrl("content/help/projectHelp.html");
 
@@ -31,24 +28,15 @@ iris.controller("projectCtrl", [
 	// get the current day as long
 	$scope.today = sharedService.today;
 	
-	// gets all projects
-	$scope.getAllProjects = function(callbackSuccess) {
-		projectService.fetchProjects(function(data) {
-			callbackSuccess(data);
-		}, function(data, status) {
-			$scope.project.error.retrieve = {
-				status : status,
-				message : data.error.message
-			};
-			$scope.loading = false;
-		});
-	};
-
-	// refresh the page
+	// refresh the page (get all projects and the session)
 	$scope.refreshPage = function() {
+		// fetch the session for the user
+		sessionService.fetchSession(function(data){}, function(data,status,config,header){});
+		
 		$scope.loading = true;
 		
-		$scope.getAllProjects(function(data) {
+		// gets all projects
+		projectService.fetchProjects(function(data) {
 			$scope.project.error.retrieve = null;
 			$scope.project.projects = data;
 			
@@ -65,6 +53,7 @@ iris.controller("projectCtrl", [
 				}
 			}, {
 				total : $scope.project.projects.length, // number of projects
+				counts : [10,25,50],
 				getData : function($defer, params) {
 					// use build-in angular filter
 					var newData = $scope.project.projects;
@@ -77,10 +66,17 @@ iris.controller("projectCtrl", [
 							* params.count(), params.page() * params.count());
 					params.total(newData.length); // set total for recalc pagination
 					
+					// provide data to the table
 					$defer.resolve($scope.data);
 				},
 				filterDelay : 0,
 			});
+			$scope.loading = false;
+		}, function(data, status) {
+			$scope.project.error.retrieve = {
+				status : status,
+				message : data.error.message
+			};
 			$scope.loading = false;
 		});
 	};
@@ -95,10 +91,9 @@ iris.controller("projectCtrl", [
 			// forward to the image overview table of this project
 			$location.url("/project/" + project.id + "/images")
 		}, function(data,status){
-			sharedService.addAlert("Cannot touch project. Error " + status + ".", "danger");
+			sharedService.addAlert("Cannot open project. Error " + status + ".", "danger");
 		})
-	}
-
+	};
 	
 	// ###############################################################
 	// PROJECT DESCRIPTION MODAL DIALOG
@@ -137,7 +132,7 @@ iris.controller("projectCtrl", [
 			// open the dialog
 			$scope.showInfoDialog(project, dlgData);
 		});
-	}
+	};
 
 	// open the modal project information dialog
 	$scope.showInfoDialog = function(project, dlgData) {

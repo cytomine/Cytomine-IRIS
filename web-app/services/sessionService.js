@@ -57,17 +57,15 @@ iris.factory("sessionService", [
 					callbackSuccess(data);
 				}
 			}).error(
-					function(data, status, header, config) {
-						// $log.error("Error retrieving session: " + data);
-						sharedService
-								.addAlert(
-										"The session could not be retrieved!",
-										"danger")
+				function(data, status, header, config) {
+					$log.error("Error retrieving session: " + data);
 
-						if (callbackError) {
-							callbackError(data, status);
-						}
-					})
+					sessionService.setSession(null);
+					
+					if (callbackError) {
+						callbackError(data, status);
+					}
+				})
 		},
 
 		// retrieve the currently active project
@@ -77,7 +75,7 @@ iris.factory("sessionService", [
 				// $log.debug("returning local IRIS project")
 				return sess.currentProject;
 			} else {
-				$log.debug("returning null")
+				$log.debug("No local project abailable.")
 				// if no project is found, move on to the project page
 				// and let the user select a project
 				$location.url("/projects")
@@ -112,8 +110,7 @@ iris.factory("sessionService", [
 					callbackSuccess(data)
 				}
 			}).error(function(data, status, header, config) {
-				// on error, show the error message
-				sharedService.addAlert(status + ": " + data, "danger");
+				// on error, log the error message
 				$log.error(data);
 
 				if (callbackError) {
@@ -161,10 +158,10 @@ iris.factory("sessionService", [
 		getCurrentImage : function() {
 			var sess = this.getSession();
 			if (sess.currentImage != null) {
-				$log.debug("returning current IRIS image")
+				$log.debug("Returning current IRIS image.")
 				return sess.currentImage;
 			} else {
-				$log.debug("current IRIS image is null")
+				$log.debug("Current IRIS image is null.")
 				return null;
 			}
 		},

@@ -22,8 +22,8 @@ class SecurityFilters {
 				if(publicKey && privateKey) {
 					// store a new cytomine instance (from the client-JAR)
 					// to the request object (will be available in the controllers etc.)
-					request['cytomine'] = new Cytomine(grailsApplication.config.grails.cytomine.host, publicKey, privateKey, "./");
-					request['cytomine'].setMax(0); //no max
+					request['cytomine'] = new Cytomine(grailsApplication.config.grails.cytomine.host, publicKey, privateKey, "./")
+					request['cytomine'].setMax(0) //no max
 				}
 				else {
 					response.setStatus(403)

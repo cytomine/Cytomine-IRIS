@@ -18,6 +18,11 @@
 	margin: 0px;
 }
 
+.ng-table-counts > .btn {
+	padding: 2px 8px;
+	font-size: 10pt;
+}
+
 .table {
 	margin: 10px 0;	
 }

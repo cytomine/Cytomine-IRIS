@@ -36,36 +36,15 @@ class Image implements Comparable<Image>, Updateable{
 		"annotations.hideCompleted":String.valueOf(false)
 		]
 	
+	/**
+	 * The cytomine ID of the currently active annotation
+	 */
 	Long currentCmAnnotationID = 0L
 	
 	// each image may have up to 3 annotations (current, previous, next)
 	// which will be updated accordingly 
-	Map annotations = [:]
-	static hasMany = [annotations:Annotation]
-	
-	public void setCurrentAnnotation(Annotation currAnn){
-		this.annotations.put("currentAnnotation", currAnn)
-	}
-	
-	public void setPreviousAnnotation(Annotation prevAnn){
-		this.annotations.put("previousAnnotation", prevAnn)
-	}
-	
-	public void setNextAnnotation(Annotation nextAnn){
-		this.annotations.put("nextAnnotation", nextAnn)
-	}
-	
-	public Annotation getCurrentAnnotation(){
-		return this.annotations.get("currentAnnotation")
-	}
-	
-	public Annotation getPreviousAnnotation(){
-		return this.annotations.get("previousAnnotation")
-	}
-	
-	public Annotation getNextAnnotation(){
-		return this.annotations.get("nextAnnotation")
-	}
+//	Map annotations = [:]
+//	static hasMany = [annotations:Annotation]
 	
 	@Override
 	public int compareTo(Image img) {

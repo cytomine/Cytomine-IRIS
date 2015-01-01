@@ -1,29 +1,36 @@
 package be.cytomine.apps.iris
 
 import grails.converters.JSON
-import groovy.json.JsonBuilder;
 
-import org.codehaus.groovy.grails.web.json.JSONElement;
+import org.codehaus.groovy.grails.web.json.JSONElement
 import org.json.simple.JSONObject
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
 import be.cytomine.client.Cytomine
-import be.cytomine.client.CytomineException;
+import be.cytomine.client.CytomineException
 import be.cytomine.client.collections.AnnotationCollection
 import be.cytomine.client.models.Annotation
 import be.cytomine.client.models.Ontology
 
+
+/**
+ * Utility class for the Cytomine IRIS application.
+ * @author Philipp Kainz
+ * @since 0.1
+ */
 class Utils {
 
 	/**
+	 * Computes the annotation progress of a user in an image. Each 
+	 * annotation has to have at least one term assigned by the user, 
+	 * otherwise this does not attribute to the progress.
 	 * 
-	 * @param cytomine the cytomine instance 
-	 * @param params parameter map, required: imageID, projectID, userID
-	 * @return
+	 * @param cytomine a Cytomine instance
+	 * @param projectID the cytomine project id
+	 * @param imageID the cytomine image id
+	 * @param userID the cytomine user id
+	 * @return a JSONObject (map) which contains progress information for the user
 	 */
-	public JSONObject getUserProgress(Cytomine cytomine, long projectID, long imageID, long userID){
+	JSONObject getUserProgress(Cytomine cytomine, long projectID, long imageID, long userID){
 		JSONObject jsonResult = new JSONObject()
 		// clone the object and retrieve every object without pagination
 		Cytomine cm = new Cytomine(cytomine.host, cytomine.publicKey, cytomine.privateKey, cytomine.basePath)
@@ -35,7 +42,7 @@ class Utils {
 		Map<String,String> filters = new HashMap<String,String>()
 		filters.put("project", String.valueOf(projectID))
 		filters.put("image", String.valueOf(imageID))
-		
+
 		// get the annotations of this image (as batch, causes 1 access per image)
 		AnnotationCollection annotations = cm.getAnnotations(filters)
 
@@ -70,7 +77,13 @@ class Utils {
 		return jsonResult;
 	}
 
-	public List<JSONObject> flattenOntology(Ontology ontology){
+	/**
+	 * 'Flatten' an ontology, which may be hierarchical. 
+	 *  
+	 * @param ontology
+	 * @return a list of JSONObjects
+	 */
+	List<JSONObject> flattenOntology(Ontology ontology){
 		// perform recursion and flatten the hierarchy
 		JSONObject root = ontology.getAttr();
 		List flatHierarchy = new ArrayList<JSONObject>();
@@ -81,12 +94,16 @@ class Utils {
 		// pass the root node
 		flatHelper(root, dict, flatHierarchy);
 
-		//		String result = new Gson().toJson(flatHierarchy);
-		//		println "######################################################"
-
 		return flatHierarchy;
 	}
 
+	/**
+	 * Flattens a hierarchy, where the parent node is an attribute of each child node.
+	 * 
+	 * @param node the node (mostly root node)
+	 * @param dict the dictionary to map from
+	 * @param flatHierarchy the flat hierarchy to write to
+	 */
 	private void flatHelper(JSONObject node, Map<Long,Object> dict, List flatHierarchy){
 		// get the node's children
 		List childrenList = node.get("children").toList()
@@ -113,25 +130,53 @@ class Utils {
 		}
 	}
 
-	public JSONElement modelToJSON(def object){
+	/**
+	 * Converts a domain object to JSON format using the custom marshaller classes.
+	 * @param object
+	 * @return the JSONElement object
+	 */
+	JSONElement modelToJSON(def object){
 		return JSON.parse((object as JSON).toString())
 	}
 
-	public Annotation getPredecessor(
+	/**
+	 * Gets the predecessor annotation from a collection.
+	 * 
+	 * @param annotations the collection
+	 * @param currentIndex the current index
+	 * @return
+	 * @throws IndexOutOfBoundsException if the current index is already the beginning of the collection
+	 */
+	Annotation getPredecessor(
 			AnnotationCollection annotations,
 			int currentIndex)
 	throws IndexOutOfBoundsException{
 		return annotations.get(currentIndex-1)
 	}
 
-	public Annotation getSuccessor(
+	/**
+	 * Gets the successor annotation from a collection.
+	 * 
+	 * @param annotations the collection
+	 * @param currentIndex the current index
+	 * @return
+	 * @throws IndexOutOfBoundsException if the current index is already the end of the collection
+	 */
+	Annotation getSuccessor(
 			AnnotationCollection annotations,
 			int currentIndex)
 	throws IndexOutOfBoundsException{
 		return annotations.get(currentIndex+1)
 	}
 
-	public def getSplitIndices(def theList, int nParts){
+	/**
+	 * Compute split indices for a list of objects.
+	 * 
+	 * @param theList
+	 * @param nParts
+	 * @return an array constisting of split indices
+	 */
+	def getSplitIndices(def theList, int nParts){
 		def nItems = theList.size()
 		def splitIndices;
 
@@ -153,13 +198,20 @@ class Utils {
 
 			// split the list in subparts
 			splitIndices = (1..maxSplits).collect { (it * nElementsPerPart)-1 }
-			print "max elements per part: " << nElementsPerPart << ", parts: " << nParts << ", maxSplits: " << maxSplits
+			log.debug("max elements per part: " + nElementsPerPart + ", parts: " + nParts + ", maxSplits: " + maxSplits)
 		}
-		println "      --> Split indices: " << splitIndices
+		log.debug("      --> Split indices: " + splitIndices)
 
 		return splitIndices
 	}
-	
+
+	/**
+	 * Resolve a CytomineException object to JSON data, which can be rendered to the client.
+	 * The status code is inherently stored in the CytomineException object.
+	 * 
+	 * @param e the exception
+	 * @return a JSONObject
+	 */
 	JSONObject resolveCytomineException(CytomineException e){
 		JSONObject errorMsg = new JSONObject()
 		errorMsg.putAt("class", CytomineException.class.getName())
@@ -176,7 +228,13 @@ class Utils {
 		errorMsg.getAt("error").putAt("status", e.httpCode)
 		return errorMsg
 	}
-	
+
+	/**
+	 * Resolve an Exception object to a HTTP status code which can be rendered to the client as JSON.
+	 * @param e the exception
+	 * @param httpCode the status code
+	 * @return a JSONObject
+	 */
 	JSONObject resolveException(Exception e, int httpCode){
 		JSONObject errorMsg = new JSONObject()
 		errorMsg.putAt("class", e.getClass().getName())
@@ -184,13 +242,12 @@ class Utils {
 		try {
 			String msg = e.getMessage()==null?"The requested operation cannot be performed.":e.getMessage()
 			errorObj = new org.codehaus.groovy.grails.web.json.JSONObject("{ status : " +
-				httpCode + ", message : \"" + msg + "\" }")
+					httpCode + ", message : \"" + msg + "\" }")
 		} catch (Exception ex){
 			errorObj = new org.codehaus.groovy.grails.web.json.JSONObject("{ status : " +
-				httpCode + ", message : \"The requested operation cannot be performed.\" }")
+					httpCode + ", message : \"The requested operation cannot be performed.\" }")
 		}
 		errorMsg.putAt("error", errorObj)
 		return errorMsg
 	}
-	
 }

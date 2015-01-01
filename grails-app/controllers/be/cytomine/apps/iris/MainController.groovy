@@ -7,12 +7,13 @@ import org.json.simple.JSONObject
 /**
  * This is the main controller of the IRIS application.
  * 
- * @author Philipp Kainz, 2014-08-13
- *
+ * @author Philipp Kainz
+ * @since 0.1
  */
 class MainController {
 
     def grailsApplication
+	def adminService
 	
 	def beforeInterceptor = {
 		log.debug("Executing action $actionName with params $params")
@@ -31,7 +32,7 @@ class MainController {
 	 * @return the name of the application
 	 */
 	def appName() {
-		render "${grailsApplication.metadata.'app.name'}"
+		render adminService.getAppName()
 	}
 	
 	/**
@@ -39,7 +40,7 @@ class MainController {
 	 * @return the version as string
 	 */
 	def appVersion(){
-		render "${grailsApplication.metadata.'app.version'}"
+		render adminService.getAppVersion()
 	}
 	
 	/**
@@ -73,6 +74,6 @@ class MainController {
 	 * @return the URL of the web page in Config.groovy
 	 */
 	def webAddress(){
-		render grailsApplication.config.grails.cytomine.web
+		render adminService.getCytomineWebAddress()
 	}
 }

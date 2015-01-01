@@ -58,6 +58,9 @@ iris.config(["$routeProvider", "$locationProvider", function($routeProvider, $lo
 	$routeProvider.when("/project/:projectID/gallery", {
 		templateUrl : "views/annotationGallery.html"
 	});
+	$routeProvider.when("/about", {
+		templateUrl : "views/about.html"
+	});
 	// default route (unknown)
 	$routeProvider.otherwise({
 		templateUrl : "views/404.html"

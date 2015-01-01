@@ -1,14 +1,11 @@
 var iris = angular.module("irisApp");
 
-iris.constant("appNameUrl", "/api/appName.json");
-iris.constant("appVersionUrl", "/api/appVersion.json");
-
 iris.controller("mainCtrl", [ 
 "$scope", "$http", "$route", "$location", "$modal",
-"$log", "appNameUrl", "appVersionUrl", "cytomineService",
+"$log", "cytomineService",
 "projectService", "imageService", "sharedService",
         function($scope, $http, $route, $location, $modal,
-		$log, appNameUrl, appVersionUrl, cytomineService,
+		$log, cytomineService,
 		projectService, imageService, sharedService) {
 	$log.debug("mainCtrl");
 	

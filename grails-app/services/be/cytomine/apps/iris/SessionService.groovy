@@ -24,6 +24,11 @@ class SessionService {
 	def imageService
 	def grailsApplication
 
+	/**
+	 * Get all sessions.
+	 * 
+	 * @return
+	 */
 	@Transactional(readOnly = true)
 	List<Session> getAll(){
 		// fetch all sessions from the database where the user is owner
@@ -43,8 +48,11 @@ class SessionService {
 	 * 
 	 * @throws Exception
 	 */
-	def getSession(Cytomine cytomine, String publicKey) throws Exception{
+	JSONElement getSession(Cytomine cytomine, String publicKey) throws Exception{
+		// get the calling user from cytomine
 		be.cytomine.client.models.User cmUser = cytomine.getUser(publicKey)
+		
+		// try to find it in the data base
 		User user = User.findByCmID(cmUser.getId())
 
 		// generate a new user, if the user does not yet exist, otherwise update the
@@ -59,23 +67,26 @@ class SessionService {
 		}
 
 		// save the user and the session
-		user.save(flush:true,failOnError:true)
+		user.save(flush:true, failOnError:true)
 
 		// ############################################
 		// inject non-IRIS objects into the session
-		def sessJSON = new Utils().modelToJSON(userSession);
+		JSONElement sessJSON = new Utils().modelToJSON(userSession)
 
 		// inject the user
 		sessJSON.user.cytomine = cmUser.getAttr()
 
-		// inject current project
+		// inject current Cytomine project
 		Project cP = userSession.getCurrentProject()
 
 		if (cP != null){
 			def pj = cytomine.getProject(cP.getCmID()).getAttr()
 			sessJSON.currentProject.cytomine = pj
 		}
+		
+		// inject current Cytomine image
 		Image cI = userSession.getCurrentImage()
+		
 		if (cI != null){
 			def img = cytomine.getImageInstance(cI.getCmID()).getAttr()
 			sessJSON.currentImage.cytomine = img
@@ -88,18 +99,18 @@ class SessionService {
 	/**
 	 * Updates a project associated with an IRIS Session. 
 	 * Also fetches the current project settings from the Cytomine host 
-	 * and returns the updated project.
+	 * and returns the updated project as JSON object.
 	 * 
 	 * @param cytomine a Cytomine instance
 	 * @param sessionID the IRIS session ID where the project belongs to
 	 * @param cmProjectID the Cytomine project ID for updating
-	 * @return the updated IRIS project instance
+	 * @return the updated IRIS project instance as JSON object
 	 * 
 	 * @throws CytomineException if the project is is not available for the 
 	 * querying user
 	 * @throws Exception
 	 */
-	def touchProject(Cytomine cytomine, long sessionID, long cmProjectID) throws CytomineException, Exception{
+	JSONElement touchProject(Cytomine cytomine, long sessionID, long cmProjectID) throws CytomineException, Exception{
 		// find the project in the session
 		Session sess = Session.get(sessionID)
 
@@ -109,6 +120,7 @@ class SessionService {
 		// fetch the Cytomine project instance
 		def cmProject = cytomine.getProject(cmProjectID)
 
+		// map to the IRIS domain model
 		projectForUpdate = new DomainMapper(grailsApplication).mapProject(cmProject, projectForUpdate)
 		projectForUpdate.updateLastActivity()
 
@@ -121,7 +133,7 @@ class SessionService {
 
 		// inject the project here directly in order to avoid fetching it again
 		// from Cytomine
-		def projectJSON = injectCytomineProject(cytomine, projectForUpdate, cmProject)
+		JSONElement projectJSON = injectCytomineProject(cytomine, projectForUpdate, cmProject)
 
 		return projectJSON
 	}
@@ -139,20 +151,20 @@ class SessionService {
 	 * querying user
 	 * @throws Exception
 	 */
-	def getProject(Cytomine cytomine, long sessionID, long cmProjectID) throws CytomineException, Exception{
+	JSONElement getProject(Cytomine cytomine, long sessionID, long cmProjectID) throws CytomineException, Exception{
 		// find the project in the session
 		Session sess = Session.get(sessionID)
 
 		// find the nested project by projectID
 		Project projectForUpdate = sess.getProjects().find { it.cmID == cmProjectID }
 
-		def projectJSON = injectCytomineProject(cytomine, projectForUpdate, null)
+		JSONElement projectJSON = injectCytomineProject(cytomine, projectForUpdate, null)
 
 		return projectJSON
 	}
 
 	/**
-	 * Injects a Cytomine Project into the IRIS project.
+	 * Injects a Cytomine project into the IRIS project (as JSON).
 	 * 
 	 * @param cytomine a Cytomine instance
 	 * @param irisProject the IRIS Project
@@ -163,9 +175,9 @@ class SessionService {
 	 * querying user
 	 * @throws Exception
 	 */
-	def injectCytomineProject(Cytomine cytomine, Project irisProject, def cmProject) throws CytomineException, Exception{
+	JSONElement injectCytomineProject(Cytomine cytomine, Project irisProject, def cmProject) throws CytomineException, Exception{
 
-		def projectJSON = new Utils().modelToJSON(irisProject)
+		JSONElement projectJSON = new Utils().modelToJSON(irisProject)
 
 		// fetch the Cytomine project instance
 		if (cmProject == null){
@@ -196,9 +208,9 @@ class SessionService {
 	 * querying user
 	 * @throws Exception
 	 */
-	def injectCytomineAnnotation(Cytomine cytomine, Annotation irisAnnotation, def cmAnnotation) throws CytomineException, Exception{
+	JSONElement injectCytomineAnnotation(Cytomine cytomine, Annotation irisAnnotation, def cmAnnotation) throws CytomineException, Exception{
 
-		def annJSON = new Utils().modelToJSON(irisAnnotation)
+		JSONElement annJSON = new Utils().modelToJSON(irisAnnotation)
 
 		// fetch the Cytomine project instance
 		if (cmAnnotation == null){
@@ -227,8 +239,8 @@ class SessionService {
 	 * querying user
 	 * @throws Exception
 	 */
-	def injectCytomineImageInstance(Cytomine cytomine, Image irisImage, def cmImage, boolean blindMode) throws CytomineException, Exception{
-		def imageJSON = new Utils().modelToJSON(irisImage)
+	JSONElement injectCytomineImageInstance(Cytomine cytomine, Image irisImage, def cmImage, boolean blindMode) throws CytomineException, Exception{
+		JSONElement imageJSON = new Utils().modelToJSON(irisImage)
 
 		// fetch the Cytomine image instance
 		if (cmImage == null){
@@ -266,7 +278,7 @@ class SessionService {
 	 * @throws CytomineException
 	 * @throws Exception
 	 */
-	def updateByIRISProject(Cytomine cytomine, long sessionID, long irisProjectID, def payload) throws CytomineException, Exception{
+	JSONElement updateByIRISProject(Cytomine cytomine, long sessionID, long irisProjectID, def payload) throws CytomineException, Exception{
 		// check if the user may access this project
 		def cmProject = cytomine.getProject(payload['cytomine'].id);
 
@@ -306,7 +318,7 @@ class SessionService {
 		sess.addToProjects(project)
 		sess.updateLastActivity()
 
-		def pjJSON = injectCytomineProject(cytomine, project, cmProject)
+		JSONElement pjJSON = injectCytomineProject(cytomine, project, cmProject)
 		return pjJSON
 	}
 
@@ -323,7 +335,7 @@ class SessionService {
 	 * querying user
 	 * @throws Exception
 	 */
-	def touchImage(Cytomine cytomine, long sessionID, long cmProjectID, long cmImageID) throws CytomineException, Exception {
+	JSONElement touchImage(Cytomine cytomine, long sessionID, long cmProjectID, long cmImageID) throws CytomineException, Exception {
 		// find the project in the session
 		Session sess = Session.get(sessionID)
 
@@ -355,7 +367,7 @@ class SessionService {
 
 		// inject the project here directly in order to avoid fetching it again
 		// from Cytomine
-		def imageJSON = injectCytomineImageInstance(cytomine, imageForUpdate, cmImage, irisProject.getCmBlindMode())
+		JSONElement imageJSON = injectCytomineImageInstance(cytomine, imageForUpdate, cmImage, irisProject.getCmBlindMode())
 
 		return imageJSON
 	}
@@ -374,7 +386,7 @@ class SessionService {
 	 * querying user
 	 * @throws Exception
 	 */
-	def touchAnnotation(Cytomine cytomine, long sessionID, long cmProjectID, long cmImageID, long cmAnnID) throws CytomineException, Exception{
+	JSONElement touchAnnotation(Cytomine cytomine, long sessionID, long cmProjectID, long cmImageID, long cmAnnID) throws CytomineException, Exception{
 		// find the project in the session
 		Session sess = Session.get(sessionID)
 
@@ -410,7 +422,7 @@ class SessionService {
 
 		// inject the project here directly in order to avoid fetching it again
 		// from Cytomine
-		def annJSON = new Utils().modelToJSON(irisAnn)
+		JSONElement annJSON = new Utils().modelToJSON(irisAnn)
 
 		return annJSON
 	}
@@ -418,13 +430,12 @@ class SessionService {
 	/**
 	 * Removes a session from the database.
 	 * 
-	 * @param cytomine a Cytomine instance
 	 * @param sessID the IRIS session ID
 	 * 
 	 * @return <code>null</code>, if the session does not exist
 	 * @throws Exception if any error occurs during deletion
 	 */
-	def delete(long sessID) throws Exception{
+	void delete(long sessID) throws Exception{
 		Session sess = Session.get(sessID)
 		sess.delete(flush:true, failOnError:true)
 	}
