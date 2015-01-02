@@ -27,8 +27,10 @@ environments {
     }
     production {
         dataSource {
-            dbCreate = "update"
-            url = "jdbc:h2:prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE"
+			dbdir = "${System.properties['catalina.base']}/db/iris"
+            
+			dbCreate = "update"
+            url = "jdbc:h2:file:${dbdir};MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE"
             properties {
                maxActive = -1
                minEvictableIdleTimeMillis=1800000

@@ -117,6 +117,10 @@ environments {
 	}
 }
 
+def catalinaBase = System.properties.getProperty('catalina.base')
+if (!catalinaBase) catalinaBase = '.' 
+def logDirectory = "${catalinaBase}/logs"
+
 // log4j configuration
 log4j = {
 	appenders {
@@ -124,7 +128,7 @@ log4j = {
 		appender new DailyRollingFileAppender(
 				name: 'dailyFileAppender',
 				datePattern: "'.'yyyy-MM-dd",  // See the API for all patterns.
-				fileName: "logs/${appName}-${appVersion}.log",
+				fileName: "${logDirectory}/${appName}-${appVersion}.log",
 				layout: pattern(conversionPattern:'%d [%t] %-5p %c{2} %x - %m%n')
 				)
 	}
