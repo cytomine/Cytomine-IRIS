@@ -1,5 +1,4 @@
 import org.apache.log4j.DailyRollingFileAppender
-import org.apache.log4j.RollingFileAppender
 
 // locations to search for config files that get merged into the main config;
 // config files can be ConfigSlurper scripts, Java properties files, or classes
@@ -20,13 +19,6 @@ grails.cytomine.image.host = "http://image{serverID}.cytomine.be"
 grails.cytomine.host = "http://beta.cytomine.be"
 grails.cytomine.web = "http://www.cytomine.be"
 grails.cytomine.execution.threads = 4
-grails.cytomine.apps.iris = {
-	server = {
-		admin = {
-			email = "philipp.kainz@medunigraz.at"
-		}
-	}
-}
 
 // The ACCEPT header will not be used for content negotiation for user agents containing the following strings (defaults to the 4 major rendering engines)
 grails.mime.disable.accept.header.userAgents = ['Gecko', 'WebKit', 'Presto', 'Trident']
@@ -106,12 +98,22 @@ environments {
 	development {
 		grails.logging.jul.usebridge = true
 		grails.serverURL = "http://localhost:8080"
+		grails.cytomine.apps.iris.server.admin.email = "philipp.kainz@medunigraz.at"
 		grails.cytomine.apps.iris.host = grails.serverURL + grailsApplication.metadata['app.context']
+		
+		// job configuration
+		// disable the jobs using the "disabled"=true flag
+		PingCytomineHostJob.disabled = false
+		SynchronizeUserProgressJob.disabled = false
 	}
 	production {
 		grails.logging.jul.usebridge = false
 		grails.serverURL = "https://leonardo.medunigraz.at"
+		grails.cytomine.apps.iris.server.admin.email = "philipp.kainz@medunigraz.at"
 		grails.cytomine.apps.iris.host = grails.serverURL + grailsApplication.metadata['app.context']
+		
+		// job configuration
+		// disable the jobs using the "disabled"=true flag
 	}
 }
 

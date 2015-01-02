@@ -63,6 +63,12 @@ class SynchronizeUserProgressJob {
 	 * @throws Exception
 	 */
 	def execute() throws Exception{
+		// check, if the job is enabled
+		String className = getClass().simpleName
+		if (grailsApplication.config."$className".disabled) {
+		  return "deactivated"
+		}
+		
 		log.info("Starting user progress synchronization...")
 		// get all users from the IRIS database
 		List<User> users = User.getAll()

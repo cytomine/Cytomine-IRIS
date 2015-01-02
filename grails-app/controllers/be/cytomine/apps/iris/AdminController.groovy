@@ -25,9 +25,11 @@ class AdminController {
 	 * @return
 	 */
 	def synchronizeUserProgress() {
-		boolean success = new SynchronizeUserProgressJob(grailsApplication,sessionService,imageService,activityService,mailService).execute()
-		if (success) {
+		def resp = new SynchronizeUserProgressJob(grailsApplication,sessionService,imageService,activityService,mailService).execute()
+		if (resp == true) {
 			render "Sync OK."
+		} else if (resp == "deactivated"){
+			render "Sync deactivated."
 		} else {
 			response.setStatus(500)
 			render "Sync Failed."

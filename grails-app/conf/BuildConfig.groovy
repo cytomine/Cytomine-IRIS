@@ -16,7 +16,7 @@ grails.project.fork = [
     // configure settings for the run-app JVM
     run: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false, jvmArgs: ['-Djava.net.preferIPv4Stack=true']],
     // configure settings for the run-war JVM
-    war: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false, jvmArgs: ['-Djava.net.preferIPv4Stack=true']],
+    war: [maxMemory: 4096, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false, jvmArgs: ['-Djava.net.preferIPv4Stack=true']],
     // configure settings for the Console UI JVM
     console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, jvmArgs: ['-Djava.net.preferIPv4Stack=true']]
 ]
