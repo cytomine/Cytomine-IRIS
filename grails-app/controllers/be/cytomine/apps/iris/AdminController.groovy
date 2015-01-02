@@ -17,6 +17,7 @@ class AdminController {
 	def imageService
 	def sessionService
 	def adminService
+	def activityService
 	def mailService	
 	
 	/**
@@ -24,7 +25,7 @@ class AdminController {
 	 * @return
 	 */
 	def synchronizeUserProgress() {
-		boolean success = new SynchronizeUserProgressJob(grailsApplication,sessionService,imageService,mailService).execute()
+		boolean success = new SynchronizeUserProgressJob(grailsApplication,sessionService,imageService,activityService,mailService).execute()
 		if (success) {
 			render "Sync OK."
 		} else {

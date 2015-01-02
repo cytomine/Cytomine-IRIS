@@ -68,7 +68,7 @@ class SynchronizeUserProgressJob {
 		try {
 			// for each IRIS user, refresh the labeling progress in the projects
 			users.each { user ->
-				log.debug("Synchronizing user " + user.cmUserName + "...")
+				log.info("Synchronizing user " + user.cmUserName + "...")
 				// create a new cytomine connection
 				Cytomine cytomine = new Cytomine(grailsApplication.config.grails.cytomine.host,
 						user.cmPublicKey, user.cmPrivateKey, "./")
@@ -135,9 +135,9 @@ class SynchronizeUserProgressJob {
 						// persist the IRIS image
 						irisProject.addToImages(irisImage)
 					}
-					log.debug("Syncing projects... " + ((pIdx+1)*100/nProjects) + "%")
+					log.info("Syncing projects... [" + irisProject.cmName + ", " + ((pIdx+1)*100/nProjects) + "%]")
 				}
-				log.debug("Done synchronizing user " + user.cmUserName + ".")
+				log.info("Done synchronizing user " + user.cmUserName + ".")
 				activityService.log(user, "Successfully (auto)synchronized user progress.")
 			}
 
@@ -146,6 +146,8 @@ class SynchronizeUserProgressJob {
 			activityService.log("(Auto)synchronization of user progress failed!")
  
 			String recepient = grailsApplication.config.grails.cytomine.apps.iris.server.admin.email
+			
+			log.info("Sending email to admin...")
 			
 			// notify the admin
 			mailService.sendMail {
