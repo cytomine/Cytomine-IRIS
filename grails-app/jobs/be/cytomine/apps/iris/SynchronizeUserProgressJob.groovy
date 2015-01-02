@@ -31,6 +31,8 @@ class SynchronizeUserProgressJob {
 	def grailsApplication
 	def sessionService
 	def imageService
+	def activityService
+	def mailService
 
 	/**
 	 * Custom constructor for calling via controller. 
@@ -39,10 +41,12 @@ class SynchronizeUserProgressJob {
 	 * @param sessionService
 	 * @param imageService
 	 */
-	SynchronizeUserProgressJob(def grailsApplication, def sessionService, def imageService){
+	SynchronizeUserProgressJob(def grailsApplication, def sessionService, def imageService, def activityService, def mailService){
 		this.grailsApplication = grailsApplication
 		this.sessionService = sessionService
 		this.imageService = imageService
+		this.activityService = activityService
+		this.mailService = mailService
 	}
 
 	/**
@@ -134,10 +138,23 @@ class SynchronizeUserProgressJob {
 					log.debug("Syncing projects... " + ((pIdx+1)*100/nProjects) + "%")
 				}
 				log.debug("Done synchronizing user " + user.cmUserName + ".")
+				activityService.log(user, "Successfully (auto)synchronized user progress.")
 			}
 
 		} catch(Exception ex){
 			log.error("Cannot complete the user progress synchronization!", ex)
+			activityService.log("(Auto)synchronization of user progress failed!")
+ 
+			String recepient = grailsApplication.config.grails.cytomine.apps.iris.server.admin.email
+			
+			// notify the admin
+			mailService.sendMail {
+				async true
+				from "cytomine-iris@pkainz.com"
+				to recepient
+				subject "Progress synchronization job failed"
+				body ('Could not complete the user synchronization!\n' + ex)
+			}
 			return false
 		}
 		

@@ -16,14 +16,15 @@ class AdminController {
 	def grailsApplication
 	def imageService
 	def sessionService
-	def adminService	
+	def adminService
+	def mailService	
 	
 	/**
 	 * Manually trigger the synchronization of the user progress.
 	 * @return
 	 */
 	def synchronizeUserProgress() {
-		boolean success = new SynchronizeUserProgressJob(grailsApplication,sessionService,imageService).execute()
+		boolean success = new SynchronizeUserProgressJob(grailsApplication,sessionService,imageService,mailService).execute()
 		if (success) {
 			render "Sync OK."
 		} else {

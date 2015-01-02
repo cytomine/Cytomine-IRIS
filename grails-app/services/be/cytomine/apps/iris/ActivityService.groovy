@@ -15,4 +15,8 @@ class ActivityService {
 		ac.save(failOnError:true)
 	}
 	
+	def log(String description) {
+		Activity ac = new Activity(description:description)
+		ac.save(failOnError:true)
+	}
 }

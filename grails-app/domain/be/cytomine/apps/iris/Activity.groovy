@@ -15,7 +15,7 @@ class Activity {
     static constraints = {
 		lastActivity nullable:false, blank:false
 		description size:0..5000, blank:true
-		user nullable:false
+		user nullable:true
 	}
 
 	// class members	

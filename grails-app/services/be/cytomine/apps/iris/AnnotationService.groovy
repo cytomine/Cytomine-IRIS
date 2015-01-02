@@ -375,7 +375,6 @@ class AnnotationService {
 		if (!hasTermsLeft){
 			log.debug("User " + user.cmUserName + " has no other terms assigned to annotation [" + annotation.getId() + "]")
 			
-			// TODO ENABLE
 			// decrement labeled annotations
 			if (irisImage.labeledAnnotations>0){
 				irisImage.labeledAnnotations--
@@ -453,7 +452,6 @@ class AnnotationService {
 		if (!hadTermsAssigned){
 			log.debug("User " + user.cmUserName + " had no terms assigned to annotation [" + annotation.getId() + "]")
 			
-			// TODO ENABLE
 			// increment labeled annotations
 			if (irisImage.labeledAnnotations<irisImage.numberOfAnnotations){
 				irisImage.labeledAnnotations++

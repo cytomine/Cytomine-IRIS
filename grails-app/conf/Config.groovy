@@ -19,6 +19,13 @@ grails.cytomine.image.host = "http://image{serverID}.cytomine.be"
 grails.cytomine.host = "http://beta.cytomine.be"
 grails.cytomine.web = "http://www.cytomine.be"
 grails.cytomine.execution.threads = 4
+grails.cytomine.apps.iris {
+	server {
+		admin {
+			email = "philipp.kainz@medunigraz.at"
+		}
+	}
+}
 
 // The ACCEPT header will not be used for content negotiation for user agents containing the following strings (defaults to the 4 major rendering engines)
 grails.mime.disable.accept.header.userAgents = ['Gecko', 'WebKit', 'Presto', 'Trident']
