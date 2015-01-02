@@ -40,6 +40,8 @@ class SynchronizeUserProgressJob {
 	 * @param grailsApplication
 	 * @param sessionService
 	 * @param imageService
+	 * @param activityService
+	 * @param mailService
 	 */
 	SynchronizeUserProgressJob(def grailsApplication, def sessionService, def imageService, def activityService, def mailService){
 		this.grailsApplication = grailsApplication
