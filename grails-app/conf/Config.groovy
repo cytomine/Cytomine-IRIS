@@ -152,8 +152,9 @@ log4j = {
 		development {
 			debug   'grails.app.controllers',
 					'grails.app.services',
-					'grails.app.jobs',
 					'be.cytomine.apps.iris'
+					
+			info 	'grails.app.jobs'
 		}
 		production {
 			info    'grails.app.controllers',
