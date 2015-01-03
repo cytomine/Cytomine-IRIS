@@ -233,6 +233,9 @@ iris.controller(
 									var view = map.getView();
 									$log.debug(view.getProjection().getCode())
 									if (view.getProjection().getCode() !== 'Zoomify'){
+										// DUE TO A CURRENT BUG IN THE OL3 SYSTEM
+										// WE HAVE TO ENTIRELY RELOAD THE PATH
+										// EPSG:3857 is automatically set to default
 										// workaround for openlayers problem with refreshing page
 										// on browser history navigation
 										navService.navToLabelingPage();

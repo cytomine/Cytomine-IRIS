@@ -48,6 +48,12 @@ function($rootScope, $scope, $http, $filter,
 		callback : function() {
 			helpService.showHelp();
 		}
+	}).add({
+		combo : 'r',
+		description : 'Resume labeling where you left last time',
+		callback : function() {
+			navService.navToLabelingPage();
+		}
 	});
 
 	// proceed to the labeling page

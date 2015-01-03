@@ -4,12 +4,21 @@ iris.controller("annotationGalleryCtrl", [
 "$rootScope", "$scope", "$http", "$filter", "$log",
 "$location", "hotkeys", "helpService", "cytomineService", 
 "navService", "annotationService", "sessionService", "sharedService", "$routeParams",
-                                          function($rootScope, $scope, $http, $filter, $log,
+		function($rootScope, $scope, $http, $filter, $log,
 		$location, hotkeys, helpService, cytomineService, navService, annotationService, sessionService, sharedService, $routeParams) {
 	$log.debug("annotationGalleryCtrl");
 
 	// set content url for the help page
 	helpService.setContentUrl("content/help/annGalleryHelp.html");
+	
+	hotkeys.bindTo($scope)
+	.add({
+		combo : 'r',
+		description : 'Resume labeling where you left last time',
+		callback : function() {
+			navService.navToLabelingPage();
+		}
+	});
 	
 	$scope.annotation = {
 		groups : [] // this variable holds all terms and their annotations

@@ -1,8 +1,8 @@
 var iris = angular.module("irisApp");
 
 iris.controller("welcomeCtrl", 
-		["$scope", "$log", "helpService", "hotkeys", "cytomineService", "sessionService",
-		 function($scope, $log, helpService, hotkeys, cytomineService, sessionService) {
+		["$scope", "$log", "helpService", "hotkeys", "cytomineService", "sessionService", "navService",
+		 function($scope, $log, helpService, hotkeys, cytomineService, sessionService, navService) {
 	$log.debug("welcomeCtrl");
 	
 	// set the help variable for this page
@@ -18,8 +18,14 @@ iris.controller("welcomeCtrl",
 		callback : function() {
 			helpService.showHelp();
 		}
+	}).add({
+		combo : 'r',
+		description : 'Resume labeling where you left last time',
+		callback : function() {
+			navService.navToLabelingPage();
+		}
 	});
-
+	
 	// retrieve the Cytomine host address
 	$scope.getCytomineHost = function() {
 		cytomineService.getCytomineHost(function(cytomineHost) {

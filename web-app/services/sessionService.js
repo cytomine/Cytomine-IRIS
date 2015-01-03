@@ -75,10 +75,7 @@ iris.factory("sessionService", [
 				// $log.debug("returning local IRIS project")
 				return sess.currentProject;
 			} else {
-				$log.debug("No local project abailable.")
-				// if no project is found, move on to the project page
-				// and let the user select a project
-				$location.url("/projects")
+				$log.debug("No local project available.")
 				return null;
 			}
 		},

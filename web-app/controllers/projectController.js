@@ -2,9 +2,9 @@ var iris = angular.module("irisApp");
 
 iris.controller("projectCtrl", [
 "$rootScope", "$routeParams", "$scope", "$http", "$filter", "$location", "$document",
-"$modal", "$log", "hotkeys", "projectService", "helpService", "sharedService", "sessionService", "ngTableParams",
+"$modal", "$log", "hotkeys", "projectService", "helpService", "sharedService", "sessionService", "ngTableParams", "navService",
 	    function($rootScope, $routeParams, $scope, $http, $filter, $location, $document,
-		$modal, $log, hotkeys, projectService, helpService, sharedService, sessionService, ngTableParams) {
+		$modal, $log, hotkeys, projectService, helpService, sharedService, sessionService, ngTableParams, navService) {
 	$log.debug("projectCtrl");
 	
 	// set content url for the help page
@@ -22,6 +22,12 @@ iris.controller("projectCtrl", [
 		description : 'Show help for this page',
 		callback : function() {
 			helpService.showHelp();
+		}
+	}).add({
+		combo : 'r',
+		description : 'Resume labeling where you left last time',
+		callback : function() {
+			navService.navToLabelingPage();
 		}
 	});
 	

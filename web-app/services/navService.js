@@ -35,7 +35,10 @@ iris.factory("navService", [
 			try {
 				var iID = sessionService.getCurrentImage().cmID;
 				var url = "/project/" + pID + "/image/" + iID + "/label";
-	
+
+				// ###### IMPORTANT NOTE ######
+				// DUE TO A CURRENT BUG IN THE OL3 SYSTEM
+				// WE HAVE TO ENTIRELY RELOAD THE PATH
 				$location.path(url, false);
 				$window.location.href = $location.absUrl();
 				$window.location.reload();
