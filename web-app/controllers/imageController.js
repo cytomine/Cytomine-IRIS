@@ -193,13 +193,13 @@ function($rootScope, $scope, $http, $filter,
 
 //	post the prefs update to the server
 	$scope.hideCompleted = function(hideCompleted){
-		
-		if ($scope.hide == hideCompleted) {
-			$log.info("No changes in user progress filter.");
+		try {
+			var cPrj = sessionService.getCurrentProject();
+			$log.debug("current project prefs: " + JSON.stringify(cPrj.prefs));
+			$log.debug(typeof hideCompleted);
+		} catch (e) {
 			return;
 		}
-
-//		$log.debug(typeof hideCompleted)
 
 		// POSTING UPDATE TO SERVER
 		var cPrj = sessionService.getCurrentProject();

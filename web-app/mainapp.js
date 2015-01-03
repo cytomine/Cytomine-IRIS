@@ -75,3 +75,10 @@ iris.config(["$routeProvider", "$locationProvider", function($routeProvider, $lo
 		templateUrl : "views/404.html"
 	});
 }]);
+
+// OTHER SYSTEM WIDE CONFIGURATION
+$(".fancybox").fancybox({
+	openEffect	: 'elastic',
+	closeEffect	: 'elastic'
+});
+
