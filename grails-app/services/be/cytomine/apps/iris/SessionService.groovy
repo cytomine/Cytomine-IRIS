@@ -80,14 +80,14 @@ class SessionService {
 		// inject current Cytomine project
 		Project irisProject = userSession.getCurrentProject()
 		if (irisProject != null){
-			def pj = cytomine.getProject(irisProject.getCmID()).getAttr()
-			sessJSON.currentProject.cytomine = pj
+			def pjJSON = injectCytomineProject(cytomine, irisProject, null)
+			sessJSON.currentProject = pjJSON
 			
 			// also try to inject the current image
 			Image irisImage = irisProject.getCurrentImage()
 			if (irisImage != null){
-				def img = cytomine.getImageInstance(irisImage.getCmID()).getAttr()
-				sessJSON.currentProject.currentImage.cytomine = img
+				def imgJSON = injectCytomineImageInstance(cytomine, irisImage, null, irisProject.cmBlindMode)
+				sessJSON.currentProject.currentImage = imgJSON
 			}
 		}
 		
@@ -135,7 +135,14 @@ class SessionService {
 		// inject the project here directly in order to avoid fetching it again
 		// from Cytomine
 		JSONElement projectJSON = injectCytomineProject(cytomine, projectForUpdate, cmProject)
-
+		
+		// also try to inject the current image
+		Image irisImage = projectForUpdate.getCurrentImage()
+		if (irisImage != null){
+			def imageJSON = injectCytomineImageInstance(cytomine, irisImage, null, projectForUpdate.cmBlindMode)
+			projectJSON.currentImage = imageJSON
+		}
+		
 		return projectJSON
 	}
 
@@ -308,17 +315,31 @@ class SessionService {
 			log.error("Cannot find project " + irisProjectID + " for session " + sessionID)
 			throw new CytomineException(404, "Cannot find requested project in the session.")	
 		}
+		
+		log.debug("prefs received from client: " + payload['prefs']);
 
 		// map all properties from json to the project
 		project = project.updateByJSON(payload)
+		
+		log.debug("prefs after updateByJSON: " + project.getPrefs())
 
 		// add the project to the session and cause reordering
 		sess.setCurrentProject(project)
 		sess.addToProjects(project)
 		sess.updateLastActivity()
 
-		JSONElement pjJSON = injectCytomineProject(cytomine, project, cmProject)
-		return pjJSON
+		JSONElement projectJSON = injectCytomineProject(cytomine, project, cmProject)
+
+		// also try to inject the current image
+		Image irisImage = project.getCurrentImage()
+		if (irisImage != null){
+			def imageJSON = injectCytomineImageInstance(cytomine, irisImage, null, project.cmBlindMode)
+			projectJSON.currentImage = imageJSON
+		}
+		
+		log.debug(projectJSON)
+		
+		return projectJSON
 	}
 
 	/**
