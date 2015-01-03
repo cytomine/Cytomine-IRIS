@@ -1,8 +1,8 @@
 var iris = angular.module("irisApp");
 
 iris.controller("welcomeCtrl", 
-		["$scope", "$log", "helpService", "hotkeys", "cytomineService", 
-		 function($scope, $log, helpService, hotkeys, cytomineService) {
+		["$scope", "$log", "helpService", "hotkeys", "cytomineService", "sessionService",
+		 function($scope, $log, helpService, hotkeys, cytomineService, sessionService) {
 	$log.debug("welcomeCtrl");
 	
 	// set the help variable for this page
@@ -24,7 +24,6 @@ iris.controller("welcomeCtrl",
 	$scope.getCytomineHost = function() {
 		cytomineService.getCytomineHost(function(cytomineHost) {
 			$scope.welcome.cytomineHost = cytomineHost;
-			delete $scope.welcome.error;
 		}, function(data, status){
 			$scope.welcome.error = {
 				status: status,

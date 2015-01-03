@@ -16,6 +16,7 @@
 <script src="ngmodules/angular-resource.js" type="text/javascript"></script>
 <script src="ngmodules/ng-table/ng-table.js" type="text/javascript"></script>
 <link href="ngmodules/ng-table/ng-table.css" rel="stylesheet" />
+<script src="ngmodules/ng-breadcrumbs/ng-breadcrumbs.min.js" type="text/javascript"></script>
 
 <!-- AngularJS draggable -->
 <script type="text/javascript" src="ngmodules/ng-draggable/ngDraggable.js"></script>
@@ -152,6 +153,7 @@
 			</ul>
 		</div>
 	</nav>
+	<ng-include src="'templates/html/breadcrumbsPanel.html'"></ng-include>
 	
 	<div id="main" role="main">
 		<div ng-show="publicKey">

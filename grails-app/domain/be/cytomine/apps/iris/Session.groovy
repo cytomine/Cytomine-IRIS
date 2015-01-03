@@ -32,22 +32,26 @@ class Session implements Updateable{
 	SortedSet<Project> projects
 	Map<String, String> prefs = [:]
 	static hasMany = [projects:Project]
+	
+	// the last opened project instance 
+	Project currentProject
 
 	// ###################################################
 	// CLASS METHODS
-	/**
-	 * Gets the most recent project.
-	 * @return the most recent active project.
-	 */
-	Project getCurrentProject(){
-		try {
-			return this.projects.last()
-		} catch (NoSuchElementException e) {
-			return null
-		} catch (NullPointerException e) {
-			return null
-		}
-	}
+//	/**
+//	 * Gets the most recent project.
+//	 * @return the most recent active project.
+//	 */
+//	Project getCurrentProject(){
+//		try {
+//			Project cp = this.projects.last()
+//			return cp
+//		} catch (NoSuchElementException e) {
+//			return null
+//		} catch (NullPointerException e) {
+//			return null
+//		}
+//	}
 
 	/**
 	 * Gets the most recent image of the most recent project. Delegate for the image.

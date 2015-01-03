@@ -1,10 +1,5 @@
 <div class="container" ng-controller="imageCtrl">
 
-<!-- TODO Show a warning panel if there is no current project in this session -->
-<!-- <div ng-show="currentProject==null">
-		<ng-include src="'templates/html/openProjectPanel.html'"></ng-include>
-	</div>
--->
     <div ng-show="image.error">
 		<div class="alert alert-danger text-center" ng-show="image.error.retrieve">
        	 	{{image.error.retrieve.message}}
@@ -26,7 +21,7 @@
    	</div>
     
     <div class="row" ng-hide="loading">
-    	<ng-include src="'templates/html/refreshPanel.html'"></ng-include>
+		<ng-include src="'templates/html/refreshPanel.html'"></ng-include>
     	
 	    <div ng-hide="image.error">
 		    <table ng-table="tableParams" show-filter="true" class="table table-hover table-bordered">

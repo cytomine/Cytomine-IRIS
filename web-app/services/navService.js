@@ -37,7 +37,6 @@ iris.factory("navService", [
 				var url = "/project/" + pID + "/image/" + iID + "/label";
 	
 				$location.path(url, false);
-				console.log($location.absUrl());
 				$window.location.href = $location.absUrl();
 				$window.location.reload();
 			} catch (e) {

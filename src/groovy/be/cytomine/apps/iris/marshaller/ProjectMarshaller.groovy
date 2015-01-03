@@ -18,6 +18,7 @@ class ProjectMarshaller implements IRISMarshaller{
 			prj['cmBlindMode'] = it.cmBlindMode
 			prj['cmOntology'] = it.cmOntology
 			prj['cmNumberOfImages'] = it.cmNumberOfImages
+			prj['currentImage'] = it.currentImage
 			prj['prefs'] = it.prefs
 			return prj
 		}

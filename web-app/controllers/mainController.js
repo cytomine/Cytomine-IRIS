@@ -3,10 +3,10 @@ var iris = angular.module("irisApp");
 iris.controller("mainCtrl", [ 
 "$scope", "$http", "$route", "$location", "$modal",
 "$log", "cytomineService",
-"projectService", "imageService", "sharedService",
+"projectService", "imageService", "sharedService", "sessionService",
         function($scope, $http, $route, $location, $modal,
 		$log, cytomineService,
-		projectService, imageService, sharedService) {
+		projectService, imageService, sharedService, sessionService) {
 	$log.debug("mainCtrl");
 	
 	// declare variables for expression
@@ -37,7 +37,11 @@ iris.controller("mainCtrl", [
 				$scope.main.user = data;
 				
 				delete $scope.error;
-				window.location.reload();
+				sessionService.fetchSession(function(data){
+					window.location.reload();
+				}, function(data,status,config,header){
+					$log.error("Cannot fetch session!");
+				});
 			},function(data, status){
 				$scope.error = {
 						message : "Public or private keys are incorrect!",
@@ -61,6 +65,7 @@ iris.controller("mainCtrl", [
 		$scope.privateKey = "";
 		$scope.publicKeyCurrent = "";
 		$scope.privateKeyCurrent = "";
+		cytomineService.setKeys($scope.publicKey, $scope.privateKey);
 		delete $scope.main.user;
 		localStorage.removeItem("publicKey");
 		localStorage.removeItem("privateKey");

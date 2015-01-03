@@ -101,6 +101,9 @@ class DomainMapper {
 		irisImage.setMacroURL(cmImage.get("macroURL").toString()
 				.replace(cmHost,irisHost))
 
+		irisImage.setWidth(cmImage.get("width"))
+		irisImage.setHeight(cmImage.get("height"))
+		
 		if (blindMode){
 			irisImage.setOriginalFilename("[BLIND]" + cmImage.getId())
 		} else {

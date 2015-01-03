@@ -100,7 +100,7 @@ function($rootScope, $scope, $http, $filter,
 				delete $scope.image.error;
 			}
 
-//			console.log("hideCompleted (session): " + sessionService.getCurrentProject().prefs['images.hideCompleted']);
+			$log.debug("hideCompleted (local): " + sessionService.getCurrentProject().prefs['images.hideCompleted']);
 
 			// get user preferences from session
 			$scope.hide = (sessionService.getCurrentProject().prefs['images.hideCompleted'] === 'true');
@@ -165,16 +165,6 @@ function($rootScope, $scope, $http, $filter,
 //	//////////////////////////////////////////
 //	declare additional methods
 //	//////////////////////////////////////////
-	$scope.touchImage = function(image){
-		// update the image in the session
-		sessionService.touchImage($scope.projectID, image.id, function(data){
-			// handle success promise
-			$log.debug("Successfully touched image " + image.id);
-		}, function(data,status){
-			sharedService.addAlert("Cannot touch image. Error " + status + ".", "danger");
-		});
-	}
-
 //	Determine the row's background color class according 
 //	to the current labeling progress.
 	$scope.rowClass = function(progress) {
@@ -197,6 +187,11 @@ function($rootScope, $scope, $http, $filter,
 
 //	post the prefs update to the server
 	$scope.hideCompleted = function(hideCompleted){
+		
+		if ($scope.hide == hideCompleted) {
+			$log.info("No changes in user progress filter.");
+			return;
+		}
 
 //		$log.debug(typeof hideCompleted)
 
@@ -204,7 +199,7 @@ function($rootScope, $scope, $http, $filter,
 		var cPrj = sessionService.getCurrentProject();
 		cPrj.prefs['images.hideCompleted'] = hideCompleted;
 
-		// TODO possible BUG in updating the project! sometimes the argument is the input DOM element!!
+		// possible BUG in updating the project! sometimes the argument is the input DOM element!!
 		sessionService.updateProject(cPrj);
 
 		if (hideCompleted == false){

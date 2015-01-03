@@ -57,12 +57,12 @@ class SessionController {
 			render sessJSON
 		} catch(Exception e3){
 			// if retrieving session fails, delete the session from the DB by removing the user
-			try {
-				User user = User.findByCmPublicKey(params["publicKey"])
-				user.delete()
-			} catch (Exception e) {
-				log.error(e)
-			}
+//			try {
+//				User user = User.findByCmPublicKey(params["publicKey"])
+//				user.delete()
+//			} catch (Exception e) {
+//				log.error(e)
+//			}
 		
 			log.error(e3)
 			// on any other exception render 500
@@ -190,14 +190,16 @@ class SessionController {
 
 			Cytomine cytomine = request['cytomine']
 			long sessionID = params.long('sessionID')
-			long projectID = Long.valueOf(payload['id'])
-
+			long irisProjectID = Long.valueOf(payload['id'])
+			
 			// declare the project
-			def irisProject = null
+			def irisProject
 
 			if (pldClazz.equals(Project.class.name)){
 				// update using the IRIS project
-				irisProject = sessionService.updateByIRISProject(cytomine, sessionID, projectID, payload)
+				irisProject = sessionService.updateByIRISProject(cytomine, sessionID, irisProjectID, payload)
+			} else {
+				throw new CytomineException(404, "Cannot find IRIS project with ID " + irisProjectID)
 			}
 
 			render (irisProject as JSON)

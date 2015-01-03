@@ -610,8 +610,6 @@ class AnnotationController {
 			result.put("userProgress", annInfo.get("userProgress"))
 			result.put("numberOfAnnotations", annInfo.get("totalAnnotations"))
 			
-			// TODO persist the user progress information in the image
-
 			render (result as JSON)
 
 		} catch(CytomineException e1){

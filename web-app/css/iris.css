@@ -1,5 +1,9 @@
-.navbar {
+.navbar, .breadcrumb {
 	border-radius: 0px;
+}
+
+.breadcrumb {
+	margin-top: -20px;
 }
 
 .noPadding {

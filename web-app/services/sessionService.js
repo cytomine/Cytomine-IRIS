@@ -58,9 +58,9 @@ iris.factory("sessionService", [
 				}
 			}).error(
 				function(data, status, header, config) {
-					$log.error("Error retrieving session: " + data);
+					$log.error("Error retrieving session.");
 
-					sessionService.setSession(null);
+					sessionService.setSession(undefined);
 					
 					if (callbackError) {
 						callbackError(data, status);
@@ -148,6 +148,8 @@ iris.factory("sessionService", [
 						sharedService.addAlert(status
 								+ ": failed updating project.", "danger");
 
+						session.currentProject = null;
+
 						if (callbackError) {
 							callbackError(data, status)
 						}
@@ -157,9 +159,10 @@ iris.factory("sessionService", [
 		// retrieve the currently active image
 		getCurrentImage : function() {
 			var sess = this.getSession();
-			if (sess.currentImage != null) {
+			var cProj = sess.currentProject;
+			if (cProj.currentImage != null) {
 				$log.debug("Returning current IRIS image.")
-				return sess.currentImage;
+				return cProj.currentImage;
 			} else {
 				$log.debug("Current IRIS image is null.")
 				return null;
@@ -169,7 +172,8 @@ iris.factory("sessionService", [
 		// set the currently active image
 		setCurrentImage : function(image) {
 			var session = this.getSession();
-			session.currentImage = image;
+			var cProj = session.currentProject;
+			cProj.currentImage = image;
 			this.setSession(session);
 		},
 
@@ -185,16 +189,17 @@ iris.factory("sessionService", [
 
 			$http.post(url, null).success(function(data) {
 				// on success, update the image in the local storage
-				session.currentImage = data;
-				sessionService.setSession(session);
+				sessionService.setCurrentImage(data);
+
 				if (callbackSuccess) {
 					callbackSuccess(data)
 				}
 			}).error(function(data, status, header, config) {
 				// on error, show the error message
 				sharedService.addAlert(status + ": " + data, "danger");
-				$log.error(data);
 
+				sessionService.setCurrentImage(null);
+				
 				if (callbackError) {
 					callbackError(data, status)
 				}
@@ -204,12 +209,13 @@ iris.factory("sessionService", [
 		
 		// retrieve the currently active annotation
 		getCurrentAnnotationID : function() {
-			var sess = this.getSession();
-			if (sess.currentImage.currentCmAnnotationID != null) {
-				$log.debug("returning current IRIS annotation")
-				return sess.currentImage.currentCmAnnotationID;
+			var sessionService = this;
+			var cImg = sessionService.getCurrentImage();
+			if (cImg != null && cImg.currentCmAnnotationID != null) {
+				$log.debug("Returning current IRIS annotation")
+				return cImg.currentCmAnnotationID;
 			} else {
-				$log.debug("current IRIS annotation is null")
+				$log.debug("Current IRIS annotation is null")
 				return null;
 			}
 		},
@@ -217,41 +223,42 @@ iris.factory("sessionService", [
 		// set the currently active annotation
 		setCurrentAnnotationID : function(annotationID) {
 			var session = this.getSession();
-			session.currentImage.currentCmAnnotationID = annotationID;
+			session.currentProject.currentImage.currentCmAnnotationID = annotationID;
 			this.setSession(session);
 		},
 		
-		// touch the current annotation in this session
-		touchAnnotation : function(cmProjectID, cmImageID, cmAnnotationID, callbackSuccess,
-				callbackError) {
-			var sessionService = this;
-			var session = sessionService.getSession();
-
-			var url = cytomineService.addKeys(touchAnnotationURL).replace(
-					"{sessionID}", session.id).replace("{projectID}",
-					cmProjectID).replace("{imageID}", cmImageID)
-					.replace("{annID}", cmAnnotationID);
-
-			$http.post(url, null).success(function(data) {
-				// on success, update the image in the local storage
-				session.currentAnnotation = data;
-				sessionService.setSession(session);
-				if (callbackSuccess) {
-					callbackSuccess(data)
-				}
-			}).error(function(data, status, header, config) {
-				// on error, show the error message
-				sharedService.addAlert("Touching annotation failed! Status " + status + ".", "danger");
-				$log.error(data);
-
-				if (callbackError) {
-					callbackError(data, status)
-				}
-			});
-
-		},
+//		UNUSED AS OF IRIS v1.5
+//		// touch the current annotation in this session
+//		touchAnnotation : function(cmProjectID, cmImageID, cmAnnotationID, callbackSuccess,
+//				callbackError) {
+//			var sessionService = this;
+//			var session = sessionService.getSession();
+//
+//			var url = cytomineService.addKeys(touchAnnotationURL).replace(
+//					"{sessionID}", session.id).replace("{projectID}",
+//					cmProjectID).replace("{imageID}", cmImageID)
+//					.replace("{annID}", cmAnnotationID);
+//
+//			$http.post(url, null).success(function(data) {
+//				// on success, update the image in the local storage
+//				session.currentAnnotation = data;
+//				sessionService.setSession(session);
+//				if (callbackSuccess) {
+//					callbackSuccess(data)
+//				}
+//			}).error(function(data, status, header, config) {
+//				// on error, show the error message
+//				sharedService.addAlert("Touching annotation failed! Status " + status + ".", "danger");
+//				$log.error(data);
+//
+//				if (callbackError) {
+//					callbackError(data, status)
+//				}
+//			});
+//
+//		},
 		
-		// touches an image in the current session
+		// gets the labeling progress (freshly computed) for an image in a project
 		getLabelingProgress : function(cmProjectID, cmImageID, callbackSuccess,
 				callbackError) {
 			var sessionService = this;

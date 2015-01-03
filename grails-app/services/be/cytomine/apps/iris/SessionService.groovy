@@ -7,6 +7,7 @@ import grails.converters.JSON;
 import grails.transaction.Transactional
 import be.cytomine.client.Cytomine
 import be.cytomine.client.CytomineException;
+import be.cytomine.client.models.ImageInstance;
 
 /**
  * This service handles all CRUD operations of a Session object.
@@ -73,25 +74,23 @@ class SessionService {
 		// inject non-IRIS objects into the session
 		JSONElement sessJSON = new Utils().modelToJSON(userSession)
 
-		// inject the user
+		// inject the current user
 		sessJSON.user.cytomine = cmUser.getAttr()
 
 		// inject current Cytomine project
-		Project cP = userSession.getCurrentProject()
-
-		if (cP != null){
-			def pj = cytomine.getProject(cP.getCmID()).getAttr()
+		Project irisProject = userSession.getCurrentProject()
+		if (irisProject != null){
+			def pj = cytomine.getProject(irisProject.getCmID()).getAttr()
 			sessJSON.currentProject.cytomine = pj
+			
+			// also try to inject the current image
+			Image irisImage = irisProject.getCurrentImage()
+			if (irisImage != null){
+				def img = cytomine.getImageInstance(irisImage.getCmID()).getAttr()
+				sessJSON.currentProject.currentImage.cytomine = img
+			}
 		}
 		
-		// inject current Cytomine image
-		Image cI = userSession.getCurrentImage()
-		
-		if (cI != null){
-			def img = cytomine.getImageInstance(cI.getCmID()).getAttr()
-			sessJSON.currentImage.cytomine = img
-		}
-
 		// return the session as json object
 		return sessJSON
 	}
@@ -111,6 +110,7 @@ class SessionService {
 	 * @throws Exception
 	 */
 	JSONElement touchProject(Cytomine cytomine, long sessionID, long cmProjectID) throws CytomineException, Exception{
+		
 		// find the project in the session
 		Session sess = Session.get(sessionID)
 
@@ -118,7 +118,7 @@ class SessionService {
 		Project projectForUpdate = sess.getProjects().find { it.cmID == cmProjectID }
 
 		// fetch the Cytomine project instance
-		def cmProject = cytomine.getProject(cmProjectID)
+		be.cytomine.client.models.Project cmProject = cytomine.getProject(cmProjectID)
 
 		// map to the IRIS domain model
 		projectForUpdate = new DomainMapper(grailsApplication).mapProject(cmProject, projectForUpdate)
@@ -128,6 +128,7 @@ class SessionService {
 		projectForUpdate.save(flush:true,failOnError:true)
 
 		// trigger reordering of the projects in the session
+		sess.setCurrentProject(projectForUpdate)
 		sess.addToProjects(projectForUpdate)
 		sess.updateLastActivity()
 
@@ -285,16 +286,14 @@ class SessionService {
 		// get the cytomine project from the payload
 		if (cmProject == null){
 			log.error("This user is not allowed to access the project.")
-
-			return
+			throw new CytomineException(404, "The project is not available for this user.")
 		}
 
 		// get the session
 		Session sess = Session.get(sessionID)
 		if (sess == null){
 			log.error("Cannot find session " + sessionID)
-
-			return
+			throw new CytomineException(404, "Cannot find session for this user.")
 		}
 
 		// find the specific project
@@ -307,14 +306,14 @@ class SessionService {
 		// if no project is available in this session, return null and cause error
 		if (project == null){
 			log.error("Cannot find project " + irisProjectID + " for session " + sessionID)
-
-			return
+			throw new CytomineException(404, "Cannot find requested project in the session.")	
 		}
 
 		// map all properties from json to the project
 		project = project.updateByJSON(payload)
 
 		// add the project to the session and cause reordering
+		sess.setCurrentProject(project)
 		sess.addToProjects(project)
 		sess.updateLastActivity()
 
@@ -346,7 +345,7 @@ class SessionService {
 		Image imageForUpdate = irisProject.getImages().find { it.cmID == cmImageID }
 
 		// fetch the image from Cytomine
-		def cmImage = cytomine.getImageInstance(cmImageID)
+		ImageInstance cmImage = cytomine.getImageInstance(cmImageID)
 
 		// Map the client model to the IRIS model
 		imageForUpdate = new DomainMapper(grailsApplication).mapImage(cmImage, imageForUpdate, irisProject.getCmBlindMode())
@@ -359,9 +358,11 @@ class SessionService {
 		imageForUpdate.save(failOnError:true, flush:true)
 
 		// update the time stamps and re-order the most recent images
+		irisProject.setCurrentImage(imageForUpdate)
 		irisProject.addToImages(imageForUpdate)
 		irisProject.updateLastActivity()
 
+		sess.setCurrentProject(irisProject)
 		sess.addToProjects(irisProject)
 		sess.updateLastActivity()
 

@@ -1,6 +1,7 @@
 var iris = angular.module("irisApp", [ "ngRoute", "ngResource", "ngTable", 
                                        "ui.bootstrap", "cfp.hotkeys", "treeControl", 
                                        "ngDraggable", "openlayers-directive", "ngSanitize", 
+                                       "ng-breadcrumbs",
                                        "com.2fdevs.videogular",
                            			   "com.2fdevs.videogular.plugins.controls",
                         		       "com.2fdevs.videogular.plugins.overlayplay",
@@ -33,33 +34,41 @@ iris.run(["$route", "$rootScope", "$location", function ($route, $rootScope, $lo
 iris.config(["$routeProvider", "$locationProvider", function($routeProvider, $locationProvider) {
 	$routeProvider.when("/", {
 		templateUrl : "views/welcome.html",
+		label : "Home"
 	});
 //	$routeProvider.when("/map", {
 //		templateUrl : "views/map.html",
 //	});
 	$routeProvider.when("/keys", {
-		templateUrl : "views/keys.html"
+		templateUrl : "views/keys.html",
+		label : "Keys"
 	});
 	$routeProvider.when("/projects", {
-		templateUrl : "views/projects.html"
+		templateUrl : "views/projects.html",
+		label : "Projects"
 	});
 	$routeProvider.when("/project/:projectID/images", {
-		templateUrl : "views/images.html"
+		templateUrl : "views/images.html",
+		label : "Images"
 	});
 	$routeProvider.when("/project/:projectID/image/:imageID/label/", {
-		templateUrl : "views/labeling.html"
+		templateUrl : "views/labeling.html",
+		label : "Labeling"
 	});
 //	$routeProvider.when("/project/:projectID/image/:imageID/label/:annID", {
 //		templateUrl : "views/labeling.html"
 //	});
 	$routeProvider.when("/project/:projectID/image/:imageID/gallery", {
-		templateUrl : "views/annotationGallery.html"
+		templateUrl : "views/annotationGallery.html",
+		label : "Gallery"
 	});
 	$routeProvider.when("/project/:projectID/gallery", {
-		templateUrl : "views/annotationGallery.html"
+		templateUrl : "views/annotationGallery.html",
+		label : "Gallery"
 	});
 	$routeProvider.when("/about", {
-		templateUrl : "views/about.html"
+		templateUrl : "views/about.html",
+		label : "About"
 	});
 	// default route (unknown)
 	$routeProvider.otherwise({

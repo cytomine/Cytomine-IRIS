@@ -11,7 +11,7 @@ class Project implements Comparable<Project>, Updateable{
 	Date lastUpdated = new Date()
 
 	static constraints = {
-		cmID nullable:false, blank:false
+		cmID nullable:false
 	}
 
 	// class members
@@ -22,8 +22,8 @@ class Project implements Comparable<Project>, Updateable{
 	Long cmOntology = 0L
 	Integer cmNumberOfImages = 0
 
-	// many projects in one session
-	Session session = null;
+	// many projects can be in one session
+	Session session = null
 
 	// DELETE CASCADES
 	// in order to get deleted, when the parent session is deleted,
@@ -33,6 +33,9 @@ class Project implements Comparable<Project>, Updateable{
 	// a project has many images
 	SortedSet<Image> images
 	static hasMany = [images:Image]
+	
+	// each project has a current image
+	Image currentImage
 
 	// a project has a map of unique preferences
 	Map<String, String> prefs = [
@@ -53,19 +56,19 @@ class Project implements Comparable<Project>, Updateable{
 		this.lastActivity = new Date().getTime()
 	}
 
-	/**
-	 * Gets the most recent image.
-	 * @return the most recent image
-	 */
-	Image getCurrentImage(){
-		try {
-			return this.images.last()
-		} catch (NoSuchElementException e) {
-			return null
-		} catch (NullPointerException e) {
-			return null
-		}
-	}
+//	/**
+//	 * Gets the most recent image.
+//	 * @return the most recent image
+//	 */
+//	Image getCurrentImage(){
+//		try {
+//			return this.images.last()
+//		} catch (NoSuchElementException e) {
+//			return null
+//		} catch (NullPointerException e) {
+//			return null
+//		}
+//	}
 
 	/**
 	 * Updates the project using a JSON object.  

@@ -13,7 +13,7 @@ class Activity {
 	Date lastUpdated = new Date()
 
     static constraints = {
-		lastActivity nullable:false, blank:false
+		lastActivity nullable:false
 		description size:0..5000, blank:true
 		user nullable:true
 	}
