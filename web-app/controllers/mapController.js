@@ -10,45 +10,11 @@ iris.controller(
 					
 					$scope.debug = false;
 					
-					if ($scope.debug){
-					// large blob
-					var annotation = {
-						"class" : "be.cytomine.ontology.UserAnnotation",
-						"id" : 98921281,
-						"created" : "1391545026362",
-						"updated" : "1391545030358",
-						"deleted" : null,
-						"location" : "POLYGON ((20636.030824992 11276.411811874, 20573.906496135744 10800.683799942288, 20710.649112290244 10340.816394596397, 21022.61463285472 9976.324847984853, 21455.86138520579 9770.23305981854, 21935.477069938777 9758.176172556532, 22378.531777991633 9942.23893153981, 22708.41732531636 10290.595213582497, 22868.093503864402 10743.011052801941, 22829.950851752255 11221.259640528231, 22600.584580045226 11642.64745119147, 22219.654200848625 11934.312704139902, 21753.026037369396 12045.823827443108, 21281.38433825688 11957.899534835207, 20886.28023801796 11685.74273527523, 20636.030824992 11276.411811874))",
-						"image" : 94255021,
-						"geometryCompression" : 0.0,
-						"project" : 93519082,
-						"container" : 93519082,
-						"user" : 93518990,
-						"nbComments" : 0,
-						"area" : 1715713.0,
-						"perimeterUnit" : "mm",
-						"areaUnit" : "micron²",
-						"perimeter" : 5.0,
-						"x" : 21724.030824991998,
-						"y" : 10892.411811874,
-						"term" : [],
-						"similarity" : null,
-						"rate" : null,
-						"idTerm" : null,
-						"idExpectedTerm" : null,
-						"cropURL" : "http://beta.cytomine.be/api/userannotation/98921281/crop.jpg",
-						"smallCropURL" : "http://beta.cytomine.be/api/userannotation/98921281/crop.png?maxSize=256",
-						"url" : "http://beta.cytomine.be/api/userannotation/98921281/crop.jpg",
-						"imageURL" : "http://beta.cytomine.be/#tabs-image-93519082-94255021-98921281",
-						"reviewed" : false
-					}
-					}
-
 					var animateMap = false;
 					var currImg = sessionService.getCurrentImage();
 					
-					var imgWidth = currImg.cytomine.width;
-					var imgHeight = currImg.cytomine.height;
+					var imgWidth = currImg.width;
+					var imgHeight = currImg.height;
 					var imgCenter = [ imgWidth / 2, - imgHeight / 2 ];
 					var centroid = { x: imgCenter[0], y: imgCenter[1] };
 					
