@@ -24,6 +24,7 @@ class SessionService {
 	def projectService
 	def imageService
 	def grailsApplication
+	def activityService
 
 	/**
 	 * Get all sessions.
@@ -90,6 +91,8 @@ class SessionService {
 				sessJSON.currentProject.currentImage = imgJSON
 			}
 		}
+		
+		activityService.log(user, "Retrieved session [" + userSession.getId() + "]" )
 		
 		// return the session as json object
 		return sessJSON
@@ -339,6 +342,8 @@ class SessionService {
 		
 		log.debug(projectJSON)
 		
+		activityService.logForProject(sess.getUser(), project.cmID, "Updated project [" + project.cmID + "]")
+		
 		return projectJSON
 	}
 
@@ -391,6 +396,8 @@ class SessionService {
 		// from Cytomine
 		JSONElement imageJSON = injectCytomineImageInstance(cytomine, imageForUpdate, cmImage, irisProject.getCmBlindMode())
 
+		activityService.logForProjectImage(sess.getUser(), irisProject.cmID, imageForUpdate.cmID, "Touched image [" + imageForUpdate.cmID + "]")
+		
 		return imageJSON
 	}
 

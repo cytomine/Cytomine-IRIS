@@ -5,8 +5,18 @@ import grails.transaction.Transactional
 @Transactional
 class ActivityService {
 
-    def log(User user, Project irisProject, Image irisImage, String description) {
-		Activity ac = new Activity(user:user, project:irisProject, image: irisImage, description:description)
+    def logForAll(User user, Long cmPjID, Long cmImgID, Long cmAnnID, String description) {
+		Activity ac = new Activity(user:user, cmProjectID:cmPjID, cmImageID: cmImgID, cmAnnotationID:cmAnnID, description:description)
+		ac.save(failOnError:true)
+	}
+	
+	def logForProject(User user, Long cmPjID, String description) {
+		Activity ac = new Activity(user:user, cmProjectID:cmPjID, description:description)
+		ac.save(failOnError:true)
+	}
+	
+	def logForProjectImage(User user, Long cmPjID, Long cmImgID, String description) {
+		Activity ac = new Activity(user:user, cmProjectID:cmPjID, cmImageID: cmImgID, description:description)
 		ac.save(failOnError:true)
 	}
 	

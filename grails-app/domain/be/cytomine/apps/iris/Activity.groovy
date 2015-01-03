@@ -24,13 +24,9 @@ class Activity {
 	
 	// many activities can have the same user
 	User user
-	
-	// many activities can have the same project
-	Project project
-	
-	// many activities can have the same image
-	Image image
-	
-	// many activities can have the same annotation
-	Annotation annotation = null
+
+	// bind the activity optionally to a projcect/image/annotation
+	Long cmProjectID
+	Long cmImageID
+	Long cmAnnotationID
 }

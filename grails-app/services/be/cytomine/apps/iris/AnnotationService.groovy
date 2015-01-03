@@ -390,7 +390,7 @@ class AnnotationService {
 			log.debug("User " + user.cmUserName + " has some other terms assigned to annotation [" + annotation.getId() + "]")
 		}
 		
-		activityService.log(user, "Deleted term from annotation [" + annotation.getId() + "]")
+		activityService.logForAll(user, irisProject.getCmID(), irisImage.getCmID(), annotation.getId(), "Deleted term from annotation [" + annotation.getId() + "]")
 
 		return true;
 	}
@@ -467,7 +467,7 @@ class AnnotationService {
 			log.debug("User " + user.cmUserName + " has some terms assigned to annotation [" + annotation.getId() + "]")
 		}
 
-		activityService.log(user, "Set unique term to annotation [" + annotation.getId() + "]")
+		activityService.logForAll(user, irisProject.getCmID(), irisImage.getCmID(), annotation.getId(), "Set unique term to annotation [" + annotation.getId() + "]")
 		
 		return annTerm;
 	}
