@@ -5,14 +5,22 @@ iris.controller("annotationGalleryCtrl", [
 "$location", "hotkeys", "helpService", "cytomineService", 
 "navService", "annotationService", "sessionService", "sharedService", "$routeParams",
 		function($rootScope, $scope, $http, $filter, $log,
-		$location, hotkeys, helpService, cytomineService, navService, annotationService, sessionService, sharedService, $routeParams) {
+		$location, hotkeys, helpService, cytomineService, 
+		navService, annotationService, sessionService, sharedService, $routeParams) {
 	$log.debug("annotationGalleryCtrl");
 
 	// set content url for the help page
 	helpService.setContentUrl("content/help/annGalleryHelp.html");
 	
+	// put all valid shortcuts for this page here
 	hotkeys.bindTo($scope)
 	.add({
+		combo : 'h',
+		description : 'Show help for this page',
+		callback : function() {
+			helpService.showHelp();
+		}
+	}).add({
 		combo : 'r',
 		description : 'Resume labeling where you left last time',
 		callback : function() {
@@ -33,16 +41,6 @@ iris.controller("annotationGalleryCtrl", [
 
 	$scope.projectID = $routeParams["projectID"];
 	$scope.projectName = sessionService.getCurrentProject().cmName;
-	
-	// put all valid shortcuts for this page here
-	hotkeys.bindTo($scope)
-	.add({
-		combo : 'h',
-		description : 'Show help for this page',
-		callback : function() {
-			helpService.showHelp();
-		}
-	});
 	
 	// assigns a new term to an annotation
 	$scope.assignNewTerm = function(item,targetTermID){
