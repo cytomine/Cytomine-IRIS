@@ -2,9 +2,9 @@ var iris = angular.module("irisApp");
 
 iris.controller("navCtrl", [
 "$scope", "$window", "$route", "$location", "$log", "sharedService", "navService",
-"projectService", "helpService", "sessionService", "imageService", "breadcrumbs", "hotkeys",
+"projectService", "helpService", "sessionService", "imageService", "breadcrumbs",
         function($scope, $window, $route, $location, $log, sharedService, navService,
-		projectService, helpService, sessionService, imageService, breadcrumbs, hotkeys) {
+		projectService, helpService, sessionService, imageService, breadcrumbs) {
 	$log.debug("navCtrl");
 	
 	$scope.breadcrumbs = breadcrumbs;
