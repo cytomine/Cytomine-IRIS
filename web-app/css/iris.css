@@ -309,10 +309,29 @@ input[type="checkbox"].colorbox-checkbox {
 	margin-top: 10px;
 }
 
+/*VIDEO CONTAINER XS*/
+.videogular-container {
+	position: relative;
+	display: block;
+	width: 100%;
+	height: 250px;
+	margin: auto;
+	overflow: hidden;
+}
 
-/*VIDEO CONTAINER*/
+/*VIDEO CONTAINER SMALL*/
 .videogular-container-sm {
 	width: 50%;
+	height: 250px;
+	margin: auto;
+	overflow: hidden;
+}
+
+/*VIDEO CONTAINER XS*/
+.videogular-container-xs {
+	position: relative;
+	display: block;
+	width: 250px;
 	height: 250px;
 	margin: auto;
 	overflow: hidden;
