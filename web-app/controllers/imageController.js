@@ -119,7 +119,6 @@ function($rootScope, $scope, $http, $filter,
 						count : 10, // count per page
 						sorting : {
 							// initial sorting
-							numberOfAnnotations : 'desc',
 							userProgress : 'desc'
 						},
 						filter : {
@@ -131,7 +130,10 @@ function($rootScope, $scope, $http, $filter,
 						getData : function($defer, params) {
 							// use build-in angular filter
 							var newData = $scope.image.images;
-
+							
+							// fixed sorting for images with no annoations
+							params.sorting()['numberOfAnnotations'] = params.sorting()['userProgress'];
+							
 							// use build-in angular filter
 							newData = params.filter() ? $filter('filter')(newData,
 									params.filter()) : newData;
