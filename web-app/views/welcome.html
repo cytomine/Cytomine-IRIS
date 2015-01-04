@@ -19,47 +19,76 @@
 					<a href="{{ welcome.cytomineHost }}" target="_blank"><button class="btn btn-default btn-xs" type="button">Visit Cytomine</button></a>
 					<a href="http://www.cytomine.be" target="_blank"><button class="btn btn-default btn-xs" type="button">Learn more about the Cytomine project</button></a>
 				</p>
-				<div class="row">
-					<div class="col-sm-3">
-					 	<a class="fancybox" data-fancybox-group="gallery" href="images/screenshots/projects-screenshot.jpg" title="List all projects available to you">
-							<img src="images/screenshots/projects-screenshot.jpg" class="img-thumbnail" alt="" />
-						</a>
-					</div>
-					<div class="col-sm-3">
-						<a class="fancybox" data-fancybox-group="gallery" href="images/screenshots/images-screenshot.jpg" title="Select from the list of available images in a project">
-							<img src="images/screenshots/images-screenshot.jpg" class="img-thumbnail" alt="" />
-						</a>
-					</div>
-					<div class="col-sm-3">
-						<a class="fancybox" data-fancybox-group="gallery" href="images/screenshots/labeling-screenshot.jpg" title="Assign labels to predefined annotations">
-							<img src="images/screenshots/labeling-screenshot.jpg" class="img-thumbnail" alt="" />
-						</a>
-					</div>
-					<div class="col-sm-3">
-						<a class="fancybox" data-fancybox-group="gallery" href="images/screenshots/gallery-screenshot.jpg" title="Review your annotations with optional filters in the gallery">
-							<img src="images/screenshots/gallery-screenshot.jpg" class="img-thumbnail" alt="" />
-						</a>
-					</div>
-				</div>
 			</div>
 			<div class="col-sm-6 text-center" style="padding-left:20px">
-				<div class="row" style="font-size: 11pt; text-transform: uppercase;">Get started by watching the tutorial video</div>
-				<div class="row">
-					<div class="img-thumbnail videogular-container" ng-controller="videoCtrl">
-						<videogular vg-theme="video.dnd.galleryTree.config.theme">
-							<vg-video vg-src="video.dnd.galleryTree.config.sources"
-								vg-tracks="video.dnd.galleryTree.config.tracks"
-								vg-native-controls="true">
-							</vg-video> 
-						</videogular>
-					</div>
-				</div>
+				<img src="images/slide_thumb.png" class="img-thumbnail" alt="" />
 			</div>
 			
 		</div>
 	</div>
-	
 	<div class="muted-links text-muted">
 		<span><a href="#/about" class="text-muted">About Cytomine IRIS</a></span>
+	</div>
+	
+	<hr>
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="text-center"
+				style="font-size: 11pt; text-transform: uppercase; margin-bottom: 20px;">
+				Get started by watching the tutorial video</div>
+			<div class="col-xs-12 text-center">
+				<div class="img-thumbnail videogular-container"
+					ng-controller="videoCtrl">
+					<videogular vg-theme="video.dnd.galleryTree.config.theme">
+					<vg-video vg-src="video.dnd.galleryTree.config.sources"
+						vg-tracks="video.dnd.galleryTree.config.tracks"
+						vg-native-controls="true"> </vg-video> </videogular>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="text-center"
+					style="font-size: 11pt; text-transform: uppercase; margin-bottom: 20px;">
+					Take a preview at the application</div>
+		
+			<div class="row">
+				<div class="row">
+					<div class="col-sm-6">
+						<a class="fancybox" data-fancybox-group="gallery"
+							href="images/screenshots/projects-screenshot.jpg"
+							title="List all projects available to you"> <img
+							src="images/screenshots/projects-screenshot.jpg"
+							class="img-thumbnail" alt="" />
+						</a>
+					</div>
+					<div class="col-sm-6">
+						<a class="fancybox" data-fancybox-group="gallery"
+							href="images/screenshots/images-screenshot.jpg"
+							title="Select from the list of available images in a project">
+							<img src="images/screenshots/images-screenshot.jpg"
+							class="img-thumbnail" alt="" />
+						</a>
+					</div>
+				</div>
+				<div class="row" style="margin-top: 20px;">
+					<div class="col-sm-6">
+						<a class="fancybox" data-fancybox-group="gallery"
+							href="images/screenshots/labeling-screenshot.jpg"
+							title="Assign labels to predefined annotations"> <img
+							src="images/screenshots/labeling-screenshot.jpg"
+							class="img-thumbnail" alt="" />
+						</a>
+					</div>
+					<div class="col-sm-6">
+						<a class="fancybox" data-fancybox-group="gallery"
+							href="images/screenshots/gallery-screenshot.jpg"
+							title="Review your annotations with optional filters in the gallery">
+							<img src="images/screenshots/gallery-screenshot.jpg"
+							class="img-thumbnail" alt="" />
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
