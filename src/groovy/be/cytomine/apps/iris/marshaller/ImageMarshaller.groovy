@@ -16,7 +16,6 @@ class ImageMarshaller implements IRISMarshaller{
 			img['cmID'] = it.cmID
 			img['currentCmAnnotationID'] = it.currentCmAnnotationID
 			img['macroURL'] = it.macroURL
-			img['prefs'] = it.prefs
 			img['project'] = (it.project==null?null:it.project.id)
 			img['goToURL'] = it.goToURL
 			img['olTileServerURL'] = it.olTileServerURL
@@ -26,6 +25,7 @@ class ImageMarshaller implements IRISMarshaller{
 			img['originalFilename'] = it.originalFilename
 			img['width'] = it.width
 			img['height'] = it.height
+			img['hideCompletedAnnotations'] = it.hideCompletedAnnotations
 			return img
 		}
 	}

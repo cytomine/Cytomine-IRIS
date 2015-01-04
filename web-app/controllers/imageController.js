@@ -106,10 +106,10 @@ function($rootScope, $scope, $http, $filter,
 				delete $scope.image.error;
 			}
 
-			$log.debug("hideCompleted (local): " + sessionService.getCurrentProject().prefs['images.hideCompleted']);
+			$log.debug("hideCompleted (local): " + sessionService.getCurrentProject()['hideCompletedImages']);
 
 			// get user preferences from session
-			$scope.hide = (sessionService.getCurrentProject().prefs['images.hideCompleted'] === 'true');
+			$scope.hide = (sessionService.getCurrentProject()['hideCompletedImages'] === true);
 
 			// build the data table
 			$scope.tableParams = new ngTableParams(
@@ -191,19 +191,11 @@ function($rootScope, $scope, $http, $filter,
 		return document.getElementById("hideCompleted");
 	};
 
-//	post the prefs update to the server
+//	post the update to the server
 	$scope.hideCompleted = function(hideCompleted){
-		try {
-			var cPrj = sessionService.getCurrentProject();
-			$log.debug("current project prefs: " + JSON.stringify(cPrj.prefs));
-			$log.debug(typeof hideCompleted);
-		} catch (e) {
-			return;
-		}
-
 		// POSTING UPDATE TO SERVER
 		var cPrj = sessionService.getCurrentProject();
-		cPrj.prefs['images.hideCompleted'] = hideCompleted;
+		cPrj['hideCompletedImages'] = hideCompleted;
 
 		// possible BUG in updating the project! sometimes the argument is the input DOM element!!
 		sessionService.updateProject(cPrj);

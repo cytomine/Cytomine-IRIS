@@ -1,13 +1,13 @@
 package be.cytomine.apps.iris
 
-import org.codehaus.groovy.grails.web.json.JSONElement;
-import org.springframework.aop.ThrowsAdvice;
-
-import grails.converters.JSON;
 import grails.transaction.Transactional
+
+import org.codehaus.groovy.grails.web.json.JSONElement
+import org.hibernate.StaleObjectStateException;
+
 import be.cytomine.client.Cytomine
-import be.cytomine.client.CytomineException;
-import be.cytomine.client.models.ImageInstance;
+import be.cytomine.client.CytomineException
+import be.cytomine.client.models.ImageInstance
 
 /**
  * This service handles all CRUD operations of a Session object.
@@ -65,8 +65,9 @@ class SessionService {
 		Session userSession = user.getSession()
 		if (userSession == null){
 			userSession = new Session()
-			user.setSession(userSession)
 		}
+		user.setSession(userSession)
+		userSession.setUser(user)
 
 		// save the user and the session
 		user.save(flush:true, failOnError:true)
@@ -129,6 +130,7 @@ class SessionService {
 
 		// save the project in order to have the ID returned in the response
 		projectForUpdate.save(flush:true,failOnError:true)
+		log.info("Successfully updated project.")
 
 		// trigger reordering of the projects in the session
 		sess.setCurrentProject(projectForUpdate)
@@ -319,18 +321,24 @@ class SessionService {
 			throw new CytomineException(404, "Cannot find requested project in the session.")	
 		}
 		
-		log.debug("prefs received from client: " + payload['prefs']);
+		log.debug("IRIS project payload received from client: " + payload);
 
-		// map all properties from json to the project
-		project = project.updateByJSON(payload)
+		// TODO for the future: update the entire project
+		// currently we just update the filter preferences of hiding completed images
+		boolean hideCompleted = Boolean.valueOf(payload['hideCompletedImages']).booleanValue()
+		project.setHideCompletedImages(hideCompleted)
 		
-		log.debug("prefs after updateByJSON: " + project.getPrefs())
+		log.debug("IRIS project payload after update: " + payload);
 
-		// add the project to the session and cause reordering
 		sess.setCurrentProject(project)
 		sess.addToProjects(project)
 		sess.updateLastActivity()
-
+		
+		project.save(flush:true)
+		log.info("Successfully updated project.")
+		sess.save(flush:true)
+		log.info("Successfully updated session.")
+		
 		JSONElement projectJSON = injectCytomineProject(cytomine, project, cmProject)
 
 		// also try to inject the current image
@@ -381,21 +389,25 @@ class SessionService {
 		imageForUpdate.setOlTileServerURL(imageService.getImageServerURL(cytomine, cmImage.get("baseImage"), cmImage.getId()));
 
 		// save the image in order to immediately reflect the ID
-		imageForUpdate.save(failOnError:true, flush:true)
+		imageForUpdate.save(flush:true, failOnError:true)
 
 		// update the time stamps and re-order the most recent images
 		irisProject.setCurrentImage(imageForUpdate)
 		irisProject.addToImages(imageForUpdate)
 		irisProject.updateLastActivity()
+		irisProject.save(flush:true)
 
 		sess.setCurrentProject(irisProject)
 		sess.addToProjects(irisProject)
 		sess.updateLastActivity()
+		sess.save(flush:true)
 
 		// inject the project here directly in order to avoid fetching it again
 		// from Cytomine
 		JSONElement imageJSON = injectCytomineImageInstance(cytomine, imageForUpdate, cmImage, irisProject.getCmBlindMode())
 
+		log.debug(imageJSON)
+		
 		activityService.logForProjectImage(sess.getUser(), irisProject.cmID, imageForUpdate.cmID, "Touched image [" + imageForUpdate.cmID + "]")
 		
 		return imageJSON

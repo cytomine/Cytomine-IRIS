@@ -19,7 +19,7 @@ class ProjectMarshaller implements IRISMarshaller{
 			prj['cmOntology'] = it.cmOntology
 			prj['cmNumberOfImages'] = it.cmNumberOfImages
 			prj['currentImage'] = it.currentImage
-			prj['prefs'] = it.prefs
+			prj['hideCompletedImages'] = it.hideCompletedImages
 			return prj
 		}
 	}

@@ -127,44 +127,6 @@ class SessionController {
 	}
 
 	/**
-	 * Update a session.
-	 * 
-	 * @return the updated session
-	 */
-	def updateSession(){
-		try {
-			// parse the payload of the POST request
-			def sess = request.JSON
-
-			// fetch the session from the DB
-			Session s = Session.get(sess.id)
-
-			s = s.updateByJSON(sess)
-
-			render s as JSON
-
-		} catch(CytomineException e1){
-			log.error(e1)
-			// exceptions from the cytomine java client
-			response.setStatus(e1.httpCode)
-			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
-			render errorMsg as JSON
-		} catch(GroovyCastException e2) {
-			log.error(e2)
-			// send back 400 if the project ID is other than long format
-			response.setStatus(400)
-			JSONObject errorMsg = new Utils().resolveException(e2, 400)
-			render errorMsg as JSON
-		} catch(Exception e3){
-			log.error(e3)
-			// on any other exception render 500
-			response.setStatus(500)
-			JSONObject errorMsg = new Utils().resolveException(e3, 500)
-			render errorMsg as JSON
-		}
-	}
-
-	/**
 	 * Update a specific project in a session. The payload of the 
 	 * PUT request defines the ID to be used for querying the IRIS 
 	 * database.

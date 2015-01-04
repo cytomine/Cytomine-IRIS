@@ -43,9 +43,6 @@ class Annotation {
 	// a flag determining whether the annotation is already labeled
 	boolean alreadyLabeled = false
 	
-	// a map of preferences
-	Map<String, String> prefs = [:]
-	
 	// the parent image 
 	Image image = null
 	static belongsTo = [image:Image]

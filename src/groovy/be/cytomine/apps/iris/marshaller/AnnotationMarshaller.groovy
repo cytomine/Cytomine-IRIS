@@ -25,13 +25,11 @@ class AnnotationMarshaller implements IRISMarshaller {
 			ann['cmTermName'] = it.cmTermName
 			ann['cmOntology'] = it.cmOntology
 			ann['cmUserID'] = it.cmUserID
-			ann['prefs'] = it.prefs
 			ann['image'] = (it.image==null?null:it.image.id)
 			ann['location'] = it.cmLocation
 			ann['x'] = it.cmCentroidX
 			ann['y'] = it.cmCentroidY
 			
-			// TODO marshal the image server URLs
 			return ann
 		}
 	}

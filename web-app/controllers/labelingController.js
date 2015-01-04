@@ -14,7 +14,7 @@ iris.controller("labelingCtrl", [
 	$scope.labeling = {
 		annotationTuple : {},
 		annotations : {},
-		hideCompleted : (sessionService.getCurrentImage().prefs['annotations.hideCompleted'] === 'true'),
+		hideCompleted : (sessionService.getCurrentImage()['hideCompletedAnnotations'] === true),
 	};
 	
 	$scope.ontology = {};
@@ -97,7 +97,7 @@ iris.controller("labelingCtrl", [
 			
 			// set the hidden state of the annotations to the local session
 			var cImg = sessionService.getCurrentImage();
-			cImg.prefs['annotations.hideCompleted'] = data.hideCompleted;
+			cImg['hideCompletedAnnotations'] = data.hideCompleted;
 			sessionService.setCurrentImage(cImg);
 			
 			// enable navigation
@@ -311,7 +311,7 @@ iris.controller("labelingCtrl", [
 	// fetch the labeling status of the current image 
 	$scope.updateLabelingProgress = function(){
 		sessionService.getLabelingProgress($scope.projectID, $scope.imageID, function(data){
-			console.log("updated status")
+			$log.debug("updated labeling progress")
 			$scope.item = {
 					userProgress : data.userProgress,
 					labeledAnnotations : data.labeledAnnotations,

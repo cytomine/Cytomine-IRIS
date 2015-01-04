@@ -8,6 +8,7 @@ import be.cytomine.client.collections.ImageInstanceCollection;
 import be.cytomine.client.collections.ProjectCollection;
 import be.cytomine.client.models.ImageInstance;
 
+import org.hibernate.StaleObjectStateException;
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject;
 
@@ -107,6 +108,20 @@ class SynchronizeUserProgressJob {
 
 					// persist the project
 					sess.addToProjects(irisProject)
+					
+					for(idx in [1..5]){
+						try {
+							// add the project to the session and cause reordering
+							sess.save(flush:true)
+							log.info("Successfully updated session.")
+							break
+						} catch(StaleObjectStateException e){
+							long sleepTime = new Long(new Random().nextInt(2000)).longValue()
+							// try again
+							log.error("Trying to update a project, which is locked, trying again in " + sleepTime/1000 + " seconds. " + e)
+							Thread.sleep(sleepTime)
+						}
+					}
 
 					// get all images for that project from the Cytomine core server
 					ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)
@@ -141,8 +156,22 @@ class SynchronizeUserProgressJob {
 						// IMPORTANT: do NOT update lastActivityDate!
 
 						// persist the IRIS image
-						irisProject.addToImages(irisImage)
+						for(idx in [1..5]){
+							try {
+								// add the project to the session and cause reordering
+								irisProject.addToImages(irisImage)
+								irisImage.save(flush:true)
+								log.info("Successfully updated image.")
+								break
+							} catch(StaleObjectStateException e){
+								long sleepTime = new Long(new Random().nextInt(2000)).longValue()
+								// try again
+								log.error("Trying to update a project, which is locked, trying again in " + sleepTime/1000 + " seconds. " + e)
+								Thread.sleep(sleepTime)
+							}
+						}
 					}
+					
 					log.info("Syncing projects... [" + irisProject.cmName + ", " + ((pIdx+1)*100/nProjects) + "%]")
 				}
 				log.info("Done synchronizing user " + user.cmUserName + ".")

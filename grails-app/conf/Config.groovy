@@ -128,9 +128,12 @@ log4j = {
 		appender new DailyRollingFileAppender(
 				name: 'dailyFileAppender',
 				datePattern: "'.'yyyy-MM-dd",  // See the API for all patterns.
-				fileName: "${logDirectory}/${appName}-${appVersion}.log",
+				fileName: "${logDirectory}/${appName}/${appName}.log",
 				layout: pattern(conversionPattern:'%d [%t] %-5p %c{2} %x - %m%n')
 				)
+		
+		rollingFile name: "stacktrace", maxFileSize: 2048,
+			file: "${logDirectory}/${appName}/${appName}-stacktrace.log"
 	}
 
 	root {
@@ -150,6 +153,7 @@ log4j = {
 			'org.hibernate',
 			'net.sf.ehcache.hibernate'
 
+	// cytomine java client
 	warn  	'be.cytomine.client'
 	
 	environments {
@@ -161,10 +165,11 @@ log4j = {
 			info 	'grails.app.jobs'
 		}
 		production {
-			info    'grails.app.controllers',
+			// let the application run in debug log mode
+			debug   'grails.app.controllers',
 					'grails.app.services',
-					'grails.app.jobs',
-					'be.cytomine.apps.iris'
+					'be.cytomine.apps.iris',
+					'grails.app.jobs'
 		}
 	}
 }

@@ -153,7 +153,6 @@ class UrlMappings {
 		"/api/session(.$format)"(controller:"session"){
 			action = [
 				GET: "getSession",
-				PUT: "updateSession", // create or overwrite a resource
 				DELETE: "deleteSession"
 			]
 		}

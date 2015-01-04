@@ -15,8 +15,6 @@ class SessionMarshaller implements IRISMarshaller{
 			sess['lastActivity'] = it.lastActivity
 			sess['user'] = it.user
 			sess['currentProject'] = it.getCurrentProject()
-//			sess['currentImage'] = it.getCurrentImage()
-			sess['prefs'] = it.prefs
 			return sess
 		}
 	}

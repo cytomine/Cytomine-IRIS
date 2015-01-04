@@ -21,6 +21,7 @@ class Project implements Comparable<Project>, Updateable{
 	Boolean cmBlindMode = false
 	Long cmOntology = 0L
 	Integer cmNumberOfImages = 0
+	Boolean hideCompletedImages = false
 
 	// many projects can be in one session
 	Session session = null
@@ -37,11 +38,6 @@ class Project implements Comparable<Project>, Updateable{
 	// each project has a current image
 	Image currentImage
 
-	// a project has a map of unique preferences
-	Map<String, String> prefs = [
-		"images.hideCompleted":String.valueOf(false), // hide the completed images in the image overview
-	]
-
 	// ###################################################
 	// CLASS METHODS
 	@Override
@@ -54,38 +50,5 @@ class Project implements Comparable<Project>, Updateable{
 	@Override
 	public void updateLastActivity() {
 		this.lastActivity = new Date().getTime()
-	}
-
-//	/**
-//	 * Gets the most recent image.
-//	 * @return the most recent image
-//	 */
-//	Image getCurrentImage(){
-//		try {
-//			return this.images.last()
-//		} catch (NoSuchElementException e) {
-//			return null
-//		} catch (NullPointerException e) {
-//			return null
-//		}
-//	}
-
-	/**
-	 * Updates the project using a JSON object.  
-	 * 
-	 * @param json a JSONElement object (e.g. parsed from a PUT request payload)
-	 * @return the updated project
-	 */
-	Project updateByJSON(def json){
-		// assign all properties from the json to the object
-		this.updateLastActivity()
-
-		// setting the preferences does not work directly,
-		// resolve each property from the set
-		json.prefs.each {
-			String[] entry = it.toString().split("=")
-			this.getPrefs().put(entry[0],entry[1])
-		}
-		return this
 	}
 }

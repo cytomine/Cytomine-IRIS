@@ -30,28 +30,10 @@ class Session implements Updateable{
 
 	// proper method to add a project is Session.addToProjects(Project p)
 	SortedSet<Project> projects
-	Map<String, String> prefs = [:]
 	static hasMany = [projects:Project]
 	
 	// the last opened project instance 
 	Project currentProject
-
-	// ###################################################
-	// CLASS METHODS
-//	/**
-//	 * Gets the most recent project.
-//	 * @return the most recent active project.
-//	 */
-//	Project getCurrentProject(){
-//		try {
-//			Project cp = this.projects.last()
-//			return cp
-//		} catch (NoSuchElementException e) {
-//			return null
-//		} catch (NullPointerException e) {
-//			return null
-//		}
-//	}
 
 	/**
 	 * Gets the most recent image of the most recent project. Delegate for the image.
@@ -70,23 +52,5 @@ class Session implements Updateable{
 	@Override
 	public void updateLastActivity() {
 		this.lastActivity = new Date().getTime()
-	}
-	
-	/**
-	 * Updates the session using a JSON object.
-	 *
-	 * @param json a JSONElement object (e.g. parsed from a PUT request payload)
-	 * @return the updated session
-	 */
-	Session updateByJSON(def json){
-		// assign all properties from the json to the object
-		this.updateLastActivity()
-		
-		json.prefs.each {
-			String[] entry = it.toString().split("=")
-			this.getPrefs().put(entry[0],entry[1])
-		}
-				
-		return this
 	}
 }

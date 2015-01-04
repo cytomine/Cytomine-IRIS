@@ -60,20 +60,4 @@ class User {
 	Boolean cmGuest
 	Boolean cmUser = true
 	Boolean cmUserByNow = true
-	
-	Map<String, String> prefs = [:]
-	
-	/**
-	 * Updates the user using a JSON object.
-	 *
-	 * @param json a JSONElement object (e.g. parsed from a PUT request payload)
-	 * @return the updated project
-	 */
-	User updateByJSON(def json){
-		json.prefs.each {
-			String[] entry = it.toString().split("=")
-			this.getPrefs().put(entry[0],entry[1])
-		}
-		return this
-	}
 }

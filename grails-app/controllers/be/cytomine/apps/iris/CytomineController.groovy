@@ -168,7 +168,7 @@ class CytomineController {
 			
 			BufferedImage macroImage = client.readBufferedImageFromURL(macroURL)
 			
-			log.debug("fetched image from server in " + (System.currentTimeMillis() - start)/1000 + " seconds")
+			log.debug("Fetched macro image from server in " + (System.currentTimeMillis() - start)/1000 + " seconds")
 			start = System.currentTimeMillis()
 			
 			// get the image as byte[]
@@ -179,7 +179,7 @@ class CytomineController {
 			byte[] imageInByte = baos.toByteArray()
 			baos.close()
 			
-			log.debug("converted image to byte[] in " + (System.currentTimeMillis() - start)/1000 + " seconds") 
+			log.debug("Converted macro image to byte[] in " + (System.currentTimeMillis() - start)/1000 + " seconds") 
 			
 			response.setStatus(200)
 			response.setContentType("image/png")
@@ -191,8 +191,23 @@ class CytomineController {
 			response.setHeader("Access-Control-Allow-Origin", "*")
 
 			// render image back to client
-			response.outputStream.write(imageInByte)
-			log.debug("rendered response in " + (System.currentTimeMillis() - start)/1000 + " seconds")
+			def outputStream = null
+			try {
+				outputStream = response.outputStream
+				outputStream << imageInByte
+		
+				log.debug("Rendered macro image response in " + (System.currentTimeMillis() - start)/1000 + " seconds")
+			} catch (IOException e){
+				log.warn('Client canceled AJAX request. ' + e)
+			} finally {
+				if (outputStream != null){
+					try {
+						outputStream.close()
+					} catch (IOException e) {
+						log.error('Exception on close', e)
+					}
+				}
+			}
 			
 		} catch(CytomineException e1){
 			log.error(e1)
@@ -234,7 +249,9 @@ class CytomineController {
 			if (zoomify_params.length < 9){
 				throw new IllegalArgumentException("Zoomify URL is malformed in the request URL.")
 			}
-
+			
+			long start = System.currentTimeMillis()
+			
 			int tileGroup = Integer.valueOf(zoomify_params[7].substring("TileGroup".length()))
 			String extension = zoomify_params[8].substring(zoomify_params[8].indexOf(".")+1)
 			String[] positions = zoomify_params[8].substring(0, zoomify_params[8].indexOf(".")).split("-")
@@ -258,7 +275,7 @@ class CytomineController {
 
 			String imageURL = cmHost + "/image/tile?zoomify=" + dataString + path
 
-			log.debug(imageURL)
+			log.trace(imageURL)
 
 			// get the image as byte[]
 			HttpClient client = new DefaultHttpClient()
@@ -267,6 +284,8 @@ class CytomineController {
 			HttpEntity entity = resp.getEntity()
 			InputStream is = entity.getContent()
 
+			log.trace("Fetched tile image from server in " + (System.currentTimeMillis() - start)/1000 + " seconds")
+			
 			int statusCode = resp.getStatusLine().getStatusCode()
 			response.setStatus(statusCode)
 			response.setContentType(entity.getContentType().getValue())
@@ -277,8 +296,24 @@ class CytomineController {
 			response.setHeader("Access-Control-Allow-Methods", "GET")
 			response.setHeader("Access-Control-Allow-Origin", "*")
 
-			// render image back to client
-			response.outputStream.leftShift(is)
+			// render tile image back to client
+			def outputStream = null
+			try {
+				outputStream = response.outputStream
+				outputStream.leftShift(is)
+				
+				log.debug("Rendered tile image response in " + (System.currentTimeMillis() - start)/1000 + " seconds")
+			} catch (IOException e){
+				log.warn('Client canceled AJAX request. ' + e)
+			} finally {
+				if (outputStream != null){
+					try {
+						outputStream.close()
+					} catch (IOException e) {
+						log.error('Exception on close', e)
+					}
+				}
+			}
 
 		} catch(CytomineException e1){
 			log.error(e1)
@@ -323,7 +358,7 @@ class CytomineController {
 			
 			BufferedImage macroImage = client.readBufferedImageFromURL(cropURL)
 			
-			log.debug("fetched image from server in " + (System.currentTimeMillis() - start)/1000 + " seconds")
+			log.debug("Fetched crop image from server in " + (System.currentTimeMillis() - start)/1000 + " seconds")
 			start = System.currentTimeMillis()
 			
 			// get the image as byte[]
@@ -334,7 +369,7 @@ class CytomineController {
 			byte[] imageInByte = baos.toByteArray()
 			baos.close()
 			
-			log.debug("converted image to byte[] in " + (System.currentTimeMillis() - start)/1000 + " seconds")
+			log.debug("Converted crop image to byte[] in " + (System.currentTimeMillis() - start)/1000 + " seconds")
 			
 			response.setStatus(200)
 			response.setContentType("image/jpeg")
@@ -346,8 +381,23 @@ class CytomineController {
 			response.setHeader("Access-Control-Allow-Origin", "*")
 
 			// render image back to client
-			response.outputStream.write(imageInByte)
-			log.debug("rendered response in " + (System.currentTimeMillis() - start)/1000 + " seconds")
+			def outputStream = null
+			try {
+				outputStream = response.outputStream
+				outputStream << imageInByte
+		
+				log.debug("Rendered crop image response in " + (System.currentTimeMillis() - start)/1000 + " seconds")
+			} catch (IOException e){
+				log.warn('Client canceled AJAX request. ' + e)
+			} finally {
+				if (outputStream != null){
+					try {
+						outputStream.close()
+					} catch (IOException e) {
+						log.error('Exception on close', e)
+					}
+				}
+			}
 			
 		} catch(CytomineException e1){
 			log.error(e1)

@@ -13,7 +13,6 @@ class UserMarshaller implements IRISMarshaller {
 			user['class'] = it.getClass()
 			user['id'] = it.id
 			user['cmID'] = it.cmID
-			user['prefs'] = it.prefs
 			return user
 		}
 	}

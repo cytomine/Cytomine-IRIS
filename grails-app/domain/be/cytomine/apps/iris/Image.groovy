@@ -36,20 +36,13 @@ class Image implements Comparable<Image>, Updateable{
 	// we need to declare, that the image belongs to its project
 	static belongsTo = [project:Project]
 	
-	// an image can have preferences
-	Map<String, String> prefs = [
-		"annotations.hideCompleted":String.valueOf(false)
-		]
-	
+	// filter flag for the labeling view
+	Boolean hideCompletedAnnotations = false
+
 	/**
 	 * The cytomine ID of the currently active annotation
 	 */
 	Long currentCmAnnotationID = 0L
-	
-	// each image may have up to 3 annotations (current, previous, next)
-	// which will be updated accordingly 
-//	Map annotations = [:]
-//	static hasMany = [annotations:Annotation]
 	
 	@Override
 	public int compareTo(Image img) {
@@ -61,21 +54,5 @@ class Image implements Comparable<Image>, Updateable{
 	@Override
 	public void updateLastActivity() {
 		this.lastActivity = new Date().getTime()		
-	}
-	
-	/**
-	 * Updates the image using a JSON object.
-	 *
-	 * @param json a JSONElement object (e.g. parsed from a PUT request payload)
-	 * @return the updated project
-	 */
-	Image updateByJSON(def json){
-		this.updateLastActivity()
-		
-		json.prefs.each {
-			String[] entry = it.toString().split("=")
-			this.getPrefs().put(entry[0],entry[1])
-		}
-		return this
 	}
 }
