@@ -113,7 +113,7 @@ class SynchronizeUserProgressJob {
 						try {
 							// add the project to the session and cause reordering
 							sess.save(flush:true)
-							log.info("Successfully updated session.")
+							log.debug("Successfully updated session.")
 							break
 						} catch(StaleObjectStateException e){
 							long sleepTime = new Long(new Random().nextInt(2000)).longValue()
@@ -161,7 +161,7 @@ class SynchronizeUserProgressJob {
 								// add the project to the session and cause reordering
 								irisProject.addToImages(irisImage)
 								irisImage.save(flush:true)
-								log.info("Successfully updated image.")
+								log.debug("Successfully updated image.")
 								break
 							} catch(StaleObjectStateException e){
 								long sleepTime = new Long(new Random().nextInt(2000)).longValue()
