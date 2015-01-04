@@ -119,7 +119,7 @@ function($rootScope, $scope, $http, $filter,
 						count : 10, // count per page
 						sorting : {
 							// initial sorting
-//							originalFilename : 'asc',
+							numberOfAnnotations : 'desc',
 							userProgress : 'desc'
 						},
 						filter : {
