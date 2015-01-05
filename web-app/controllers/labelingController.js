@@ -97,7 +97,7 @@ iris.controller("labelingCtrl", [
 			
 			// set the hidden state of the annotations to the local session
 			var cImg = sessionService.getCurrentImage();
-			cImg['hideCompletedAnnotations'] = data.hideCompleted;
+			cImg['hideCompletedAnnotations'] = Boolean(data.hideCompleted);
 			sessionService.setCurrentImage(cImg);
 			
 			// enable navigation

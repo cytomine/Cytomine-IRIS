@@ -39,10 +39,26 @@
 			<div class="col-xs-12 text-center">
 				<div class="img-thumbnail videogular-container"
 					ng-controller="videoCtrl">
-					<videogular vg-theme="video.dnd.galleryTree.config.theme">
-					<vg-video vg-src="video.dnd.galleryTree.config.sources"
-						vg-tracks="video.dnd.galleryTree.config.tracks"
-						vg-native-controls="true"> </vg-video> </videogular>
+					<videogular vg-theme="video.tutorial.config.theme">
+					<vg-video vg-src="video.tutorial.config.sources"
+						vg-tracks="video.tutorial.config.tracks" 
+						vg-preload="none"> 
+					</vg-video> 
+					<vg-controls>
+						<vg-play-pause-button></vg-play-pause-button>
+						<vg-timedisplay>{{ currentTime | date:'mm:ss' }}</vg-timedisplay>
+						<vg-scrubBar>
+							<vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>
+						</vg-scrubBar>
+						<vg-timedisplay>{{ timeLeft | date:'mm:ss' }}</vg-timedisplay>
+						<vg-volume>
+							<vg-mutebutton></vg-mutebutton>
+							<vg-volumebar></vg-volumebar>
+						</vg-volume>
+						<vg-fullscreenButton></vg-fullscreenButton>
+					</vg-controls>
+					<vg-poster-image vg-url='video.tutorial.config.plugins.poster'></vg-poster-image>
+					</videogular>
 				</div>
 			</div>
 		</div>

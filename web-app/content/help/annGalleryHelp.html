@@ -75,8 +75,24 @@
 			<div ng-controller="videoCtrl" class="videogular-container-sm">
 				<videogular vg-theme="video.dnd.galleryTree.config.theme">
 				<vg-video vg-src="video.dnd.galleryTree.config.sources"
-					vg-tracks="video.dnd.galleryTree.config.tracks"
-					vg-native-controls="true"> </vg-video> </videogular>
+					vg-tracks="video.dnd.galleryTree.config.tracks"> 
+				</vg-video>
+				
+				<vg-controls>
+					<vg-play-pause-button></vg-play-pause-button>
+					<vg-timedisplay>{{ currentTime | date:'mm:ss' }}</vg-timedisplay>
+					<vg-scrubBar>
+						<vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>
+					</vg-scrubBar>
+					<vg-timedisplay>{{ timeLeft | date:'mm:ss' }}</vg-timedisplay>
+					<vg-volume>
+						<vg-mutebutton></vg-mutebutton>
+						<vg-volumebar></vg-volumebar>
+					</vg-volume>
+					<vg-fullscreenButton></vg-fullscreenButton>
+				</vg-controls>
+				<vg-poster-image vg-url='video.dnd.galleryTree.config.plugins.poster'></vg-poster-image>
+				</videogular>
 			</div>
 			<ol>
 				<li>
@@ -102,8 +118,24 @@
 			<div ng-controller="videoCtrl" class="videogular-container-sm">
 				<videogular vg-theme="video.dnd.panelHeader.config.theme">
 				<vg-video vg-src="video.dnd.panelHeader.config.sources"
-					vg-tracks="video.dnd.panelHeader.config.tracks"
-					vg-native-controls="true"> </vg-video> </videogular>
+					vg-tracks="video.dnd.panelHeader.config.tracks"> 
+				</vg-video> 
+				
+				<vg-controls>
+					<vg-play-pause-button></vg-play-pause-button>
+					<vg-timedisplay>{{ currentTime | date:'mm:ss' }}</vg-timedisplay>
+					<vg-scrubBar>
+						<vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>
+					</vg-scrubBar>
+					<vg-timedisplay>{{ timeLeft | date:'mm:ss' }}</vg-timedisplay>
+					<vg-volume>
+						<vg-mutebutton></vg-mutebutton>
+						<vg-volumebar></vg-volumebar>
+					</vg-volume>
+					<vg-fullscreenButton></vg-fullscreenButton>
+				</vg-controls>
+				<vg-poster-image vg-url='video.dnd.panelHeader.config.plugins.poster'></vg-poster-image>
+				</videogular>
 			</div>
 			<ol>
 				<li>
@@ -129,8 +161,24 @@
 				<div ng-controller="videoCtrl" class="videogular-container-sm">
 				<videogular vg-theme="video.multiAssign.config.theme">
 				<vg-video vg-src="video.multiAssign.config.sources"
-					vg-tracks="video.multiAssign.config.tracks"
-					vg-native-controls="true"> </vg-video> </videogular>
+					vg-tracks="video.multiAssign.config.tracks"> 
+				</vg-video>
+				
+				<vg-controls>
+					<vg-play-pause-button></vg-play-pause-button>
+					<vg-timedisplay>{{ currentTime | date:'mm:ss' }}</vg-timedisplay>
+					<vg-scrubBar>
+						<vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>
+					</vg-scrubBar>
+					<vg-timedisplay>{{ timeLeft | date:'mm:ss' }}</vg-timedisplay>
+					<vg-volume>
+						<vg-mutebutton></vg-mutebutton>
+						<vg-volumebar></vg-volumebar>
+					</vg-volume>
+					<vg-fullscreenButton></vg-fullscreenButton>
+				</vg-controls>
+				<vg-poster-image vg-url='video.multiAssign.config.plugins.poster'></vg-poster-image>
+				</videogular>
 			</div>
 			<ol>
 				<li>

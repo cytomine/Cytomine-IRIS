@@ -75,6 +75,7 @@ class PingCytomineHostJob {
 				}
 			} else {
 				log.debug("Cytomine host ping successful.")
+				sp.resetFailCount()
 			}
 		} catch(UnknownHostException uhe){
 			log.error("Cannot find host. ", uhe)
@@ -88,9 +89,11 @@ class PingCytomineHostJob {
 					"] is unable to ping Cytomine host at [" + cmHost + "]!\n"
 					+ "Server ping failed, so please check the connection!\n\n" + uhe.getStackTrace().toString())
 				sp.resetFailCount()
+			}else {
+				log.warn("Ignoring server ping fail count #" + failCount + ", threshold is set to " + notifyThreshold)
 			}
 		} catch(Exception ex){
-			log.error("Exception occurred during host ping: ")
+			log.error("Exception occurred during host ping: " + ex)
 			activityService.log("Cytomine host is not reachable!")
 			
 			int failCount = sp.incrementFailCount()
@@ -102,6 +105,8 @@ class PingCytomineHostJob {
 					+ "Server ping failed " + sp.getFailCount() + " times, so please check the connection!\n\n" 
 					+ ex.getStackTrace().toString())
 				sp.resetFailCount()
+			} else {
+				log.warn("Ignoring server ping fail count #" + failCount + ", threshold is set to " + notifyThreshold)
 			}
 		}
 	}

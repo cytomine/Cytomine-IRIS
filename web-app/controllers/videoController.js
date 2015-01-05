@@ -72,6 +72,27 @@ iris
 									poster : "videos/help/gallery/thumbnails/iris-gallery-multi-assignment.png"
 								}
 							}
+						}, 
+						tutorial : {
+							config : {
+								sources : [
+										{
+												src : $sce
+														.trustAsResourceUrl("videos/tutorial/iris-tutorial.mp4"),
+												type : "video/mp4"
+											},
+											{
+												src : $sce
+														.trustAsResourceUrl("videos/tutorial/iris-tutorial.webm"),
+												type : "video/webm"
+											}
+										],
+								tracks : [],
+								theme : defaultTheme,
+								plugins : {
+									poster : "videos/tutorial/thumbnails/iris-tutorial.png"
+								}
+							}
 						}
 					}
 				}]);
