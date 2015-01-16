@@ -7,9 +7,9 @@ import grails.transaction.Transactional
 
 @Transactional
 class AdminService {
-	
+
 	def grailsApplication
-	
+
 	/**
 	 * Gets the application name
 	 * @return the name of the application
@@ -17,7 +17,7 @@ class AdminService {
 	String getAppName() {
 		return grailsApplication.metadata['app.name']
 	}
-	
+
 	/**
 	 * Gets the version of the IRIS module.
 	 * @return the version as string
@@ -25,7 +25,7 @@ class AdminService {
 	String getAppVersion(){
 		return grailsApplication.metadata['app.version']
 	}
-	
+
 	/**
 	 * Gets the context of the IRIS module.
 	 * @return the context as string
@@ -33,7 +33,7 @@ class AdminService {
 	String getAppContext(){
 		return grailsApplication.metadata['app.context']
 	}
-	
+
 	/**
 	 * Gets the Grails version of the IRIS module.
 	 * @return the version as string
@@ -41,7 +41,7 @@ class AdminService {
 	String getGrailsVersion(){
 		return grailsApplication.metadata['app.grails.version']
 	}
-	
+
 	/**
 	 * Gets the servlet version of the IRIS module.
 	 * @return the version as string
@@ -49,7 +49,7 @@ class AdminService {
 	String getServletVersion(){
 		return grailsApplication.metadata['app.servlet.version']
 	}
-	
+
 	/**
 	 * Gets the Cytomine host URL from the configuration.
 	 * @return the URL of the host in Config.groovy and the connection status
@@ -64,7 +64,7 @@ class AdminService {
 		}
 		return hostInfo
 	}
-	
+
 	/**
 	 * Gets the IRIS host URL from the configuration.
 	 * @return the URL of the host in Config.groovy
@@ -72,7 +72,7 @@ class AdminService {
 	String getIrisHostAddress(Cytomine cytomine) {
 		return grailsApplication.config.grails.serverURL
 	}
-	
+
 	/**
 	 * Gets the Cytomine web URL from the configuration.
 	 * @return the URL of the web page in Config.groovy
@@ -80,17 +80,17 @@ class AdminService {
 	String getCytomineWebAddress(){
 		return grailsApplication.config.grails.cytomine.web
 	}
-	
-	
+
+
 	JSONObject getDatabaseStatistics(){
 		// TODO number of users
-		
+
 		// last activity of any user
-		
+
 		// last activity of each user
-		
+
 	}
-	
+
 	def getActivityLog() {
 		// TODO get all activities (in form of a log)
 	}

@@ -11,9 +11,12 @@ class UrlMappings {
 		 * ###########################
 		 * Global redirects (to views)
 		 */
-		"/"(view:"/iris")
-		"/iris"(view:"/iris")
+		"/"(view:"/iris") // TODO REDIRECT TO /iris IN PRODUCTION
+		"/index"(view:"/index")
+		"/iris"(view: "/iris")
 		"500"(view:"/error")
+
+		"/admin"(view:"admin/index")
 
 		/*
 		 * ###########################
@@ -22,24 +25,28 @@ class UrlMappings {
 		 * mainController
 		 * - handles information about the IRIS application
 		 */
-		"/api/welcome.$format"(controller:"main"){
+		"/api/welcome(.$format)"(controller:"main"){
 			action = [GET: "welcome"]
 		}
 
-		"/api/appName.$format"(controller:"main"){
+		"/api/appName(.$format)"(controller:"main"){
 			action = [GET: "appName"]
 		}
 
-		"/api/appVersion.$format"(controller:"main"){
+		"/api/appVersion(.$format)"(controller:"main"){
 			action = [GET: "appVersion"]
 		}
 
-		"/api/cytomineHost.$format"(controller:"main"){
+		"/api/cytomineHost(.$format)"(controller:"main"){
 			action = [GET: "hostAddress"]
 		}
 
-		"/api/cytomineWeb.$format"(controller:"main"){
+		"/api/cytomineWeb(.$format)"(controller:"main"){
 			action = [GET: "webAddress"]
+		}
+
+		"/api/admin/appInfo(.$format)"(controller:"main"){
+			action = [GET: "applicationInfo"]
 		}
 
 
@@ -51,11 +58,11 @@ class UrlMappings {
 		 *  optional parameters: 
 		 *  	flat={true|false}
 		 */
-		"/api/ontology/$ontologyID.$format"(controller:"cytomine"){
+		"/api/ontology/$cmOntologyID(.$format)"(controller:"cytomine"){
 			action = [GET: "getOntology"]
 		}
 
-		"/api/user/publicKey/$pubKey.$format"(controller:"cytomine"){
+		"/api/user/publicKey/$pubKey(.$format)"(controller:"cytomine"){
 			action = [GET: "getUserByPublicKey"]
 		}
 
@@ -98,12 +105,8 @@ class UrlMappings {
 		 * Optional parameters
 		 * 		image = [imageID#1,imageID#2,...]
 		 */
-		"/api/session/$sessionID/project/$cmProjectID/annotations.$format"(controller:"annotation"){
+		"/api/project/$cmProjectID/annotations(.$format)"(controller:"annotation"){
 			action = [GET: "getAnnotationsByUser"]
-		}
-		
-		"/api/session/$sessionID/project/$cmProjectID/annotations/pagination.$format"(controller:"annotation"){
-			action = [GET: "getAnnotations"]
 		}
 		
 		/*
@@ -113,39 +116,31 @@ class UrlMappings {
 		 * 			if null, return first and subsequent item, if any, previousAnnotation = null
 		 * 		hideCompleted = { true || false }
 		 */
-		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotations/tuple.$format"(controller:"annotation"){
+		"/api/project/$cmProjectID/image/$cmImageID/annotations/tuple(.$format)"(controller:"annotation"){
 			action = [GET: "getAnnotation3Tuple"]
 		}
 
 		/*
 		 * Assign a unique term		
 		 */
-		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/term/$cmTermID/clearBefore.$format"(controller:"annotation"){
+		"/api/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/term/$cmTermID/clearBefore(.$format)"(controller:"annotation"){
 			action = [POST: "setUniqueTerm"]
 		}
 		
 		/*
 		 * Adds another term or deletes it
 		 */
-		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/term/$cmTermID.$format"(controller:"annotation"){
-			action = [POST: "addTerm",
-					DELETE: "deleteTerm"]
+		"/api/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/term/$cmTermID(.$format)"(controller:"annotation"){
+			action = [DELETE: "deleteTerm"]
 		}
 		
 		/*
 		 * Removes all terms of a user from the annotation
 		 */
-		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/terms.$format"(controller:"annotation"){
+		"/api/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/terms(.$format)"(controller:"annotation"){
 			action = [DELETE: "deleteAllTerms"]
 		}
 		
-		/*
-		 * Touches the annotation (UNUSED)
-		 */
-//		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/annotation/$cmAnnID/touch"(controller:"annotation"){
-//			action = [POST: "touchAnnotation"]
-//		}
-
 		/*
 		 * SessionController
 		 */
@@ -153,90 +148,107 @@ class UrlMappings {
 		"/api/session(.$format)"(controller:"session"){
 			action = [
 				GET: "getSession",
-				DELETE: "deleteSession"
+				//DELETE: "deleteSession"
 			]
 		}
-		
-		"/api/session/$sessionID/project/$cmProjectID/touch"(controller:"session"){
-			action = [
-				POST: "touchProject" // create or overwrite the "current" project in the session
-				]
-		}
-		
+
 		/*
-		 * Optional parameters for PUT request is 
-		 * 		class={cytomine|iris}
+		 * Resumes a session at the images of the last opened project.
 		 */
-		"/api/session/$sessionID/project/$cmProjectID(.$format)"(controller:"session"){
-			action = [
-				GET: "getProject", // gets an IRIS project from a session
-				PUT: "updateProject" // update the project in the session using the params from the payload
-				]
+		"/api/session/resume/images(.$format)"(controller:"session"){
+			action = [GET: "resumeSessionAtImages"]
 		}
-		
+
 		/*
-		 * Gets a single image
+		 * Resumes a session at the gallery of the last opened project.
 		 */
-		"/api/project/$cmProjectID/image/$cmImageID.$format"(controller:"session"){
+		"/api/session/resume/gallery(.$format)"(controller:"session"){
+			action = [GET: "resumeSessionAtGallery"]
+		}
+
+		/*
+		 * Resumes a session at the last known annotation in the last opened
+		 * image of the last opened project.
+		 */
+		"/api/session/resume/labeling(.$format)"(controller:"session"){
+			action = [GET: "resumeSessionAtLabeling"]
+		}
+
+
+		/*
+		 * Gets a single image.
+		 */
+		"/api/project/$cmProjectID/image/$cmImageID(.$format)"(controller:"session"){
 			action = [GET: "getImage"]
 		}
-		
-		/*
-		 *  optional parameters 
-		 *  	computeProgress = true | false
-		 *  	withTileURL = true | false
+
+		/**
+		 * List the images from a specific project
 		 */
-		"/api/project/$projectID/images.$format"(controller:"session"){
+		"/api/project/$cmProjectID/images(.$format)"(controller:"session"){
 			action = [GET: "getImages"]
 		}
-		
-		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/touch"(controller:"session"){
+
+
+		"/api/project/$cmProjectID/image/$cmImageID/progress(.$format)"(controller:"session"){
 			action = [
-				POST: "touchImage" // create or overwrite the "current" image in the session
+				GET: "labelingProgress" // get the current labeling progress of an image
 				]
 		}
-		
-		"/api/session/$sessionID/project/$cmProjectID/image/$cmImageID/progress"(controller:"session"){
-			action = [
-				GET: "labelingProgress" // get the labeling progress of an image
-				]
+				
+		"/api/session/dev"(controller:"session"){
+			action = [GET: "dev"]
 		}
-		
-//		"/api/sessions(.$format)"(controller:"session"){
-//			action = [GET: "getAll"]
-//		}
-		
-//		"/api/deleteproject.json"(controller:"session"){
-//			action = [DELETE: "delProj"]
-//		}
+
+		"/api/session/dev2"(controller:"session"){
+			action = [GET: "dev2"]
+		}
 		
 		/*
 		 * ProjectController
 		 * Retrieves information on and instances of Cytomine projects.
 		 */
 		/*
-		 *  checks the availability of a project
-		 *  	$projectID = Cytomine project ID
-		 */ 
-		"/api/project/$projectID/availability(.$format)"(controller:"project"){
-			action = [GET: "checkAvailability"]
-		}
-		
-		/*
 		 * Gets the projects for a user. 
 		 *  optional parameters:
 		 *  	resolveOntology={true|false}
 		 */
 		"/api/projects(.$format)"(controller:"project"){
-			action = [GET: "getProjects"]
+			action = [GET: "getAll"]
 		}
-		
+
+		/**
+		 * Open a project.
+		 */
+		"/api/project/$cmProjectID(.$format)"(controller:"project"){
+			action = [
+					GET: "openProject" // create or overwrite the "current" project in the session
+			]
+		}
+
+		/**
+		 * Update the project settings.
+		 */
+		"/api/project/$cmProjectID/settings(.$format)"(controller:"project"){
+			action = [
+					PUT: "updateProjectSettings" // updates specific project settings
+			]
+		}
+
 		/*
 		 * Gets the description of a project.
 		 * 		$projectID = Cytomine project ID 
 		 */
-		"/api/project/$projectID/description(.$format)"(controller:"project"){
-			action = [GET: "getProjectDescription"]
+		"/api/project/$cmProjectID/description(.$format)"(controller:"project"){
+			action = [GET: "getDescription"]
+		}
+
+		/*
+		 * Gets the description of a project.
+		 * 		$projectID = Cytomine project ID
+		 */
+		"/api/project/$cmProjectID/ontology(.$format)"(controller:"project"){
+			action = [GET: "getOntologyByProject"]
 		}
 
 		/**
@@ -245,9 +257,6 @@ class UrlMappings {
 		"/api/admin/synchronize(.$format)"(controller:"admin"){
 			action = [POST: "synchronizeUserProgress"]
 		}
-		
-		"/api/admin/appInfo(.$format)"(controller:"admin"){
-			action = [GET: "applicationInfo"]
-		}
+
 	}
 }

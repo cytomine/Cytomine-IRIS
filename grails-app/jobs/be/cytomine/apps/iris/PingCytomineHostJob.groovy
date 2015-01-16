@@ -74,7 +74,7 @@ class PingCytomineHostJob {
 					sp.resetFailCount()
 				}
 			} else {
-				log.debug("Cytomine host ping successful.")
+				log.trace("Cytomine host ping successful.")
 				sp.resetFailCount()
 			}
 		} catch(UnknownHostException uhe){

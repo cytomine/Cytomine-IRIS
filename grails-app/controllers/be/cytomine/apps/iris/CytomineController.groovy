@@ -1,5 +1,7 @@
 package be.cytomine.apps.iris
 
+import be.cytomine.client.models.Project
+
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 
@@ -52,7 +54,7 @@ class CytomineController {
 	def getOntology(){
 		try {
 			Cytomine cytomine = request['cytomine']
-			long oID = params.long('ontologyID')
+			long oID = params.long('cmOntologyID')
 
 			Ontology ontology = cytomine.getOntology(oID)
 
@@ -124,7 +126,7 @@ class CytomineController {
 			// perform a synchronous get request to the Cytomine host server
 			def urls = imageService.getImageServerURLs(cytomine, abstrImgID, imgInstID)
 			// render URLs to client
-			render urls;
+			render urls
 		} catch(CytomineException e1){
 			log.error(e1)
 			// exceptions from the cytomine java client
@@ -275,7 +277,7 @@ class CytomineController {
 
 			String imageURL = cmHost + "/image/tile?zoomify=" + dataString + path
 
-			log.trace(imageURL)
+			log.debug(imageURL)
 
 			// get the image as byte[]
 			HttpClient client = new DefaultHttpClient()

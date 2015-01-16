@@ -1,0 +1,17 @@
+<!-- This map shows the current annotation in an OpenLayers map -->
+<div class="map">
+	<openlayers oncontextmenu="return false;" defaults="defaults" layers="layers" center="center" width="100%" height="400px"></openlayers>
+</div>
+<p>
+<div class="btn btn-xs btn-primary" ng-click="resetView(true)">Reset view</div>
+<div class="btn btn-xs btn-primary" ng-click="panToCenter()">Pan to annotation</div>
+</p>
+<div ng-show="debug">
+	
+	<p class="well">
+		{{ center | json }}
+	</p>
+	<p class="well">
+		{{ extent | json }}
+	</p>
+</div>

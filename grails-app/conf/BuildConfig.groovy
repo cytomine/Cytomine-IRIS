@@ -3,8 +3,8 @@ grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 grails.project.work.dir = "target/work"
-grails.project.target.level = 1.6
-grails.project.source.level = 1.6
+grails.project.target.level = 1.7
+grails.project.source.level = 1.7
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 
 grails.project.fork = [
@@ -12,13 +12,13 @@ grails.project.fork = [
     //  compile: [maxMemory: 256, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
 
     // configure settings for the test-app JVM, uses the daemon by default
-    test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true, jvmArgs: ['-Djava.net.preferIPv4Stack=true']],
+    test: [maxMemory: 2048, minMemory: 1024, debug: false, maxPerm: 512, daemon:true],
     // configure settings for the run-app JVM
-    run: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false, jvmArgs: ['-Djava.net.preferIPv4Stack=true']],
+    run: [maxMemory: 2048, minMemory: 1024, debug: false, maxPerm: 512, forkReserve:false],
     // configure settings for the run-war JVM
-    war: [maxMemory: 4096, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false, jvmArgs: ['-Djava.net.preferIPv4Stack=true']],
+    war: [maxMemory: 2048, minMemory: 1024, debug: false, maxPerm: 512, forkReserve:false],
     // configure settings for the Console UI JVM
-    console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, jvmArgs: ['-Djava.net.preferIPv4Stack=true']]
+    console: [maxMemory: 2048, minMemory: 1024, debug: false, maxPerm: 512]
 ]
 
 grails.project.dependency.resolver = "maven" // or ivy
@@ -44,6 +44,8 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://repository.codehaus.org"
         //mavenRepo "http://download.java.net/maven/2/"
         //mavenRepo "http://repository.jboss.com/maven2/"
+        mavenRepo 'https://oss.sonatype.org/content/repositories/snapshots'
+        mavenRepo 'http://repo.spring.io/milestone/'
     }
 
     dependencies {
@@ -52,25 +54,62 @@ grails.project.dependency.resolution = {
         // runtime 'org.postgresql:postgresql:9.3-1100-jdbc41'
     }
 
+//   GRAILS 2.3.5 plugins {
+//        // plugins for the build system only
+//        build ":tomcat:7.0.50"
+//
+//        // plugins for the compile step
+//        compile ":scaffolding:2.0.1"
+//        compile ":cache:1.1.1"
+//		compile ":quartz:1.0.2"
+//		compile ":mail:1.0.7"
+//        compile ":executor:0.3"
+////        compile ":spring-security-core:2.0-RC4"
+//		//compile ":rest:0.8"
+//
+//        // plugins needed at runtime but not for compilation
+//        runtime ":hibernate:3.6.10.7" // or ":hibernate4:4.1.11.6"
+//        runtime ":database-migration:1.3.8"
+//        //runtime ":jquery:1.10.2.2"
+//
+//        //runtime ":resources:1.2.1"
+//        // Uncomment these (or add new ones) to enable additional resources capabilities
+//        //runtime ":zipped-resources:1.0.1"
+//       	//runtime ":cached-resources:1.1"
+//        //runtime ":yui-minify-resources:0.1.5"
+//    }
+
+
+    // GRAILS 2.3.11
     plugins {
         // plugins for the build system only
-        build ":tomcat:7.0.50"
+        build ':tomcat:7.0.54'
 
         // plugins for the compile step
-        compile ":scaffolding:2.0.1"
-        compile ":cache:1.1.1"
-		compile ":quartz:1.0.2"
-		compile ":mail:1.0.7"
-		//compile ":rest:0.8"
-		
+//        compile ":asset-pipeline:2.1.0"
+        compile ':cache:1.1.7'
+        compile ':scaffolding:2.0.1'
+
+        compile ":quartz:1.0.2"
+        compile ":executor:0.3"
+
+        // security
+        compile ":spring-security-core:2.0-RC4"
+        compile ":mail:1.0.7"
+//        compile ":jquery-ui:1.10.4"
+//        compile ":jquery:1.11.1"
+//        compile ":famfamfam:1.0.1"
+
+//        compile ":spring-security-ui:1.0-RC2"
+
+
+        // runtime ":cors:1.1.6"
+//        compile ":spring-security-rest:1.4.0.RC5", {
+//            excludes ('cors','spring-security-core')
+//        }
+
         // plugins needed at runtime but not for compilation
-        runtime ":hibernate:3.6.10.7" // or ":hibernate4:4.1.11.6"
-        runtime ":database-migration:1.3.8"
-        //runtime ":jquery:1.10.2.2"
-        runtime ":resources:1.2.1"
-        // Uncomment these (or add new ones) to enable additional resources capabilities
-        //runtime ":zipped-resources:1.0.1"
-       	//runtime ":cached-resources:1.1"
-        //runtime ":yui-minify-resources:0.1.5"
+        runtime ":database-migration:1.4.0"
+        runtime ":hibernate:3.6.10.16"
     }
 }

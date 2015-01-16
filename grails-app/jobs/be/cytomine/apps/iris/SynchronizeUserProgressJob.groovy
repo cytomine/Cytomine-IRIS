@@ -1,203 +1,380 @@
 package be.cytomine.apps.iris
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import be.cytomine.client.Cytomine
+import be.cytomine.client.collections.AnnotationCollection
 
-import be.cytomine.client.Cytomine;
-import be.cytomine.client.collections.ImageInstanceCollection;
-import be.cytomine.client.collections.ProjectCollection;
-import be.cytomine.client.models.ImageInstance;
-
-import org.hibernate.StaleObjectStateException;
-import org.json.simple.JSONArray
-import org.json.simple.JSONObject;
+import java.text.SimpleDateFormat
 
 /**
  * Maintenance script for synchronizing the cached user progress in the IRIS database. 
  * It updates the total number of annotations and computes the user progress for each user.
- * 
+ *
  * @author Philipp Kainz
  * @since 1.4
  */
 class SynchronizeUserProgressJob {
-	static triggers = {
-		simple name: 'initAtStartup', startDelay: 10000L, repeatCount: 0 // runs once at server start
-		cron name: 'every2Hours', cronExpression: "0 0 0/2 * * ?" // runs every two hours
-	}
+    static triggers = {
+        simple name: 'initAtStartup', startDelay: 10000L, repeatCount: 0 // runs once at server start (10 seconds delay)
+//        cron name: 'every2Hours', cronExpression: "0 0 0/2 * * ?" // runs every two hours
+        cron name: 'nightlySync', cronExpression: "0 0 3 * * ?" // runs once a day at 3 AM
+    }
 
-	def description = "Synchronize user labeling progress from the Cytomine core server. " +
-	" Running once at server startup and every two hours."
+    // disable concurrent running
+    def concurrent = false
 
-	// the configuration of the IRIS server
-	def grailsApplication
-	def sessionService
-	def imageService
-	def activityService
-	def mailService
+    def description = "Synchronize user labeling progress from the Cytomine core server. " +
+            " Running once at server startup and every two hours."
 
-	/**
-	 * Custom constructor for calling via controller. 
-	 * 
-	 * @param grailsApplication
-	 * @param sessionService
-	 * @param imageService
-	 * @param activityService
-	 * @param mailService
-	 */
-	SynchronizeUserProgressJob(def grailsApplication, def sessionService, def imageService, def activityService, def mailService){
-		this.grailsApplication = grailsApplication
-		this.sessionService = sessionService
-		this.imageService = imageService
-		this.activityService = activityService
-		this.mailService = mailService
-	}
+    // the configuration of the IRIS server
+    def grailsApplication
+    def sessionService
+    def imageService
+    def activityService
+    def mailService
+    def syncService
+    def executorService
+    def annotationService
 
-	/**
-	 * Empty constructor for scheduled access.
-	 */
-	SynchronizeUserProgressJob(){
-	}
+    String _override = "";
 
-	/**
-	 * Worker method.
-	 * @return
-	 * @throws Exception
-	 */
-	def execute() throws Exception{
-		// check, if the job is enabled
-		String className = getClass().simpleName
-		if (grailsApplication.config."$className".disabled) {
-		  return "deactivated"
-		}
-		
-		log.info("Starting user progress synchronization...")
-		// get all users from the IRIS database
-		List<User> users = User.getAll()
+    def syncExceptions = []
 
-		try {
-			// for each IRIS user, refresh the labeling progress in the projects
-			users.each { user ->
-				log.info("Synchronizing user " + user.cmUserName + "...")
-				// create a new cytomine connection
-				Cytomine cytomine = new Cytomine(grailsApplication.config.grails.cytomine.host,
-						user.cmPublicKey, user.cmPrivateKey, "./")
+    /**
+     * Custom constructor for calling via controller.
+     *
+     * @param grailsApplication
+     * @param sessionService
+     * @param imageService
+     * @param activityService
+     * @param mailService
+     * @param syncService
+     * @param executorService
+     * @param annotationService
+     */
+    SynchronizeUserProgressJob(def grailsApplication, def sessionService,
+                               def imageService, def activityService,
+                               def mailService, def syncService,
+                               def executorService, def annotationService, String override) {
+        this.grailsApplication = grailsApplication
+        this.sessionService = sessionService
+        this.imageService = imageService
+        this.activityService = activityService
+        this.mailService = mailService
+        this.syncService = syncService
+        this.executorService = executorService
+        this.annotationService = annotationService
+        this._override = override
+    }
 
-				// get the user's session
-				Session sess = user.getSession()
-				// get the projects from this session
-				SortedSet<Project> irisProjects = sess.getProjects()
+    /**
+     * Empty constructor for scheduled access.
+     */
+    SynchronizeUserProgressJob() {
+    }
 
-				// get the projects of this user from Cytomine
-				ProjectCollection cmProjects = cytomine.getProjectsByUser(user.cmID)
+    /**
+     * Sync job which can be triggered by the admin.
+     *
+     * @return
+     */
+    def runExplicit() throws Exception{
+        return execute()
+    }
 
-				// the domain mapper
-				DomainMapper domainMapper = new DomainMapper(grailsApplication)
+    boolean isEnabled(){
+        String className = getClass().simpleName
+        return !(grailsApplication.config."$className".disabled)
+    }
 
-				int nProjects = cmProjects.size()
+    boolean isOverridden(){
+        return "override_config".equals(_override)
+    }
 
-				// update the projects of the user
-				for (int pIdx = 0; pIdx < nProjects; pIdx++){
-					be.cytomine.client.models.Project cmProject = cmProjects.get(pIdx)
-					long cmProjectID = cmProject.getId()
+    /**
+     * Worker method called by the quartz scheduler.
+     *
+     * @return
+     * @throws Exception
+     */
+    def execute() throws Exception {
+        // check, if the job is enabled
+        if (!isOverridden()){
+            if (!isEnabled()){
+                return "deactivated"
+            }
+        }
 
-					// find the project in the local database
-					Project irisProject = irisProjects.find { it.cmID == cmProjectID }
+        log.info("Starting user progress synchronization...")
 
-					// map the client domain model to IRIS
-					irisProject = domainMapper.mapProject(cmProject, irisProject)
+        try {
+            // get all 'synchronizable' users from the DB
+            List<IRISUser> irisUsers
+            IRISUser.withTransaction {
+                def userCriteria = IRISUser.createCriteria()
+                irisUsers = userCriteria.list {
+                    and {
+                        isNull('cmDeleted')
+                        eq('synchronize', true)
+                        not {
+                            'in'('cmUserName', ['system', 'admin', 'superadmin'])
+                        }
+                    }
+                }
+            }
 
-					// persist the project
-					sess.addToProjects(irisProject)
-					
-					for(idx in [1..5]){
-						try {
-							// add the project to the session and cause reordering
-							sess.save(flush:true)
-							log.debug("Successfully updated session.")
-							break
-						} catch(StaleObjectStateException e){
-							long sleepTime = new Long(new Random().nextInt(2000)).longValue()
-							// try again
-							log.error("Trying to update a project, which is locked, trying again in " + sleepTime/1000 + " seconds. " + e)
-							Thread.sleep(sleepTime)
-						}
-					}
+            String userNameStr = irisUsers.cmUserName.join(",")
 
-					// get all images for that project from the Cytomine core server
-					ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)
+//          if the query did not result in any 'synchronizable' user instances, return true
+            if (checkSkip(irisUsers)) {
+                String msg = "No eligible users found, skipping sync."
+                log.info(msg)
+                executorService.execute({
+                    activityService.logSync(msg)
+                })
+                return true;
+            } else {
+                String msg = "Synchronizing progress for users [" + userNameStr + "]"
+                log.info(msg)
+                executorService.execute({
+                    activityService.logSync(msg)
+                })
+                assert irisUsers.size() != 0
+            }
 
-					// get all images in this session
-					SortedSet<Image> irisImages = irisProject.getImages()
+            // TODO 1. get a list of ALL ENABLED DISTINCT project IDs of synchronizable users in the DB
+            List projectIDs
+            IRISUserProjectSettings.withTransaction {
+                def prjCriteria = IRISUserProjectSettings.createCriteria()
+                projectIDs = prjCriteria.list {
+                    and {
+                        isNull('deleted')
+                        eq('enabled', true)
+                        'in'('user', irisUsers)
+                    }
+                    projections {
+                        distinct('cmProjectID')
+                    }
+                }
+            }
 
-					// FOR EACH IMAGE
-					for (int iIdx = 0; iIdx < cmImageCollection.size(); iIdx++){
-						ImageInstance cmImage = cmImageCollection.get(iIdx)
-						// find the IRIS image in the list
-						Image irisImage = irisImages.find {
-							it.cmID == cmImage.getId()
-						}
+            String projectIDStr = projectIDs.join(",")
 
-						// map each image to the IRIS model (updates all annotations)
-						irisImage = domainMapper.mapImage(cmImage,irisImage,irisProject.cmBlindMode)
+//          if the query did not result in any 'synchronizable' projects, return true
+            if (checkSkip(projectIDs)) {
+                String msg = "No eligible projects found for users [" + userNameStr + "], skipping sync."
+                log.info(msg)
+                executorService.execute({
+                    activityService.logSync(msg)
+                })
+                return true;
+            } else {
+                String msg = "Synchronizing progress for projects [" + projectIDStr + "]"
+                log.info(msg)
+                executorService.execute({
+                    activityService.logSync(msg)
+                })
+                assert projectIDs != []
+            }
 
-						//for each image, add a goToURL property containing the full URL to open the image in the core Cytomine instance
-						irisImage.setGoToURL(grailsApplication.config.grails.cytomine.host + "/#tabs-image-" + cmProjectID + "-" + cmImage.getId() + "-")
+            // TODO 2. for each of these projects get the ENABLED images
+            List imageIDs
+            IRISUserImageSettings.withTransaction {
+                def imgCriteria = IRISUserImageSettings.createCriteria()
+                imageIDs = imgCriteria.list {
+                    and {
+                        isNull('deleted')
+                        eq('enabled', true)
+                        'in'('cmProjectID', projectIDs)
+                    }
+                    projections {
+                        distinct('cmImageInstanceID')
+                    }
+                }
+            }
 
-						// this performs an synchronous GET request to the cytomine server
-						irisImage.setOlTileServerURL(imageService.getImageServerURL(cytomine, cmImage.get("baseImage"), cmImage.getId()));
+            String imageIDStr = imageIDs.join(",")
 
-						// compute the user progress
-						JSONObject annInfo = new Utils().getUserProgress(cytomine, cmProjectID, cmImage.getId(), user.cmID)
-						// resolving the values from the JSONObject to each image as property
-						irisImage.setLabeledAnnotations(annInfo.get("labeledAnnotations"))
-						irisImage.setUserProgress(annInfo.get("userProgress"))
-						irisImage.setNumberOfAnnotations(annInfo.get("totalAnnotations"))
+//          if the query did not result in any 'synchronizable' images in these projects, return true
+            if (checkSkip(imageIDs)) {
+                String msg = "No eligible images found for projects [" + projectIDStr + "], skipping sync."
+                log.info(msg)
+                executorService.execute({
+                    activityService.logSync(msg)
+                })
+                return true;
+            } else {
+                String msg = "Synchronizing progress for images [" + imageIDStr + "]"
+                log.info(msg)
+                executorService.execute({
+                    activityService.logSync(msg)
+                })
+                assert imageIDs != []
+            }
 
-						// IMPORTANT: do NOT update lastActivityDate!
+            int nImages = imageIDs.size()
 
-						// persist the IRIS image
-						for(idx in [1..5]){
-							try {
-								// add the project to the session and cause reordering
-								irisProject.addToImages(irisImage)
-								irisImage.save(flush:true)
-								log.debug("Successfully updated image.")
-								break
-							} catch(StaleObjectStateException e){
-								long sleepTime = new Long(new Random().nextInt(2000)).longValue()
-								// try again
-								log.error("Trying to update a project, which is locked, trying again in " + sleepTime/1000 + " seconds. " + e)
-								Thread.sleep(sleepTime)
-							}
-						}
-					}
-					
-					log.info("Syncing projects... [" + irisProject.cmName + ", " + ((pIdx+1)*100/nProjects) + "%]")
-				}
-				log.info("Done synchronizing user " + user.cmUserName + ".")
-				activityService.log(user, "Successfully (auto)synchronized user progress.")
-			}
+            // for each image, get its annotations and compute the progress for every user
+            for (int i = 0; i < nImages; i++) {
+                Long imageID = imageIDs[i]
+                try {
+                    List<IRISUser> imageUsers
+                    // get the users per image and compute their progress
+                    IRISUserImageSettings.withTransaction {
+                        def imgCriteria = IRISUserImageSettings.createCriteria()
+                        imageUsers = imgCriteria.list {
+                            and {
+                                eq('cmImageInstanceID', imageID)
+                                isNull('deleted')
+                                eq('enabled', true)
+                            }
+                            projections {
+                                distinct('user')
+                            }
+                        }
+                    }
 
-		} catch(Exception ex){
-			log.error("Cannot complete the user progress synchronization!", ex)
-			activityService.log("(Auto)synchronization of user progress failed!")
- 
-			String recepient = grailsApplication.config.grails.cytomine.apps.iris.server.admin.email
-			
-			log.info("Sending email to admin...")
-			
-			// notify the admin
-			mailService.sendMail {
-				async true
-				from "cytomine-iris@pkainz.com"
-				to recepient
-				subject "Progress synchronization job failed"
-				body ('Could not complete the user synchronization!\n' + ex)
-			}
-			return false
-		}
-		
-		log.info("Done synchronizing user progress.")
-		return true
-	}
+                    // get all annotations (including ACL check for that user)
+                    AnnotationCollection allImageAnnotations
+
+                    for (int j = 0; j < imageUsers.size(); j++) {
+                        // a user which has access to this image is required
+                        IRISUser someUserWithAccessToThisImage = imageUsers.get(j)
+                        try {
+                            // create the cytomine connection for that user
+                            Cytomine cytomine = new Cytomine(grailsApplication.config.grails.cytomine.host as String,
+                                    someUserWithAccessToThisImage.cmPublicKey, someUserWithAccessToThisImage.cmPrivateKey, "./")
+
+                            allImageAnnotations = annotationService.getAllAnnotationsLight(cytomine,
+                                    someUserWithAccessToThisImage, null, imageID)
+
+                            // we have all we want, leave the loop
+                            break
+                        } catch (Exception ex) {
+                            addSyncException(ex, "User '" + someUserWithAccessToThisImage.cmUserName + "' is not allowed to access " +
+                                    "image [" + imageID + "].")
+                            if (j < imageUsers.size() - 2) {
+                                log.warn("I will concern '" + imageUsers.get(j + 1).cmUserName + "' next...")
+                            } else {
+                                String msg = "I cannot try anyone else to get this " +
+                                        "image and have to skip ID [" + imageID + "]!"
+                                addSyncException(ex, msg)
+                            }
+                        }
+                    }
+
+                    // skip the image if there are no annotations!
+                    if (allImageAnnotations == null || allImageAnnotations.isEmpty()) {
+                        log.info("Skipping computing user progress for this image, since no annotations can be found.")
+                        continue
+                    }
+
+                    imageUsers.each { user ->
+
+                        try {
+                            def progressInfo = syncService.computeUserProgress(allImageAnnotations, user)
+                            int nLabeled = progressInfo['labeledAnnotations']
+                            int nTotal = progressInfo['totalAnnotations']
+
+
+                            IRISUserImageSettings.withTransaction {
+                                // store the record of this user
+                                IRISUserImageSettings settings = IRISUserImageSettings
+                                        .findByUserAndCmImageInstanceID(user, imageID)
+
+                                settings?.lock()
+                                settings?.setLabeledAnnotations(nLabeled)
+                                settings?.setNumberOfAnnotations(nTotal)
+                                settings?.computeProgress()
+
+                                settings?.merge(flush: true)
+                            }
+
+                            log.trace("Done synchronizing image [" + imageID + "] for user '" + user.cmUserName + "'.")
+                        } catch (Exception e) {
+                            String msg = "Cannot synchronize image [" + imageID +
+                                    "] for user '" + user.cmUserName + "'."
+                            addSyncException(e, msg)
+                        }
+                    }
+                    String msg = "Done synchronizing image [" + imageID + "] for all its users."
+                    log.info(msg)
+                    activityService.logSync(msg)
+                } catch (Exception e) {
+                    addSyncException(e, "Cannot synchronize image [" + imageID + "]!")
+                }
+            }
+
+        } catch (Exception ex) {
+            String msg = "The synchronization failed! This is a serious global error, you should act quickly!"
+            log.fatal(msg, ex)
+            // GLOBAL ERROR
+            addSyncException(ex, msg)
+        }
+
+        if (!this.syncExceptions.isEmpty()) {
+            String recipient = grailsApplication.config.grails.cytomine.apps.iris.server.admin.email
+
+            log.info("User synchronization succeeded, but had some errors! Sending email to admin...")
+
+            // notify the admin
+            mailService.sendMail {
+                async true
+                to recipient
+                subject new SimpleDateFormat('E, yyyy-MM-dd').format(new Date()) + ": Progress synchronization had some errors"
+                body('Errors occurred during scheduled user progress synchronization. See stack traces below. \n\n\n'
+                    + exceptionsToString()
+                )
+            }
+        } else {
+            log.info("Splendit! All synchronizations completed without errors :-)")
+        }
+
+        log.info("Done synchronizing user progress.")
+        return syncExceptions
+    }
+
+    /**
+     * Checks whether the sync of an item should be skipped
+     * @param item
+     * @return
+     */
+    boolean checkSkip(def item) {
+        boolean skip = false
+
+        if (item == null)
+            skip = true
+        else if (item instanceof Collection)
+            if (item.isEmpty())
+                skip = true
+
+        return skip
+    }
+
+    /**
+     * Adds an Exception to the list of errors which will be sent to the admin.
+     *
+     * @param e
+     * @param msg
+     */
+    void addSyncException(Exception e, String msg) {
+        syncExceptions.add(['msg': msg, 'exception': e])
+        log.error(msg, e)
+        executorService.execute({
+            activityService.logSync("ERROR\n" + msg)
+        })
+    }
+
+    /**
+     * Prints the exceptions in a reverse chronologically stack of messages/exceptions.
+     *
+     * @return
+     */
+    String exceptionsToString(){
+        String exStr = "\nEXCEPTIONS ARE ORDERED REVERSE CHRONOLOGICALLY (MOST RECENT FIRST)"
+        syncExceptions.reverse()
+        syncExceptions.each { item ->
+            exStr += (item['msg'] + "\n" + item['exception'] + "\n " +
+                    "------------------------------------------------------\n")
+        }
+    }
 }

@@ -99,20 +99,20 @@ public class IRIS {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Cytomine c = new Cytomine("http://beta.cytomine.be",
-				"0880e4b4-fe26-4967-8169-f15ed2f9be5c",
-				"a511a35c-5941-4932-9b40-4c8c4c76c7e7", "./");
-		IRIS iris = new IRIS(c);
-		long projectID = 93519082L;
-		long imageID = 94255021L; // 100117637L 94255021L 
-		long annID = 136334701L;
-		long userID = 93518990L; // pkainz: 93518990L; masslaber: 107758862L
-
-		// get a single annotation
-		// iris.getAnnotation(projectID, imageID, annID);
-
-		// get all annotations, where a specific user has not yet added a term
-		iris.getRemainingAnnotations(projectID, imageID, userID);
+//		Cytomine c = new Cytomine("http://beta.cytomine.be",
+//				"0880e4b4-fe26-4967-8169-f15ed2f9be5c",
+//				"a511a35c-5941-4932-9b40-4c8c4c76c7e7", "./");
+//		IRIS iris = new IRIS(c);
+//		long projectID = 93519082L;
+//		long imageID = 94255021L; // 100117637L 94255021L
+//		long annID = 136334701L;
+//		long userID = 93518990L; // pkainz: 93518990L; masslaber: 107758862L
+//
+//		// get a single annotation
+//		// iris.getAnnotation(projectID, imageID, annID);
+//
+//		// get all annotations, where a specific user has not yet added a term
+//		iris.getRemainingAnnotations(projectID, imageID, userID);
 	}
 
 }

@@ -1,13 +1,15 @@
 package be.cytomine.apps.iris
 
-import org.json.simple.JSONArray;
-import org.springframework.aop.ThrowsAdvice;
-
+import be.cytomine.apps.iris.model.IRISProject
 import be.cytomine.client.Cytomine;
 import be.cytomine.client.CytomineException
-import be.cytomine.client.collections.ProjectCollection;
-import grails.converters.JSON;
+import be.cytomine.client.collections.ProjectCollection
+import be.cytomine.client.models.Description
+import be.cytomine.client.models.Project
+import grails.converters.JSON
 import grails.transaction.Transactional
+import org.json.simple.JSONArray
+import org.json.simple.JSONObject
 
 /**
  * This service handles all CRUD operations of a Project object.
@@ -20,71 +22,174 @@ import grails.transaction.Transactional
  */
 @Transactional
 class ProjectService {
-	
-	/**
-	 * Fetches the project list of the user executing this query.
-	 * Optionally, there will be an injection of the associated ontology with 
-	 * the resolved hierarchy names.
-	 * 
-	 * @param cytomine a Cytomine instance
-	 * @param resolveOntology <code>true</code>: ontology names will be
-	 * fully resolved in the property <code>resolvedOntology</code>, 
-	 * <code>false</code>: ontology will not be resolved
-	 * 
-	 * @return a ProjectCollection as JSON array with an optionally 
-	 * injected ontology 
-	 */
-	def getProjects(Cytomine cytomine, boolean resolveOntology){
-		def projectList = cytomine.getProjects().list
+    def springSecurityService
+    def grailsApplication
+    def syncService
+    def activityService
 
-		// optionally resolve the ontology and inject it in the project
-		if (resolveOntology){
-			// get the ontology object for each project
-			projectList.each {
-				long oID = it.get("ontology")
-				def ontology = cytomine.getOntology(oID)
-				it.resolvedOntology = ontology;
-			}
-		}
+    /**
+     * Update an existing IRISUserProjectSettings object by a JSON object delivered in the payload.
+     *
+     * @param cytomine a Cytomine instance
+     * @param irisUser the IRIS user
+     * @param cmProjectID the Cytomine project ID
+     * @param payload the IRISUserProjectSettings as JSON
+     * @return
+     * @throws CytomineException
+     * @throws Exception
+     */
+    IRISProject updateProjectSettings(Cytomine cytomine, IRISUser irisUser, Long cmProjectID,
+                                      def payload) throws CytomineException, Exception {
 
-		return projectList
-	}
+        IRISProject irisProject = getProject(cytomine, irisUser, cmProjectID)
 
-	/**
-	 * Gets the description of a project from Cytomine.
-	 * 
-	 * @param cytomine a Cytomine instance
-	 * @param projectID the id of the project
-	 * @return a JSON object
-	 * @throws CytomineException if the project does not have a description
-	 */
-	def getProjectDescription(Cytomine cytomine, long projectID) throws CytomineException{
-		def description = cytomine.getDescription(projectID, IRISConstants.CM_PROJECT)
-		return description
-	}
+        // update the settings
+        IRISUserProjectSettings settings = irisProject.getSettings()
+        settings.setHideCompletedImages(Boolean.valueOf(payload['hideCompletedImages']))
+        settings.save()
 
-	/**
-	 * Checks, whether or not the calling user has access to a 
-	 * requested project.
-	 * 
-	 * @param cytomine a Cytomine instance
-	 * @param projectID the requested project ID
-	 * @return <code>true</code> if the project is available for this user, <code>false</code> 
-	 * otherwise
-	 * 
-	 * @throws CytomineException if the project does not exist
-	 * @throws Exception on any exception
-	 */
-	boolean isAvailable(Cytomine cytomine, long projectID) throws CytomineException {
+        activityService.logProjectUpdate(irisUser, irisProject.cmID)
 
-		def p = cytomine.getProject(projectID)
+        return irisProject
+    }
 
-		if (p != null){
-			// project exists and user is authorized
-			return true
-		} else {
-			// project exists and user is NOT authorized
-			return false
-		}
-	}
+    /**
+     * Fetches the project list of the user executing this query.
+     *
+     * @param cytomine a Cytomine instance
+     * @param the IRIS user
+     *
+     * @return a list of IRISProject instances including their settings on this IRIS host as JSON
+     */
+    JSONObject getAllProjects(Cytomine cytomine, IRISUser irisUser) throws CytomineException, Exception {
+
+        ProjectCollection projectList = cytomine.getProjectsByUser(irisUser.cmID)
+
+        Utils utils = new Utils()
+
+        def projectListJSON = new JSONArray()
+        int enabledProjects = 0
+        for (int i = 0; i < projectList.size(); i++) {
+            Project cmProject = projectList.get(i)
+
+            IRISProject irisProject = new DomainMapper(grailsApplication).mapProject(cmProject, null)
+            // get the settings for this user from the DB
+            IRISUserProjectSettings settings = IRISUserProjectSettings.
+                    findByUserAndCmProjectID(irisUser, cmProject.getId())
+
+            // if no local settings exist for this project
+            if (!settings) {
+                // create and save them
+                settings = new IRISUserProjectSettings(
+                        user: irisUser,
+                        cmProjectID: cmProject.getId(),
+                )
+
+                //set the demo project on this instance initially enabled for each user
+                def demoProjectID = grailsApplication.config.grails.cytomine.apps.iris.demoProject.cmID
+                if (cmProject.getId() == demoProjectID) {
+                    settings.enabled = true
+                }
+
+                settings.save()
+            }
+
+            // set the ontology ID to the settings
+            settings.setCmOntologyID(irisProject.cmOntologyID)
+
+            // count the accessible projects for this user
+            if (settings.enabled == true) {
+                enabledProjects += 1
+            }
+
+            // inject the settings
+            irisProject.setSettings(settings)
+
+            // add the project, no matter if it is enabled or not
+            projectListJSON.add(utils.toJSONObject(irisProject))
+        }
+
+        JSONObject result = new JSONObject()
+        result.put("projects", projectListJSON)
+        result.put("accessibleProjects", enabledProjects)
+
+        return result
+    }
+
+    /**
+     * Fetches the current project from the Cytomine host, maps to IRIS domain model
+     * and returns the IRIS project.
+     *
+     * @param cytomine a Cytomine instance
+     * @param user the IRIS user
+     * @param cmProjectID the Cytomine project ID to get
+     * @return the IRIS project with injected cytomine domain
+     *
+     * @throws CytomineException if the project is is not available for the
+     * querying user
+     * @throws Exception
+     */
+    IRISProject getProject(Cytomine cytomine, IRISUser user, Long cmProjectID) throws CytomineException, Exception {
+
+        // TODO get the user from springsecurity service context
+//        springSecurityService.getCurrentUser()
+
+        IRISProject irisProject = syncService.synchronizeProject(cytomine, user, cmProjectID)
+
+        // check if the project is available for this IRIS instance
+        if (!irisProject.settings.enabled) {
+            log.info("Project [" + cmProjectID +
+                    "] is not available to '" + user.cmID + "' on this IRIS instance.")
+
+            throw new CytomineException(403, "This project is not available on this IRIS host.")
+        }
+
+        // get the user's session
+        IRISUserSession sess = user.getSession()
+        sess.setCurrentCmProjectID(cmProjectID)
+
+        // store the user session
+        sess.merge(flush: true)
+
+        return irisProject
+    }
+
+    /**
+     * Gets the description of a project from Cytomine.
+     *
+     * @param cytomine a Cytomine instance
+     * @param projectID the Cytomine ID of the project
+     *
+     * @return the project description
+     * @throws CytomineException if the project does not have a description
+     */
+    Description getProjectDescription(Cytomine cytomine, long projectID) throws CytomineException {
+        Description description = cytomine.getDescription(projectID, IRISConstants.CM_PROJECT_DOMAINNAME)
+        return description
+    }
+
+    /**
+     * Checks, whether or not the calling user has access to a
+     * requested project.
+     *
+     * @param cytomine a Cytomine instance
+     * @param projectID the requested project ID
+     * @return <code>true</code> if the project is available for this user, <code>false</code>
+     * otherwise
+     *
+     * @throws CytomineException if the project does not exist
+     * @throws Exception on any exception
+     */
+    boolean isAvailable(Cytomine cytomine, long projectID) throws CytomineException {
+
+        def p = cytomine.getProject(projectID)
+
+        if (p != null) {
+            // project exists and user is authorized
+            return true
+        } else {
+            // project exists and user is NOT authorized
+            return false
+        }
+    }
 }

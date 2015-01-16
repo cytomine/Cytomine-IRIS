@@ -1,8 +1,13 @@
 package be.cytomine.apps.iris
 
-import be.cytomine.client.Cytomine;
+import be.cytomine.client.Cytomine
+import be.cytomine.client.CytomineException;
 import grails.converters.JSON
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.json.simple.JSONObject
+
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 /**
  * This is the main controller of the IRIS application.
@@ -19,12 +24,14 @@ class MainController {
 		log.debug("Executing action $actionName with params $params")
 	}
 
+	def index(){}
+
 	/**
 	 * Renders a welcome text for the start page.
 	 * @return
 	 */
     def welcome() {
-        render "Welcome to Cytomine ${grailsApplication.metadata.'app.name'}"
+        render "Welcome to Cytomine IRIS"
     }
 	
 	/**
@@ -75,5 +82,45 @@ class MainController {
 	 */
 	def webAddress(){
 		render adminService.getCytomineWebAddress()
+	}
+
+	/**
+	 * Get the application information of this IRIS instance.
+	 * @return
+	 */
+	def applicationInfo() {
+		try {
+			JSONObject appInfo = new JSONObject()
+			appInfo.put("appName", adminService.getAppName())
+			appInfo.put("appVersion", adminService.getAppVersion())
+
+			appInfo.put("grailsVersion", adminService.getGrailsVersion())
+			appInfo.put("servletVersion", adminService.getServletVersion())
+			appInfo.put("appContext", adminService.getAppContext())
+			appInfo.put("irisHost", adminService.getIrisHostAddress())
+
+			appInfo.put("cytomineHost", adminService.getCytomineHostAddress(request['cytomine']))
+			appInfo.put("cytomineWeb", adminService.getCytomineWebAddress())
+
+			render appInfo as JSON
+		} catch(CytomineException e1){
+			log.error(e1)
+			// exceptions from the cytomine java client
+			response.setStatus(e1.httpCode)
+			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+			render errorMsg as JSON
+		} catch(GroovyCastException e2) {
+			log.error(e2)
+			// send back 400 if the project ID is other than long format
+			response.setStatus(400)
+			JSONObject errorMsg = new Utils().resolveException(e2, 400)
+			render errorMsg as JSON
+		} catch(Exception e3){
+			log.error(e3)
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
+		}
 	}
 }
