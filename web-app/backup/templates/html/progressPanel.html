@@ -1,7 +1,0 @@
-<div tooltip-placement="top" tooltip="You labeled {{item.settings.labeledAnnotations}} of {{item.settings.numberOfAnnotations}} annotation{{item.settings.numberOfAnnotations>1?'s':''}}.">
-	<progressbar style="margin-bottom:5px;" class="progress-striped" value="item.settings.progress" max="100" type="{{type(item.settings.progress)}}">
-		<span style="color:black; white-space:nowrap;">{{item.settings.progress}}%</span>
-	</progressbar>
-	<div ng-show="item.settings.progress == 100" class="label label-info text-center">finished</div>
-	<div ng-show="item.settings.progress < 100" class="label label-default text-center">{{item.settings.numberOfAnnotations-item.settings.labeledAnnotations}} more to go</div>
-</div>
