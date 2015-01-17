@@ -113,7 +113,7 @@ img.image-preview {
 Map controls.
 */
 .ol-viewport {
-	background: url('images/textured_paper.jpeg') repeat;
+	background: url(../images/textured_paper.jpeg) repeat;
 	cursor: move;
 }
 /*map controls end*/
@@ -209,7 +209,7 @@ input[type="checkbox"].colorbox-checkbox {
 .drag-handle {
 	cursor: move;
 	position: absolute;
-	background: rgba(255, 255, 255, 0.75) url('images/drag-icon.png') repeat-y;
+	background: rgba(255, 255, 255, 0.75) url(../images/drag-icon.png) repeat-y;
 	height: 90px;
 	width: 7px;
 	vertical-align: middle;
