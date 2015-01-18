@@ -223,18 +223,18 @@ iris.controller("annotationGalleryCtrl", [
     		$log.debug($scope.selectedAnnotations);
     		
     		}, function(data,status,header,config){
-    		$scope.error = {
-    			message : data.error.message,
-    			status : status
-    		};
-    		$log.error(status);
-    		
-    		// disable the loading spinner
-    		if ($scope['loading-'+termIDs[0]]){
-    			delete $scope['loading-'+termIDs[0]];
-    		} else {
-    			delete $scope.loading;
-    		}
+				$scope.error = {
+					message : data.error.message,
+					status : status
+				};
+				$log.error(status);
+
+				// disable the loading spinner
+				if ($scope['loading-'+termIDs[0]]){
+					delete $scope['loading-'+termIDs[0]];
+				} else {
+					delete $scope.loading;
+				}
     	}, 
     	offset, // variable offset
     	$scope.pagination.global.itemsPerPage); // max stays constant
@@ -346,7 +346,7 @@ iris.controller("annotationGalleryCtrl", [
 			delete $scope.error;
 			navService.navToLabelingPage(ann.cmProjectID, ann.cmImageID, ann.cmID);
 		}, function(data,status){
-			$scope.error = {
+			$scope.error = {
     			message : data.error.message,
     			status : status
     		};

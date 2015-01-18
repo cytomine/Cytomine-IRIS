@@ -1,9 +1,5 @@
 var iris = angular.module("irisApp");
 
-//iris.constant("resumeAtImagesURL", "api/session/resume/images");
-//iris.constant("resumeAtLabelingURL", "api/session/resume/labeling");
-//iris.constant("resumeAtGalleryURL", "api/session/resume/gallery");
-
 /**
  * This service provides navigation functionality to the client.
  */
@@ -14,7 +10,6 @@ iris.factory("navService", [
 	"$routeParams",
 	    function($http, $rootScope, $location, $window,
 		$log, cytomineService, sessionService, sharedService,
-		//resumeAtImagesURL, resumeAtLabelingURL, resumeAtGalleryURL,
 		$routeParams) {
 
 	return {
@@ -80,8 +75,22 @@ iris.factory("navService", [
 				navService.analyzeErrorStatus(status);
 			});
 		},
+
+		resumeImageAtLabelingPage : function(projectID, imageID){
+			var navService = this;
+
+			// store the current image in local storage and then forward
+			sessionService.openImage(projectID, imageID, function (image) {
+				// url computation complete
+				$log.debug("URL computation complete.");
+
+				navService.navToLabelingPage(projectID, imageID, image.settings.currentCmAnnotationID);
+			}, function (data, status) {
+				navService.analyzeErrorStatus(status);
+			});
+		},
 		
-		navToLabelingPage : function(projectID, imageID, annotationID, token) {
+		navToLabelingPage : function(projectID, imageID, annotationID) {
 			var navService = this;
 
 			// user has no project opened
@@ -93,14 +102,15 @@ iris.factory("navService", [
 				} else {
 					if (annotationID == null || annotationID === undefined){
 						// start at the beginning
-						var lblUrl = "/project/" + projectID + "/image/" + imageID + "/label"; ///token/" + token;
+						var lblUrl = "/project/" + projectID + "/image/" + imageID + "/label";
 					} else {
-						var lblUrl = "/project/" + projectID + "/image/" + imageID + "/label/" + annotationID; //;+ "/token/" + token;
+						var lblUrl = "/project/" + projectID + "/image/" + imageID + "/label/" + annotationID;
 					}
 
 					// ###### IMPORTANT NOTE ######
 					// DUE TO A CURRENT BUG IN THE OL3 SYSTEM
 					// WE HAVE TO ENTIRELY RELOAD THE PATH
+					//$location.url(lblUrl);
 					$location.path(lblUrl, false);
 					$window.location.href = $location.absUrl();
 					$window.location.reload();

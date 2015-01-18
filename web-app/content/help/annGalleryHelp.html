@@ -27,8 +27,9 @@
 			
 			<p>
 			<h5><strong>Update the Filter</strong></h5>
-			Update the gallery with the current filter by pressing <span type="button" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-refresh"></span> Refresh filter</span> at the bottom of the page, or by pressing 
-			<span type="button" class="btn btn-primary"><span class="glyphicon glyphicon-refresh"></span> Refresh</span> at the bottom of the <strong>Filter Panel</strong> on the left.
+			Update the gallery with the current filter by pressing <span type="button" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-refresh"></span> Refresh filter</span> at the bottom of the page.
+			<!--, or by pressing -->
+			<!--<span type="button" class="btn btn-primary"><span class="glyphicon glyphicon-refresh"></span> Refresh</span> at the bottom of the <strong>Filter Panel</strong> on the left.-->
 			</p>
 		</div>
 	</div>
@@ -78,7 +79,8 @@
 					vg-tracks="video.dnd.galleryTree.config.tracks"> 
 				</vg-video>
 				
-				<vg-controls>
+				<vg-controls vg-autohide="video.dnd.galleryTree.config.plugins.controls.autoHide"
+							 vg-autohide-time="video.dnd.galleryTree.config.plugins.controls.autoHideTime">
 					<vg-play-pause-button></vg-play-pause-button>
 					<vg-timedisplay>{{ currentTime | date:'mm:ss' }}</vg-timedisplay>
 					<vg-scrubBar>
@@ -92,8 +94,10 @@
 					<vg-fullscreenButton></vg-fullscreenButton>
 				</vg-controls>
 				<vg-poster-image vg-url='video.dnd.galleryTree.config.plugins.poster'></vg-poster-image>
+				<vg-overlay-play></vg-overlay-play>
 				</videogular>
 			</div>
+			<p class="text-center">Watch the short tutorial video by clicking on the image.</p>
 			<ol>
 				<li>
 					Choose a term, some images and filter the annotations.  
@@ -121,7 +125,8 @@
 					vg-tracks="video.dnd.panelHeader.config.tracks"> 
 				</vg-video> 
 				
-				<vg-controls>
+				<vg-controls vg-autohide="video.dnd.panelHeader.config.plugins.controls.autoHide"
+							 vg-autohide-time="video.dnd.panelHeader.config.plugins.controls.autoHideTime">
 					<vg-play-pause-button></vg-play-pause-button>
 					<vg-timedisplay>{{ currentTime | date:'mm:ss' }}</vg-timedisplay>
 					<vg-scrubBar>
@@ -135,8 +140,10 @@
 					<vg-fullscreenButton></vg-fullscreenButton>
 				</vg-controls>
 				<vg-poster-image vg-url='video.dnd.panelHeader.config.plugins.poster'></vg-poster-image>
+				<vg-overlay-play></vg-overlay-play>
 				</videogular>
 			</div>
+			<p class="text-center">Watch the short tutorial video by clicking on the image.</p>
 			<ol>
 				<li>
 					Choose at least <strong>two</strong> terms, some images and filter the annotations.  
@@ -164,7 +171,8 @@
 					vg-tracks="video.multiAssign.config.tracks"> 
 				</vg-video>
 				
-				<vg-controls>
+				<vg-controls vg-autohide="video.multiAssign.config.plugins.controls.autoHide"
+							 vg-autohide-time="video.multiAssign.config.plugins.controls.autoHideTime">
 					<vg-play-pause-button></vg-play-pause-button>
 					<vg-timedisplay>{{ currentTime | date:'mm:ss' }}</vg-timedisplay>
 					<vg-scrubBar>
@@ -178,8 +186,10 @@
 					<vg-fullscreenButton></vg-fullscreenButton>
 				</vg-controls>
 				<vg-poster-image vg-url='video.multiAssign.config.plugins.poster'></vg-poster-image>
+				<vg-overlay-play></vg-overlay-play>
 				</videogular>
 			</div>
+			<p class="text-center">Watch the short tutorial video by clicking on the image.</p>
 			<ol>
 				<li>
 					Choose a term, some images and filter the annotations.  

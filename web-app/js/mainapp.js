@@ -18,18 +18,19 @@ iris.config(["$logProvider", function($logProvider){
 	$logProvider.debugEnabled(true);
 }]);
 
+
 iris.run(["$route", "$rootScope", "$location", function ($route, $rootScope, $location) {
-    var original = $location.path;
-    $location.path = function (path, reload) {
-        if (reload === false) {
-            var lastRoute = $route.current;
-            var un = $rootScope.$on("$locationChangeSuccess", function () {
-                $route.current = lastRoute;
-                un();
-            });
-        }
-        return original.apply($location, [path]);
-    };
+	var original = $location.path;
+	$location.path = function (path, reload) {
+		if (reload === false) {
+			var lastRoute = $route.current;
+			var un = $rootScope.$on("$locationChangeSuccess", function () {
+				$route.current = lastRoute;
+				un();
+			});
+		}
+		return original.apply($location, [path]);
+	};
 }]);
 
 iris.config(["$routeProvider", function($routeProvider) {

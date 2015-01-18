@@ -2,6 +2,7 @@ package be.cytomine.apps.iris
 
 import be.cytomine.apps.iris.model.IRISAnnotation
 import be.cytomine.apps.iris.model.IRISImage
+import grails.converters.JSON
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject
 import grails.transaction.Transactional
@@ -655,6 +656,9 @@ class AnnotationService {
         // TODO required here??
 //        JSONObject progressInformation = syncService.computeUserProgress(cytomine, cmProjectID, irisImage, user)
         result.put("imageSettings", irisImage.getSettings())
+
+        def sortedIDs = annotations.list.collect { ann-> ann.id }.sort().reverse()
+        result.put("annotationIDList", sortedIDs)
 
         return result
     }

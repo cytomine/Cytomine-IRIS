@@ -4,7 +4,7 @@
 			Computing your current working status, please wait... <img src="images/ajax-loader-xs.gif" alt=""/>
 		</span>
 		<span ng-hide="blockSessionRefresh">
-			<span ng-show="bcProjectName"> You are working on: Project [<a href="" ng-click="images()" tooltip="Click here to view the images of {{ bcProjectName }}" tooltip-placement="bottom">{{ bcProjectName }}</a>]</span>
+			<span ng-show="bcProjectName"> <a href="" ng-click="refreshSession()">You are working on</a>: Project [<a href="" ng-click="images()" tooltip="Click here to view the images of {{ bcProjectName }}" tooltip-placement="bottom">{{ bcProjectName }}</a>]</span>
 			<span ng-show="bcImageName"> &gt; Image [<a href="" ng-click="labeling()" tooltip="Click here to resume your labeling in image {{ bcImageName }}" tooltip-placement="bottom">{{ bcImageName }}</a>]</span>
 			<span ng-show="bcAnnotationID"> &gt; Annotation [{{ bcAnnotationID }}]</span>
 			<!-- 	<ol class="ab-nav breadcrumb"> -->
@@ -14,6 +14,6 @@
 			<!-- 	   </li> -->
 			<!-- 	 </ol> -->
 		</span>
-		<span class="pull-right"><button type="button" ng-class="{ 'disabled' : blockSessionRefresh }" class="btn btn-default btn-xs" ng-click="refreshSession()"><span class="glyphicon glyphicon-refresh"></span></button></span>
+		<!--<span class="pull-right"><button type="button" ng-class="{ 'disabled' : blockSessionRefresh }" class="btn btn-default btn-xs" ng-click="refreshSession()"><span class="glyphicon glyphicon-refresh"></span></button></span>-->
 	</span>
 </div>

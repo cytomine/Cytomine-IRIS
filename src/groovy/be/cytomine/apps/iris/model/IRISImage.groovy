@@ -22,6 +22,7 @@ class IRISImage {
     String goToURL = null
     String olTileServerURL = null
     String macroURL = null
+    String mime = null
 
     Long width = 0
     Long height = 0

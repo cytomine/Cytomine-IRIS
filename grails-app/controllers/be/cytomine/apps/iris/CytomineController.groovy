@@ -196,7 +196,7 @@ class CytomineController {
 			def outputStream = null
 			try {
 				outputStream = response.outputStream
-				outputStream << imageInByte
+				outputStream.leftShift(imageInByte)
 		
 				log.debug("Rendered macro image response in " + (System.currentTimeMillis() - start)/1000 + " seconds")
 			} catch (IOException e){
@@ -238,8 +238,8 @@ class CytomineController {
 	 */
 	def getTile(){
 		try {
-			Cytomine cytomine = request['cytomine']
 			String zoomify_string = params['zoomify']
+			String mimeType = params['mimeType']
 
 			if (zoomify_string == null){
 				throw new IllegalArgumentException("Zoomify URL is not specified in the request URL.")
@@ -262,7 +262,7 @@ class CytomineController {
 			int tileX = Integer.valueOf(positions[1])
 			int tileY = Integer.valueOf(positions[2])
 
-			String path = "&tileGroup={tileGroup}&z={z}&x={x}&y={y}&channels=0&layer=0&timeframe=0&mimeType=image/tiff"
+			String path = "&tileGroup={tileGroup}&z={z}&x={x}&y={y}&channels=0&layer=0&timeframe=0"
 			path = path.replace("{tileGroup}", tileGroup+"")
 			path = path.replace("{z}", tileZ+"")
 			path = path.replace("{x}", tileX+"")
@@ -275,7 +275,7 @@ class CytomineController {
 			cmHost = cmHost.replace("{serverID}", String.valueOf(serverID==0?"":serverID))
 			String dataString = zoomify_string.replace(zoomify_params[7]+"/"+zoomify_params[8], "")
 
-			String imageURL = cmHost + "/image/tile?zoomify=" + dataString + path
+			String imageURL = cmHost + "/image/tile?zoomify=" + dataString + path + "&mimeType=" + mimeType
 
 			log.debug(imageURL)
 
@@ -386,7 +386,7 @@ class CytomineController {
 			def outputStream = null
 			try {
 				outputStream = response.outputStream
-				outputStream << imageInByte
+				outputStream.leftShift(imageInByte)
 		
 				log.debug("Rendered crop image response in " + (System.currentTimeMillis() - start)/1000 + " seconds")
 			} catch (IOException e){
@@ -420,9 +420,5 @@ class CytomineController {
 			JSONObject errorMsg = new Utils().resolveException(e3, 500)
 			render errorMsg as JSON
 		}
-	}
-
-	def dev(){
-
 	}
 }

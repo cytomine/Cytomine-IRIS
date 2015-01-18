@@ -6,7 +6,12 @@ iris
 				"$scope", "$rootScope", "$log", "$sce",
 				function($scope, $rootScope, $log, $sce) {
 					var defaultTheme = "lib/videogular/videogular.min.css";
-					
+
+					var defaultControls = {
+						autoHide : true,
+						autoHideTime : 5000
+					}
+
 					$scope.video = {
 						dnd : {
 							galleryTree : {
@@ -26,7 +31,8 @@ iris
 									tracks : [],
 									theme : defaultTheme,
 									plugins : {
-										poster : "videos/help/gallery/thumbnails/iris-gallery-dnd-tree.png"
+										poster : "videos/help/gallery/thumbnails/iris-gallery-dnd-tree.png",
+										controls : defaultControls
 									}
 								}
 							},
@@ -47,7 +53,8 @@ iris
 									tracks : [],
 									theme : defaultTheme,
 									plugins : {
-										poster : "videos/help/gallery/thumbnails/iris-gallery-dnd-panel.png"
+										poster : "videos/help/gallery/thumbnails/iris-gallery-dnd-panel.png",
+										controls : defaultControls
 									}
 								}
 							}
@@ -69,7 +76,8 @@ iris
 								tracks : [],
 								theme : defaultTheme,
 								plugins : {
-									poster : "videos/help/gallery/thumbnails/iris-gallery-multi-assignment.png"
+									poster : "videos/help/gallery/thumbnails/iris-gallery-multi-assignment.png",
+									controls : defaultControls
 								}
 							}
 						}, 
@@ -90,7 +98,8 @@ iris
 								tracks : [],
 								theme : defaultTheme,
 								plugins : {
-									poster : "videos/tutorial/thumbnails/iris-tutorial.png"
+									poster : "videos/tutorial/thumbnails/iris-tutorial.png",
+									controls : defaultControls
 								}
 							}
 						}

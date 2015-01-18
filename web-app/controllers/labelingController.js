@@ -4,10 +4,10 @@ iris.controller("labelingCtrl", [
     "$scope", "$http", "$filter", "$location", "$timeout",
     "$routeParams", "$log", "hotkeys", "ngTableParams", "helpService", "annotationService",
     "projectService", "sessionService", "sharedService", "navService", "imageService",
-    "cytomineService", function ($scope, $http, $filter, $location, $timeout,
+    "cytomineService", "$route", function ($scope, $http, $filter, $location, $timeout,
                                  $routeParams, $log, hotkeys, ngTableParams, helpService, annotationService,
                                  projectService, sessionService, sharedService, navService, imageService,
-                                 cytomineService) {
+                                 cytomineService, $route) {
         $log.debug("labelingCtrl");
 
         $scope.projectID = $routeParams["projectID"];
@@ -88,6 +88,18 @@ iris.controller("labelingCtrl", [
                     $scope.image.settings = data.imageSettings;
                     $scope.labeling.hideCompleted = data.imageSettings.hideCompletedAnnotations;
 
+                    // store all available annotation IDs into an array for the dropdown list
+                    $scope.labeling.annotationIDList = data.annotationIDList;
+                    $scope.gtAnnotationID = $scope.annotation.cmID;
+
+                    var urlPath = "/project/" + $scope.projectID + "/image/" + $scope.imageID + "/label/"
+                                + $scope.annotation.cmID;
+
+                    // update the path in the URL (e.g. for bookmarking)
+                    //$location.path(urlPath, false);
+                    // TODO the prev. statement somehow breaks the ability to move to
+                    // "/project/:idProject/images", however all other
+                    // links work
 
                     // enable navigation
                     $scope.navDisabled = false;
@@ -112,13 +124,13 @@ iris.controller("labelingCtrl", [
                                 status: status
                             }
                         }
-                    //} else {
-                    //    $scope.labeling.error = {
-                    //        retrieve: {
-                    //            message: data.error.message,
-                    //            status: status
-                    //        }
-                    //    }
+                    } else {
+                        $scope.labeling.error = {
+                            retrieve: {
+                                message: data.error.message,
+                                status: status
+                            }
+                        }
                     }
 
                     $log.error(data);
@@ -378,5 +390,24 @@ iris.controller("labelingCtrl", [
         // navigates to the image list
         $scope.navToImages = function () {
             navService.navToImages();
+        };
+
+        $scope.goToAnnotation = function(){
+            try {
+                var raw = $scope.gtAnnotationID;
+                if (raw === undefined){
+                    // return
+                    return;
+                }
+                var gotoID = Number(raw);
+                $log.debug("User navigates to annotation [" + gotoID + "].");
+                $scope.fetchNewTuple(gotoID, true);
+            } catch (e) {
+                sharedService.addAlert("Cannot go to annotation [" + $scope.gtAnnotationID + "].", "danger");
+            }
+        };
+
+        $scope.selectLabel = function(value){
+            return "#" + ($scope.labeling.annotationIDList.indexOf(value)+1) + ": " + value;
         };
     }]);

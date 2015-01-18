@@ -51,8 +51,8 @@ function($rootScope, $scope, $http, $filter,
 	$scope.startLabeling = function(image) {
 		$scope.image.opening = image;
 		sessionService.openImage($scope.projectID, image.cmID, function(data){
-			$log.debug("Successfully opened image " + image.cmID);
-			navService.navToLabelingPage($scope.projectID, image.cmID);
+				$log.debug("Successfully opened image " + image.cmID);
+				navService.navToLabelingPage($scope.projectID, image.cmID, data.settings.currentCmAnnotationID);
 			//$scope.image.opening = {};
 		}, function(data,status){
 			sharedService.addAlert("Cannot open image. " +

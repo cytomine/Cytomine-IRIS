@@ -72,12 +72,19 @@
 							<span class="label label-danger" tooltip="Only showing unlabeled annotations" tooltip-placement="bottom"
 								  ng-show="labeling.hideCompleted == true">filtered</span>
 							<span class="text-center">
-								<span class="badge text-center"
-									tooltip="ID: {{annotation.cmID}}" tooltip-placement="bottom">
+								<span class="badge text-center">
 									&nbsp; Annotation # {{labeling.annotationTuple.currentIndex+1}} /
 									{{labeling.annotationTuple.imageSettings.numberOfAnnotations}} &nbsp; </span>
 							</span>
 						</span>
+						<div>
+							<select ng-model="gtAnnotationID" ng-options="selectLabel(value) for value in labeling.annotationIDList"
+									ng-change="goToAnnotation()">
+								<!--<option value="">go to ...</option>-->
+								<!--<option value="-1">first</option>-->
+								<!--<option value="-99">last</option>-->
+							</select>
+						</div>
 					</div>
 
 					<div id="viewPanel">

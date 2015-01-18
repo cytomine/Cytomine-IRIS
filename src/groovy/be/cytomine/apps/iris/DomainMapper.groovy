@@ -136,9 +136,10 @@ class DomainMapper {
         // direct link to the image explorer on the Cytomine host
         irisImage.setGoToURL(cmHost + "/#tabs-image-" + cmImage.getLong("project") + "-" + cmImage.getId() + "-")
         // hard-code relative tile url
-        irisImage.setOlTileServerURL(appContext + "/image/tile?zoomify=" + cmImage.get("fullPath") + "/")
+        irisImage.setOlTileServerURL(appContext + "/image/tile?&mimeType=" + cmImage.getStr("mime") + "&zoomify=" + cmImage.get("fullPath") + "/")
         // replace the host in the macro url
         irisImage.setMacroURL(cmImage.getStr("macroURL").replace(cmHost, irisHost))
+        irisImage.setMime(cmImage.getStr("mime"))
 
         irisImage.setWidth(cmImage.getLong("width"))
         irisImage.setHeight(cmImage.getLong("height"))

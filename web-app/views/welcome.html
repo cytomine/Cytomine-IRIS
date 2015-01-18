@@ -36,30 +36,30 @@
 			<div class="text-center"
 				style="font-size: 11pt; text-transform: uppercase; margin-bottom: 20px;">
 				Get started by watching the tutorial video</div>
-			<div class="col-xs-12 text-center">
-				<div class="img-thumbnail videogular-container"
-					ng-controller="videoCtrl">
-					<videogular vg-theme="video.tutorial.config.theme">
-					<vg-video vg-src="video.tutorial.config.sources"
-						vg-tracks="video.tutorial.config.tracks" 
-						vg-preload="none"> 
-					</vg-video> 
-					<vg-controls>
-						<vg-play-pause-button></vg-play-pause-button>
-						<vg-timedisplay>{{ currentTime | date:'mm:ss' }}</vg-timedisplay>
-						<vg-scrubBar>
-							<vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>
-						</vg-scrubBar>
-						<vg-timedisplay>{{ timeLeft | date:'mm:ss' }}</vg-timedisplay>
-						<vg-volume>
-							<vg-mutebutton></vg-mutebutton>
-							<vg-volumebar></vg-volumebar>
-						</vg-volume>
-						<vg-fullscreenButton></vg-fullscreenButton>
-					</vg-controls>
-					<vg-poster-image vg-url='video.tutorial.config.plugins.poster'></vg-poster-image>
-					</videogular>
-				</div>
+			<div class="img-thumbnail videogular-container"
+				ng-controller="videoCtrl">
+				<videogular vg-theme="video.tutorial.config.theme">
+				<vg-video vg-src="video.tutorial.config.sources"
+					vg-tracks="video.tutorial.config.tracks"
+					vg-preload="none">
+				</vg-video>
+				<vg-controls vg-autohide="video.tutorial.config.plugins.controls.autoHide"
+							 vg-autohide-time="video.tutorial.config.plugins.controls.autoHideTime">
+					<vg-play-pause-button></vg-play-pause-button>
+					<vg-timedisplay>{{ currentTime | date:'mm:ss' }}</vg-timedisplay>
+					<vg-scrubBar>
+						<vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>
+					</vg-scrubBar>
+					<vg-timedisplay>{{ timeLeft | date:'mm:ss' }}</vg-timedisplay>
+					<vg-volume>
+						<vg-mutebutton></vg-mutebutton>
+						<vg-volumebar></vg-volumebar>
+					</vg-volume>
+					<vg-fullscreenButton></vg-fullscreenButton>
+				</vg-controls>
+				<vg-poster-image vg-url='video.tutorial.config.plugins.poster'></vg-poster-image>
+				<vg-overlay-play></vg-overlay-play>
+				</videogular>
 			</div>
 		</div>
 		<div class="col-sm-6">

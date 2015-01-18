@@ -30,6 +30,7 @@ class IRISImageMarshaller implements IRISMarshaller{
 			img['goToURL'] = it.goToURL
 			img['olTileServerURL'] = it.olTileServerURL
 			img['macroURL'] = it.macroURL
+			img['mime'] = it.mime
 
 			img['width'] = it.width
 			img['height'] = it.height
