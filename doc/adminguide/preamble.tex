@@ -1,0 +1,162 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PREAMBLE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage{lmodern}
+\usepackage{lipsum,blindtext}
+\usepackage{pdfpages}
+\usepackage{url}
+\usepackage[disable]{todonotes}
+\usepackage{nameref}
+\usepackage{wrapfig}
+\usepackage{dirtree}
+\usepackage{framed,xcolor}
+\usepackage[size=small]{caption}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{footmisc}
+%\usepackage{longtable,tabu}
+\usepackage{tocloft}
+
+\usepackage{tikz} 
+\usetikzlibrary{calc} 
+\usetikzlibrary{positioning}
+\usetikzlibrary{shadows}
+
+%COLORED TITLED BOXES
+%http://www.tug.org/texlive/Contents/live/texmf-dist/doc/latex/bclogo/bclogo-doc.pdf
+\usepackage[tikz]{bclogo}
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SNIPPET
+%\begin{bclogo}[couleur = green!10, arrondi=0.1, logo=\null, ombre=false, barre=none]{\hspace*{0.2cm}Title\vspace*{10pt}}
+%\blindtext[1]
+%\end{bclogo}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{minitoc} % part-wise toc
+\renewcommand*{\partheadstartvskip}{%
+  \null\vskip2pt
+}
+\renewcommand*{\partheadendvskip}{%
+  \vskip20pt
+}
+
+\renewcommand\beforeparttoc{}
+\renewcommand\ptctitle{}
+
+\definecolor{shadecolor}{gray}{0.9}
+
+%http://texblog.org/2013/03/14/menukeys-typesetting-menu-sequences-directory-path-names-and-keyboard-shortcuts-in-latex/
+\usepackage[
+os=win,
+mackeys=symbols
+]{menukeys}
+%\renewmenumacro{\menu}{roundedmenus} % default: menus
+\renewmenumacro{\directory}{hyphenatepathswithfolder} % default: paths
+\newcommand{\file}[1]{\winmenuwin{}\,\texttt{#1}}
+%\renewmenumacro{\keys}{shadowedroundedkeys} % default: roundedkeys
+\renewcommand{\cmd}{\cmdmac}
+
+\newcommand{\infobox}[2]{
+\vspace*{5mm}
+\begin{bclogo}[couleur = green!15, arrondi=0.1, logo=\null, ombre=false, barre=none]{\hspace*{0.2cm}{#1} \vspace*{8pt}}
+{#2}
+\end{bclogo}
+\vspace*{5mm}
+}
+
+\newcommand{\warnbox}[2]{
+\vspace*{5mm}
+\begin{bclogo}[couleur = orange!20, arrondi=0.1, logo=\null, ombre=false, barre=none]{\hspace*{0.2cm}{#1} \vspace*{8pt}}
+{#2}
+\end{bclogo}
+\vspace*{5mm}
+}
+
+\newcommand{\errorbox}[2]{
+\vspace*{5mm}
+\begin{bclogo}[couleur = red!20, arrondi=0.1, logo=\null, ombre=false, barre=none]{\hspace*{0.2cm}{#1} \vspace*{8pt}}
+{#2}
+\end{bclogo}
+\vspace*{5mm}
+}
+
+%\usepackage{setspace}
+%\onehalfspacing
+
+\usepackage[
+pdfstartview={Fit},
+bookmarks=true,
+unicode=true,
+colorlinks=true,
+linktoc=all,
+linkcolor=blue,
+citecolor=green,
+%urlcolor=black,
+]{hyperref}
+
+% packages for missing figures
+\usepackage{etoolbox}% http://ctan.org/pkg/etoolbox
+\usepackage{graphicx}% http://ctan.org/pkg/graphicx
+\newcommand{\noimage}{%
+  \setlength{\fboxsep}{-\fboxrule}%
+  \fbox{\phantom{\rule{150pt}{100pt}}}% Framed box
+}
+
+\makeatletter
+\patchcmd{\Gin@ii}
+  {\begingroup}% <search>
+  {\begingroup\renewcommand{\@latex@error}[2]{\noimage}}% <replace>
+  {}% <success>
+  {}% <failure>
+\makeatother
+
+% set line spacing
+\linespread{1.10}
+
+% customize the table of contents and list of figures
+\setlength{\cftsecnumwidth}{2.75em}
+\setlength{\cftfignumwidth}{3em}
+
+% groovy syntax
+\usepackage{listings}
+\definecolor{groovyblue}{HTML}{0000A0}
+\definecolor{groovygreen}{HTML}{008000}
+\definecolor{lightgray}{rgb}{.7,.7,.7}
+\definecolor{pblue}{rgb}{0.13,0.13,1}
+\definecolor{pgreen}{rgb}{0,0.5,0}
+\definecolor{pred}{rgb}{0.9,0,0}
+\definecolor{pgrey}{rgb}{0.46,0.45,0.48}
+
+\lstdefinelanguage{Groovy}[]{Java}{
+  keywordstyle=\color{groovyblue}\bfseries,
+  stringstyle=\color{groovygreen}\ttfamily,
+  keywords=[3]{each, findAll, groupBy, collect, inject, eachWithIndex},
+  morekeywords={def, as, in, use},
+  moredelim=[is][\textcolor{darkgray}]{\%\%}{\%\%},
+  moredelim=[il][\textcolor{darkgray}]{§§}
+}
+
+\lstset{
+  showspaces=false,
+  showtabs=false,
+  %numbers=left,
+  %stepnumber=2,
+  frame=L,
+  numberstyle=\scriptsize\color{pgrey}
+  showstringspaces=false,
+  breakatwhitespace=true,
+  commentstyle=\color{pgreen},
+  keywordstyle=\color{pblue},
+  stringstyle=\color{pred},
+  basicstyle=\ttfamily\scriptsize,
+  breaklines=true,
+  prebreak=\mbox{\tiny$\searrow$},
+  postbreak=\mbox{{\color{blue}\tiny$\rightarrow$}}
+}

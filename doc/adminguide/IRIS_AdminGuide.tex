@@ -1,0 +1,160 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% User Guide Template
+% 	created by Philipp Kainz, 2014-10-14
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[
+a4paper,
+11pt,
+oneside,
+headsepline
+]{scrbook}
+
+\input{preamble}
+
+%----------------------------------------------------------------------------------------
+%	DEFINITIONS
+%----------------------------------------------------------------------------------------
+\def\appVersion{2.1}
+\def\appName{IRIS}
+\def\appNameLong{Cytomine IRIS}
+\def\tobedone{
+\begin{minipage}{\textwidth}
+	\includegraphics[width=35px]{images/tobedone.png} We are sorry, but this section is under construction and not yet (fully) available.
+	\bigskip
+\end{minipage}
+}
+
+% Define UI components
+\def\dnd{Drag\&Drop}
+\def\seealso#1{\textsc{See also:} #1}
+
+% Define Button
+\newcommand{\button}[1]%
+{   \begin{tikzpicture}[baseline=(button.base)]
+        \node [draw=black, top color=white, bottom color=black!25, rounded corners=2pt, inner sep=4pt, minimum width=1.5em, minimum height=1.2em, 
+        %general shadow={fill=gray!50, 
+        %hadow xshift=0.5pt, shadow yshift=-0.5pt, 
+        %shadow scale=1.05}
+        ] 
+        (button) {\sffamily\small #1};
+    \end{tikzpicture}
+}
+
+\newcommand{\lmb}%
+{   \hspace{-0.45cm}
+	\begin{tikzpicture}[baseline={([yshift=-.6ex]image.center)}]
+        \node (image) {\includegraphics[width=0.45cm]{images/misc/lmb.pdf}};
+    \end{tikzpicture}
+}
+
+\newcommand{\rmb}%
+{   \hspace{-0.45cm}
+	\begin{tikzpicture}[baseline={([yshift=-.6ex]image.center)}]
+        \node (image) {\includegraphics[width=0.45cm]{images/misc/rmb.pdf}};
+    \end{tikzpicture}
+}
+
+\newcommand{\lmbdbl}%
+{   \hspace{-0.45cm}
+	\begin{tikzpicture}[baseline={([yshift=-.6ex]image.center)}]
+        \node (image) {\includegraphics[width=0.45cm]{images/misc/lmbdbl.pdf}};
+    \end{tikzpicture}
+}
+
+\newcommand{\rmbdbl}%
+{   \hspace{-0.45cm}
+	\begin{tikzpicture}[baseline={([yshift=-.6ex]image.center)}]
+        \node (image) {\includegraphics[width=0.45cm]{images/misc/rmbdbl.pdf}};
+    \end{tikzpicture}
+}
+
+\newcommand{\menudescription}[3]%
+{
+\paragraph*{\hspace*{-30px}
+\begin{tikzpicture}[baseline={([xshift=-5ex]circle.base)}]
+	\node[draw, ultra thick, circle, color=red, inner sep=0.05em] (circle) {#1};
+\end{tikzpicture}
+\menu[,]{#2}}
+{#3}
+}
+
+\newcommand{\toolbardescription}[3]%
+{
+\paragraph*{\hspace*{-20px}
+\begin{tikzpicture}[baseline={([xshift=-5ex]circle.base)}]
+	\node[draw, ultra thick, circle, color=red, inner sep=0.05em] (circle) {#1};
+\end{tikzpicture}
+#2}
+{~\\ #3}
+}
+
+\newcommand{\enumdescription}[3]%
+{
+\paragraph*{\hspace*{-20px}
+\begin{tikzpicture}[baseline={([xshift=-5ex]circle.base)}]
+	\node[draw, ultra thick, circle, color=red, inner sep=0.05em] (circle) {#1};
+\end{tikzpicture}
+#2}
+{#3}
+}
+
+\newcommand{\inlinefigure}[1]%
+{
+\begin{tikzpicture}[baseline={([yshift=-.6ex]image.center)}]
+  \node (image) {\includegraphics[scale=0.75]{#1}};
+\end{tikzpicture}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DOCUMENT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\begin{titlepage}
+
+\end{titlepage}
+
+%\cleardoublepage
+\frontmatter
+%\cleardoublepage
+
+%%%%%%%%%%%%%%%%%%%%%
+% TITLE DEFINITIONS
+%%%%%%%%%%%%%%%%%%%%%
+%\titlehead{}
+\subject{Interobserver Reliability Study Module}
+\title{Cytomine IRIS\\Administrator Guide}
+\subtitle{Version \appVersion}
+\author{Philipp Kainz}
+\date{May 2015\\{\small Last updated: \today}}
+%\publishers{}
+%\extratitle{\centering Cytomine IRIS\\Administrator Guide }
+%\uppertitleback{}
+%\lowertitleback{}
+%\dedication{}
+\maketitle
+
+\include{foreword}
+\newpage
+{
+\hypersetup{linkcolor=black}
+\noptcrule
+\doparttoc[n] 
+\tableofcontents
+}
+%% the main text begins
+\mainmatter
+
+\include{gettingstarted}
+
+\include{projectadmin}
+
+%\part{Appendix}
+%{
+%\hypersetup{linkcolor=black}
+%\addcontentsline{toc}{chapter}{List of Figures}\listoffigures
+%}
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% END
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

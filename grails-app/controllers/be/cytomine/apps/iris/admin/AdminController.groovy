@@ -24,6 +24,7 @@ class AdminController {
 
     /**
      * Manually trigger the synchronization of the user progress.
+     * The calling user must have an admin login, otherwise he receives a 503 message.
      *
      * @return
      */

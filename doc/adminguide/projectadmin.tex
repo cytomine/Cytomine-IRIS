@@ -1,0 +1,70 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% IRIS-specific project administration
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{IRIS Administration}
+\label{part:irisadmin}
+{
+\hypersetup{linkcolor=black}
+\parttoc
+}
+
+\chapter{User Management}
+In addition to the Cytomine user management, the IRIS module requires custom assignment of roles to users. 
+This allows for custom widget visibility and other functionality in the IRIS interface as well as access to backend and database. 
+
+\def\irisadmin{\texttt{IRISAdmin}}
+\def\pjadmin{\texttt{ProjectAdmin}}
+\def\pjcoord{\texttt{ProjectCoordinator}}
+\section{User Roles}
+\subsection{IRISAdmin}
+The \irisadmin\ role gives users root access to all configurations and to the IRIS database, activity logs and other backend functionality within the Grails application.  
+\warnbox{Caution}{Root access should be granted to just one person only!}
+
+\subsection{IRISProjectAdmin}
+A \pjadmin\ is able to manipulate other IRIS users' role assignments. 
+This role also incorporates all functions and rights granted to \pjcoord .
+
+The rights granted to a \pjadmin\ are as follows:
+\begin{itemize}
+\item User role manipulation for the particular project, this role has been assigned to
+\begin{itemize}
+\item declaring other users as \pjadmin
+\item declaring other users as \pjcoord
+\end{itemize}
+\item All rights granted to \pjcoord
+\end{itemize}
+
+
+\subsection{IRISProjectCoordinator}
+A \pjcoord\ can view all statistics of the projects he is assigned to. 
+Users are just able to view their particular projects, they have been assigned to in the Cytomine core application.
+Thus, they can only be a \pjcoord\ in these projects. 
+In a particular project, multiple persons can have the role \pjcoord . 
+
+The rights granted to a \pjcoord\ are as follows:
+\begin{itemize}
+\item Locking/Unlocking the project and/or particular images in the project to particular users
+\item Interobserver statistics: view and export
+\end{itemize}
+
+
+
+\section{Assigning Project Roles}
+
+
+
+
+
+%\begin{table}
+%\caption{\label{tab:name}}
+%\begin{tabular}{c}
+%
+%\end{tabular}
+%\end{table}
+
+
+
+
+
+
+
