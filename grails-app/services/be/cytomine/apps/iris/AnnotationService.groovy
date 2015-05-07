@@ -33,6 +33,7 @@ class AnnotationService {
 
     /**
      * Gets all annotations in an image in a very light format (but containing the user labels).
+     * This service ignores images enabled or disabled for specific users.
      *
      * @param cytomine a Cytomine instance
      * @param user the IRISUser
@@ -61,6 +62,117 @@ class AnnotationService {
     }
 
     /**
+     * Retrieve all annotations for a given list of images, or for all images in the project.
+     * This service ignores images enabled or disabled for specific users.
+     *
+     * @param cytomine a Cytomine instance
+     * @param irisUser the calling IRISUser
+     * @param cmProjectID the Cytomine project ID
+     * @param imageIDs the requested image IDs as comma separated String
+     * @param termIDs the requested term IDs as comma separated String
+     * @param offset pagination parameter
+     * @param max pagination parameter
+     * @return the filtered annotations
+     * @throws CytomineException if the project does not have any images, or the user is not permitted
+     * @throws Exception
+     */
+    AnnotationCollection getAllAnnotations(Cytomine cytomine, IRISUser irisUser,
+                                           Long cmProjectID, String imageIDs,
+                                           String termIDs, int offset, int max)
+            throws CytomineException, Exception {
+
+        // get all images
+        List<IRISImage> images = imageService.getAllImages(cytomine, irisUser, cmProjectID, 0, 0)
+
+        if (images.isEmpty()) {
+            throw new CytomineException(404, "This project does not have any images.")
+        }
+
+        // ##################################################
+        // filter annotations for the project
+        Map<String, String> filters = new HashMap<String, String>()
+        filters.put("project", String.valueOf(cmProjectID))
+        filters.put("showMeta", "true")
+        filters.put("showTerm", "true") // retrieves a minimal set of annotations containing the user labels
+
+        // match query image IDs with filtered images on IRIS
+        List availableImageIDs = images.collect { it.cmID }
+
+        // convert the comma separated string to a 'Long' list
+        List queryImageIDs
+        if ((imageIDs == null || imageIDs.equals(""))){
+            queryImageIDs = []
+        } else {
+            queryImageIDs = imageIDs.split(",").collect { Long.valueOf(it) }
+        }
+
+        /*  ################################################################################################
+            TODO BUG? IN CYTOMINE ANNOTATION FILTER
+            FILTERING ALL IMAGES ALSO FILTERS THE IMAGES WHICH HAVE BEEN DELETED FROM THE PROJECT
+            ACCESS CONTROL LIST IS NOT CHECKED ON IMAGE INSTANCE IDs ON THE
+            "images" FILTER!!
+            THIS ONLY OCCURS WHEN THE NUMBER OF QUERY IMAGES EQUALS THE NUMBER OF
+            'VISIBLE' IMAGES IN THE PROJECT
+
+            TODO TEMPORARY WORKAROUND
+            PUT A NON-EXISTING IMAGE ID (e.g. '-1') ON THE IMAGE FILTER IF THE QUERY IS
+            EMPTY OR THE TOTAL NUMBER OF QUERY IMAGES EQUALS THE NUMBER OF 'VISIBLE' IMAGES IN THE PROJECT
+         */
+        if (queryImageIDs.isEmpty()) {
+            // EXPLICITLY USE ALL AVAILABLE IMAGES
+            queryImageIDs = availableImageIDs
+        } else {
+            // remove the requested, but disabled images from the query
+            def commons = availableImageIDs.intersect(queryImageIDs)
+            if (commons.isEmpty()) throw new Exception("No known image ids on the filter!")
+            def difference = availableImageIDs.plus(queryImageIDs)
+            difference.removeAll(commons)
+            queryImageIDs.removeAll(difference)
+        }
+
+        // AND NOOOOOW.... USE THE HACK-AROUND ;-)
+        if (queryImageIDs.size() == availableImageIDs.size()) {
+            queryImageIDs.add("-1")
+        }
+
+        // BUILD THE QUERY STRING
+        imageIDs = queryImageIDs.join(",")
+        filters.put("images", String.valueOf(imageIDs))
+        // ################################################################################################
+
+        // #####################################################################################
+        // NEVER RETRIEVE NOTERM=TRUE, BECAUSE THIS DOES NOT ENSURE THAT THIS USER DOES NOT HAVE
+        // YET LABELED THE ANNOTATION, BUT JUST SAYS THAT THE ANNOTATION HAS NO LABEL AT ALL!
+        // #####################################################################################
+
+        // HINT: putting no "term" on the filter map retrieves all annotations for the selected images
+        boolean termsEmpty = (termIDs == null || termIDs.equals(""))
+        // split the list in the params
+        def queryTerms = String.valueOf(termIDs).split(",") as List
+
+        if (!termsEmpty) {
+            //  check if 'no terms assigned' is on the list
+            if (queryTerms.contains(IRISConstants.ANNOTATION_NO_TERM_ASSIGNED.toString())) {
+                log.debug("Querying all annotations and search for 'no term' (" + IRISConstants.ANNOTATION_NO_TERM_ASSIGNED + ")...")
+            } else {
+                filters.put("terms", String.valueOf(termIDs))
+                log.debug("Querying selected terms...")
+            }
+        }
+
+        // print the filter map
+        log.debug(filters)
+
+        // set the offset parameters
+        cytomine.setMax(max)
+        cytomine.setOffset(offset)
+        // get all annotations according to the filter
+        AnnotationCollection annotations = cytomine.getAnnotations(filters)
+
+        return annotations
+    }
+
+    /**
      * Resolves the terms assigned by a single user. This method stops searching,
      * as soon as the user has a term assigned, injects the term and returns this annotation.
      * <br/>
@@ -75,12 +187,13 @@ class AnnotationService {
      */
     IRISAnnotation resolveTerms(long ontologyID, TermCollection terms, IRISUser user, Annotation annotation, IRISAnnotation irisAnn) {
         // grab all terms from all users for the current annotation
-        List userByTermList = annotation.getList("userByTerm");
+        List userByTermList = annotation.getList("userByTerm")
+        List termList = terms.list
 
         for (assignment in userByTermList) {
             //println currentUser.get("id") + ", " + assignment.get("user")
             if (user.cmID in assignment.get("user")) {
-                String cmTermName = terms.list.find { it.id == assignment.get("term") }.get("name")
+                String cmTermName = termList.find { it.id == assignment.get("term") }.get("name")
                 log.debug(user.cmUserName + " assigned " + cmTermName)
 
                 // store the properties in the irisAnnotation
@@ -717,10 +830,10 @@ class AnnotationService {
 
             TODO TEMPORARY WORKAROUND
             PUT A NON-EXISTING IMAGE ID (e.g. '-1') ON THE IMAGE FILTER IF THE QUERY IS
-            EMPTY OR THE TOTAL NUMBER OF QUERY TERMS EQUALS THE NUMBER OF 'VISIBLE' IMAGES IN THE PROJECT
+            EMPTY OR THE TOTAL NUMBER OF QUERY IMAGES EQUALS THE NUMBER OF 'VISIBLE' IMAGES IN THE PROJECT
          */
         if (queryImageIDs.isEmpty()) {
-            // EXPLICITLY USE ALL TERMS AVAILABLE
+            // EXPLICITLY USE ALL IMAGES AVAILABLE
             queryImageIDs = irisEnabledImageIDs
         } else {
             // remove the requested, but disabled images from the query

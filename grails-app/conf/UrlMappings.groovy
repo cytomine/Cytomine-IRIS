@@ -258,5 +258,15 @@ class UrlMappings {
 			action = [POST: "synchronizeUserProgress"]
 		}
 
+		/**
+		 * STATISTICS
+		 */
+		"/api/stats/$cmProjectID/agreements(.$format)"(controller:"projectStatistics"){
+			action = [GET: "majorityAgreements"]
+		}
+
+		"/api/stats/$cmProjectID/agreements/list(.$format)"(controller:"projectStatistics"){
+			action = [GET: "agreementsList"]
+		}
 	}
 }

@@ -4,6 +4,7 @@ import be.cytomine.apps.iris.model.IRISAnnotation
 import be.cytomine.apps.iris.model.IRISImage
 import be.cytomine.apps.iris.model.IRISProject
 import be.cytomine.apps.iris.sync.RemoteConfiguration
+import org.apache.log4j.Logger
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 
@@ -17,7 +18,6 @@ import org.json.simple.parser.JSONParser
 class DomainMapper {
 
     def grailsApplication
-    def log
     String cmHost
     String irisHost
     String appContext
@@ -181,7 +181,7 @@ class DomainMapper {
         try {
             irisAnnotation.setCmLocation(cmAnnotation.getStr("location"))
         } catch (Exception e) {
-            log.warn("'Location' information does not exist for this instance of " + cmAnnotation.getClass() + ".")
+            Logger.getLogger(DomainMapper.class).warn("'Location' information does not exist for this instance of " + cmAnnotation.getClass() + ".")
         }
 
         // the centroid can be in a distinct object, or in extra coordinates
@@ -194,7 +194,7 @@ class DomainMapper {
                 irisAnnotation.setCmCentroidY(Double.valueOf(cmAnnotation.get("centroid").get("y")))
             }
         } catch (Exception e) {
-            log.warn("'Centroid' information does not exist for this instance of " + cmAnnotation.getClass() + ".")
+            Logger.getLogger(DomainMapper.class).warn("'Centroid' information does not exist for this instance of " + cmAnnotation.getClass() + ".")
         }
 
         return irisAnnotation

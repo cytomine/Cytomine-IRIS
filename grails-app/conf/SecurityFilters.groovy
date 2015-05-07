@@ -35,7 +35,7 @@ class SecurityFilters {
 					request['user'] = currentUser
 				}
 				else {
-					log.warn("Some tried to access the API without valid API keys!")
+					log.warn("Someone tried to access the API without valid API keys!")
 					response.setStatus(HttpServletResponse.SC_FORBIDDEN)
 					JSONObject exObj = new Utils().resolveException(new InvalidCredentialsException("You do not have " +
 						"the permissions to access this API resource. Invalid API keys."), HttpServletResponse.SC_FORBIDDEN)

@@ -264,4 +264,18 @@ class Utils {
         errorMsg.putAt("error", errorObj)
         return errorMsg
     }
+
+    /**
+     * Makes a deep copy of an object.
+     * @param orig the original object
+     * @return a deep copy of the original object
+     */
+    def deepcopy(def orig) {
+        def bos = new ByteArrayOutputStream()
+        def oos = new ObjectOutputStream(bos)
+        oos.writeObject(orig); oos.flush()
+        def bin = new ByteArrayInputStream(bos.toByteArray())
+        def ois = new ObjectInputStream(bin)
+        return ois.readObject()
+    }
 }

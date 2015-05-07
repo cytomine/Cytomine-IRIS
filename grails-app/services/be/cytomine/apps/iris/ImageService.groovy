@@ -23,6 +23,8 @@ class ImageService {
 
     /**
      * Gets a list of images from Cytomine without computing the user's labeling progress.
+     * This service checks the 'enabled' status of the images for the querying user.
+     * Particular images may be disabled for particular users, and these will be filtered out.
      *
      * @param cytomine a Cytomine instance
      * @param user the IRIS user
@@ -86,6 +88,50 @@ class ImageService {
                 // add it to the result list
                 irisImageList.add(irisImage)
             }
+        }
+
+        return irisImageList
+    }
+
+
+    /**
+     * Gets a list of all images from Cytomine without computing the user's labeling progress.
+     *
+     * @param cytomine a Cytomine instance
+     * @param user the IRIS user
+     * @param cmProjectID the Cytomine project ID
+     * @param offset a pagination parameter
+     * @param max a pagination parameter
+     *
+     * @return a list of all (blinded) IRIS images
+     */
+    List<IRISImage> getAllImages(Cytomine cytomine, IRISUser user,
+                              Long cmProjectID,
+                              Integer offset, Integer max)
+            throws CytomineException, Exception {
+
+        // set the client properties for pagination
+        cytomine.setOffset(offset)
+        cytomine.setMax(max)
+
+        IRISProject irisProject = projectService.getProject(cytomine, user, cmProjectID)
+
+        // get all images from the server
+        ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)
+
+        // compute the total number of images
+        int nImages = cmImageCollection.size()
+
+        List<IRISImage> irisImageList = new ArrayList<IRISImage>(nImages)
+        // add all settings into the image instance
+        for (int i = 0; i < nImages; i++) {
+            ImageInstance cmImage = cmImageCollection.get(i)
+
+            // map the client image to the IRIS image WITHOUT SAVING to IRIS db
+            IRISImage irisImage = new DomainMapper(grailsApplication).mapImage(cmImage, null, irisProject.cmBlindMode)
+
+            // add it to the result list
+            irisImageList.add(irisImage)
         }
 
         return irisImageList
