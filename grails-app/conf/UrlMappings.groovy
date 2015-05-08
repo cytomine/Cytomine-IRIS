@@ -275,5 +275,12 @@ class UrlMappings {
 		"/api/stats/$cmProjectID/userstatistics(.$format)"(controller:"projectStatistics"){
 			action = [GET: "userStatistics"]
 		}
+
+		/**
+		 * One-vs-all statistics
+		 */
+//		"/api/stats/$cmProjectID/ovastatistics(.$format)"(controller:"projectStatistics"){
+//			action = [GET: "userVsAll"]
+//		}
 	}
 }

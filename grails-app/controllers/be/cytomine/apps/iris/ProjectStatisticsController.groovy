@@ -19,7 +19,6 @@ class ProjectStatisticsController {
 
     def beforeInterceptor = {
         log.debug("Executing action $actionName with params $params")
-        // TODO check whether the user is allowed to view the statistics
     }
 
     /**
@@ -103,7 +102,7 @@ class ProjectStatisticsController {
     }
 
     /**
-     * Get labeling statistics of particluar users
+     * Get labeling statistics of particular users
      * @return
      */
     def userStatistics(){
@@ -142,4 +141,44 @@ class ProjectStatisticsController {
             render errorMsg as JSON
         }
     }
+
+//    /**
+//     * Get labeling statistics of a single user in comparison with all other users.
+//     *
+//     * @return
+//     */
+//    def userVsAll(){
+//        try {
+//            Cytomine cytomine = request['cytomine']
+//            IRISUser irisUser = request['user']
+//            Long cmProjectID = params.long('cmProjectID')
+//            String imageIDs = params['images']
+//            String termIDs = params['terms']
+//            String userID = params['user']
+//
+//            def stats = statisticsService.oneVsAll(cytomine, irisUser,
+//                    cmProjectID, imageIDs, termIDs, userID, [:])
+//
+//            render stats as JSON
+//
+//        } catch (CytomineException e1) {
+//            log.error(e1)
+//            // exceptions from the cytomine java client
+//            response.setStatus(e1.httpCode)
+//            JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+//            render errorMsg as JSON
+//        } catch (GroovyCastException e2) {
+//            log.error(e2)
+//            // send back 400 if the project ID is other than long format
+//            response.setStatus(400)
+//            JSONObject errorMsg = new Utils().resolveException(e2, 400)
+//            render errorMsg as JSON
+//        } catch (Exception e3) {
+//            log.error(e3)
+//            // on any other exception render 500
+//            response.setStatus(500)
+//            JSONObject errorMsg = new Utils().resolveException(e3, 500)
+//            render errorMsg as JSON
+//        }
+//    }
 }
