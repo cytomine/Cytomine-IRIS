@@ -244,7 +244,7 @@ class SynchronizeUserProgressJob {
                             Cytomine cytomine = new Cytomine(grailsApplication.config.grails.cytomine.host as String,
                                     someUserWithAccessToThisImage.cmPublicKey, someUserWithAccessToThisImage.cmPrivateKey, "./")
 
-                            allImageAnnotations = annotationService.getAllAnnotationsLight(cytomine,
+                            allImageAnnotations = annotationService.getImageAnnotationsLight(cytomine,
                                     someUserWithAccessToThisImage, null, imageID)
 
                             // we have all we want, leave the loop

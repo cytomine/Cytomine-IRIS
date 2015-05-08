@@ -2,7 +2,6 @@ package be.cytomine.apps.iris
 
 import be.cytomine.apps.iris.model.IRISAnnotation
 import be.cytomine.apps.iris.model.IRISImage
-import grails.converters.JSON
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject
 import grails.transaction.Transactional
@@ -43,7 +42,7 @@ class AnnotationService {
      * @throws CytomineException
      * @throws Exception
      */
-    AnnotationCollection getAllAnnotationsLight(Cytomine cytomine, IRISUser user,
+    AnnotationCollection getImageAnnotationsLight(Cytomine cytomine, IRISUser user,
                                                 Long cmProjectID, Long cmImageID)
             throws CytomineException, Exception {
 
@@ -62,7 +61,88 @@ class AnnotationService {
     }
 
     /**
-     * Retrieve all annotations for a given list of images, or for all images in the project.
+     * Gets all annotations in a very light format (but containing the user labels).
+     * This service ignores images enabled or disabled for specific users.
+     * There will not be any URL or other META information in the result of this query.
+     *
+     * @param cytomine a Cytomine instance
+     * @param irisUser the IRISUser
+     * @param cmProjectID the Cytomine project ID - may be null, but only if the cmImageID is not null
+     * @param imageIDs list of Cytomine image IDs to be retrieved
+     * @return the AnnotationCollection
+     * @throws CytomineException
+     * @throws Exception
+     */
+    AnnotationCollection getAllAnnotationsLight(Cytomine cytomine, IRISUser irisUser,
+                                                  Long cmProjectID, String imageIDs)
+            throws CytomineException, Exception {
+
+        // get all images
+        List<IRISImage> images = imageService.getAllImages(cytomine, irisUser, cmProjectID, 0, 0)
+
+        if (images.isEmpty()) {
+            throw new CytomineException(404, "This project does not have any images.")
+        }
+
+        // get the annotations for this image
+        Map<String, String> filters = new HashMap<String, String>()
+        filters.put("project", String.valueOf(cmProjectID)) // ACL gets checked when using "project"
+        filters.put("showTerm", "true") // retrieves a minimal set of annotations containing the user label
+
+        // match query image IDs with filtered images on IRIS
+        List availableImageIDs = images.collect { it.cmID }
+
+        // convert the comma separated string to a 'Long' list
+        List queryImageIDs
+        if ((imageIDs == null || imageIDs.equals(""))){
+            queryImageIDs = []
+        } else {
+            queryImageIDs = imageIDs.split(",").collect { Long.valueOf(it) }
+        }
+
+        /*  ################################################################################################
+            TODO BUG? IN CYTOMINE ANNOTATION FILTER
+            FILTERING ALL IMAGES ALSO FILTERS THE IMAGES WHICH HAVE BEEN DELETED FROM THE PROJECT
+            ACCESS CONTROL LIST IS NOT CHECKED ON IMAGE INSTANCE IDs ON THE
+            "images" FILTER!!
+            THIS ONLY OCCURS WHEN THE NUMBER OF QUERY IMAGES EQUALS THE NUMBER OF
+            'VISIBLE' IMAGES IN THE PROJECT
+
+            TODO TEMPORARY WORKAROUND
+            PUT A NON-EXISTING IMAGE ID (e.g. '-1') ON THE IMAGE FILTER IF THE QUERY IS
+            EMPTY OR THE TOTAL NUMBER OF QUERY IMAGES EQUALS THE NUMBER OF 'VISIBLE' IMAGES IN THE PROJECT
+         */
+        if (queryImageIDs.isEmpty()) {
+            // EXPLICITLY USE ALL AVAILABLE IMAGES
+            queryImageIDs = availableImageIDs
+        } else {
+            // remove the requested, but disabled images from the query
+            def commons = availableImageIDs.intersect(queryImageIDs)
+            if (commons.isEmpty()) throw new Exception("No known image IDs on the filter!")
+            def difference = availableImageIDs.plus(queryImageIDs)
+            difference.removeAll(commons)
+            queryImageIDs.removeAll(difference)
+        }
+
+        // AND NOOOOOW.... USE THE HACK-AROUND ;-)
+        if (queryImageIDs.size() == availableImageIDs.size()) {
+            queryImageIDs.add("-1")
+        }
+
+        // BUILD THE QUERY STRING
+        imageIDs = queryImageIDs.join(",")
+        filters.put("images", String.valueOf(imageIDs))
+        // ################################################################################################
+
+        // fetch all annotations (necessary because this contains info on the assignments by this user)
+        AnnotationCollection annotations = cytomine.getAnnotations(filters)
+
+        return annotations
+    }
+
+    /**
+     * Retrieve all annotations with given labels for a given list of images,
+     * or for all images in the project.
      * This service ignores images enabled or disabled for specific users.
      *
      * @param cytomine a Cytomine instance
@@ -92,7 +172,7 @@ class AnnotationService {
         // filter annotations for the project
         Map<String, String> filters = new HashMap<String, String>()
         filters.put("project", String.valueOf(cmProjectID))
-        filters.put("showMeta", "true")
+        filters.put("showMeta", "true") // shows links as well (required for mapping to IRIS annotation)
         filters.put("showTerm", "true") // retrieves a minimal set of annotations containing the user labels
 
         // match query image IDs with filtered images on IRIS
@@ -124,7 +204,7 @@ class AnnotationService {
         } else {
             // remove the requested, but disabled images from the query
             def commons = availableImageIDs.intersect(queryImageIDs)
-            if (commons.isEmpty()) throw new Exception("No known image ids on the filter!")
+            if (commons.isEmpty()) throw new Exception("No known image IDs on the filter!")
             def difference = availableImageIDs.plus(queryImageIDs)
             difference.removeAll(commons)
             queryImageIDs.removeAll(difference)
@@ -491,7 +571,7 @@ class AnnotationService {
                              Long cmAnnID, Long cmTermID)
             throws CytomineException, Exception {
 
-        AnnotationCollection annotations = getAllAnnotationsLight(cytomine, user, cmProjectID, cmImageID)
+        AnnotationCollection annotations = getImageAnnotationsLight(cytomine, user, cmProjectID, cmImageID)
         def annList = annotations.list
 
         Annotation annotation
@@ -592,7 +672,7 @@ class AnnotationService {
                                        Long cmAnnID, Long cmTermID)
             throws CytomineException, Exception {
 
-        AnnotationCollection annotations = getAllAnnotationsLight(cytomine, user, cmProjectID, cmImageID)
+        AnnotationCollection annotations = getImageAnnotationsLight(cytomine, user, cmProjectID, cmImageID)
         def annList = annotations.list
 
         Annotation annotation
@@ -838,7 +918,7 @@ class AnnotationService {
         } else {
             // remove the requested, but disabled images from the query
             def commons = irisEnabledImageIDs.intersect(queryImageIDs)
-            if (commons.isEmpty()) throw new Exception("No known image ids on the filter!")
+            if (commons.isEmpty()) throw new Exception("No known image IDs on the filter!")
             def difference = irisEnabledImageIDs.plus(queryImageIDs)
             difference.removeAll(commons)
             queryImageIDs.removeAll(difference)

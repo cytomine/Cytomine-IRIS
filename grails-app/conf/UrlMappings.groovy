@@ -268,5 +268,12 @@ class UrlMappings {
 		"/api/stats/$cmProjectID/agreements/list(.$format)"(controller:"projectStatistics"){
 			action = [GET: "agreementsList"]
 		}
+
+		/**
+		 * User statistics
+		 */
+		"/api/stats/$cmProjectID/userstatistics(.$format)"(controller:"projectStatistics"){
+			action = [GET: "userStatistics"]
+		}
 	}
 }

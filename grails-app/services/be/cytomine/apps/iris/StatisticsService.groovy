@@ -9,12 +9,15 @@ import be.cytomine.client.models.Annotation
 import be.cytomine.client.models.Ontology
 import be.cytomine.client.models.Project
 import be.cytomine.client.models.Term
-import grails.converters.JSON
+import be.cytomine.client.models.User
 import grails.transaction.Transactional
 import org.json.simple.JSONObject
 
+import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+
 /**
- * This service computes various annotation statistics.
+ * This service computes various annotation and user statistics.
  *
  */
 @Transactional
@@ -51,6 +54,7 @@ class StatisticsService {
                 cytomine, irisUser, cmProjectID, imageIDs, termIDs, offset, max)
         int totalAnnotations = annotations.size()
 
+        // reset the Cytomine paging parameters
         cytomine.setOffset(0)
         cytomine.setMax(0)
 
@@ -65,7 +69,7 @@ class StatisticsService {
         //TermCollection terms = cytomine.getTermsByOntology(cmProject.getLong("ontology"))
 
         Ontology ontology = cytomine.getOntology(cmProject.getLong("ontology"))
-        List<JSONObject> flatOntology = new Utils().flattenOntology(ontology);
+        List<JSONObject> flatOntology = new Utils().flattenOntology(ontology)
 
         // for each annotation, make statistics of how many users agree
         // store an n-dim vector for each term, indicating the frequency of agreeing users
@@ -110,7 +114,7 @@ class StatisticsService {
 
                 // check whether the first two elements are equal
                 def hasTies
-                if (list.size() >= 2  && list.max() != 0) {
+                if (list.size() >= 2 && list.max() != 0) {
                     hasTies = list[0] == list[1]
                     if (hasTies) {
                         log.debug("Multiple majority votings for term '" + key +
@@ -130,7 +134,8 @@ class StatisticsService {
     }
 
     /**
-     * Get a list of all annotations present within given images.
+     * Get a list of all annotations and the agreement present within given images,
+     * or all images in the given project.
      *
      * @param cytomine
      * @param irisUser
@@ -166,13 +171,13 @@ class StatisticsService {
         int nProjectUsers = projectUsers.size()
 
         Ontology ontology = cytomine.getOntology(cmProject.getLong("ontology"))
-        List<JSONObject> flatOntology = new Utils().flattenOntology(ontology);
+        List<JSONObject> flatOntology = utils.flattenOntology(ontology)
 
         // list of annotation statistics
         def annStats = []
 
         def emptyUserMap = [:]
-        for (int i=0; i < nProjectUsers; i++) {
+        for (int i = 0; i < nProjectUsers; i++) {
             emptyUserMap[projectUsers.get(i).getId()] = null
         }
 
@@ -228,4 +233,135 @@ class StatisticsService {
 
         return result
     }
+
+    /**
+     * Compute the statistics for a given list of users.
+     *
+     * @param cytomine
+     * @param irisUser
+     * @param cmProjectID
+     * @param imageIDs
+     * @param termIDs
+     * @param userIDs
+     * @param options
+     * @param offset
+     * @param max
+     * @return the user statistics
+     */
+    def getUserStatistics(Cytomine cytomine, IRISUser irisUser, Long cmProjectID,
+                          String imageIDs, String termIDs, String userIDs, Map options,
+                          int offset, int max) {
+
+        Utils utils = new Utils()
+
+        // get the project
+        Project cmProject = cytomine.getProject(cmProjectID);
+
+        // get all annotations
+        AnnotationCollection annotations = annotationService.getAllAnnotationsLight(
+                cytomine, irisUser, cmProjectID, imageIDs)
+
+        // total annotations in a given image
+        int totalAnnotations = annotations.size();
+
+        // labeled annotations (empty)
+        Map empty_labeledAnnotations = [:]
+
+        // get all terms of the project ontology
+        Ontology ontology = cytomine.getOntology(cmProject.getLong("ontology"))
+        List<JSONObject> flatOntology = utils.flattenOntology(ontology)
+
+        // filter the requested terms
+        List allTermIDs = flatOntology.asList().collect { Long.valueOf(it['id']) }
+        // filter all terms, if unspecified
+        List queryTermIDs = []
+        if (termIDs == null || termIDs.isEmpty())
+            queryTermIDs = allTermIDs
+        else
+            queryTermIDs = termIDs.split(",").collect { Long.valueOf(it) }
+
+        // prepare the labeled annotations map (will be copied to each user
+        for (int i = 0; i < flatOntology.size(); i++) {
+            if (allTermIDs[i] in queryTermIDs){
+                // initialize the labeled annotations
+                empty_labeledAnnotations[flatOntology[i]['id']] = 0;
+            }
+        }
+
+        // get all project users
+        UserCollection projectUsers = cytomine.getProjectUsers(cmProjectID)
+
+        // filter all users from the parameter list
+        List allUserIDs = projectUsers.list.collect { Long.valueOf(it.id) }
+        List queryUserIDs
+        if (userIDs == null || userIDs.isEmpty())
+            queryUserIDs = allUserIDs
+        else
+            queryUserIDs = userIDs.split(",").collect { Long.valueOf(it) }
+
+        // filter all requested users
+        def commons = allUserIDs.intersect(queryUserIDs)
+        if (commons.isEmpty()) throw new Exception("No known user IDs on the filter!")
+        def difference = allUserIDs.plus(queryUserIDs)
+        difference.removeAll(commons)
+        queryUserIDs.removeAll(difference)
+
+        // the list of filtered users
+        List users = projectUsers.list.findAll {
+            it.id in queryUserIDs
+        }
+
+        // each user gets its own statistics
+        Map userStatistics = [:]
+        for (u in users) {
+            userStatistics[u.get("id")] = [:]
+            userStatistics[u.get("id")]["summary"] = ["total": 0]
+            userStatistics[u.get("id")]["stats"] = utils.deepcopy(empty_labeledAnnotations)
+        }
+
+        // count the annotations per user and term
+        for (int i = 0; i < totalAnnotations; i++) {
+            Annotation annotation = annotations.get(i)
+            // grab all terms from all users for the current annotation
+            List userByTermList = annotation.getList("userByTerm")
+
+            // skip empty elements
+            if (userByTermList.isEmpty())
+                continue
+
+            for (assignment in userByTermList) {
+                // only add the annotation, if it matches one of the query terms
+                if (assignment.get("term") in queryTermIDs) {
+                    for (u in users) {
+                        //println currentUser.get("id") + ", " + assignment.get("user")
+                        if (u.get("id") in assignment.get("user")) {
+                            // overall counter
+                            userStatistics[u.get("id")]["summary"]["total"] =
+                                    userStatistics[u.get("id")]["summary"]["total"] + 1;
+                            // class-wise label counter
+                            userStatistics[u.get("id")]["stats"][assignment.get("term")] =
+                                    userStatistics[u.get("id")]["stats"][assignment.get("term")] + 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        for (u in users) {
+            println u.get("username") + ": \t\tlabeled " + userStatistics[u.get("id")]["summary"]["total"] + " annotations."
+            println userStatistics[u.get("id")]["stats"]
+            println "--------\n"
+        }
+
+        def result = [:]
+        result['userStats'] = userStatistics
+        result['users'] = users
+        result['terms'] = flatOntology
+
+        return result
+    }
 }
+
+
+
+
