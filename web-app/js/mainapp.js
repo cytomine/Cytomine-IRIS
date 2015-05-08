@@ -53,6 +53,10 @@ iris.config(["$routeProvider", function($routeProvider) {
 		templateUrl : "views/images.html",
 		label : "Images"
 	});
+	$routeProvider.when("/project/:projectID/stats", {
+		templateUrl : "views/projectstatistics.html",
+		label : "Project Statistics"
+	});
 	$routeProvider.when("/project/:projectID/image/:imageID/label", {
 		templateUrl : "views/labeling.html",
 		label : "Labeling"

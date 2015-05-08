@@ -1,0 +1,41 @@
+<div class="container" data-ng-controller="statsCtrl">
+
+    <div class="alert alert-danger text-center" ng-show="stats.error">
+        Cannot get project statistics. .
+    </div>
+
+    <!--<div ng-show="loading">-->
+        <!--<p class="text-center">-->
+            <!--Loading statistics...-->
+        <!--</p>-->
+        <!--<img class="img-responsive center-block" src="images/ajax-loader.gif" alt="" />-->
+        <!--</p>-->
+    <!--</div>-->
+
+    <div class="row">
+        <div ng-hide="stats.error">
+            <h4 class="text-muted pull-right">Project Statistics</h4>
+            <tabset style="margin: 0px">
+                <tab heading="Observer Agreements">
+                    <div class="row">
+                        Observer Agreements
+                    </div>
+                </tab>
+                <tab heading="Annotation List">
+                    <div class="row">
+                        Annotation List
+                    </div>
+                </tab>
+                <!--<tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">-->
+                    <!--{{tab.content}}-->
+                <!--</tab>-->
+                <!--<tab select="alertMe()">-->
+                    <!--<tab-heading>-->
+                        <!--<i class="glyphicon glyphicon-bell"></i> Alert!-->
+                    <!--</tab-heading>-->
+                    <!--I've got an HTML heading, and a select callback. Pretty cool!-->
+                <!--</tab>-->
+            </tabset>
+        </div>
+    </div>
+</div>

@@ -131,6 +131,24 @@ iris.controller("projectCtrl", [
             })
         };
 
+        // show the project statistics page
+        $scope.showStatistics = function (project) {
+
+            if (project['settings'].enabled !== true) {
+                $scope.showNoOpenDialog(project);
+                return;
+            }
+
+            // update the project in the session
+            sessionService.openProject(project.cmID, function (data) {
+                // forward to the image overview table of this project
+                $location.url("/project/" + project.cmID + "/stats");
+            }, function (data, status) {
+                sharedService.addAlert("Cannot open project statistics. "
+                + data.error.message + " (" + status + ")", "danger");
+            })
+        };
+
         $scope.canBeOpened = function (item) {
             return item.cmNumberOfImages > 0 && !item.isClosed;
         };

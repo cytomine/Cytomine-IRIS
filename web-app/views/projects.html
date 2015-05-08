@@ -12,7 +12,7 @@
     		<img class="img-responsive center-block" src="images/ajax-loader.gif" alt="" />
     	</p>
     </div>
-	
+
 	<div class="row" ng-hide="loading">
 		<ng-include src="'templates/html/refreshPanel.html'"></ng-include>
 
@@ -43,11 +43,47 @@
 		            <td data-title="'Action'" class="text-center">
 		            	<span ng-switch="canBeOpened(item)">
 	                		<span ng-switch-when="true">
-	                	 		<button type="button" ng-click="openProject(item)" ng-class="{'btn btn-sm btn-primary' : item.settings.enabled === true, 'btn btn-sm btn-warning' : item.settings.enabled === false}">Open</button>
-	                		</span>
+								<div class="btn-group" dropdown>
+									<button type="button" ng-click="openProject(item)"
+											ng-class="{'btn btn-sm btn-primary' : item.settings.enabled === true,
+												'btn btn-sm btn-warning' : item.settings.enabled === false}">
+										Open
+									</button>
+									<button type="button" class="btn btn-primary btn-sm dropdown-toggle"
+											ng-class="{ 'btn btn-sm btn-primary' : item.settings.enabled === true,
+												'btn btn-sm btn-warning disabled': item.settings.enabled === false }">
+										<span class="caret"></span>
+										<span class="sr-only">Toggle Dropdown</span>
+									</button>
+									<ul class="dropdown-menu text-left" role="menu">
+										<li ng-class="{	'btn btn-sm btn-warning disabled': item.settings.enabled === false }"><a
+												ng-click="showStatistics(item)" href>
+											View statistics dashboard
+										</a></li>
+									</ul>
+								</div>
+							</span>
 			                <span ng-switch-default>
-			                	<button type="button" ng-class="{'btn btn-sm btn-primary disabled' : item.settings.enabled === true, 'btn btn-sm btn-warning disabled' : item.settings.enabled === false}">Open</button>
-			            	</span>
+								<div class="btn-group" dropdown>
+									<button type="button"
+											ng-class="{'btn btn-sm btn-primary disabled' : item.settings.enabled === true,
+											'btn btn-sm btn-warning disabled' : item.settings.enabled === false}">
+										Open
+									</button>
+									<button type="button" class="btn btn-primary btn-sm dropdown-toggle"
+											ng-class="{ 'btn btn-sm btn-primary' : item.settings.enabled === true,
+												'btn btn-sm btn-warning disabled': item.settings.enabled === false }">
+										<span class="caret"></span>
+										<span class="sr-only">Toggle Dropdown</span>
+									</button>
+									<ul class="dropdown-menu text-left" role="menu">
+										<li ng-class="{	'btn btn-sm btn-warning disabled': item.settings.enabled === false }"><a
+												ng-click="showStatistics(item)" href>
+											View statistics dashboard
+										</a></li>
+									</ul>
+								</div>
+							</span>
 		            	</span>
 		            </td>
 		            <td data-title="'Info'" class="text-center">
@@ -58,7 +94,7 @@
 			<span>Showing project {{ project.pageItemMin+1 }} to {{ project.pageItemMax }} (<strong>{{ project.projects.length }}</strong> in total)</span>
 	    </div>
     </div>
-    
+
     <!-- INCLUDE: Templates for modal dialogs  -->
 	<div ng-include="'templates/html/projectDescription.html'"></div>
 	<div ng-include="'templates/html/projectDisabled.html'"></div>
