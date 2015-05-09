@@ -251,6 +251,14 @@ class UrlMappings {
 			action = [GET: "getOntologyByProject"]
 		}
 
+		/*
+		 * Gets the users of a project.
+		 * 		$projectID = Cytomine project ID
+		 */
+		"/api/project/$cmProjectID/users(.$format)"(controller:"project"){
+			action = [GET: "getUsersByProject"]
+		}
+
 		/**
 		 * ADMIN 
 		 */

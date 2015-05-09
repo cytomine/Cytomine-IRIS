@@ -4,6 +4,7 @@ import be.cytomine.apps.iris.model.IRISProject
 import be.cytomine.client.Cytomine;
 import be.cytomine.client.CytomineException
 import be.cytomine.client.collections.ProjectCollection
+import be.cytomine.client.collections.UserCollection
 import be.cytomine.client.models.Description
 import be.cytomine.client.models.Project
 import grails.converters.JSON
@@ -191,5 +192,30 @@ class ProjectService {
             // project exists and user is NOT authorized
             return false
         }
+    }
+
+    /**
+     * Get the project users.
+     *
+     * @param cytomine a Cytomine instance
+     * @param irisUser the IRISUser
+     * @param cmProjectID the Cytomine project ID
+     * @param options a map of options, e.g. 'adminOnly' retrieves all admins exclusively
+     * @return a UserCollection
+     * @throws CytomineException
+     * @throws Exception
+     */
+    UserCollection getProjectUsers(Cytomine cytomine, IRISUser irisUser, Long cmProjectID, Map options)
+        throws CytomineException, Exception{
+
+        UserCollection projectUsers
+
+        if (new Boolean(options['adminOnly']).booleanValue()){
+            projectUsers = cytomine.getProjectAdmins(cmProjectID)
+        } else {
+            projectUsers = cytomine.getProjectUsers(cmProjectID)
+        }
+
+        return projectUsers
     }
 }

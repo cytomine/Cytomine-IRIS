@@ -1,0 +1,29 @@
+<div ng-controller="userTreeCtrl" id="userTree-UI">
+	<div ng-show="tree.loading">
+  		<p class="text-center">
+  		Loading project users...
+  		</p>
+  			<img class="img-responsive center-block" src="images/ajax-loader.gif"/>
+  		</p>
+	</div>
+	<button class="btn-primary btn-xs" ng-click="refreshUsers()">Refresh users</button>
+	<div ng-hide="tree.loading">
+		<h5>Project Users&nbsp;<a href="" ng-click="showTree=!showTree"><span class="label label-default" ng-show="showTree" tooltip-placement="right" tooltip="hide the project user tree">hide</span><span class="label label-default" ng-show="!showTree" tooltip-placement="right" tooltip="show the project user tree">show</span></a></h5>
+		<div ng-show="showTree"
+			treecontrol="" class="tree-light" tree-model="treeData" options="treeOptions">
+			<span id="{{ 'clickableControl:' + node.id }}" ng-click="selectOrUnselectUser($event, node.id)">
+				<input id="{{ 'chbxUser:' + node.id }}" type="checkbox" ng-model="node.checked">
+				<span id="{{ 'treeUserLabel:' + node.id }}">{{ node.lastname + ' ' + node.firstname }}</span>
+			</span>
+		</div>
+		<div class="row" style="margin-top:20px">
+			<div class="col-xs-12">
+				<div class="btn btn-xs btn-info" ng-click="checkAllUsers()" style="width: 90px">Check all</div>
+<!-- 				<p class="clearfix" style="margin:2px;"></p> -->
+				<div class="btn btn-xs btn-default" ng-click="uncheckAllUsers()" style="width: 90px">Uncheck all</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- {{ ontology | json }} -->

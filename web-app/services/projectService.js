@@ -7,20 +7,23 @@ iris.constant("projectURL", "api/projects.json");
 iris.constant("projectDescrURL", "api/project/{id}/description.json");
 iris.constant("ontologyURL", "api/ontology/{ontologyID}.json");
 iris.constant("ontologyByProjectURL", "api/project/{projectID}/ontology.json");
+iris.constant("projectUsersURL", "api/project/{projectID}/users.json");
 
 iris.factory("projectService", [
-"$http", "$log",
-"projectURL", 
-"projectDescrURL", 
-"ontologyURL", 
-"ontologyByProjectURL",
-"sessionService",
-"cytomineService", 
+	"$http", "$log",
+	"projectURL",
+	"projectDescrURL",
+	"ontologyURL",
+	"ontologyByProjectURL",
+	"projectUsersURL",
+	"sessionService",
+	"cytomineService",
 	    function($http, $log,
 		projectURL, 
 		projectDescrURL, 
 		ontologyURL, 
 		ontologyByProjectURL,
+		projectUsersURL,
 		sessionService,
 		cytomineService) {
 
@@ -89,6 +92,29 @@ iris.factory("projectService", [
 			if (params !== null){
 				if (params.flat == true) {
 					url += "&flat=true";
+				}
+			}
+
+			$http.get(url).success(function(data) {
+				// $log.debug("success on $http.get(" + url + ")");
+				// on success, assign the data to the projects array
+				if (callbackSuccess) {
+					callbackSuccess(data);
+				}
+			}).error(function(data, status, headers, config) {
+				// on error log the error
+				if (callbackError) {
+					callbackError(data, status, headers, config);
+				}
+			})
+		},
+
+		// get the ontology
+		fetchUsers : function(projectID, params, callbackSuccess, callbackError) {
+			var url = cytomineService.addKeys(projectUsersURL).replace("{projectID}", projectID);
+			if (params !== null){
+				if (params.adminOnly == true) {
+					url += "&adminOnly=true";
 				}
 			}
 

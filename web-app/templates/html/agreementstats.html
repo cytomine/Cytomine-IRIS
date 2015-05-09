@@ -1,3 +1,31 @@
-<div class="">
-    Agreement statistics template
+<script type="text/javascript">
+    $(function(){
+        $('.sidebar-toggler-agreement').on('click', function(){
+            // toggle the sidebar
+            $('#sidebar-agreement').toggle('slide', { direction: 'left' }, 500);
+
+            $('#sb-main-content-agreement').animate({
+                'margin-left' : $('#sb-main-content-agreement').css('margin-left') == '20px' ? '260px' : '20px'
+            }, 500);
+        });
+    });
+</script>
+
+<div>
+    <div id="sidebar-agreement">
+        <div style="max-height: 100%; overflow: auto">
+            <ng-include src="'templates/html/userTree.html'"></ng-include>
+        </div>
+    </div>
+    <div class="sidebar-toggler-agreement" ng-click="setCollapsed(!stats.sbcollapsed)">
+        <div ng-show="stats.sbcollapsed">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </div>
+        <div ng-show="!stats.sbcollapsed">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </div>
+    </div>
+    <div id="sb-main-content-agreement">
+        main content with fancy diagrams and other stuff
+    </div>
 </div>

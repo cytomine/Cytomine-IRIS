@@ -3,14 +3,14 @@
  */
 var iris = angular.module("irisApp");
 
-iris.controller("statsCtrl",
-    ["$scope", "$log", "helpService", "hotkeys", "cytomineService", "sessionService", "navService",
-        function ($scope, $log, helpService, hotkeys, cytomineService, sessionService, navService) {
+iris.controller("prjStatsCtrl",
+    ["$document", "$scope", "$log", "helpService", "hotkeys", "cytomineService", "sessionService", "navService",
+        function ($document, $scope, $log, helpService, hotkeys, cytomineService, sessionService, navService) {
 
-            $log.debug("statsCtrl");
+            $log.debug("prjStatsCtrl");
 
             // set content url for the help page
-            helpService.setContentUrl("content/help/statsHelp.html");
+            helpService.setContentUrl("content/help/prjStatisticsHelp.html");
 
             // put all valid shortcuts for this page here
             hotkeys.bindTo($scope)
@@ -29,6 +29,7 @@ iris.controller("statsCtrl",
                 });
 
             $scope.stats = {
+                sbcollapsed: false
                 //error: {}
             };
 
@@ -43,4 +44,8 @@ iris.controller("statsCtrl",
                 window.alert('You\'ve selected the alert tab!');
             };
 
-}]);
+            $scope.setCollapsed = function(flag){
+                $scope.stats.sbcollapsed = flag;
+                $log.debug(flag)
+            };
+        }]);

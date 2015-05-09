@@ -4,6 +4,7 @@ import be.cytomine.apps.iris.model.IRISImage
 import be.cytomine.apps.iris.model.IRISProject
 import be.cytomine.client.Cytomine
 import be.cytomine.client.CytomineException
+import be.cytomine.client.collections.UserCollection
 import be.cytomine.client.models.Ontology
 import grails.converters.JSON
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
@@ -133,6 +134,52 @@ class ProjectController {
             } else {
                 render ontology.getAttr() as JSON
             }
+        } catch(CytomineException e1){
+            log.error(e1)
+            // exceptions from the cytomine java client
+            response.setStatus(e1.httpCode)
+            JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+            render errorMsg as JSON
+        } catch(GroovyCastException e2) {
+            log.error(e2)
+            // send back 400 if the project ID is other than long format
+            response.setStatus(400)
+            JSONObject errorMsg = new Utils().resolveException(e2, 400)
+            render errorMsg as JSON
+        } catch(Exception e3){
+            log.error(e3)
+            // on any other exception render 500
+            response.setStatus(500)
+            JSONObject errorMsg = new Utils().resolveException(e3, 500)
+            render errorMsg as JSON
+        }
+    }
+
+    /**
+     * Gets all users for a project in ascending order.
+     *
+     * @return the user list as JSON object
+     */
+    def getUsersByProject(){
+        try {
+            Cytomine cytomine = request['cytomine']
+            IRISUser irisUser = request['user']
+            long pID = params.long('cmProjectID')
+
+            UserCollection projectUsers = projectService.getProjectUsers(cytomine, irisUser, pID, params)
+
+            // sort the user collection by last name, then first name
+            def userList = projectUsers.getList()
+            userList.sort{ x,y ->
+                if(x.get("lastname") == y.get("lastname")){
+                    x.get("firstname") <=> y.get("firstname")
+                }else{
+                    x.get("lastname") <=> y.get("lastname")
+                }
+            }
+
+            render userList as JSON
+
         } catch(CytomineException e1){
             log.error(e1)
             // exceptions from the cytomine java client
