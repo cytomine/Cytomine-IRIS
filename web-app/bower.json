@@ -44,6 +44,7 @@
     "videogular-poster": "~0.7.2",
     "videogular-themes-default": "~0.7.2",
     "videogular": "~0.7.2",
-    "ngDraggable": "fatlinesofcode/ngDraggable"
+    "ngDraggable": "fatlinesofcode/ngDraggable",
+    "d3": "mbostock/d3"
   }
 }

@@ -23,7 +23,7 @@ iris.controller("userTreeCtrl", [
 	//	$scope.tree.loading = true;
 
 		// get the users and initialize the tree
-		projectService.fetchUsers($scope.projectID, {'adminOnly':false}, function(users){
+		projectService.fetchUsers($scope.projectID, { 'adminOnly':false }, function(users){
 			//$scope.treeData = demoTree;
 			$scope.treeData = users;
 			$scope.tree.loading = false;

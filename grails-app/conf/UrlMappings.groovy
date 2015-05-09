@@ -268,11 +268,16 @@ class UrlMappings {
 
 		/**
 		 * STATISTICS
+		 *
+		 * A compressed form of agreement visualization.
 		 */
 		"/api/stats/$cmProjectID/agreements(.$format)"(controller:"projectStatistics"){
 			action = [GET: "majorityAgreements"]
 		}
 
+		/**
+		 * Annotation statistics: agreement list
+		 */
 		"/api/stats/$cmProjectID/agreements/list(.$format)"(controller:"projectStatistics"){
 			action = [GET: "agreementsList"]
 		}

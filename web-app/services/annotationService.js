@@ -46,7 +46,7 @@ iris.factory("annotationService", [
 			})
 		},
 		
-		// get the annotations for a given project, images and a ingle terms (for a calling user)
+		// get the annotations for a given project, images and terms (for a calling user)
 		fetchUserAnnotationsByTerm : function(projectID, imageIDs, termIDs, callbackSuccess,
 				callbackError, offset, max) {
 			$log.debug("Getting user annotations by terms: " + projectID + " - " + imageIDs + " - " + termIDs);
