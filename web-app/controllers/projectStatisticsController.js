@@ -4,8 +4,8 @@
 var iris = angular.module("irisApp");
 
 iris.controller("prjStatsCtrl",
-    ["$document", "$scope", "$log", "helpService", "hotkeys", "cytomineService", "sessionService", "navService",
-        function ($document, $scope, $log, helpService, hotkeys, cytomineService, sessionService, navService) {
+    ["$routeParams", "$scope", "$log", "helpService", "hotkeys", "cytomineService", "sessionService", "navService",
+        function ($routeParams, $scope, $log, helpService, hotkeys, cytomineService, sessionService, navService) {
 
             $log.debug("prjStatsCtrl");
 
@@ -27,6 +27,8 @@ iris.controller("prjStatsCtrl",
                         navService.resumeAtLabelingPage();
                     }
                 });
+
+            $scope.projectID = $routeParams['projectID'];
 
             $scope.stats = {
                 sbcollapsed: false

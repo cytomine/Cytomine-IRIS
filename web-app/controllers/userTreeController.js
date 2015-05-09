@@ -18,9 +18,9 @@ iris.controller("userTreeCtrl", [
 		$scope.checkAllUsers();
 	};
 
-	$scope.refreshUsers = function(){
-		$scope.projectID = $routeParams['projectID'];
-		$scope.tree.loading = true;
+	//$scope.refreshUsers = function(){
+	//	$scope.projectID = $routeParams['projectID'];
+	//	$scope.tree.loading = true;
 
 		// get the users and initialize the tree
 		projectService.fetchUsers($scope.projectID, {'adminOnly':false}, function(users){
@@ -33,7 +33,7 @@ iris.controller("userTreeCtrl", [
 		}, function(data, status){
 			sharedService.addAlert("Cannot retrieve users. Status " + status + ".", "danger");
 		});
-	};
+	//};
 
 	$scope.selectedNode = {};
 	
