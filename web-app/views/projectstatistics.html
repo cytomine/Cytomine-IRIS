@@ -1,39 +1,44 @@
-<div class="container" data-ng-controller="statsCtrl">
+<div class="container-100" data-ng-controller="statsCtrl">
 
     <div class="alert alert-danger text-center" ng-show="stats.error">
-        Cannot get project statistics. .
+        Cannot get project statistics.
     </div>
 
     <!--<div ng-show="loading">-->
-        <!--<p class="text-center">-->
-            <!--Loading statistics...-->
-        <!--</p>-->
-        <!--<img class="img-responsive center-block" src="images/ajax-loader.gif" alt="" />-->
-        <!--</p>-->
+    <!--<p class="text-center">-->
+    <!--Loading statistics...-->
+    <!--</p>-->
+    <!--<img class="img-responsive center-block" src="images/ajax-loader.gif" alt="" />-->
+    <!--</p>-->
     <!--</div>-->
 
-    <div class="row">
+    <div class="row" style="margin-top: -20px">
         <div ng-hide="stats.error">
-            <h4 class="text-muted pull-right">Project Statistics</h4>
-            <tabset style="margin: 0px">
-                <tab heading="Observer Agreements">
-                    <div class="row">
-                        Observer Agreements
+            <h4 class="text-muted pull-right"><span class="glyphicon glyphicon-stats"></span>&nbsp;Project Statistics&nbsp;&nbsp;</h4>
+            <tabset>
+                <tab heading="Users">
+                    <div class="panel-body">
+                        <ng-include src="'templates/html/userstats.html'"></ng-include>
                     </div>
                 </tab>
-                <tab heading="Annotation List">
-                    <div class="row">
-                        Annotation List
+                <tab heading="Annotations">
+                    <div class="panel-body">
+                        <ng-include src="'templates/html/annstats.html'"></ng-include>
+                    </div>
+                </tab>
+                <tab heading="User Agreements">
+                    <div class="panel-body">
+                        <ng-include src="'templates/html/agreementstats.html'"></ng-include>
                     </div>
                 </tab>
                 <!--<tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">-->
-                    <!--{{tab.content}}-->
+                <!--{{tab.content}}-->
                 <!--</tab>-->
                 <!--<tab select="alertMe()">-->
-                    <!--<tab-heading>-->
-                        <!--<i class="glyphicon glyphicon-bell"></i> Alert!-->
-                    <!--</tab-heading>-->
-                    <!--I've got an HTML heading, and a select callback. Pretty cool!-->
+                <!--<tab-heading>-->
+                <!--<i class="glyphicon glyphicon-bell"></i> Alert!-->
+                <!--</tab-heading>-->
+                <!--I've got an HTML heading, and a select callback. Pretty cool!-->
                 <!--</tab>-->
             </tabset>
         </div>

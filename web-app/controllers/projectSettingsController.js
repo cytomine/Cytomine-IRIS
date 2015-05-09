@@ -3,14 +3,14 @@
  */
 var iris = angular.module("irisApp");
 
-iris.controller("statsCtrl",
+iris.controller("prjSettingsCtrl",
     ["$scope", "$log", "helpService", "hotkeys", "cytomineService", "sessionService", "navService",
         function ($scope, $log, helpService, hotkeys, cytomineService, sessionService, navService) {
 
-            $log.debug("statsCtrl");
+            $log.debug("prjSettingsCtrl");
 
             // set content url for the help page
-            helpService.setContentUrl("content/help/statsHelp.html");
+            helpService.setContentUrl("content/help/prjSettingsHelp.html");
 
             // put all valid shortcuts for this page here
             hotkeys.bindTo($scope)
@@ -28,7 +28,7 @@ iris.controller("statsCtrl",
                     }
                 });
 
-            $scope.stats = {
+            $scope.settings = {
                 //error: {}
             };
 

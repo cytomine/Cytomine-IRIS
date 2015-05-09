@@ -149,6 +149,24 @@ iris.controller("projectCtrl", [
             })
         };
 
+        // show the project settings
+        $scope.showSettings = function (project) {
+
+            if (project['settings'].enabled !== true) {
+                $scope.showNoOpenDialog(project);
+                return;
+            }
+
+            // update the project in the session
+            sessionService.openProject(project.cmID, function (data) {
+                // forward to the project settings
+                $location.url("/project/" + project.cmID + "/settings");
+            }, function (data, status) {
+                sharedService.addAlert("Cannot open project settings. "
+                + data.error.message + " (" + status + ")", "danger");
+            })
+        };
+
         $scope.canBeOpened = function (item) {
             return item.cmNumberOfImages > 0 && !item.isClosed;
         };
