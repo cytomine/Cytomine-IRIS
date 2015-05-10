@@ -16,8 +16,6 @@ function($rootScope, $scope, $http, $filter,
 		ngTableParams) {
 	$log.debug("annStatsCtrl");
 
-	$scope.myData = [10,20,30];
-
 	// retrieve the project parameter from the URL
 	$scope.projectID = $routeParams["projectID"];
 

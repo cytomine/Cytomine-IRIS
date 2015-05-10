@@ -1,6 +1,6 @@
 .chart {
     background: #eee;
-    /*padding: 3px;*/
+    padding: 1px;
 }
 
 .chart div {
@@ -11,11 +11,17 @@
 }
 
 .chart div {
-    font: 10px sans-serif;
+    font: 11px sans-serif;
     background-color: steelblue;
     text-align: right;
     padding: 1px;
     margin: 1px;
-    color: white;
-    /*box-shadow: 2px 2px 2px #666;*/
+    color: black;
+    box-shadow: 1px 1px 1px #666;
+    text-shadow:
+        0 1px 0 #fff,
+        0 -1px 0 #fff,
+        1px 0 0 #fff,
+        -1px 0 0 #fff;
+    -webkit-font-smoothing: antialiased;
 }

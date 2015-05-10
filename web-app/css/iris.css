@@ -37,6 +37,10 @@
 	margin: 10px 0;	
 }
 
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+	padding:4px;
+}
+
 .transparent-overlay {
 	position:fixed;
 	width:100%;
@@ -439,3 +443,16 @@ div[class^="sidebar-toggler"] {
 	z-index: 30;
 }
 
+/*Preview images for the annoations table*/
+img.annotation-preview-small {
+	max-width: 50px;
+	max-height: 50px;
+	/*display: block;*/
+	padding: 4px;
+	line-height: 1.42857143;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	-webkit-transition: all .2s ease-in-out;
+	transition: all .2s ease-in-out;
+}

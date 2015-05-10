@@ -192,6 +192,9 @@ class StatisticsService {
             // grab all terms from all users for the current annotation
             List userByTermList = annotation.getList("userByTerm")
 
+            if (userByTermList.isEmpty())
+                continue
+
             // map to an IRISAnnotation and convert to JSON
             IRISAnnotation irisAnn = dm.mapAnnotation(annotation, null)
             def irisAnnJSON = utils.toJSONObject(irisAnn)
@@ -199,6 +202,10 @@ class StatisticsService {
             // store a map, where each user is identified by its ID
             irisAnnJSON['userStats'] = utils.deepcopy(emptyUserMap)
             irisAnnJSON['termAgreementStats'] = utils.deepcopy(termAgreementStats)
+            irisAnnJSON['assignmentRanking'] = []
+
+            // total number of assignments
+            int nAssignments = userByTermList.size()
 
             // collect assignments for each user
             for (assignment in userByTermList) {
@@ -211,16 +218,21 @@ class StatisticsService {
                     irisAnnJSON['userStats'][userID] = termID
                 }
 
-                // add the number of agreements to the list
-                irisAnnJSON['termAgreementStats'][termID][userIDList.size()] =
-                        irisAnnJSON['termAgreementStats'][termID][userIDList.size()] + 1
+                // increment the number of agreements for a term
+                int nAgreeingUsers = irisAnnJSON['termAgreementStats'][termID][userIDList.size()] + 1
+                irisAnnJSON['termAgreementStats'][termID][userIDList.size()] = nAgreeingUsers
+
+                // compute a compressed version of the agreements on each term
+                // compute the ration as:
+                //      all users that agree on this term divided by all assignments of this annotation
+                double agreementRatio = nAgreeingUsers*1.0 / nAssignments
+                irisAnnJSON['assignmentRanking'].add([ 'termID' : termID, 'ratio' : agreementRatio,
+                                                       'total' : nAssignments , 'nUsers' : nAgreeingUsers ])
             }
 
             // add the annotation to the list
             annStats.add(irisAnnJSON)
         }
-
-        // TODO term agreement stats must be compressed as well (percentage of agreements)
 
         def result = [:]
         result['annotationStats'] = annStats

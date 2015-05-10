@@ -47,41 +47,33 @@
             <table ng-table="tableParams" class="table table-hover table-bordered">
                 <thead>
                 <tr>
+                    <!--<th></th>-->
+                    <th colspan="2">Annotations</th>
+                    <!--<th></th>-->
+                    <th colspan="{{usercolumns.length}}" class="text-center">Users</th>
+                </tr>
+                <tr>
                     <!--<th>ID</th>-->
                     <th>Preview</th>
-                    <th>Classification</th>
-                    <th>Actions</th>
+                    <th>Agreement</th>
+                    <!--<th>Actions</th>-->
                     <th ng-repeat="column in usercolumns" ng-show="column.visible">
                         {{column.title}}
                     </th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody style="font-size: 12px;">
                 <!-- iterate over all annotations -->
                 <tr ng-repeat="item in data">
                     <!--<td>{{item.cmID}}</td>-->
-                    <td><img class="thumbnail image-preview" src="{{ addKeys(item.smallCropURL) }}"/></td>
-                    <!--<td data-title="'Name'" sortable="'originalFilename'" filter="{ 'originalFilename': 'text' }">-->
-                    <!--{{item.originalFilename}}-->
-                    <!--<span ng-show="(today - item.cmCreated) <= image.stillNew"-->
-                    <!--class="label label-success pull-right">New!</span>-->
-
-                    <!--<p class="text-muted">{{item.width | number}} x {{item.height | number}} px</p>-->
-                    <!--</td>-->
-                    <!--<td data-title="'Progress'" sortable="'settings.progress'" class="text-center"-->
-                    <!--filter="{ 'userProgress' : 'userProgressFilter' }">-->
-                    <!--<div ng-switch="{{item.settings.numberOfAnnotations}}">-->
-                    <!--<div ng-switch-when="0" class="label label-info">No Annotations!</div>-->
-                    <!--<div ng-switch-default>-->
-                    <!--<div ng-controller="progressCtrl"-->
-                    <!--ng-include="'templates/html/progressPanel.html'"></div>-->
-                    <!--</div>-->
-                    <!--</div>-->
-                    <!--</td>-->
-
-                    <td><bars-chart chart-data="myData"></bars-chart></td>
-                    <td>
-                        <!--<div class="btn-group" dropdown>
+                    <td class="text-center">
+                        <img class="annotation-preview-small" src="{{ addKeys(item.smallCropURL) }}"/>
+                    </td>
+                    <td style="width: 200px">
+                        <bars-chart chart-data="item.assignmentRanking" terms="terms"></bars-chart>
+                    </td>
+                    <!--<td>
+                        <div class="btn-group" dropdown>
                             <button type="button" style="width:100px;" class="btn btn-primary btn-sm"
                                     ng-click="startLabeling(item)"
                                     ng-class="{ 'disabled' : item.numberOfAnnotations=='0' || (image.opening.cmID) }">
@@ -108,8 +100,8 @@
                                     Explore in Cytomine
                                 </a></li>
                             </ul>
-                        </div>-->
-                    </td>
+                        </div>
+                    </td>-->
                     <td ng-repeat="column in usercolumns" ng-show="column.visible">
                         <!-- term ID -->
                         <!--<span>{{ item[column.userStats][column.userID] ||  '' }}</span>-->
@@ -119,7 +111,8 @@
                                 popover="{{usermap[column.userID].lastname + ' '
                                         + usermap[column.userID].firstname}}"
                                 popover-trigger="mouseenter">
-                            <span ng-style="{ 'background': terms[item[column.userStats][column.userID]].color }">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;{{ terms[item[column.userStats][column.userID]].name }}
+                            <span ng-style="{ 'background': terms[item[column.userStats][column.userID]].color }"
+                                    style="border: 1px solid black">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;{{ terms[item[column.userStats][column.userID]].name }}
                         </span>
 
                     </td>
