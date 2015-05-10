@@ -36,7 +36,7 @@
     "jquery": "2.1.1",
     "ng-breadcrumbs": "~0.4.1",
     "mousetrap": "~1.4.6",
-    "ng-table": "~0.4.2",
+    "ng-table": "~0.5.4",
     "pace": "~1.0.2",
     "videogular-buffering": "~0.7.2",
     "videogular-controls": "~0.7.2",

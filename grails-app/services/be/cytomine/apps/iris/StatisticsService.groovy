@@ -223,7 +223,7 @@ class StatisticsService {
         def result = [:]
         result['annotationStats'] = annStats
         result['terms'] = flatOntology
-        result['users'] = projectUsers.list
+        result['users'] = utils.sortUsersAsc(projectUsers.list)
 
         return result
     }
@@ -304,6 +304,9 @@ class StatisticsService {
         List users = projectUsers.list.findAll {
             it.id in queryUserIDs
         }
+
+        // sort the users by lastname, firstname asc
+        users = utils.sortUsersAsc(users)
 
         // each user gets its own statistics
         Map userStatistics = [:]
@@ -409,6 +412,9 @@ class StatisticsService {
 //        // get all project users
 //        UserCollection projectUsers = cytomine.getProjectUsers(cmProjectID)
 //        List users = projectUsers.list
+
+    // sort the users by lastname, firstname asc
+//    users = utils.sortUsersAsc(users)
 //
 //        // each user gets its own statistics
 //        Map userStatistics = [:]

@@ -170,13 +170,8 @@ class ProjectController {
 
             // sort the user collection by last name, then first name
             def userList = projectUsers.getList()
-            userList.sort{ x,y ->
-                if(x.get("lastname") == y.get("lastname")){
-                    x.get("firstname") <=> y.get("firstname")
-                }else{
-                    x.get("lastname") <=> y.get("lastname")
-                }
-            }
+            // sort the users by lastname, firstname asc
+            userList = new Utils().sortUsersAsc(userList)
 
             render userList as JSON
 

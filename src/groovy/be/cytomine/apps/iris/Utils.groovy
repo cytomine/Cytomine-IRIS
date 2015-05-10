@@ -278,4 +278,25 @@ class Utils {
         def ois = new ObjectInputStream(bin)
         return ois.readObject()
     }
+
+    /**
+     * Sorts a list of Cytomine users ascending by
+     * <ul>
+     *     <li>lastname
+     *     <li>firstname
+     * </ul>
+     * @param users the list of Cytomine users
+     * @return sorted list
+     */
+    def sortUsersAsc(def users){
+        // sort the users by lastname, firstname asc
+        users.sort{ x,y ->
+            if(x.get("lastname") == y.get("lastname")){
+                x.get("firstname") <=> y.get("firstname")
+            }else{
+                x.get("lastname") <=> y.get("lastname")
+            }
+        }
+        return users
+    }
 }
