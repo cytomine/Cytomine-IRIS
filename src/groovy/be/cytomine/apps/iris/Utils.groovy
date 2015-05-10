@@ -288,7 +288,7 @@ class Utils {
      * @param users the list of Cytomine users
      * @return sorted list
      */
-    def sortUsersAsc(def users){
+    List sortUsersAsc(def users){
         // sort the users by lastname, firstname asc
         users.sort{ x,y ->
             if(x.get("lastname") == y.get("lastname")){

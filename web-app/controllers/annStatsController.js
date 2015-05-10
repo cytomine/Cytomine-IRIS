@@ -38,6 +38,8 @@ function($rootScope, $scope, $http, $filter,
 		statisticsService.fetchAnnotationAgreementList($scope.projectID, null, null, null, function(data) {
 			// success
 			$scope.annstats.annotations = data.annotationStats; // this should be a list of annotations
+			$scope.terms = data.terms; // the term map
+			$scope.users = data.users; // the sorted users list
 			$scope.annstats.total = data.length;
 
 			if (data.length < 1){
@@ -52,13 +54,26 @@ function($rootScope, $scope, $http, $filter,
 
 			$scope.usercolumns = [];
 
-			// construct the dynamic columns
-			for (var k = 0; k < data.users.length; k++){
+			// the map of users
+			$scope.usermap = {};
+
+			// loop over the map and construct the dynamic columns
+			for (var k = 0; k < data.users.length; k++) {
 				var userid = data.users[k].id;
 				var username = data.users[k].username;
 				$scope.usercolumns.push(
-					{ title: String(username), userStats: 'userStats', visible: true, userID: userid, user: data.users[k]}
-				)
+					{
+						title: String(username),
+						userStats: 'userStats',
+						visible: true,
+						userID: userid
+					}
+				);
+				$scope.usermap[userid] = {
+					'username' : username,
+					'firstname': data.users[k].firstname,
+					'lastname': data.users[k].lastname
+				};
 			}
 
 			// build the data table
@@ -113,7 +128,7 @@ function($rootScope, $scope, $http, $filter,
 	};
 
 //	fetch the annotations
-//	$scope.refreshPage();
+	$scope.refreshPage();
 
 //	//////////////////////////////////////////
 //	declare additional methods

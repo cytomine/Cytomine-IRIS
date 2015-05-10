@@ -220,12 +220,16 @@ class StatisticsService {
             annStats.add(irisAnnJSON)
         }
 
-        // TODO term agreement stats must be compressed as well
+        // TODO term agreement stats must be compressed as well (percentage of agreements)
 
         def result = [:]
         result['annotationStats'] = annStats
-        result['terms'] = flatOntology
+//        result['terms'] = flatOntology
+        result['terms'] = flatOntology.collectEntries { [(it.id): [ 'name': it.name, 'color': it.color ]] }
         result['users'] = utils.sortUsersAsc(projectUsers.list)
+//        result['users'] = projectUsers.list.collectEntries {
+//            [(it.id): [ 'username':it.username, 'lastname': it.lastname, 'firstname': it.firstname ]] }
+
 
         return result
     }

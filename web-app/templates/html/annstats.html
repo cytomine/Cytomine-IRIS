@@ -1,4 +1,5 @@
 <script type="text/javascript">
+    // sidebar toggling on dom ready
     $(function(){
         $('.sidebar-toggler-ann').on('click', function(){
             // toggle the sidebar
@@ -110,8 +111,17 @@
                         </div>-->
                     </td>
                     <td ng-repeat="column in usercolumns" ng-show="column.visible">
-                        <!--TODO add the term name instead of the ID -->
-                        <span>{{ item[column.userStats][column.userID] ||  '' }}</span>
+                        <!-- term ID -->
+                        <!--<span>{{ item[column.userStats][column.userID] ||  '' }}</span>-->
+                        <!-- term name -->
+                        <span   ng-show="item[column.userStats][column.userID]"
+                                popover-placement="top"
+                                popover="{{usermap[column.userID].lastname + ' '
+                                        + usermap[column.userID].firstname}}"
+                                popover-trigger="mouseenter">
+                            <span ng-style="{ 'background': terms[item[column.userStats][column.userID]].color }">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;{{ terms[item[column.userStats][column.userID]].name }}
+                        </span>
+
                     </td>
                 </tr>
                 </tbody>
