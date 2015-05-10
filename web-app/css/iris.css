@@ -439,9 +439,3 @@ div[class^="sidebar-toggler"] {
 	z-index: 30;
 }
 
-.floatingHeader {
-	position: fixed;
-	top: 106px;
-	background: #ffffff;
-	visibility: hidden;
-}

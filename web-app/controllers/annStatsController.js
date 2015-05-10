@@ -54,7 +54,7 @@ function($rootScope, $scope, $http, $filter,
 
 			$scope.usercolumns = [];
 
-			// the map of users
+			// the lookup map of user names
 			$scope.usermap = {};
 
 			// loop over the map and construct the dynamic columns
