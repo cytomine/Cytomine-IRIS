@@ -30,12 +30,23 @@
 
 
     <div id="sb-main-content-ann">
-        <ng-include src="'templates/html/refreshPanel.html'"></ng-include>
+        <div ng-show="loading">
+            <p class="text-center">
 
-        <table ng-table="tableParams" class="table table-hover table-bordered">
-            <thead>
+            <p class="text-center">
+                Loading agreement list, this may take a while...
+            </p>
+            <img class="img-responsive center-block" src="images/ajax-loader.gif"/>
+            </p>
+        </div>
+
+        <div ng-hide="loading">
+            <ng-include src="'templates/html/refreshPanel.html'"></ng-include>
+
+            <table ng-table="tableParams" class="table table-hover table-bordered">
+                <thead>
                 <tr>
-                    <th>ID</th>
+                    <!--<th>ID</th>-->
                     <th>Preview</th>
                     <th>Classification</th>
                     <th>Actions</th>
@@ -43,67 +54,68 @@
                         {{column.title}}
                     </th>
                 </tr>
-            </thead>
-            <tbody>
-            <!-- iterate over all annotations -->
-            <tr ng-repeat="item in data">
-                <td>{{item.cmID}}</td>
-                <td><img class="thumbnail image-preview" src="{{ addKeys(item.smallCropURL) }}"/></td>
-                <!--<td data-title="'Name'" sortable="'originalFilename'" filter="{ 'originalFilename': 'text' }">-->
+                </thead>
+                <tbody>
+                <!-- iterate over all annotations -->
+                <tr ng-repeat="item in data">
+                    <!--<td>{{item.cmID}}</td>-->
+                    <td><img class="thumbnail image-preview" src="{{ addKeys(item.smallCropURL) }}"/></td>
+                    <!--<td data-title="'Name'" sortable="'originalFilename'" filter="{ 'originalFilename': 'text' }">-->
                     <!--{{item.originalFilename}}-->
-                        <!--<span ng-show="(today - item.cmCreated) <= image.stillNew"-->
-                              <!--class="label label-success pull-right">New!</span>-->
+                    <!--<span ng-show="(today - item.cmCreated) <= image.stillNew"-->
+                    <!--class="label label-success pull-right">New!</span>-->
 
                     <!--<p class="text-muted">{{item.width | number}} x {{item.height | number}} px</p>-->
-                <!--</td>-->
-                <!--<td data-title="'Progress'" sortable="'settings.progress'" class="text-center"-->
+                    <!--</td>-->
+                    <!--<td data-title="'Progress'" sortable="'settings.progress'" class="text-center"-->
                     <!--filter="{ 'userProgress' : 'userProgressFilter' }">-->
                     <!--<div ng-switch="{{item.settings.numberOfAnnotations}}">-->
-                        <!--<div ng-switch-when="0" class="label label-info">No Annotations!</div>-->
-                        <!--<div ng-switch-default>-->
-                            <!--<div ng-controller="progressCtrl"-->
-                                 <!--ng-include="'templates/html/progressPanel.html'"></div>-->
-                        <!--</div>-->
+                    <!--<div ng-switch-when="0" class="label label-info">No Annotations!</div>-->
+                    <!--<div ng-switch-default>-->
+                    <!--<div ng-controller="progressCtrl"-->
+                    <!--ng-include="'templates/html/progressPanel.html'"></div>-->
                     <!--</div>-->
-                <!--</td>-->
+                    <!--</div>-->
+                    <!--</td>-->
 
-                <td><bars-chart chart-data="myData"></bars-chart></td>
-                <td>
-                    <!--<div class="btn-group" dropdown>
-                        <button type="button" style="width:100px;" class="btn btn-primary btn-sm"
-                                ng-click="startLabeling(item)"
-                                ng-class="{ 'disabled' : item.numberOfAnnotations=='0' || (image.opening.cmID) }">
-								  <span ng-show="image.opening.cmID === item.cmID">
-									   <img src="images/ajax-loader-xs.gif" alt=""/>
-								  </span>
-								  <span ng-show="image.opening.cmID !== item.cmID">
-									 Start Labeling
-								  </span>
-                            </span>
-                        </button>
-                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
-                                ng-class="{ 'disabled': image.opening.cmID }">
-                            <span class="caret"></span>
-                            <span class="sr-only">Toggle Dropdown</span>
-                        </button>
-                        <ul class="dropdown-menu text-left" role="menu">
-                            <li ng-class="{ 'disabled' : item.settings.numberOfAnnotations===0 }"><a
-                                    ng-click="annotationGallery(item)" href>
-                                View Annotation Gallery
-                            </a></li>
-                            <li class="divider"></li>
-                            <li><a target="_blank" href="{{item.goToURL}}">
-                                Explore in Cytomine
-                            </a></li>
-                        </ul>
-                    </div>-->
-                </td>
-                <td ng-repeat="column in usercolumns" ng-show="column.visible">
-                    <!--TODO add the term name instead of the ID -->
-                    <span>{{ item[column.userStats][column.userID] ||  '' }}</span>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                    <td><bars-chart chart-data="myData"></bars-chart></td>
+                    <td>
+                        <!--<div class="btn-group" dropdown>
+                            <button type="button" style="width:100px;" class="btn btn-primary btn-sm"
+                                    ng-click="startLabeling(item)"
+                                    ng-class="{ 'disabled' : item.numberOfAnnotations=='0' || (image.opening.cmID) }">
+                                      <span ng-show="image.opening.cmID === item.cmID">
+                                           <img src="images/ajax-loader-xs.gif" alt=""/>
+                                      </span>
+                                      <span ng-show="image.opening.cmID !== item.cmID">
+                                         Start Labeling
+                                      </span>
+                                </span>
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
+                                    ng-class="{ 'disabled': image.opening.cmID }">
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu text-left" role="menu">
+                                <li ng-class="{ 'disabled' : item.settings.numberOfAnnotations===0 }"><a
+                                        ng-click="annotationGallery(item)" href>
+                                    View Annotation Gallery
+                                </a></li>
+                                <li class="divider"></li>
+                                <li><a target="_blank" href="{{item.goToURL}}">
+                                    Explore in Cytomine
+                                </a></li>
+                            </ul>
+                        </div>-->
+                    </td>
+                    <td ng-repeat="column in usercolumns" ng-show="column.visible">
+                        <!--TODO add the term name instead of the ID -->
+                        <span>{{ item[column.userStats][column.userID] ||  '' }}</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

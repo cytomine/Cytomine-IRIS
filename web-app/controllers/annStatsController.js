@@ -50,12 +50,6 @@ function($rootScope, $scope, $http, $filter,
 				delete $scope.annstats.error;
 			}
 
-			//$scope.dynamiccolumns = [
-			//	{ title: 'Name', field: 'name', visible: true, filter: { 'name': 'text' } },
-			//	{ title: 'Age', field: 'age', visible: true },
-			//	{ title: 'country', field: 'add', visible: true,subfield:'coun' }
-			//];
-
 			$scope.usercolumns = [];
 
 			// construct the dynamic columns
@@ -119,7 +113,7 @@ function($rootScope, $scope, $http, $filter,
 	};
 
 //	fetch the annotations
-	$scope.refreshPage();
+//	$scope.refreshPage();
 
 //	//////////////////////////////////////////
 //	declare additional methods
