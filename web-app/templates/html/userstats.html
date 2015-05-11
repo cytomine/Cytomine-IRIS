@@ -48,12 +48,10 @@
                 <div class="col-md-3">
                     <h4 class="">{{data[0].user.lastname}} {{data[0].user.firstname}}</h4>
                     <p>
-                        User labeled: {{data[0].user.summary.total}}
+                        User labeled: <span class="label label-success">{{data[0].user.summary.total}}</span>
                     </p>
                     <p>
-                        Annotations with labels: {{globalStats.labeled}}
-                    </p>
-                    <p>
+                        Annotations with labels: {{globalStats.labeled}}<br>
                         Annotations in total: {{globalStats.total}}
                     </p>
                     <div class="row">
