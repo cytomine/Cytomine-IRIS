@@ -45,7 +45,7 @@
 
             <!-- make a grid for the user statistics-->
             <div class="row user-stats" ng-repeat="data in dataset track by $index">
-                <div class="col-xs-4">
+                <div class="col-md-3">
                     <h4 class="">{{data[0].user.lastname}} {{data[0].user.firstname}}</h4>
                     <p>
                         User labeled: {{data[0].user.summary.total}}
@@ -60,7 +60,7 @@
                         <!-- TODO visualize the user progress -->
                     </div>
                 </div>
-                <div class="col-xs-8">
+                <div class="col-md-9">
                     <nvd3 id="{{ 'barChartUserStats' + data[0].user.id }}" options="barChartOptions" data="data"></nvd3>
                 </div>
             </div>

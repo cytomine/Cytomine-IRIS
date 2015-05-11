@@ -382,7 +382,8 @@ class StatisticsService {
 //        result['userStats'] = userStatistics
         result['annotations'] = [ 'total': totalAnnotations, 'labeled' : labeledAnnotations ]
         result['users'] = users
-        result['terms'] = flatOntology
+//        result['terms'] = flatOntology
+        result['terms'] = flatOntology.collectEntries { [(it.id): [ 'name': it.name, 'color': it.color ]] }
 
         return result
     }
