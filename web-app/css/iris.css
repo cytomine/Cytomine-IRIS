@@ -443,11 +443,10 @@ div[class^="sidebar-toggler"] {
 	z-index: 30;
 }
 
-/*Preview images for the annoations table*/
+/*Preview images for the annotations table*/
 img.annotation-preview-small {
 	max-width: 50px;
 	max-height: 50px;
-	/*display: block;*/
 	padding: 4px;
 	line-height: 1.42857143;
 	background-color: #fff;
@@ -455,4 +454,11 @@ img.annotation-preview-small {
 	border-radius: 4px;
 	-webkit-transition: all .2s ease-in-out;
 	transition: all .2s ease-in-out;
+}
+
+.user-stats {
+	border-top: 2px solid #bfbfbf;
+	margin: 5px;
+	padding-top: 15px;
+	padding-bottom: 15px;
 }

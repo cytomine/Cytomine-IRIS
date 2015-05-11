@@ -334,6 +334,8 @@ class StatisticsService {
             userStatistics[u.get("id")]["stats"] = utils.deepcopy(empty_labeledAnnotations)
         }
 
+        int labeledAnnotations = 0
+
         // count the annotations per user and term
         for (int i = 0; i < totalAnnotations; i++) {
             Annotation annotation = annotations.get(i)
@@ -343,6 +345,8 @@ class StatisticsService {
             // skip empty elements
             if (userByTermList.isEmpty())
                 continue
+
+            labeledAnnotations++
 
             for (assignment in userByTermList) {
                 // only add the annotation, if it matches one of the query terms
@@ -362,14 +366,21 @@ class StatisticsService {
             }
         }
 
-//        for (u in users) {
-//            println u.get("username") + ": \t\tlabeled " + userStatistics[u.get("id")]["summary"]["total"] + " annotations."
-//            println userStatistics[u.get("id")]["stats"]
-//            println "--------\n"
-//        }
+        // inject the user's statistics
+        for (u in users) {
+            // make a list of json objects for d3 visualization
+            def valueList = userStatistics[u.get("id")]['stats'].collect {
+                k, v ->
+                   return ([ 'label' : k , 'value' : v ])
+            }
+            userStatistics[u.get("id")]['stats'] = valueList
+            u['userStats'] = userStatistics[u.get("id")]['stats']
+            u['summary'] = userStatistics[u.get("id")]["summary"]
+        }
 
         def result = [:]
-        result['userStats'] = userStatistics
+//        result['userStats'] = userStatistics
+        result['annotations'] = [ 'total': totalAnnotations, 'labeled' : labeledAnnotations ]
         result['users'] = users
         result['terms'] = flatOntology
 

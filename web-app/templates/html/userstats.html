@@ -11,7 +11,7 @@
     });
 </script>
 
-<div>
+<div ng-controller="userStatsCtrl">
     <div id="sidebar-user">
         <div style="max-height: 100%; overflow: auto">
             <ng-include src="'templates/html/userTree.html'"></ng-include>
@@ -27,7 +27,43 @@
             <span class="glyphicon glyphicon-chevron-left"></span>
         </div>
     </div>
+
+
     <div id="sb-main-content-user">
-        main content with fancy diagrams and other stuff
+        <div ng-show="loading">
+            <p class="text-center">
+
+            <p class="text-center">
+                Loading user statistics, this may take a while...
+            </p>
+            <img class="img-responsive center-block" src="images/ajax-loader.gif"/>
+            </p>
+        </div>
+
+        <div ng-hide="loading">
+            <ng-include src="'templates/html/refreshPanel.html'"></ng-include>
+
+            <!-- make a grid for the user statistics-->
+            <div class="row user-stats" ng-repeat="data in dataset track by $index">
+                <div class="col-xs-4">
+                    <h4 class="">{{data[0].user.lastname}} {{data[0].user.firstname}}</h4>
+                    <p>
+                        User labeled: {{data[0].user.summary.total}}
+                    </p>
+                    <p>
+                        Annotations with labels: {{globalStats.labeled}}
+                    </p>
+                    <p>
+                        Annotations in total: {{globalStats.total}}
+                    </p>
+                    <div class="row">
+                        <!-- TODO visualize the user progress -->
+                    </div>
+                </div>
+                <div class="col-xs-8">
+                    <nvd3 id="{{ 'barChartUserStats' + data[0].user.id }}" options="barChartOptions" data="data"></nvd3>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

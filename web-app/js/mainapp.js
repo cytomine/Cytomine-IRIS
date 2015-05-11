@@ -6,7 +6,8 @@ iris = angular.module("irisApp", ["ngRoute", "ngResource", "ngTable",
 	"com.2fdevs.videogular",
 	"com.2fdevs.videogular.plugins.controls",
 	"com.2fdevs.videogular.plugins.overlayplay",
-	"com.2fdevs.videogular.plugins.poster"]);
+	"com.2fdevs.videogular.plugins.poster",
+	"nvd3"]);
 
 // include application wide route-specific cheat sheets
 iris.config(["hotkeysProvider", function(hotkeysProvider) {

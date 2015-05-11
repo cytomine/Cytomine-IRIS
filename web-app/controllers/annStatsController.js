@@ -126,7 +126,7 @@ function($rootScope, $scope, $http, $filter,
 	};
 
 //	fetch the annotations
-	$scope.refreshPage();
+	//$scope.refreshPage();
 
 //	//////////////////////////////////////////
 //	declare additional methods
