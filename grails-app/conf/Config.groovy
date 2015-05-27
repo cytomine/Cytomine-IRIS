@@ -174,7 +174,7 @@ grails.mail.default.from="cytomine-iris@leonardo.medunigraz.at"
 grails {
     mail {
         // MUG mail relay settings
-        host = "smtp.medunigraz.at"
+        host = "relay.medunigraz.at"
         port = 25
         props = [
                 "mail.smtp.from":"cytomine-iris@leonardo.medunigraz.at",
