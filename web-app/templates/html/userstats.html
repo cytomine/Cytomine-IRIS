@@ -48,15 +48,26 @@
                 <div class="col-md-3">
                     <h4 class="">{{data[0].user.lastname}} {{data[0].user.firstname}}</h4>
                     <p>
-                        User labeled: <span class="label label-success">{{data[0].user.summary.total}}</span>
+                        <h5>User labeled: <span class="label label-success">{{data[0].user.summary.total}}</span></h5>
                     </p>
                     <p>
                         Annotations with labels: {{globalStats.labeled}}<br>
-                        Annotations in total: {{globalStats.total}}
+                        <progressbar style="margin-bottom:5px;"
+                                     class="progress-striped"
+                                     value="(100*data[0].user.summary.total/globalStats.labeled).toFixed(0)"
+                                     max="100"
+                                     type="{{type((100*data[0].user.summary.total/globalStats.labeled).toFixed(0))}}">
+                            <span style="color:black; white-space:nowrap;">{{(100*data[0].user.summary.total/globalStats.labeled).toFixed(0)}}%</span>
+                        </progressbar>
+                        Annotations in total: {{globalStats.total}}<br>
+                        <progressbar style="margin-bottom:5px;"
+                                     class="progress-striped"
+                                     value="(100*data[0].user.summary.total/globalStats.total).toFixed(0)"
+                                     max="100"
+                                     type="{{type((100*data[0].user.summary.total/globalStats.total).toFixed(0))}}">
+                            <span style="color:black; white-space:nowrap;">{{(100*data[0].user.summary.total/globalStats.total).toFixed(0)}}%</span>
+                        </progressbar>
                     </p>
-                    <div class="row">
-                        <!-- TODO visualize the user progress -->
-                    </div>
                 </div>
                 <div class="col-md-9">
                     <nvd3 id="{{ 'barChartUserStats' + data[0].user.id }}" options="barChartOptions" data="data"></nvd3>
