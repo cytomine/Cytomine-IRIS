@@ -11,7 +11,7 @@
     });
 </script>
 
-<div>
+<div ng-controller="agreementStatsCtrl">
     <div id="sidebar-agreement">
         <div style="max-height: 100%; overflow: auto">
             <ng-include src="'templates/html/userTree.html'"></ng-include>
@@ -28,6 +28,27 @@
         </div>
     </div>
     <div id="sb-main-content-agreement">
-        main content with fancy diagrams and other stuff
+        <div ng-show="loading">
+            <p class="text-center">
+                <p class="text-center">
+                    Loading user agreements, this may take a while...
+                </p>
+                <img class="img-responsive center-block" src="images/ajax-loader.gif"/>
+            </p>
+        </div>
+
+        <div ng-hide="loading">
+            <ng-include src="'templates/html/refreshPanel.html'"></ng-include>
+            <div ng-repeat="id in [1,2,3]" class="row user-stats">
+                <div class="col-md-3">
+
+                </div>
+                <div class="col-md-9" style="overflow:auto;">
+                    <div style="max-height: 300px; overflow:auto;">
+                        <heatmap-chart terms="terms"></heatmap-chart>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
