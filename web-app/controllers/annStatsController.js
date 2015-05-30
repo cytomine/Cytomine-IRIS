@@ -25,7 +25,30 @@ function($rootScope, $scope, $http, $filter,
 	$scope.annstats = {
 			stillNew : (21 * (24 * 60 * 60 * 1000)), // last 21 days
 			error : {},
-			opening : {}
+			opening : {},
+			slider : {
+				options : {
+					start: function (event, ui) {
+						$log.debug('Slider start');
+					},
+					stop: function (event, ui) {
+						$log.debug('Slider stop');
+						if ($scope.annstats.slider.value === $scope.annstats.slider.max){
+							$log.debug("reached maximum agreement")
+						} else if ($scope.annstats.slider.value === $scope.annstats.slider.min){
+							$log.debug("reached minimum agreement, showing all annotations")
+						}
+
+						// TODO filter the table!
+						//$scope.tableParams.filter();
+					}
+				},
+				// initial value of the slider
+				min : 0,
+				max : 9,
+				// current slider value
+				value : 0
+			}
 	};
 
 	// refresh the page

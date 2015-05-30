@@ -1,6 +1,6 @@
 var iris;
 iris = angular.module("irisApp", ["ngRoute", "ngResource", "ngTable",
-	"ui.bootstrap", "cfp.hotkeys", "treeControl",
+	"ui.bootstrap", "ui.slider", "cfp.hotkeys", "treeControl",
 	"ngDraggable", "openlayers-directive", "ngSanitize",
 	"ng-breadcrumbs", "ngCookies",
 	"com.2fdevs.videogular",

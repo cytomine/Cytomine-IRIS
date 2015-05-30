@@ -44,6 +44,19 @@
         <div ng-hide="loading">
             <ng-include src="'templates/html/refreshPanel.html'"></ng-include>
 
+            <div class="text-center">
+                <div class="sliderpanel">
+                    <div tooltip="Drag the slider to filter annotations by agreement level"><b>Agreement Level</b></div>
+
+                    <div ui-slider="annstats.slider.options"
+                         class="slider"
+                         min="{{annstats.slider.min}}"
+                         max="{{annstats.slider.max}}"
+                         ng-model="annstats.slider.value"></div>
+
+                    <div>{{annstats.slider.value}} users ({{(100*annstats.slider.value/annstats.slider.max).toFixed(0)}}%)</div>
+                </div>
+            </div>
             <table ng-table="tableParams" class="table table-hover table-bordered">
                 <thead>
                 <tr>
