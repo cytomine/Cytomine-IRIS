@@ -30,13 +30,13 @@
 /* text */
 .chart > span {
     font: 11px sans-serif;
-    /*color: black;*/
-    /*text-shadow:*/
-        /*0 1px 0 #fff,*/
-        /*0 -1px 0 #fff,*/
-        /*1px 0 0 #fff,*/
-        /*-1px 0 0 #fff;*/
-    /*-webkit-font-smoothing: antialiased;*/
+    color: black;
+    text-shadow:
+        0 1px 0 #fff,
+        0 -1px 0 #fff,
+        1px 0 0 #fff,
+        -1px 0 0 #fff;
+    -webkit-font-smoothing: antialiased;
 }
 
 
