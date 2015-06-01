@@ -45,7 +45,7 @@ function($rootScope, $scope, $http, $filter,
 				},
 				// initial value of the slider
 				min : 0,
-				max : 9,
+				max : 0,
 				// current slider value
 				value : 0
 			}
@@ -56,12 +56,22 @@ function($rootScope, $scope, $http, $filter,
 		// show the loading button
 		$scope.loading = true;
 
+		try {
+			// TODO evil hack to get back the pagination after refreshing table
+			$scope.tableParams.page(-1);
+		} catch (ignored){
+			//$log.debug("Expected error on table parameters.");
+		}
+
 		statisticsService.fetchAnnotationAgreementList($scope.projectID, null, null, null, function(data) {
 			// success
 			$scope.annstats.annotations = data.annotationStats; // this should be a list of annotations
 			$scope.terms = data.terms; // the term map
 			$scope.users = data.users; // the sorted users list
-			$scope.annstats.total = data.length;
+			$scope.annstats.total = data.annotationStats.length;
+
+			// set the slider max value
+			$scope.annstats.slider.max = data.users.length;
 
 			if (data.length < 1){
 				$scope.annstats.error.empty= {
@@ -135,7 +145,7 @@ function($rootScope, $scope, $http, $filter,
 						filterDelay : 0
 					});
 
-			$log.info("image refresh successful");
+			$log.info("annotations refresh successful");
 			// hide or show the completed images
 			$scope.loading = false;
 		}, function(data, status) {

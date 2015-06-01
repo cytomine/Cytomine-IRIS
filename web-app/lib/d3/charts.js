@@ -3,85 +3,6 @@
  */
 var iris = angular.module("irisApp");
 
-(function() {
-
-    d3.bin = function() {
-        var width = 1,
-            height = 1,
-            side,
-            dx,
-            dy,
-            x = d3_binX,
-            y = d3_binY;
-
-        function bin(points) {
-            var binsById = {};
-
-            points.forEach(function(point, i) {
-                var py = y.call(bin, point, i) / dy;
-                var pj = Math.trunc(py);
-                var px = x.call(bin, point, i) / dx;
-                var pi = Math.trunc(px);
-
-                var id = pi + "-" + pj;
-                var bin = binsById[id];
-                if (bin) bin.push(point); else {
-                    bin = binsById[id] = [point];
-                    bin.i = pi;
-                    bin.j = pj;
-                    bin.x = pi * dx;
-                    bin.y = pj * dy;
-                }
-            });
-            return d3.values(binsById);
-        }
-
-        function square(side) {
-            var dx = side,
-                dy = side;
-            return [dx, dy];
-        }
-
-        bin.x = function(_) {
-            if (!arguments.length) return x;
-            x = _;
-            return bin;
-        };
-
-        bin.y = function(_) {
-            if (!arguments.length) return y;
-            y = _;
-            return bin;
-        };
-
-        bin.square = function(sidel) {
-            if (arguments.length < 1) side = sidel;
-            return "m" + square(sidel).join("l") + "z";
-        };
-
-
-        bin.size = function(_) {
-            if (!arguments.length) return [width, height];
-            width = +_[0], height = +_[1];
-            return bin;
-        };
-
-        bin.side = function(_) {
-            if (!arguments.length) return side;
-            side = +_;
-            dx = side;
-            dy = side;
-            return bin;
-        };
-
-        return bin.side(1);
-    };
-
-    var d3_binX = function(d) { return d[0]; },
-        d3_binY = function(d) { return d[1]; };
-
-})();
-
 /**
  * Bar chart (horizontal), displaying value as percentage.
  */
@@ -117,6 +38,10 @@ iris.directive('barsChart', ["$compile", function ($compile) {
             var data = scope.data;
             var terms = scope.terms;
 
+            var tooltip = d3.select("body").append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
+
             // hint: attrs refers to the HTML tag attributes
             //in D3, any selection[0] contains the group
             //selection[0][0] is the DOM node
@@ -124,25 +49,54 @@ iris.directive('barsChart', ["$compile", function ($compile) {
             //to our original directive markup bars-chart
             //we add a div with out chart styling and bind each
             //data entry to the chart
-            chart.append("div").attr("class", "chart")
-                .selectAll('div')
-                .data(data).enter().append("div")
-                //.attr("popover", function(item){
-                //    return terms[item.termID].name;
-                //}).attr("popover-trigger", function(item){
-                //    return "mouseenter";
-                //})
+            var enterSelection = chart.append("div") // make a div as parent for all data
+                .attr("class", "chart") // add the chart attribute to the parent
+                .selectAll('div') // make an empty selection (children)
+                .data(data).enter(); // bind all the data to the div (children)
+
+            var chartDivs = enterSelection.append("div"); // for each child append a div
+
+            chartDivs.attr("id", function(item){
+                    return item.termID;
+                })
+                .on("mouseover", function(item){
+                    tooltip.transition()
+                        .duration(100)
+                        .style("opacity", .95);
+                    tooltip.html(
+                            terms[item.termID].name
+                            + ", assigned by " + item.nUsers + " of " + item.total + " users"
+                        )
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
+                })
+                .on("mouseout", function(item){
+                    tooltip.transition()
+                        .duration(100)
+                        .style("opacity", 0);
+                })
                 .transition().ease("elastic")
                 .style("width", function(item) {
                     return item.ratio*100 + "%";
-                }).style("background", function(item){
+                })
+                .style("background", function(item){
                     return terms[item.termID].color;
-                }).text(function(item) {
-                    var text = terms[item.termID].name;
-                    //return (text.length > 10?(text.substring(0,10)+"..."):text) +
-                    //    " " + item.ratio*100 + "% (" + item.nUsers + ")" ;
-                    return item.ratio*100 + "%";
                 });
+
+            // add another span showing the label info
+            var spans2 = enterSelection.insert("span");
+            spans2
+                .text(function(item) {
+                var text = terms[item.termID].name;
+                return (text.length > 15?(text.substring(0,15)+"..."):text);
+            });
+
+            var spans3 = spans2.append("span");
+            spans3.style("float", "right");
+            spans3.style("margin-top","2px");
+            spans3.text(function(item){
+                return item.ratio*100 + "% (" + item.nUsers + ")"
+            });
         }
     };
 }]);
