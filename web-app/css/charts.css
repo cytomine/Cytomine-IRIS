@@ -59,11 +59,9 @@ text.axis-worktime {
     fill: #000;
 }
 
-div.tooltip {
+div.agreement-tooltip {
     position: absolute;
     text-align: center;
-    /*width: 60px;*/
-    /*height: 28px;*/
     padding: 2px;
     font: 14px sans-serif;
     background: lightsteelblue;

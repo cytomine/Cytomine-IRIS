@@ -39,7 +39,7 @@ iris.directive('barsChart', ["$compile", function ($compile) {
             var terms = scope.terms;
 
             var tooltip = d3.select("body").append("div")
-                .attr("class", "tooltip")
+                .attr("class", "agreement-tooltip")
                 .style("opacity", 0);
 
             // hint: attrs refers to the HTML tag attributes
@@ -59,7 +59,7 @@ iris.directive('barsChart', ["$compile", function ($compile) {
             chartDivs.attr("id", function(item){
                     return item.termID;
                 })
-                .on("mouseover", function(item){
+                .on("mousemove", function(item){
                     tooltip.transition()
                         .duration(100)
                         .style("opacity", .95);
@@ -86,6 +86,22 @@ iris.directive('barsChart', ["$compile", function ($compile) {
             // add another span showing the label info
             var spans2 = enterSelection.insert("span");
             spans2
+                .on("mousemove", function(item){
+                    tooltip.transition()
+                        .duration(100)
+                        .style("opacity", .95);
+                    tooltip.html(
+                        terms[item.termID].name
+                        + ", assigned by " + item.nUsers + " of " + item.total + " users"
+                    )
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
+                })
+                .on("mouseout", function(item){
+                    tooltip.transition()
+                        .duration(100)
+                        .style("opacity", 0);
+                })
                 .text(function(item) {
                 var text = terms[item.termID].name;
                 return (text.length > 15?(text.substring(0,15)+"..."):text);
@@ -94,6 +110,22 @@ iris.directive('barsChart', ["$compile", function ($compile) {
             var spans3 = spans2.append("span");
             spans3.style("float", "right");
             spans3.style("margin-top","2px");
+            spans3.on("mousemove", function(item){
+                tooltip.transition()
+                    .duration(100)
+                    .style("opacity", .95);
+                tooltip.html(
+                    terms[item.termID].name
+                    + ", assigned by " + item.nUsers + " of " + item.total + " users"
+                )
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+            })
+                .on("mouseout", function(item){
+                    tooltip.transition()
+                        .duration(100)
+                        .style("opacity", 0);
+                });
             spans3.text(function(item){
                 return item.ratio*100 + "% (" + item.nUsers + ")"
             });
