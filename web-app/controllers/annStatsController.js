@@ -57,10 +57,10 @@ function($rootScope, $scope, $http, $filter,
 		$scope.loading = true;
 
 		try {
-			// TODO evil hack to get back the pagination after refreshing table
+			// -> evil hack to get back the pagination after refreshing table! <-
 			$scope.tableParams.page(-1);
 		} catch (ignored){
-			//$log.debug("Expected error on table parameters.");
+			//$log.debug("Expected (nullpointer) error on table parameters.");
 		}
 
 		statisticsService.fetchAnnotationAgreementList($scope.projectID, null, null, null, function(data) {
@@ -71,7 +71,7 @@ function($rootScope, $scope, $http, $filter,
 			$scope.annstats.total = data.annotationStats.length;
 
 			// set the slider max value
-			$scope.annstats.slider.max = data.users.length;
+			$scope.annstats.slider.max = data.nUniqueUsersOverall;
 
 			if (data.length < 1){
 				$scope.annstats.error.empty= {

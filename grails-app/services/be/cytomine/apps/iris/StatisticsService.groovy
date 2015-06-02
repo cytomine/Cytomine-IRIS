@@ -187,6 +187,9 @@ class StatisticsService {
             termAgreementStats[flatOntology[i]['id']] = [0] * nProjectUsers
         }
 
+        // the total number of users that assigned a term anywhere in this query
+        def uniqueUsersOverall = [:]
+
         // run through all annotations
         for (int i = 0; i < totalAnnotations; i++) {
             Annotation annotation = annotations.get(i)
@@ -209,20 +212,20 @@ class StatisticsService {
             int nAssignments = userByTermList.size()
 
             // record the maximum number of users that assigned anything to this term
-
-            def assignedUsers = [:]
+            def uniqueUsersPerTerm = [:]
             for (assignment in userByTermList) {
                 // count all unique users that assigned something
                 // resolve the assigned terms for each user
                 def userIDList = assignment.get("user")
                 for (userID in userIDList) {
                     // simply overwrite the map entry for performance reasons
-                    assignedUsers[userID] = userID
+                    uniqueUsersPerTerm[userID] = userID
+                    uniqueUsersOverall[userID] = userID
                 }
             }
 
             // all users that assigned any term
-            int maxUsers = assignedUsers.size()
+            int maxUsers = uniqueUsersPerTerm.size()
 
             // resolve and collect assignments for each user
             for (assignment in userByTermList) {
@@ -258,11 +261,9 @@ class StatisticsService {
 
         def result = [:]
         result['annotationStats'] = annStats
-//        result['terms'] = flatOntology
         result['terms'] = ontologyMap
         result['users'] = utils.sortUsersAsc(projectUsers.list)
-//        result['users'] = projectUsers.list.collectEntries {
-//            [(it.id): [ 'username':it.username, 'lastname': it.lastname, 'firstname': it.firstname ]] }
+        result['nUniqueUsersOverall'] = uniqueUsersOverall.size() // the maximum number of users that assigned a term
 
         return result
     }
