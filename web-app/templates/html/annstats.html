@@ -44,6 +44,7 @@
         <div ng-hide="loading">
             <ng-include src="'templates/html/refreshPanel.html'"></ng-include>
 
+            <div ng-hide="annstats.startup">
             <div class="text-center">
                 <div class="sliderpanel">
                     <div tooltip="Drag the slider to filter annotations by agreement level"><b>Agreement Level</b></div>
@@ -55,6 +56,8 @@
                          ng-model="annstats.slider.value"></div>
 
                     <div>{{annstats.slider.value}} users ({{(100*annstats.slider.value/annstats.slider.max).toFixed(0)}}%)</div>
+                    <span class="pull-right">Showing annotation {{ annstats.pageItemMin+1 }} to {{ annstats.pageItemMax }} (<strong>{{
+                        annstats.total }}</strong> in total)</span>
                 </div>
             </div>
             <table ng-table="tableParams" class="table table-hover table-bordered">
@@ -132,6 +135,7 @@
                 </tr>
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 </div>

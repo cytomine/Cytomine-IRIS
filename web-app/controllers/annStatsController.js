@@ -26,6 +26,7 @@ function($rootScope, $scope, $http, $filter,
 			stillNew : (21 * (24 * 60 * 60 * 1000)), // last 21 days
 			error : {},
 			opening : {},
+			startup: true,
 			slider : {
 				options : {
 					start: function (event, ui) {
@@ -56,6 +57,7 @@ function($rootScope, $scope, $http, $filter,
 	$scope.refreshPage = function(){
 		// show the loading button
 		$scope.loading = true;
+		$scope.annstats.startup = false;
 
 		try {
 			// -> evil hack to get back the pagination after refreshing table! <-
