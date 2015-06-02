@@ -16,6 +16,7 @@ class UrlMappings {
 		"/iris"(view: "/iris")
 		"500"(view:"/error")
 
+		/* Administrator Interface */
 		"/admin"(view:"admin/index")
 
 		/*

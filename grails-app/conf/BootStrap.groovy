@@ -1,3 +1,18 @@
+
+/* Copyright the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import be.cytomine.apps.iris.auth.Role
 import be.cytomine.apps.iris.auth.User
 import be.cytomine.apps.iris.auth.UserRole
@@ -25,28 +40,36 @@ class BootStrap {
 		springContext.getBean("irisObjectMarshallers").register()
 
 		// create users for access control
-		def userRole = Role.findByAuthority('ROLE_USER') ?: new Role(authority: 'ROLE_USER').save(flush: true, failOnError: true)
-		def adminRole = Role.findByAuthority('ROLE_ADMIN') ?: new Role(authority: 'ROLE_ADMIN').save(flush: true, failOnError: true)
-		def superAdminRole = Role.findByAuthority('ROLE_SUPER_ADMIN') ?: new Role(authority: 'ROLE_SUPER_ADMIN').save(flush: true, failOnError: true)
+		def userRole = Role.findByAuthority('ROLE_USER') ?:
+				new Role(authority: 'ROLE_USER').save(flush: true, failOnError: true)
+		def systemRole = Role.findByAuthority('ROLE_SYSTEM') ?:
+				new Role(authority: 'ROLE_SYSTEM').save(flush: true, failOnError: true)
 
+		// IRIS server-specific roles
+		def IRISAdminRole = Role.findByAuthority('ROLE_IRIS_ADMIN') ?:
+				new Role(authority: 'ROLE_IRIS_ADMIN').save(flush: true, failOnError: true)
+
+		// IRIS application/project-specific roles
+		def IRISProjectAdminRole = Role.findByAuthority('ROLE_IRIS_PROJECT_ADMIN') ?:
+				new Role(authority: 'ROLE_IRIS_PROJECT_ADMIN').save(flush: true, failOnError: true)
+		def IRISProjectCoordRole = Role.findByAuthority('ROLE_IRIS_PROJECT_COORDINATOR') ?:
+				new Role(authority: 'ROLE_IRIS_PROJECT_COORDINATOR').save(flush: true, failOnError: true)
+
+		/**
+		 * The admin (root) user of the Cytomine IRIS instance.
+		 */
 		def adminUser = User.findByUsername('admin') ?: new User(
 				username: 'admin',
 				password: 'admin',
 				enabled: true).save(flush: true, failOnError: true)
 
-		if (!adminUser.authorities.contains(adminRole)) {
-			UserRole.create adminUser, adminRole, true
+		if (!adminUser.authorities.contains(IRISAdminRole)) {
+			UserRole.create adminUser, IRISAdminRole, true
 		}
 
-		def superAdminUser = User.findByUsername('superadmin') ?: new User(
-				username: 'superadmin',
-				password: 'superadmin',
-				enabled: true).save(flush: true, failOnError: true)
-
-		if (!superAdminUser.authorities.contains(superAdminRole)) {
-			UserRole.create superAdminUser, superAdminRole, true
-		}
-
+		/**
+		 * A simple test user.
+		 */
 		def testUser = User.findByUsername('testuser') ?: new User(
 				username: 'testuser',
 				password: 'testuser',
@@ -56,13 +79,17 @@ class BootStrap {
 			UserRole.create testUser, userRole, true
 		}
 
+		/**
+		 * System user for activity logging, notification services and so forth.
+ 		 */
+
 		def system = User.findByUsername('system') ?: new User(
 				username: 'system',
 				password: '>w%K6Cx/%D>>.G=~96)[Q"YG^{pR?W',
 				enabled: true).save(flush: true, failOnError: true)
 
-		if (!system.authorities.contains(superAdminRole)) {
-			UserRole.create system, superAdminRole, true
+		if (!system.authorities.contains(systemRole)) {
+			UserRole.create system, systemRole, true
 		}
 
 		activityService.log("Done running bootstrap.groovy.")
