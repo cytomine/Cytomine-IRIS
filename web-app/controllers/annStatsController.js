@@ -126,6 +126,25 @@ function($rootScope, $scope, $http, $filter,
 							// use build-in angular filter
 							var newData = $scope.annstats.annotations;
 
+							var toRemove = [];
+
+							// TODO search for minimum agreement
+							//for (var i = 0; i < newData.length; i++){
+							//	var elmnt = newData[i];
+							//	for (var j = 0; j < elmnt.annotationStats.length; j++){
+							//		var agrmntEntry = elmnt.annotationStats[j];
+							//		// search for an agreement level
+							//		if (agrmntEntry.nUsers < $scope.annstats.slider.value){
+							//			// collect the agreement entry to be removed
+							//			toRemove.push(elmnt);
+							//			continue;
+							//		}
+							//	}
+							//}
+
+							// TODO remove all elements below a certain agreement
+
+
 							// use build-in angular filter
 							newData = params.filter() ? $filter('filter')(newData,
 									params.filter()) : newData;

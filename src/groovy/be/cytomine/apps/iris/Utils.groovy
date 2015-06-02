@@ -299,4 +299,22 @@ class Utils {
         }
         return users
     }
+
+    /**
+     * Sort an array of agreement statistics.
+     * Primarily: ratio descending, secondarily: termName ascending
+     * @param agreements list of agreement statistics
+     * @return sorted list
+     */
+    List sortAgreementsDesc(def agreements){
+
+        agreements.sort { x,y ->
+            if(y.get("ratio") == x.get("ratio")){
+                x.get("termName") <=> y.get("termName")
+            }else{
+                y.get("ratio") <=> x.get("ratio")
+            }
+        }
+
+    }
 }

@@ -166,6 +166,7 @@ class StatisticsService {
 
         Ontology ontology = cytomine.getOntology(cmProject.getLong("ontology"))
         List<JSONObject> flatOntology = utils.flattenOntology(ontology)
+        def ontologyMap = flatOntology.collectEntries { [(it.id): [ 'name': it.name, 'color': it.color ]] }
 
         // list of annotation statistics
         def annStats = []
@@ -204,10 +205,26 @@ class StatisticsService {
             irisAnnJSON['termAgreementStats'] = utils.deepcopy(termAgreementStats)
             irisAnnJSON['assignmentRanking'] = []
 
-            // total number of assignments
+            // total number of terms assigned to this annotation
             int nAssignments = userByTermList.size()
 
-            // collect assignments for each user
+            // record the maximum number of users that assigned anything to this term
+
+            def assignedUsers = [:]
+            for (assignment in userByTermList) {
+                // count all unique users that assigned something
+                // resolve the assigned terms for each user
+                def userIDList = assignment.get("user")
+                for (userID in userIDList) {
+                    // simply overwrite the map entry for performance reasons
+                    assignedUsers[userID] = userID
+                }
+            }
+
+            // all users that assigned any term
+            int maxUsers = assignedUsers.size()
+
+            // resolve and collect assignments for each user
             for (assignment in userByTermList) {
 
                 Long termID = assignment.get("term")
@@ -223,12 +240,17 @@ class StatisticsService {
                 irisAnnJSON['termAgreementStats'][termID][userIDList.size()] = nAgreeingUsers
 
                 // compute a compressed version of the agreements on each term
-                // compute the ration as:
-                //      all users that agree on this term divided by all assignments of this annotation
-                double agreementRatio = nAgreeingUsers*1.0 / nAssignments
+                // compute the ratio as:
+                //      all users that agree on this term divided by all users that assigned anything
+                double agreementRatio = Math.min(userIDList.size()*1.0 / maxUsers, 1.0)
                 irisAnnJSON['assignmentRanking'].add([ 'termID' : termID, 'ratio' : agreementRatio,
-                                                       'total' : nAssignments , 'nUsers' : nAgreeingUsers ])
+                                                       'totalAssignments' : nAssignments , 'nUsers' : userIDList.size(),
+                                                        'maxUsers' : maxUsers, 'nAgreeingUsers' : nAgreeingUsers,
+                                                        'termName' : ontologyMap[termID].name ])
             }
+
+            // sort 'irisAnnJSON['assignmentRanking']' field desc by ratio and then by term name
+            irisAnnJSON['assignmentRanking'] = utils.sortAgreementsDesc(irisAnnJSON['assignmentRanking'])
 
             // add the annotation to the list
             annStats.add(irisAnnJSON)
@@ -237,11 +259,10 @@ class StatisticsService {
         def result = [:]
         result['annotationStats'] = annStats
 //        result['terms'] = flatOntology
-        result['terms'] = flatOntology.collectEntries { [(it.id): [ 'name': it.name, 'color': it.color ]] }
+        result['terms'] = ontologyMap
         result['users'] = utils.sortUsersAsc(projectUsers.list)
 //        result['users'] = projectUsers.list.collectEntries {
 //            [(it.id): [ 'username':it.username, 'lastname': it.lastname, 'firstname': it.firstname ]] }
-
 
         return result
     }

@@ -38,6 +38,26 @@ iris.directive('barsChart', ["$compile", function ($compile) {
             var data = scope.data;
             var terms = scope.terms;
 
+
+            var mouseMoveFn = function(item){
+                tooltip.transition()
+                    .duration(100)
+                    .style("opacity", .95);
+                tooltip.html(
+                    terms[item.termID].name
+                    + ", assigned by " + item.nUsers + " of " + item.maxUsers + " users"
+                )
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+                };
+
+            var mouseOutFn = function(item){
+                tooltip.transition()
+                    .duration(100)
+                    .style("opacity", 0);
+            };
+
+
             var tooltip = d3.select("body").append("div")
                 .attr("class", "agreement-tooltip")
                 .style("opacity", 0);
@@ -59,22 +79,8 @@ iris.directive('barsChart', ["$compile", function ($compile) {
             chartDivs.attr("id", function(item){
                     return item.termID;
                 })
-                .on("mousemove", function(item){
-                    tooltip.transition()
-                        .duration(100)
-                        .style("opacity", .95);
-                    tooltip.html(
-                            terms[item.termID].name
-                            + ", assigned by " + item.nUsers + " of " + item.total + " users"
-                        )
-                        .style("left", (d3.event.pageX) + "px")
-                        .style("top", (d3.event.pageY - 28) + "px");
-                })
-                .on("mouseout", function(item){
-                    tooltip.transition()
-                        .duration(100)
-                        .style("opacity", 0);
-                })
+                .on("mousemove", function(item){mouseMoveFn(item)})
+                .on("mouseout", function(item){mouseOutFn(item)})
                 .transition().ease("elastic")
                 .style("width", function(item) {
                     return item.ratio*100 + "%";
@@ -86,48 +92,21 @@ iris.directive('barsChart', ["$compile", function ($compile) {
             // add another span showing the label info
             var spans2 = enterSelection.insert("span");
             spans2
-                .on("mousemove", function(item){
-                    tooltip.transition()
-                        .duration(100)
-                        .style("opacity", .95);
-                    tooltip.html(
-                        terms[item.termID].name
-                        + ", assigned by " + item.nUsers + " of " + item.total + " users"
-                    )
-                        .style("left", (d3.event.pageX) + "px")
-                        .style("top", (d3.event.pageY - 28) + "px");
-                })
-                .on("mouseout", function(item){
-                    tooltip.transition()
-                        .duration(100)
-                        .style("opacity", 0);
-                })
+                .on("mousemove", function(item){mouseMoveFn(item)})
+                .on("mouseout", function(item){mouseOutFn(item)})
                 .text(function(item) {
                 var text = terms[item.termID].name;
-                return (text.length > 15?(text.substring(0,15)+"..."):text);
+                return (text.length > 20?(text.substring(0,20)+"..."):text);
             });
 
             var spans3 = spans2.append("span");
             spans3.style("float", "right");
             spans3.style("margin-top","2px");
-            spans3.on("mousemove", function(item){
-                tooltip.transition()
-                    .duration(100)
-                    .style("opacity", .95);
-                tooltip.html(
-                    terms[item.termID].name
-                    + ", assigned by " + item.nUsers + " of " + item.total + " users"
-                )
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY - 28) + "px");
-            })
-                .on("mouseout", function(item){
-                    tooltip.transition()
-                        .duration(100)
-                        .style("opacity", 0);
-                });
+            spans3
+                .on("mousemove", function(item){mouseMoveFn(item)})
+                .on("mouseout", function(item){mouseOutFn(item)});
             spans3.text(function(item){
-                return item.ratio*100 + "% (" + item.nUsers + ")"
+                return (item.ratio*100).toFixed(0) + "% (" + item.nUsers + ")"
             });
         }
     };
