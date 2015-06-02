@@ -1,4 +1,4 @@
-<div id="termTree-UI">
+<div ng-controller="termTreeCtrl" id="termTree-UI">
 	<div ng-show="tree.loading">
    		<p class="text-center">
    			Loading Ontology Terms...
@@ -7,9 +7,9 @@
 	</div>
 	<div ng-hide="tree.loading">
 		<h5>Ontology: {{treeData.name}}&nbsp;<a href="" ng-click="showTree=!showTree"><span class="label label-default" ng-show="showTree" tooltip-placement="right" tooltip="hide the term tree">hide</span><span class="label label-default" ng-show="!showTree" tooltip-placement="right" tooltip="show the term tree">show</span></a></h5>
-		<span class="leaf-like-container">
+		<span id="{{ 'dropTarget:' + node.id }}" class="leaf-like-container" ng-drop="true" ng-drop-success="onDropComplete($data,$event,-99)">
 			<span id="{{ parentid + ':treeTermLabel:-99' }}" class="label label-warning leaf-style" href="" ng-click="selectOrUnselectTerm($event)"><input id="{{ parentid + ':chbxTerm:-99' }}" type="checkbox">&nbsp;No term assigned</span>
-		</span>
+		</span> 
 		<hr style="margin:5px;">
 		<!-- the ontology tree -->
 		<div ng-show="showTree"
@@ -21,8 +21,10 @@
 						<span id="{{ parentid + ':treeTermLabel:' + node.id }}">{{ node.name }}</span>
 					</span>
 					<span ng-switch-when="false">
-						<span id="{{ parentid + ':treeTermColorPanel:' + node.id }}" style="background:{{node.color}}" class="colorbox">&nbsp;&nbsp;&nbsp;&nbsp;</span><input id="{{ parentid + ':chbxTerm:' + node.id }}" class="colorbox-checkbox" type="checkbox">
-						<span id="{{ parentid + ':treeTermLabel:' + node.id }}">{{ node.name }}</span>
+						<span id="{{ 'dropTarget:' + node.id }}" ng-drop="true" ng-drop-success="onDropComplete($data,$event,node.id)">
+							<span id="{{ parentid + ':treeTermColorPanel:' + node.id }}" style="background:{{node.color}}" class="colorbox">&nbsp;&nbsp;&nbsp;&nbsp;</span><input id="{{ parentid + ':chbxTerm:' + node.id }}" class="colorbox-checkbox" type="checkbox">
+							<span id="{{ parentid + ':treeTermLabel:' + node.id }}">{{ node.name }}</span>
+						</span>
 					</span>
 				</span>
 			</span>

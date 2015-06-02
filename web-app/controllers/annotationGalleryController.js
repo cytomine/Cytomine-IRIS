@@ -246,7 +246,7 @@ iris.controller("annotationGalleryCtrl", [
     	};
     	if (selectedTerms.length === 0){
     		$scope.warn.noLabel = {
-    				message : "There is no label term selected, please choose at least one from the ontology on the left side."
+    				message : "There is no label/term selected, please choose at least one from the ontology on the left side."
     		};
     		$log.info("No terms selected, won't fetch any annotations, but show warning.");
     	} else {

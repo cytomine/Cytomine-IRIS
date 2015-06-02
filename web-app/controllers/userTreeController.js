@@ -1,8 +1,24 @@
 var iris = angular.module("irisApp");
 
 iris.controller("userTreeCtrl", [
-"$rootScope", "$scope", "$routeParams", "$timeout", "$log", "sessionService", "imageService", "projectService", "sharedService",
-                                  function($rootScope, $scope, $routeParams, $timeout, $log, sessionService, imageService, projectService, sharedService){
+	"$rootScope",
+	"$scope",
+	"$routeParams",
+	"$timeout",
+	"$log",
+	"sessionService",
+	"imageService",
+	"projectService",
+	"sharedService",
+         function($rootScope,
+				  $scope,
+				  $routeParams,
+				  $timeout,
+				  $log,
+				  sessionService,
+				  imageService,
+				  projectService,
+				  sharedService){
 	
 	$log.debug("userTreeCtrl");
 
@@ -84,8 +100,8 @@ iris.controller("userTreeCtrl", [
         	user.checked = false;
         }
 
-        // notify other instances about the change
-        $rootScope.$broadcast("userFilterChange", { id : checkedUsers, action : 'selectedUsers' });
+        // notify parent instances about the change
+		$scope.$emit("userFilterChange", { id : checkedUsers, action : 'selectedUsers' });
         
         $log.debug("Active users: {" + checkedUsers.toString() + "}.");
     };
@@ -102,7 +118,7 @@ iris.controller("userTreeCtrl", [
     		checkedUsers.push($scope.treeData[i].id)
     	}
     	
-    	$rootScope.$broadcast("userFilterChange", { id : checkedUsers, action : 'selectedUsers' });
+		$scope.$emit("userFilterChange", { id : checkedUsers, action : 'selectedUsers' });
     	
     	$log.debug("Active users: {" + checkedUsers.toString() + "}.");
     	$log.debug("checked all users: " + checkedUsers.length);
@@ -115,8 +131,9 @@ iris.controller("userTreeCtrl", [
     		$scope.treeData[i].checked = false;
     	}
 
-    	$rootScope.$broadcast("userFilterChange", { id : checkedUsers, action : 'selectedUsers' });
-    	$log.debug("Active users: {" + checkedUsers.toString() + "}.");
+		$scope.$emit("userFilterChange", { id : checkedUsers, action : 'selectedUsers' });
+
+		$log.debug("Active users: {" + checkedUsers.toString() + "}.");
     	$log.debug("UNchecked all users.")
     };
     

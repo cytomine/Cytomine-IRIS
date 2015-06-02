@@ -6,9 +6,9 @@
 					<h4 class="panel-title">Label and Image Filters</h4>
 				</div>
 				<div class="panel-body">
-					<ng-include src="'templates/html/termTree.html'"></ng-include>
+					<dnd-term-tree ng-controller="termTreeCtrl" parentid="gallery"></dnd-term-tree>
 					<hr>
-					<ng-include src="'templates/html/imageTree.html'"></ng-include>
+					<image-tree ng-controller="imageTreeCtrl"></image-tree>
 				</div>
 				<div class="panel-footer">
 					<!--<ng-include src="'templates/html/refreshPanel.html'"></ng-include>-->
@@ -32,7 +32,7 @@
 		   		</p>
 		  		<img class="img-responsive center-block" src="images/ajax-loader.gif" alt=""/>
 			</div>
-		
+
 			 <div ng-hide="error || loading" class="row" ng-repeat="group in annotation.groups track by $index">
 			 	<div id="{{ 'panel-group' + group.termID }}" class="panel panel-default">
 					<div id="{{ 'panel-heading' + group.termID }}" class="panel-heading clearfix" ng-drop="true" ng-drop-success="onDropComplete($data,$event,group.termID)">

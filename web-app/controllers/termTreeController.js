@@ -19,6 +19,7 @@ iris.controller("termTreeCtrl",
 	var initTree = function(){
 		$scope.expandAll();
 		$scope.showTree = true;
+		$scope.uncheckAllTerms();
 	};
 
 	// get the ontology and initialize the tree
@@ -52,16 +53,19 @@ iris.controller("termTreeCtrl",
             targ=evt.target;
         } else if (evt.srcElement) {
             targ=evt.srcElement;
-        } 
-       
+        }
+
+		// split up the identifier
+		var identifier = targ.id.split(":");
+
         // get the ID of the clicked term
-        var id = Number(targ.id.split(":")[1]);
-        var chbxID = "chbxTerm:"+id;
+        var id = Number(identifier[2]);
+        var chbxID = identifier[0]+":chbxTerm:"+id;
                
         // if the term is checked, it is in the checked list
         var idx = checkedTerms.indexOf(id);
         var chbx = document.getElementById(chbxID);
-        
+
         if (isNaN(id)){
         	$log.debug("Nothing has been selected.");
         }
@@ -70,9 +74,10 @@ iris.controller("termTreeCtrl",
         	checkedTerms.push(id);
         	// select the checkbox
         	chbx.checked = true;
-        	
+
         	// notify other instances about the change
-        	$rootScope.$broadcast("termFilterChange", { id : id, name : $scope.termList[id], action : 'add' });
+        	//$rootScope.$broadcast("termFilterChange", { id : id, name : $scope.termList[id], action : 'add' });
+			$scope.$emit("termFilterChange", { id : id, name : $scope.termList[id], action : 'add' });
         }else {
         	// remove the term from the array
         	checkedTerms.splice(idx,1);
@@ -80,9 +85,10 @@ iris.controller("termTreeCtrl",
         	chbx.checked = false;
         	
         	// notify other instances about the change
-        	$rootScope.$broadcast("termFilterChange", { id : id, name : $scope.termList[id], action : 'remove' });
+        	//$rootScope.$broadcast("termFilterChange", { id : id, name : $scope.termList[id], action : 'remove' });
+            $scope.$emit("termFilterChange", { id : id, name : $scope.termList[id], action : 'remove' });
         }
-        
+
         $log.debug("Active Terms: {" + checkedTerms.toString() + "}.");
     };
     
@@ -144,14 +150,15 @@ iris.controller("termTreeCtrl",
 	// collapse all nodes, but do not deselect the check boxes
 	$scope.collapseAll = function(){
 		 $scope.expandedNodes = [];
-	}
+	};
 	
     $scope.checkAllTerms = function(){
     	checkedTerms = [-99];
     	searchForSelectableNode($scope.treeData, checkedTerms);
     	selectCheckboxes(checkedTerms, true); 
     	
-    	$rootScope.$broadcast("termFilterChange", { id : checkedTerms, action : 'addAll' });
+    	//$rootScope.$broadcast("termFilterChange", { id : checkedTerms, action : 'addAll' });
+		$scope.$emit("termFilterChange", { id : checkedTerms, action : 'addAll' });
     	
     	$log.debug("Active Terms: {" + checkedTerms.toString() + "}.");
     	//$log.debug("checked all terms: " + checkedTerms.length);
@@ -163,7 +170,8 @@ iris.controller("termTreeCtrl",
     	selectCheckboxes(checkedTerms, false);
     	checkedTerms = [];
     	
-    	$rootScope.$broadcast("termFilterChange", { id : checkedTerms, action : 'removeAll' });
+    	//$rootScope.$broadcast("termFilterChange", { id : checkedTerms, action : 'removeAll' });
+		$scope.$emit("termFilterChange", { id : checkedTerms, action : 'removeAll' });
 
     	$log.debug("Active Terms: {" + checkedTerms.toString() + "}.");
     	//$log.debug("UNchecked all terms.")
@@ -173,7 +181,8 @@ iris.controller("termTreeCtrl",
     var selectCheckboxes = function(checkedTerms, select){
     	for (var i = 0; i < checkedTerms.length; i++){
     		var termID = checkedTerms[i];
-    		var chbxID = "chbxTerm:"+termID;
+			// the parentid comes from the directive!
+    		var chbxID = $scope.parentid+":chbxTerm:"+termID;
     		var chbx = document.getElementById(chbxID);
     		try {
     			chbx.checked = select;
@@ -192,4 +201,4 @@ function getTerm(termList, id){
 		}
 	}
 	return null;
-};
+}

@@ -14,22 +14,35 @@
 <div ng-controller="userStatsCtrl">
     <div id="sidebar-user">
         <div style="max-height: 100%; overflow: auto">
-            <ng-include src="'templates/html/userTree.html'"></ng-include>
-            <ng-include src="'templates/html/termTree.html'"></ng-include>
-            <ng-include src="'templates/html/imageTree.html'"></ng-include>
+            <user-tree ng-controller="userTreeCtrl"></user-tree>
+            <term-tree ng-controller="termTreeCtrl" parentid="userStats"></term-tree>
+            <image-tree ng-controller="imageTreeCtrl"></image-tree>
         </div>
     </div>
-    <div class="sidebar-toggler-user" ng-click="setCollapsed(!stats.sbcollapsed)">
-        <div ng-show="stats.sbcollapsed">
+    <div class="sidebar-toggler-user" ng-click="setCollapsed(!userstats.sbcollapsed)">
+        <div ng-show="userstats.sbcollapsed">
             <span class="glyphicon glyphicon-chevron-right"></span>
         </div>
-        <div ng-show="!stats.sbcollapsed">
+        <div ng-show="!userstats.sbcollapsed">
             <span class="glyphicon glyphicon-chevron-left"></span>
         </div>
     </div>
 
 
     <div id="sb-main-content-user">
+        <div ng-show="warn.noUsers" class="alert alert-info text-center">
+            {{ warn.noUsers.message }}
+        </div>
+        <div ng-show="warn.noLabel" class="alert alert-info text-center">
+            {{ warn.noLabel.message }}
+        </div>
+        <div ng-show="warn.noImage" class="alert alert-info text-center">
+            {{ warn.noImage.message }}
+        </div>
+        <div ng-show="error" class="alert alert-danger text-center">
+            {{ error.message }}
+        </div>
+
         <div ng-show="loading">
             <p class="text-center">
 
