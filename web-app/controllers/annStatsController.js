@@ -149,6 +149,20 @@ function($rootScope, $scope, $http, $filter,
 
 		statisticsService.fetchAnnotationAgreementList($scope.projectID,
 			selectedImages, selectedTerms, selectedUsers, function(data) {
+
+			if (data.annotationStats.length < 1){
+				$scope.annstats.error = {
+					empty : {
+						message : "This query does not result in any annotations."
+					}
+				};
+				$scope.loading = false;
+				return;
+			} else {
+				delete $scope.annstats.error;
+			}
+
+
 			// success
 			$scope.annstats.annotations = data.annotationStats; // this should be a list of annotations
 			$scope.terms = data.terms; // the term map
@@ -160,16 +174,6 @@ function($rootScope, $scope, $http, $filter,
 			// set the current value (must not exceed the maximum value)
 			if ($scope.annstats.slider.value > $scope.annstats.slider.max){
 				$scope.annstats.slider.value = $scope.annstats.slider.max;
-			}
-
-			if (data.length < 1){
-				$scope.annstats.error.empty= {
-						message : "This query does not result in any annotations."
-				};
-				$scope.loading = false;
-				return;
-			} else {
-				delete $scope.annstats.error;
 			}
 
 			$scope.usercolumns = [];
@@ -219,7 +223,7 @@ function($rootScope, $scope, $http, $filter,
 
 							// search for minimum agreement in the data
 							for (var i = 0; i < newData.length; i++){
-								var elmnt = newData[i]; // one annotation
+								var elmnt = newData[i]; //
 
 								// if the highest agreement is in the filter range
 								if (elmnt.assignmentRanking[0].nUsers >= $scope.annstats.slider.value){
@@ -257,10 +261,12 @@ function($rootScope, $scope, $http, $filter,
 			$scope.loading = false;
 		}, function(data, status) {
 			// image fetching failed
-			$scope.annstats.error.retrieve = {
+			$scope.annstats.error = {
+				retrieve : {
 					status : status,
 					message : data.error.message
-			};
+				}
+				};
 			$scope.loading = false;
 		});
 	};

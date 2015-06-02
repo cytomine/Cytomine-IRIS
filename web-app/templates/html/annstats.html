@@ -31,6 +31,18 @@
 
 
     <div id="sb-main-content-ann">
+
+        <div ng-show="annstats.error">
+            <div class="alert alert-danger text-center" ng-show="annstats.error.retrieve">
+                {{annstats.error.retrieve.message}}
+            </div>
+            <div class="alert alert-info text-center" ng-show="annstats.error.empty">
+                {{annstats.error.empty.message}}
+                <br/>
+                Please select another filter from the panel on the left side and press REFRESH.
+            </div>
+        </div>
+
         <div ng-show="warn.noUsers" class="alert alert-info text-center">
             {{ warn.noUsers.message }}
         </div>
@@ -57,97 +69,98 @@
         <div ng-hide="loading">
             <ng-include src="'templates/html/refreshPanel.html'"></ng-include>
 
-            <div ng-hide="annstats.startup">
-            <div class="text-center">
-                <div class="sliderpanel">
-                    <div tooltip="Drag the slider to filter annotations by agreement level"><b>Agreement Level</b></div>
 
-                    <div ui-slider="annstats.slider.options"
-                         class="slider"
-                         min="{{annstats.slider.min}}"
-                         max="{{annstats.slider.max}}"
-                         ng-model="annstats.slider.value"></div>
+            <div ng-hide="annstats.error">
+                <div class="text-center">
+                    <div class="sliderpanel">
+                        <div tooltip="Drag the slider to filter annotations by agreement level"><b>Agreement Level</b></div>
 
-                    <div>{{annstats.slider.value}} users ({{(100*annstats.slider.value/annstats.slider.max).toFixed(0)}}%)</div>
+                        <div ui-slider="annstats.slider.options"
+                             class="slider"
+                             min="{{annstats.slider.min}}"
+                             max="{{annstats.slider.max}}"
+                             ng-model="annstats.slider.value"></div>
+
+                        <div>{{annstats.slider.value}} users ({{(100*annstats.slider.value/annstats.slider.max).toFixed(0)}}%)</div>
                     <span class="pull-right">Showing annotation {{ annstats.pageItemMin+1 }} to {{ annstats.pageItemMax }} (<strong>{{
                         annstats.total }}</strong> in total)</span>
+                    </div>
                 </div>
-            </div>
-            <table ng-table="tableParams" class="table table-hover table-bordered">
-                <thead>
-                <tr>
-                    <!--<th></th>-->
-                    <th colspan="2">Annotations</th>
-                    <!--<th></th>-->
-                    <th colspan="{{usercolumns.length}}" class="text-center">Users</th>
-                </tr>
-                <tr>
-                    <!--<th>ID</th>-->
-                    <th>Preview</th>
-                    <th>Agreement</th>
-                    <!--<th>Actions</th>-->
-                    <th ng-repeat="column in usercolumns" ng-show="column.visible">
-                        {{column.title}}
-                    </th>
-                </tr>
-                </thead>
-                <tbody style="font-size: 12px;">
-                <!-- iterate over all annotations -->
-                <tr ng-repeat="item in data">
-                    <!--<td>{{item.cmID}}</td>-->
-                    <td class="text-center">
-                        <img class="annotation-preview-small" src="{{ addKeys(item.smallCropURL) }}"/>
-                    </td>
-                    <td style="min-width: 200px">
-                        <bars-chart chart-data="item.assignmentRanking" terms="terms"></bars-chart>
-                    </td>
-                    <!--<td>
-                        <div class="btn-group" dropdown>
-                            <button type="button" style="width:100px;" class="btn btn-primary btn-sm"
-                                    ng-click="startLabeling(item)"
-                                    ng-class="{ 'disabled' : item.numberOfAnnotations=='0' || (image.opening.cmID) }">
-                                      <span ng-show="image.opening.cmID === item.cmID">
-                                           <img src="images/ajax-loader-xs.gif" alt=""/>
-                                      </span>
-                                      <span ng-show="image.opening.cmID !== item.cmID">
-                                         Start Labeling
-                                      </span>
-                                </span>
-                            </button>
-                            <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
-                                    ng-class="{ 'disabled': image.opening.cmID }">
-                                <span class="caret"></span>
-                                <span class="sr-only">Toggle Dropdown</span>
-                            </button>
-                            <ul class="dropdown-menu text-left" role="menu">
-                                <li ng-class="{ 'disabled' : item.settings.numberOfAnnotations===0 }"><a
-                                        ng-click="annotationGallery(item)" href>
-                                    View Annotation Gallery
-                                </a></li>
-                                <li class="divider"></li>
-                                <li><a target="_blank" href="{{item.goToURL}}">
-                                    Explore in Cytomine
-                                </a></li>
-                            </ul>
-                        </div>
-                    </td>-->
-                    <td ng-repeat="column in usercolumns" ng-show="column.visible">
-                        <!-- term ID -->
-                        <!--<span>{{ item[column.userStats][column.userID] ||  '' }}</span>-->
-                        <!-- term name -->
+                <table ng-table="tableParams" class="table table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <!--<th></th>-->
+                        <th colspan="2">Annotations</th>
+                        <!--<th></th>-->
+                        <th colspan="{{usercolumns.length}}" class="text-center">Users</th>
+                    </tr>
+                    <tr>
+                        <!--<th>ID</th>-->
+                        <th>Preview</th>
+                        <th>Agreement</th>
+                        <!--<th>Actions</th>-->
+                        <th ng-repeat="column in usercolumns" ng-show="column.visible">
+                            {{column.title}}
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody style="font-size: 12px;">
+                    <!-- iterate over all annotations -->
+                    <tr ng-repeat="item in data">
+                        <!--<td>{{item.cmID}}</td>-->
+                        <td class="text-center">
+                            <img class="annotation-preview-small" src="{{ addKeys(item.smallCropURL) }}"/>
+                        </td>
+                        <td style="width: 220px;">
+                            <bars-chart chart-data="item.assignmentRanking" terms="terms"></bars-chart>
+                        </td>
+                        <!--<td>
+                            <div class="btn-group" dropdown>
+                                <button type="button" style="width:100px;" class="btn btn-primary btn-sm"
+                                        ng-click="startLabeling(item)"
+                                        ng-class="{ 'disabled' : item.numberOfAnnotations=='0' || (image.opening.cmID) }">
+                                          <span ng-show="image.opening.cmID === item.cmID">
+                                               <img src="images/ajax-loader-xs.gif" alt=""/>
+                                          </span>
+                                          <span ng-show="image.opening.cmID !== item.cmID">
+                                             Start Labeling
+                                          </span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
+                                        ng-class="{ 'disabled': image.opening.cmID }">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <ul class="dropdown-menu text-left" role="menu">
+                                    <li ng-class="{ 'disabled' : item.settings.numberOfAnnotations===0 }"><a
+                                            ng-click="annotationGallery(item)" href>
+                                        View Annotation Gallery
+                                    </a></li>
+                                    <li class="divider"></li>
+                                    <li><a target="_blank" href="{{item.goToURL}}">
+                                        Explore in Cytomine
+                                    </a></li>
+                                </ul>
+                            </div>
+                        </td>-->
+                        <td ng-repeat="column in usercolumns" ng-show="column.visible">
+                            <!-- term ID -->
+                            <!--<span>{{ item[column.userStats][column.userID] ||  '' }}</span>-->
+                            <!-- term name -->
                         <span   ng-show="item[column.userStats][column.userID]"
                                 popover-placement="top"
                                 popover="{{usermap[column.userID].lastname + ' '
                                         + usermap[column.userID].firstname}}"
                                 popover-trigger="mouseenter">
                             <span ng-style="{ 'background': terms[item[column.userStats][column.userID]].color }"
-                                    style="border: 1px solid black">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;{{ terms[item[column.userStats][column.userID]].name }}
+                                  style="border: 1px solid black">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;{{ terms[item[column.userStats][column.userID]].name }}
                         </span>
 
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

@@ -165,6 +165,17 @@ iris.controller(
 					$scope.globalStats = data.annotations;
 					$scope.terms = data.terms;
 
+
+					if (data.annotations.length < 1){
+						$scope.userstats.error.empty= {
+							message : "This query does not result in any statistics."
+						};
+						$scope.loading = false;
+						return;
+					} else {
+						delete $scope.userstats.error;
+					}
+
 					// compute a lookup map for term ID vs termName
 					$scope.termsByName = {};
 					for (var key in data.terms){
@@ -190,10 +201,12 @@ iris.controller(
 					$scope.loading=false;
 				}, function(data, status){
 					// fetching failed
-					$scope.userstats.error.retrieve = {
-						status : status,
-						message : data.error.message
-					};
+					$scope.userstats.error = {
+						retrieve : {
+							status : status,
+							message : data.error.message
+						}
+						};
 					$scope.loading = false;
 				});
 			};

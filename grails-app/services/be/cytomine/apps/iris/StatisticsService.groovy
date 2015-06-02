@@ -38,6 +38,7 @@ class StatisticsService {
      * @return a Map object
      *
      */
+    // TODO currently unused
     def getMajorityAgreement(Cytomine cytomine, IRISUser irisUser, Long cmProjectID,
                              String imageIDs, String termIDs, Map options,
                              int offset, int max) {
@@ -136,13 +137,14 @@ class StatisticsService {
      * @param cmProjectID
      * @param imageIDs
      * @param termIDs
+     * @param userIDs
      * @param options
      * @param offset
      * @param max
      * @return a Map object
      */
     def getAgreementList(Cytomine cytomine, IRISUser irisUser, Long cmProjectID,
-                         String imageIDs, String termIDs, Map options,
+                         String imageIDs, String termIDs, String userIDs, Map options,
                          int offset, int max) {
 
         DomainMapper dm = new DomainMapper(grailsApplication)
@@ -162,8 +164,31 @@ class StatisticsService {
 
         // get the number of users in this project
         UserCollection projectUsers = cytomine.getProjectUsers(cmProjectID)
-        int nProjectUsers = projectUsers.size()
 
+        // filter all users from the parameter list
+        List allUserIDs = projectUsers.list.collect { Long.valueOf(it.id) }
+        List queryUserIDs
+        if (userIDs == null || userIDs.isEmpty())
+            queryUserIDs = allUserIDs
+        else
+            queryUserIDs = userIDs.split(",").collect { Long.valueOf(it) }
+
+        // filter all requested users
+        def commons = allUserIDs.intersect(queryUserIDs)
+        if (commons.isEmpty()) throw new Exception("No known user IDs on the filter!")
+        def difference = allUserIDs.plus(queryUserIDs)
+        difference.removeAll(commons)
+        queryUserIDs.removeAll(difference)
+
+        // the list of filtered users
+        List users = projectUsers.list.findAll {
+            it.id in queryUserIDs
+        }
+
+        // sort the users by lastname, firstname asc
+        users = utils.sortUsersAsc(users)
+
+        // get the ontology terms and flatten them
         Ontology ontology = cytomine.getOntology(cmProject.getLong("ontology"))
         List<JSONObject> flatOntology = utils.flattenOntology(ontology)
         def ontologyMap = flatOntology.collectEntries { [(it.id): [ 'name': it.name, 'color': it.color ]] }
@@ -172,20 +197,12 @@ class StatisticsService {
         def annStats = []
 
         def emptyUserMap = [:]
-        for (int i = 0; i < nProjectUsers; i++) {
-            emptyUserMap[projectUsers.get(i).getId()] = null
+        for (u in users) {
+            emptyUserMap[u['id']] = null;
         }
 
-        // for each annotation, make statistics of how many users agree
-        // store an n-dim vector for each term, indicating the frequency of agreeing users
-        // n, n-1, n-2, ..., 1
-        Map<Long, List> termAgreementStats = [:]
-
-        // prepare the stats map
-        for (int i = 0; i < flatOntology.size(); i++) {
-            // initialize a list with zeros
-            termAgreementStats[flatOntology[i]['id']] = [0] * nProjectUsers
-        }
+        // collect query term IDs in an array
+        def queryTermIDs = termIDs.split(",").collect { Long.valueOf(it) }
 
         // the total number of users that assigned a term anywhere in this query
         def uniqueUsersOverall = [:]
@@ -196,6 +213,7 @@ class StatisticsService {
             // grab all terms from all users for the current annotation
             List userByTermList = annotation.getList("userByTerm")
 
+            // skip this annotation if there is no label assigned at all
             if (userByTermList.isEmpty())
                 continue
 
@@ -205,27 +223,89 @@ class StatisticsService {
 
             // store a map, where each user is identified by its ID
             irisAnnJSON['userStats'] = utils.deepcopy(emptyUserMap)
-            irisAnnJSON['termAgreementStats'] = utils.deepcopy(termAgreementStats)
             irisAnnJSON['assignmentRanking'] = []
 
             // total number of terms assigned to this annotation
             int nAssignments = userByTermList.size()
 
             // record the maximum number of users that assigned anything to this term
+            // and are within the query userIDs
             def uniqueUsersPerTerm = [:]
-            for (assignment in userByTermList) {
-                // count all unique users that assigned something
-                // resolve the assigned terms for each user
-                def userIDList = assignment.get("user")
-                for (userID in userIDList) {
-                    // simply overwrite the map entry for performance reasons
-                    uniqueUsersPerTerm[userID] = userID
-                    uniqueUsersOverall[userID] = userID
+
+            // clone the list
+            List origUserByTermList = userByTermList.collect()
+
+            // a list of assignments to remove from this annotation
+            for (int j = nAssignments-1; j>=0 ; j--) {
+                def assignment = origUserByTermList[j]
+
+                Long termID = assignment.get("term")
+
+                // if this term is not of interest, remove this assignment
+                if (!(termID in queryTermIDs)){
+                    userByTermList.remove(j)
                 }
             }
 
+            // re-calculate the total assignments
+            nAssignments = userByTermList.size()
+
+            // skip the annotation, if there aren't any assignments left
+            if (nAssignments == 0)
+                continue
+
+            // clone the list again
+            origUserByTermList = userByTermList.collect()
+
+            // otherwise run through the remaining assignments and filter out all users
+            // that are not in the query
+            for (int j = nAssignments-1; j>=0 ; j--) {
+
+                def assignment = origUserByTermList[j]
+                def userIDList = assignment.get("user")
+
+                // filter out all users not in the query
+                // by simply removing them from the array
+                int nUsers = userIDList.size()
+
+                // clone the user list
+                def origUserIDList = userIDList.collect()
+
+                // TODO count unique users after removing the ones not in the filter!!
+                for (int k = nUsers-1; k>=0 ; k--) {
+                    def userID = origUserIDList[k]
+
+                    if (!(userID in queryUserIDs)) {
+                        // the user is not in the query list
+                        // and will be removed from this assignment
+                        userIDList.remove(k)
+                    } else {
+                        // if the user is in the query
+                        // simply overwrite the map entry for performance reasons
+                        uniqueUsersPerTerm[userID] = userID
+                        uniqueUsersOverall[userID] = userID
+                    }
+                }
+
+                // if after filtering no-one did assign the term
+                if (userIDList.isEmpty()){
+                    // remove the assignment completely
+                    userByTermList.remove(j)
+                } else {
+                    // otherwise
+                    // store back the 'cleaned' user list for that term
+                    assignment.putAt("user", userIDList)
+                }
+            }
+
+            ///////////////////////////
+            // at this point the annotations are filtered to compute the statistics
+            ///////////////////////////
+
             // all users that assigned any term
             int maxUsers = uniqueUsersPerTerm.size()
+            if (maxUsers == 0)
+                continue
 
             // resolve and collect assignments for each user
             for (assignment in userByTermList) {
@@ -238,17 +318,13 @@ class StatisticsService {
                     irisAnnJSON['userStats'][userID] = termID
                 }
 
-                // increment the number of agreements for a term
-                int nAgreeingUsers = irisAnnJSON['termAgreementStats'][termID][userIDList.size()] + 1
-                irisAnnJSON['termAgreementStats'][termID][userIDList.size()] = nAgreeingUsers
-
                 // compute a compressed version of the agreements on each term
                 // compute the ratio as:
                 //      all users that agree on this term divided by all users that assigned anything
                 double agreementRatio = Math.min(userIDList.size()*1.0 / maxUsers, 1.0)
                 irisAnnJSON['assignmentRanking'].add([ 'termID' : termID, 'ratio' : agreementRatio,
                                                        'totalAssignments' : nAssignments , 'nUsers' : userIDList.size(),
-                                                        'maxUsers' : maxUsers, 'nAgreeingUsers' : nAgreeingUsers,
+                                                        'maxUsers' : maxUsers,
                                                         'termName' : ontologyMap[termID].name ])
             }
 
@@ -262,7 +338,7 @@ class StatisticsService {
         def result = [:]
         result['annotationStats'] = annStats
         result['terms'] = ontologyMap
-        result['users'] = utils.sortUsersAsc(projectUsers.list)
+        result['users'] = utils.sortUsersAsc(users)
         result['nUniqueUsersOverall'] = uniqueUsersOverall.size() // the maximum number of users that assigned a term
 
         return result

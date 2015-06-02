@@ -271,9 +271,9 @@ class UrlMappings {
 		 *
 		 * A compressed form of agreement visualization.
 		 */
-		"/api/stats/$cmProjectID/agreements(.$format)"(controller:"projectStatistics"){
-			action = [GET: "majorityAgreements"]
-		}
+//		"/api/stats/$cmProjectID/agreements(.$format)"(controller:"projectStatistics"){
+//			action = [GET: "majorityAgreements"]
+//		}
 
 		/**
 		 * Annotation statistics: agreement list

@@ -24,6 +24,7 @@ class ProjectStatisticsController {
     /**
      * Compute the statistics on agreements according to a specific filter.
      */
+    // TODO currently unused
     def majorityAgreements() {
         try {
             Cytomine cytomine = request['cytomine']
@@ -71,12 +72,13 @@ class ProjectStatisticsController {
             IRISUser irisUser = request['user']
             Long cmProjectID = params.long('cmProjectID')
             String imageIDs = params['images']
+            String userIDs = params['users']
             String termIDs = params['terms']
             int offset = (params['offset'] == null ? 0 : params.int('offset'))
             int max = (params['max'] == null ? 0 : params.int('max'))
 
             def stats = statisticsService.getAgreementList(cytomine, irisUser,
-                    cmProjectID, imageIDs, termIDs, [:], offset, max)
+                    cmProjectID, imageIDs, termIDs, userIDs, [:], offset, max)
 
             render stats as JSON
 
