@@ -128,7 +128,7 @@ function($rootScope, $scope, $http, $filter,
 
 							var toRemove = [];
 
-							// TODO search for minimum agreement
+							// TODO search for minimum agreement in the data
 							//for (var i = 0; i < newData.length; i++){
 							//	var elmnt = newData[i];
 							//	for (var j = 0; j < elmnt.annotationStats.length; j++){

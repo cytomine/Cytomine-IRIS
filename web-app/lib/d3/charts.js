@@ -79,8 +79,8 @@ iris.directive('barsChart', ["$compile", function ($compile) {
             chartDivs.attr("id", function(item){
                     return item.termID;
                 })
-                .on("mousemove", function(item){mouseMoveFn(item)})
-                .on("mouseout", function(item){mouseOutFn(item)})
+                //.on("mousemove", function(item){mouseMoveFn(item)})
+                //.on("mouseout", function(item){mouseOutFn(item)})
                 .transition().ease("elastic")
                 .style("width", function(item) {
                     return item.ratio*100 + "%";
@@ -92,7 +92,28 @@ iris.directive('barsChart', ["$compile", function ($compile) {
             // add another span showing the label info
             var spans2 = enterSelection.insert("span");
             spans2
-                .on("mousemove", function(item){mouseMoveFn(item)})
+                .on("mousemove", function(item){
+                    tooltip.transition()
+                        .duration(100)
+                        .style("opacity", .95);
+                    if (Number(item.nUsers) === 1) {
+                        tooltip.html(
+                            terms[item.termID].name
+                            + ", assigned by " + item.nUsers + " of " + item.maxUsers + " users"
+                            + '<p style="margin-top: 10px;"><b>Warning</b>: This label has been assigned by '
+                            + '<span class="label label-danger">1</span> user only!</p>'
+                        );
+                    } else {
+                        tooltip.html(
+                            terms[item.termID].name
+                            + ", assigned by " + item.nUsers + " of " + item.maxUsers + " users"
+                        );
+                    }
+
+                    tooltip
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
+                })
                 .on("mouseout", function(item){mouseOutFn(item)})
                 .text(function(item) {
                 var text = terms[item.termID].name;
@@ -102,11 +123,13 @@ iris.directive('barsChart', ["$compile", function ($compile) {
             var spans3 = spans2.append("span");
             spans3.style("float", "right");
             spans3.style("margin-top","2px");
-            spans3
-                .on("mousemove", function(item){mouseMoveFn(item)})
-                .on("mouseout", function(item){mouseOutFn(item)});
-            spans3.text(function(item){
-                return (item.ratio*100).toFixed(0) + "% (" + item.nUsers + ")"
+            spans3.html(function(item){
+                if (Number(item.nUsers) === 1){
+                    return '<span class="glyphicon glyphicon-warning-sign" style="color:orangered;"></span>&nbsp;'
+                        + (item.ratio*100).toFixed(0) + "% (" + item.nUsers + ")";
+                } else {
+                    return (item.ratio*100).toFixed(0) + "% (" + item.nUsers + ")";
+                }
             });
         }
     };
