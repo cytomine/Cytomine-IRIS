@@ -39,8 +39,9 @@ function($rootScope, $scope, $http, $filter,
 							$log.debug("reached minimum agreement, showing all annotations")
 						}
 
-						// TODO filter the table!
-						//$scope.tableParams.filter();
+						// filter the table
+						$scope.tableParams.reload();
+						$scope.tableParams.page(1);
 					}
 				},
 				// initial value of the slider
@@ -72,10 +73,14 @@ function($rootScope, $scope, $http, $filter,
 
 			// set the slider max value
 			$scope.annstats.slider.max = data.nUniqueUsersOverall;
+			// set the current value (must not exceed the maximum value)
+			if ($scope.annstats.slider.value > $scope.annstats.slider.max){
+				$scope.annstats.slider.value = $scope.annstats.slider.max;
+			}
 
 			if (data.length < 1){
 				$scope.annstats.error.empty= {
-						message : "This project does not have any images."
+						message : "This query does not result in any annotations."
 				};
 				$scope.loading = false;
 				return;
@@ -126,24 +131,23 @@ function($rootScope, $scope, $http, $filter,
 							// use build-in angular filter
 							var newData = $scope.annstats.annotations;
 
-							var toRemove = [];
+							var theFinalData = [];
 
 							// TODO search for minimum agreement in the data
-							//for (var i = 0; i < newData.length; i++){
-							//	var elmnt = newData[i];
-							//	for (var j = 0; j < elmnt.annotationStats.length; j++){
-							//		var agrmntEntry = elmnt.annotationStats[j];
-							//		// search for an agreement level
-							//		if (agrmntEntry.nUsers < $scope.annstats.slider.value){
-							//			// collect the agreement entry to be removed
-							//			toRemove.push(elmnt);
-							//			continue;
-							//		}
-							//	}
-							//}
+							for (var i = 0; i < newData.length; i++){
+								var elmnt = newData[i]; // one annotation
+
+								// if the highest agreement is in the filter range
+								if (elmnt.assignmentRanking[0].nUsers >= $scope.annstats.slider.value){
+									// collect the agreement entry
+									theFinalData.push(elmnt);
+								}
+							}
 
 							// TODO remove all elements below a certain agreement
+							$log.debug("Filtered " + theFinalData.length + " annotations for display.");
 
+							newData = theFinalData;
 
 							// use build-in angular filter
 							newData = params.filter() ? $filter('filter')(newData,
