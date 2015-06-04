@@ -1,4 +1,4 @@
-<div id="alert-container">
+<div id="alert-container" style="z-index: 99999 !important;">
 	<div id="alerts" ng-controller="alertCtrl">
 		<alert class="text-center" ng-repeat="alert in alerts" type="{{alert.type}}"
 			close="closeAlert($index)" class="alert">{{alert.msg}}</alert>

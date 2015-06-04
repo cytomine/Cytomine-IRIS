@@ -17,6 +17,7 @@ package be.cytomine.apps.iris
 
 import be.cytomine.apps.iris.model.IRISAnnotation
 import be.cytomine.client.Cytomine
+import be.cytomine.client.CytomineException
 import be.cytomine.client.collections.AnnotationCollection
 import be.cytomine.client.collections.UserCollection
 import be.cytomine.client.models.Annotation
@@ -51,12 +52,13 @@ class StatisticsService {
      * @param offset pagination parameter
      * @param max pagination parameter
      * @return a Map object
-     *
+     * @throws CytomineException
+     * @throws Exception
      */
     // TODO currently unused
     def getMajorityAgreement(Cytomine cytomine, IRISUser irisUser, Long cmProjectID,
                              String imageIDs, String termIDs, Map options,
-                             int offset, int max) {
+                             int offset, int max) throws CytomineException, Exception{
 
         // get all annotations according to a filter
         // images and terms are filtered directly
@@ -157,10 +159,12 @@ class StatisticsService {
      * @param offset
      * @param max
      * @return a Map object
+     * @throws CytomineException
+     * @throws Exception
      */
     def getAgreementList(Cytomine cytomine, IRISUser irisUser, Long cmProjectID,
                          String imageIDs, String termIDs, String userIDs, Map options,
-                         int offset, int max) {
+                         int offset, int max) throws CytomineException, Exception {
 
         DomainMapper dm = new DomainMapper(grailsApplication)
         Utils utils = new Utils()
@@ -372,10 +376,12 @@ class StatisticsService {
      * @param offset
      * @param max
      * @return the user statistics
+     * @throws CytomineException
+     * @throws Exception
      */
     def getUserStatistics(Cytomine cytomine, IRISUser irisUser, Long cmProjectID,
                           String imageIDs, String termIDs, String userIDs, Map options,
-                          int offset, int max) {
+                          int offset, int max) throws CytomineException, Exception{
 
         Utils utils = new Utils()
 

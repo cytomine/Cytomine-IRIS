@@ -1,0 +1,117 @@
+<div ng-controller="imageAccessTableCtrl">
+
+    <div ng-show="image.error">
+        <div class="alert alert-danger text-center" ng-show="image.error.retrieve">
+            {{image.error.retrieve.message}}
+        </div>
+        <div class="alert alert-info text-center" ng-show="image.error.empty">
+            {{image.error.empty.message}}
+            <br/>
+            Please select another one from the <a href ng-click="navToProjects()">project list</a>.
+        </div>
+    </div>
+
+    <div ng-show="loading">
+        <p class="text-center">
+
+        <p class="text-center">
+            Loading images of selected project...
+        </p>
+        <img class="img-responsive center-block" src="images/ajax-loader.gif"/>
+        </p>
+    </div>
+
+    <div ng-hide="loading" style="position: relative;
+            display: table;
+            margin-left: auto;
+            margin-right: auto;">
+        <ng-include src="'templates/html/refreshPanel.html'"></ng-include>
+
+        <!--{{tableParams.filter() | json}}-->
+        <div ng-hide="image.error">
+            <table ng-table="tableParams" show-filter="true" class="table table-hover table-bordered">
+                <tbody>
+                <tr ng-repeat="item in data" ng-class="{ 'success' : item.settings.progress===100 }">
+                    <td data-title="'ID'" sortable="'cmID'">{{item.cmID}}</td>
+                    <td data-title="'Preview'" class="text-center"><img class="img-rounded image-preview"
+                                                                        src="{{ addKeys(item.macroURL) }}"/></td>
+                    <td data-title="'Name'" sortable="'originalFilename'" filter="{ 'originalFilename': 'text' }">
+                        {{item.originalFilename}}
+                        <span ng-show="(today - item.cmCreated) <= image.stillNew"
+                              class="label label-success pull-right">New!</span>
+
+                        <p class="text-muted">{{item.width | number}} x {{item.height | number}} px</p>
+                    </td>
+                    <td data-title="'# Labels by User'" sortable="'settings.labeledAnnotations'" class="text-center">
+                         {{ item.settings.labeledAnnotations }}
+                    </td>
+                    <!--<td data-title="'Progress'" sortable="'settings.progress'" class="text-center"-->
+                        <!--filter="{ 'userProgress' : 'userProgressFilter' }">-->
+                        <!--<div ng-switch="{{item.settings.numberOfAnnotations}}">-->
+                            <!--<div ng-switch-when="0" class="label label-info">No Annotations!</div>-->
+                            <!--<div ng-switch-default>-->
+                                <!--<div ng-controller="progressCtrl"-->
+                                     <!--ng-include="'templates/html/progressPanel.html'"></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</td>-->
+                    <!--<td data-title="'Actions'" class="text-center">-->
+                        <!--<div class="btn-group" dropdown>-->
+                            <!--<button type="button" style="width:100px;" class="btn btn-primary btn-sm"-->
+                                    <!--ng-click="startLabeling(item)"-->
+                                    <!--ng-class="{ 'disabled' : item.numberOfAnnotations=='0' || (image.opening.cmID) }">-->
+								  <!--<span ng-show="image.opening.cmID === item.cmID">-->
+									   <!--<img src="images/ajax-loader-xs.gif" alt=""/>-->
+								  <!--</span>-->
+								  <!--<span ng-show="image.opening.cmID !== item.cmID">-->
+									 <!--Start Labeling-->
+								  <!--</span>-->
+                                <!--</span>-->
+                            <!--</button>-->
+                            <!--<button type="button" class="btn btn-primary btn-sm dropdown-toggle"-->
+                                    <!--ng-class="{ 'disabled': image.opening.cmID }">-->
+                                <!--<span class="caret"></span>-->
+                                <!--<span class="sr-only">Toggle Dropdown</span>-->
+                            <!--</button>-->
+                            <!--<ul class="dropdown-menu text-left" role="menu">-->
+                                <!--<li ng-class="{ 'disabled' : item.settings.numberOfAnnotations===0 }"><a-->
+                                        <!--ng-click="annotationGallery(item)" href>-->
+                                    <!--View Annotation Gallery-->
+                                <!--</a></li>-->
+                                <!--<li class="divider"></li>-->
+                                <!--<li><a target="_blank" href="{{item.goToURL}}">-->
+                                    <!--Explore in Cytomine-->
+                                <!--</a></li>-->
+                            <!--</ul>-->
+                        <!--</div>-->
+                    <!--</td>-->
+                    <td data-title="'Enabled'">
+                        <input type="checkbox" ng-model="item.settings.enabled"
+                                ng-click="setImageEnabled(item, !item.settings.enabled)"/> {{ item.settings.enabled }}
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+            <span ng-show="hide"><span class="label label-danger"
+                                       tooltip="You are currently hiding all finished images.">filtered</span>&nbsp;&nbsp;</span><span>Showing image {{ image.pageItemMin+1 }} to {{ image.pageItemMax }} (<strong>{{
+            image.total }}</strong> in total)</span>
+
+            <!-- filter template for progress filtering -->
+            <script type="text/ng-template" id="ng-table/filters/userProgressFilter.html">
+                <div class="btn btn-xs"
+                     ng-class="{ 'active' : !hide, 'btn-info' : !hide, 'btn-default' : hide, 'disabled' : filterLoading}"
+                     ng-click="hideCompleted(false)">Show all
+                </div>
+                <div class="btn btn-xs"
+                     ng-class="{ 'active' : hide, 'btn-info' : hide, 'btn-default' : !hide, 'disabled' : filterLoading}"
+                     ng-click="hideCompleted(true)">Hide completed
+                </div>
+                <input id="allProgresses" type="radio" ng-model="params.filter()[name]" name="filter-control" value=""
+                       style="display: none;"/>
+                <input id="hideCompleted" type="radio" ng-model="params.filter()[name]" name="filter-control"
+                       value="!100" style="display: none;"/>
+            </script>
+        </div>
+    </div>
+</div>

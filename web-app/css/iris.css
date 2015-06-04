@@ -72,7 +72,7 @@
 #alerts {
 	position: relative;
 	bottom: 20px;
-	z-index: 400;
+	z-index: 99999 !important;
 	margin-left: -200px;
 	left: 50%;
 }
@@ -80,7 +80,7 @@
 #alerts .alert {
 	width: 400px;
 	position: relative;
-	z-index: 400;
+	z-index: 99999 !important;
 }
 
 #alert-container {

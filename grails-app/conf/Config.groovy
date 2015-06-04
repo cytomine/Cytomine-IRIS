@@ -310,7 +310,7 @@ grails.plugin.springsecurity.interceptUrlMap = [
         '/**/views/**'      : ['permitAll'],
         '/login/**'         : ['permitAll'],
         '/logout/**'        : ['permitAll'],
-        '/admin/**'         : ['ROLE_ADMIN', 'ROLE_SUPERADMIN', 'IS_AUTHENTICATED_FULLY'], // roles are OR chained
+        '/admin/**'         : ['ROLE_IRIS_ADMIN', 'ROLE_IRIS_PROJECT_ADMIN', 'ROLE_IRIS_PROJECT_COORDINATOR', 'ROLE_IRIS_ADMIN'], // roles are OR chained
         '/**'               : ['IS_AUTHENTICATED_FULLY']
 ]
 

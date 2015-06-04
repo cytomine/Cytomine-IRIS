@@ -153,6 +153,76 @@ class ImageService {
     }
 
     /**
+     * Gets a list of images from Cytomine IRIS where the disabled images are still visible.
+     * This service checks the 'enabled' status of the images for the querying user.
+     * Particular images may be disabled for particular users, and these will NOT be filtered out.
+     *
+     * @param cytomine a Cytomine instance
+     * @param user the IRIS user
+     * @param cmProjectID the Cytomine project ID
+     * @param cmUserID the Cytomine user ID
+     * @param offset a pagination parameter
+     * @param max a pagination parameter
+     *
+     * @return a list of (blinded) IRIS images
+     */
+    List<IRISImage> getAllImagesWithSettings(Cytomine cytomine, IRISUser user,
+                              Long cmProjectID, Long cmUserID,
+                              Integer offset, Integer max)
+            throws CytomineException, Exception {
+
+        // set the client properties for pagination
+        cytomine.setOffset(offset)
+        cytomine.setMax(max)
+
+        // fetch the user from the DB for which the settings have to be written
+        IRISUser userInQuery = IRISUser.findByCmID(cmUserID)
+
+        IRISProject irisProject = projectService.getProject(cytomine, userInQuery, cmProjectID)
+
+        // get all images from the server
+        ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)
+
+        // compute the total number of images
+        int nImages = cmImageCollection.size()
+
+        List<IRISImage> irisImageList = new ArrayList<IRISImage>(nImages)
+        // add all settings into the image instance
+        for (int i = 0; i < nImages; i++) {
+            ImageInstance cmImage = cmImageCollection.get(i)
+
+            // map the client image to the IRIS image WITHOUT SAVING to IRIS db
+            IRISImage irisImage = new DomainMapper(grailsApplication).mapImage(cmImage, null, irisProject.cmBlindMode)
+
+            // get the settings for this user on this image
+            IRISUserImageSettings settings = IRISUserImageSettings
+                    .findByUserAndCmImageInstanceID(userInQuery, cmImage.getId())
+
+            // write local settings, if they don't exist
+            if (!settings) {
+                settings = new IRISUserImageSettings(
+                        user: userInQuery,
+                        cmImageInstanceID: cmImage.getId(),
+                        numberOfAnnotations: irisImage.numberOfAnnotations,
+                        cmProjectID: irisProject.cmID
+                )
+
+                // save them locally
+                settings.save(flush: true)
+            }
+
+            // add the settings objects
+            irisImage.setSettings(settings)
+            irisImage.setProjectSettings(irisProject.settings)
+
+            // add it to the result list
+            irisImageList.add(irisImage)
+        }
+
+        return irisImageList
+    }
+
+    /**
      * Get an URL for the image tiles.
      *
      * @param cytomine

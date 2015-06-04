@@ -8,6 +8,7 @@
 \parttoc
 }
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{User Management}
 In addition to the Cytomine user management, the IRIS module requires custom assignment of roles to users. 
 This allows for custom widget visibility and other functionality in the IRIS interface as well as access to backend and database. 
@@ -75,6 +76,41 @@ The rights granted to a \pjcoord\ are as follows:
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Project Management}
+The proper project configuration is essential to conduct an interobserver-study. 
+The main configuration is done at the Cytomine host, where the project has initially been created and got its users assigned. 
+There are a few rules to follow in order to make it work properly on IRIS, which we will elaborate on in the following sections. 
+
+\section{Configuration of Blinded Projects}
+This section covers the project configuration that needs to be done on the Cytomine host. 
+
+\subsection{Cytomine Host}
+
+\subsection{IRIS Host}
+
+
+\section{Configuration of Non-Blinded Projects}
+Although the IRIS labeling interface has mainly been developed for blinded labeling of the annotations, it is possible to edit a regular project on an IRIS host as well. 
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Synchronization}
+The entire data model regarding annotations and is hosted on the Cytomine core and IRIS just caches the labeling progress for each user per each image, particular synchronization is required to optimize the data load on an IRIS server. 
+
+\section{Labeling Progress Synchronization}
+Manually, the particular \pjcoord\ can trigger the labeling progress synchronization for this project and all users in it by using the particular service endpoint. 
+Synchronization can be triggered for each project separately using the corresponding tab in the project settings. 
+
+\tobedone
+
+\paragraph{Auto-Synchronization.}
+The IRIS host automatically synchronizes the labeling progress for each user in each image that is enabled for that very same user. 
+Per default, synchronization is done once per day at \_\todo{exact time!}AM, such that daily business is not interrupted. 
+
+\warnbox{Inconsistencies}{The auto-synchronization may lead to inconsistencies when the user is new to an IRIS host. The \pjcoord\ has to trigger the synchronization manually then to reflect the current labeling status for this user.}
 
 
 

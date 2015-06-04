@@ -296,5 +296,39 @@ class UrlMappings {
 //		"/api/stats/$cmProjectID/ovastatistics(.$format)"(controller:"projectStatistics"){
 //			action = [GET: "userVsAll"]
 //		}
+
+
+		/**
+		 * SETTINGS
+		 *
+		 * User list for a specific project.
+		 */
+		"/api/settings/$cmProjectID/users(.$format)"(controller:"projectSettings"){
+			action = [GET: "userList"]
+		}
+
+		/**
+		 * Enable/Disable specific images for a user.
+		 * 		payload contains the old and new value and the settings id of the IRISUserImageSettings
+		 */
+		"/api/settings/user/$cmUserID/project/$cmProjectID/image/$cmImageID/access(.$format)"(controller:"projectSettings"){
+			action = [POST: "imageAccess"]
+		}
+
+		/**
+		 * Get the full image list without filtering the disabled images for an user.
+		 */
+		"/api/settings/user/$cmUserID/project/$cmProjectID/images(.$format)"(controller:"projectSettings"){
+			action = [GET: "userImageList"]
+		}
+
+		/**
+		 * Enable/Disable specific projects for a user.
+		 * 		payload contains the old and new value and the settings id of the IRISUserProjectSettings
+		 */
+		"/api/settings/user/$cmUserID/project/$cmProjectID/access(.$format)"(controller:"projectSettings"){
+			action = [POST: "projectAccess"]
+		}
+
 	}
 }

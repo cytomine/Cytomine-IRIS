@@ -15,14 +15,14 @@
         <div ng-hide="settings.error">
             <h4 class="text-muted pull-right"><span class="glyphicon glyphicon-wrench"></span>&nbsp;Project Settings&nbsp;&nbsp;</h4>
             <tabset>
-                <tab heading="User/Role Management">
+                <tab heading="Access Management">
                     <div class="panel-body">
                         <ng-include src="'templates/html/settingsUser.html'"></ng-include>
                     </div>
                 </tab>
-                <tab heading="Access Settings">
+                <tab heading="Synchronization">
                     <div class="panel-body">
-                        <ng-include src="'templates/html/settingsAccess.html'"></ng-include>
+                        <ng-include src="'templates/html/settingsSync.html'"></ng-include>
                     </div>
                 </tab>
                 <!--<tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">-->

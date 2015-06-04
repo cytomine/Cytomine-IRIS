@@ -15,12 +15,12 @@
  */
 package be.cytomine.apps.iris
 
-import grails.plugin.springsecurity.annotation.Secured
+import org.springframework.security.access.annotation.Secured
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 
-@Secured(['ROLE_ADMIN'])
+@Secured(['ROLE_IRIS_PROJECT_ADMIN', 'ROLE_IRIS_PROJECT_COORDINATOR', 'ROLE_IRIS_ADMIN'])
 @Transactional(readOnly = true)
 class ActivityController {
 

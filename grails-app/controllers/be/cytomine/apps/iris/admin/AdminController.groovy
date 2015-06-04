@@ -43,7 +43,7 @@ class AdminController {
      *
      * @return
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_SUPERADMIN'])
+    @Secured(['ROLE_IRIS_PROJECT_ADMIN', 'ROLE_IRIS_PROJECT_COORDINATOR', 'ROLE_IRIS_ADMIN'])
     def synchronizeUserProgress() {
         def resp = new SynchronizeUserProgressJob(grailsApplication,
                 sessionService, imageService,
