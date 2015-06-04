@@ -15,7 +15,9 @@
  */
 package be.cytomine.apps.iris.admin
 
+import be.cytomine.apps.iris.IRISUser
 import be.cytomine.apps.iris.SynchronizeUserProgressJob
+import be.cytomine.client.Cytomine
 import grails.converters.JSON
 import org.springframework.security.access.annotation.Secured
 
@@ -43,8 +45,8 @@ class AdminController {
      *
      * @return
      */
-    @Secured(['ROLE_IRIS_PROJECT_ADMIN', 'ROLE_IRIS_PROJECT_COORDINATOR', 'ROLE_IRIS_ADMIN'])
-    def synchronizeUserProgress() {
+    //@Secured(['ROLE_IRIS_PROJECT_ADMIN', 'ROLE_IRIS_PROJECT_COORDINATOR', 'ROLE_IRIS_ADMIN'])
+    def synchronizeAllUserProgress() {
         def resp = new SynchronizeUserProgressJob(grailsApplication,
                 sessionService, imageService,
                 activityService, mailService,
@@ -56,6 +58,41 @@ class AdminController {
             render (['success':true, 'msg': 'Synchronization succeeded without errors.'] as JSON)
         } else if (resp == "deactivated") {
             render (['success':true, 'msg': 'Synchronization is deactivated.'] as JSON)
+        } else {
+            String message = 'Synchronization failed with errors\n'
+            if (resp != []){
+                String exStr = message + "\nEXCEPTIONS ARE ORDERED REVERSE CHRONOLOGICALLY (MOST RECENT FIRST)"
+                resp.reverse()
+                resp.each { item ->
+                    exStr += (item['msg'] + "\n" + item['exception'] + "\n " +
+                            "------------------------------------------------------\n")
+                }
+            }
+            response.setStatus(500)
+            render (['success':false, 'msg': message] as JSON)
+        }
+    }
+
+
+    /**
+     * Manually trigger the synchronization of the user progress for a specific project and all or specific images.
+     * The calling user must have an admin login, otherwise he receives a 503 message.
+     *
+     * @return
+     */
+    //@Secured(['ROLE_IRIS_PROJECT_ADMIN', 'ROLE_IRIS_PROJECT_COORDINATOR', 'ROLE_IRIS_ADMIN'])
+    def synchronizeUserProjectProgress() {
+
+        Cytomine cytomine = request['cytomine']
+        IRISUser irisUser = request['user']
+        Long cmProjectID = params.long('cmProjectID')
+        Long cmUserID = params.long('cmUserID')
+        String queryImageIDs = params['images']
+
+        def resp = syncService.synchronizeUserLabelingProgress(cytomine, irisUser, cmProjectID, cmUserID, queryImageIDs)
+
+        if (resp == true || resp == []) {
+            render (['success':true, 'msg': 'Synchronization succeeded without errors.'] as JSON)
         } else {
             String message = 'Synchronization failed with errors\n'
             if (resp != []){

@@ -32,6 +32,8 @@ import grails.transaction.Transactional
 import org.apache.commons.beanutils.PropertyUtils
 import org.json.simple.JSONObject
 
+import java.text.SimpleDateFormat
+
 /**
  * Synchronization methods for keeping the IRIS DB updated with changes in Cytomine.
  *
@@ -44,6 +46,9 @@ class SyncService {
     def grailsApplication
     def imageService
     def activityService
+    def executorService
+    def annotationService
+    def mailService
 
     /**
      * Synchronizes a user with the Cytomine instance.
@@ -473,4 +478,291 @@ class SyncService {
 
         return true
     }
+
+    /**
+     * Synchronizes the labeling progress for particular users.
+     * The query can be refined for particular images or for the entire project.
+     *
+     * @param cytomine
+     * @param irisUser
+     * @param cmProjectID
+     * @param cmUserID
+     * @param imageIDs
+     * @return
+     * @throws Exception
+     * @throws CytomineException
+     */
+    def synchronizeUserLabelingProgress(Cytomine cytomine, IRISUser irisUser,
+                                Long cmProjectID, Long cmUserID, String queryImageIDs)
+        throws Exception, CytomineException {
+
+        // an array to record sync exceptions in
+        def syncExceptions = []
+
+        log.info("Starting user labeling progress synchronization...")
+
+        try {
+            // get the user from the DB and ignore the auto-sync flag
+            IRISUser user
+            IRISUser.withTransaction {
+                def userCriteria = IRISUser.createCriteria()
+                user = userCriteria.get {
+                    and {
+                        eq('cmUserID', cmUserID) // one specific user
+                        not {
+                            'in'('cmUserName', ['system', 'admin', 'superadmin'])
+                        }
+                    }
+                }
+            }
+
+//          if the query did not result in any 'synchronizable' user, return true
+            if (checkSkip(user)) {
+                String msg = "No eligible user found, skipping sync."
+                log.info(msg)
+                executorService.execute({
+                    activityService.logSync(msg)
+                })
+                return true;
+            } else {
+                String msg = "Synchronizing labeling progress for user [" + user.cmUserName + "]"
+                log.info(msg)
+                executorService.execute({
+                    activityService.logSync(msg)
+                })
+                assert user != null
+            }
+
+            // TODO 1. check the the project in the DB
+            Long projectID
+            IRISUserProjectSettings.withTransaction {
+                def prjCriteria = IRISUserProjectSettings.createCriteria()
+                projectID = prjCriteria.get {
+                    and {
+                        eq('cmProjectID', cmProjectID) // one specific project
+                        eq('user', user) // for one specific user
+                        isNull('deleted')
+                    }
+                    projections { // get a unique result (the ID as Long)
+                        distinct('cmProjectID')
+                    }
+                }
+            }
+
+//          if the query did not result in any project, return true
+            if (checkSkip(projectID)) {
+                String msg = "No eligible project found for user [" + user.cmUserName + "], skipping sync."
+                log.info(msg)
+                executorService.execute({
+                    activityService.logSync(msg)
+                })
+                return true;
+            } else {
+                String msg = "Synchronizing progress for project [" + projectID + "]"
+                log.info(msg)
+                executorService.execute({
+                    activityService.logSync(msg)
+                })
+                assert projectID != null
+            }
+
+            // TODO 2. for the particular project, get the image(s)
+            List imageIDs
+
+            // if the queryImageIDs are null, sync all images in the project
+            if (queryImageIDs == null){
+                // get ALL images
+                IRISUserImageSettings.withTransaction {
+                    def imgCriteria = IRISUserImageSettings.createCriteria()
+                    imageIDs = imgCriteria.list {
+                        and {
+                            eq('user', user)
+                            eq('cmProjectID', projectID)
+                            isNull('deleted')
+                        }
+                        projections { // just get the IDs as Long
+                            distinct('cmImageInstanceID')
+                        }
+                    }
+                }
+            } else {
+
+                // make query image ID array
+                def queryImageIDArray = queryImageIDs.split(",")
+
+                // otherwise get just the specified image(s)
+                IRISUserImageSettings.withTransaction {
+                    def imgCriteria = IRISUserImageSettings.createCriteria()
+                    imageIDs = imgCriteria.list {
+                        and {
+                            eq('user', user) // just the specific user
+                            eq('cmProjectID', projectID) // just the specific project
+                            'in'('cmImageInstanceID', queryImageIDArray) // just the specific image indices
+                            isNull('deleted')
+                        }
+                        projections { // just get the IDs as Long
+                            distinct('cmImageInstanceID')
+                        }
+                    }
+                }
+            }
+
+            String imageIDStr = imageIDs.join(",")
+
+//          if the query did not result in any images in the project, return true
+            if (checkSkip(imageIDs)) {
+                String msg = "No eligible image(s) found for project [" + projectID + "], skipping sync."
+                log.info(msg)
+                executorService.execute({
+                    activityService.logSync(msg)
+                })
+                return true;
+            } else {
+                String msg = "Synchronizing progress for image(s) [" + imageIDStr + "]"
+                log.info(msg)
+                executorService.execute({
+                    activityService.logSync(msg)
+                })
+                assert imageIDs != []
+            }
+
+            int nImages = imageIDs.size()
+
+            // for each image, get its annotations and compute the progress for every user
+            for (int i = 0; i < nImages; i++) {
+                Long imageID = imageIDs[i]
+                try {
+                    // get all annotations (including ACL check for that user)
+                    AnnotationCollection allImageAnnotations
+
+                    try {
+                        // create the cytomine connection for that user
+                        Cytomine cytomine2 = new Cytomine(grailsApplication.config.grails.cytomine.host as String,
+                                user.cmPublicKey, user.cmPrivateKey, "./")
+
+                        allImageAnnotations = annotationService.getImageAnnotationsLight(cytomine2,
+                                user, null, imageID)
+
+                        // we have all we want, leave the loop
+                        break
+                    } catch (Exception ex) {
+                        addSyncException(ex, "User '" + user.cmUserName + "' is not allowed to access " +
+                                "image [" + imageID + "].")
+                    }
+
+                    // skip the image if there are no annotations!
+                    if (allImageAnnotations == null || allImageAnnotations.isEmpty()) {
+                        log.info("Skipping computing user progress for this image, since no annotations can be found.")
+                        continue
+                    }
+
+                    try {
+                        def progressInfo = computeUserProgress(allImageAnnotations, user)
+                        int nLabeled = progressInfo['labeledAnnotations']
+                        int nTotal = progressInfo['totalAnnotations']
+
+                        IRISUserImageSettings.withTransaction {
+                            // store the record of this user
+                            IRISUserImageSettings settings = IRISUserImageSettings
+                                    .findByUserAndCmImageInstanceID(user, imageID)
+
+                            settings?.lock()
+                            settings?.setLabeledAnnotations(nLabeled)
+                            settings?.setNumberOfAnnotations(nTotal)
+                            settings?.computeProgress()
+
+                            settings?.merge(flush: true)
+                        }
+
+                        log.trace("Done synchronizing image [" + imageID + "] for user '" + user.cmUserName + "'.")
+                    } catch (Exception e) {
+                        String msg = "Cannot synchronize image [" + imageID +
+                                "] for user '" + user.cmUserName + "'."
+                        addSyncException(e, msg)
+                    }
+                    String msg = "Done synchronizing image [" + imageID + "] for all its users."
+                    log.info(msg)
+                    activityService.logSync(msg)
+                } catch (Exception e) {
+                    addSyncException(e, "Cannot synchronize image [" + imageID + "]!")
+                }
+            }
+
+        } catch (Exception ex) {
+            String msg = "The synchronization failed! This is a serious global error, you should act quickly!"
+            log.fatal(msg, ex)
+            // GLOBAL ERROR
+            addSyncException(ex, msg)
+        }
+
+        if (!syncExceptions.isEmpty()) {
+            String recipient = grailsApplication.config.grails.cytomine.apps.iris.server.admin.email
+
+            log.info("User synchronization succeeded, but had some errors! Sending email to admin...")
+
+            // notify the admin
+            mailService.sendMail {
+                async true
+                to recipient
+                subject new SimpleDateFormat('E, yyyy-MM-dd').format(new Date()) + ": Progress synchronization had some errors"
+                body('Errors occurred during scheduled user progress synchronization. See stack traces below. \n\n\n'
+                        + exceptionsToString()
+                )
+            }
+        } else {
+            log.info("Splendit! All synchronizations completed without errors :-)")
+        }
+
+        log.info("Done synchronizing user progress.")
+
+        return syncExceptions
+    }
+
+    /**
+     * Checks whether the sync of an item should be skipped
+     * @param item
+     * @return
+     */
+    boolean checkSkip(def item) {
+        boolean skip = false
+
+        if (item == null)
+            skip = true
+        else if (item instanceof Collection)
+            if (item.isEmpty())
+                skip = true
+
+        return skip
+    }
+
+    /**
+     * Adds an Exception to the list of errors which will be sent to the admin.
+     *
+     * @param e
+     * @param syncExceptions
+     * @param msg
+     */
+    void addSyncException(Exception e, String msg, def syncExceptions) {
+        syncExceptions.add(['msg': msg, 'exception': e])
+        log.error(msg, e)
+        executorService.execute({
+            activityService.logSync("ERROR\n" + msg)
+        })
+    }
+
+    /**
+     * Prints the exceptions in a reverse chronologically stack of messages/exceptions.
+     *
+     * @params syncExceptions
+     * @return
+     */
+    String exceptionsToString(def syncExceptions){
+        String exStr = "\nEXCEPTIONS ARE ORDERED REVERSE CHRONOLOGICALLY (MOST RECENT FIRST)"
+        syncExceptions.reverse()
+        syncExceptions.each { item ->
+            exStr += (item['msg'] + "\n" + item['exception'] + "\n " +
+                    "------------------------------------------------------\n")
+        }
+    }
+
 }

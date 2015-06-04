@@ -38,7 +38,7 @@ class SynchronizeUserProgressJob {
     def concurrent = false
 
     def description = "Synchronize user labeling progress from the Cytomine core server. " +
-            " Running once at server startup and every two hours."
+            " Running once at server startup and once at 3 AM."
 
     // the configuration of the IRIS server
     def grailsApplication

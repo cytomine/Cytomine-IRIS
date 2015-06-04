@@ -7,6 +7,7 @@ iris.constant("projectUsersSettingsURL", "api/settings/{projectID}/users.json");
 iris.constant("projectUsersImageAccessChangeURL", "api/settings/user/{userID}/project/{projectID}/image/{imageID}/access.json");
 iris.constant("imagesWithSettingsURL", "api/settings/user/{userID}/project/{projectID}/images.json");
 iris.constant("projectUsersAccessChangeURL", "api/settings/user/{userID}/project/{projectID}/access.json");
+iris.constant("projectUsersSyncURL", "api/admin/project/$cmProjectID/user/$cmUserID/synchronize.json");
 
 iris.factory("settingsService", [
     "$http", "$log",
@@ -14,6 +15,7 @@ iris.factory("settingsService", [
     "projectUsersImageAccessChangeURL",
     "imagesWithSettingsURL",
     "projectUsersAccessChangeURL",
+    "projectUsersSyncURL",
     "sessionService",
     "cytomineService",
     function($http, $log,
@@ -21,6 +23,7 @@ iris.factory("settingsService", [
              projectUsersImageAccessChangeURL,
              imagesWithSettingsURL,
              projectUsersAccessChangeURL,
+             projectUsersSyncURL,
              sessionService,
              cytomineService) {
 
@@ -129,6 +132,36 @@ iris.factory("settingsService", [
 //			HINT: content-type "application/json" is default!
                 // execute the http post request to the IRIS server
                 $http.post(url, payload).success(function (data) {
+                    // $log.debug("success on $http.get(" + url + ")");
+//				$log.debug(data);
+                    if (callbackSuccess) {
+                        callbackSuccess(data);
+                    }
+                }).error(function (data, status, headers, config) {
+                    // on error log the error
+                    $log.error(status);
+                    if (callbackError) {
+                        callbackError(data, status, headers, config);
+                    }
+                })
+            },
+
+            // set the project access for a given user
+            triggerProjectSync: function (projectID, userID, imageIDs, newValue, settingsID, callbackSuccess,
+                                        callbackError) {
+                $log.debug("Posting project access settings change to IRIS: " + projectID + " - " + userID + " - " + imageIDs);
+
+                // modify the parameters
+                var url = cytomineService.addKeys(projectUsersSyncURL).replace("{projectID}", projectID)
+                    .replace("{userID}", userID);
+
+                if (imageIDs){
+                    url += ("&images=" + imageIDs);
+                }
+
+//			HINT: content-type "application/json" is default!
+                // execute the http post request to the IRIS server
+                $http.post(url, null).success(function (data) {
                     // $log.debug("success on $http.get(" + url + ")");
 //				$log.debug(data);
                     if (callbackSuccess) {

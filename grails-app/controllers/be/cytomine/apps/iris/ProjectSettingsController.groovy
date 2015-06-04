@@ -125,7 +125,7 @@ class ProjectSettingsController {
                 throw new CytomineException(400, "SettingsID, old and new value must be set in the payload of the request!")
             }
 
-            // TODO
+            // TODO move to service
             // get the user image settings
             IRISUserImageSettings settings = IRISUserImageSettings.findByCmProjectIDAndCmImageInstanceIDAndId(cmProjectID, cmImageID, settingsID)
             settings.setEnabled(newValue)

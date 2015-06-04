@@ -261,10 +261,21 @@ class UrlMappings {
 		}
 
 		/**
-		 * ADMIN 
+		 * ADMIN
+		 *
+		 * Synchronize all users' progresses at once. This explicit service call equals
+		 * the nightly auto-synchronization.
 		 */
 		"/api/admin/synchronize(.$format)"(controller:"admin"){
-			action = [POST: "synchronizeUserProgress"]
+			action = [POST: "synchronizeAllUserProgress"]
+		}
+
+		/**
+		 * User per image synchronization.
+		 * If optional parameter 'images' is empty/null, all images of the project will be synced
+		 */
+		"/api/admin/project/$cmProjectID/user/$cmUserID/synchronize(.$format)"(controller:"admin"){
+			action = [POST: "synchronizeUserProjectProgress"]
 		}
 
 		/**
