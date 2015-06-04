@@ -29,6 +29,11 @@
 
         <!--{{tableParams.filter() | json}}-->
         <div ng-hide="image.error">
+            <div class="text-center" style="margin-top:4px;">
+                This project has <span class="label label-primary">{{ image.total }}</span> image<span ng-hide="image.total == 1">s</span><span ng-hide="image.nDisabled == 0">, where
+                    <span class="label label-warning">{{ image.nDisabled }}</span> image<span ng-hide="image.nDisabled == 1">s</span>
+                can't be accessed by {{user.cmFirstName + ' ' + user.cmLastName}}</span>.
+            </div>
             <table ng-table="tableParams" show-filter="true" class="table table-hover table-bordered">
                 <tbody>
                 <tr ng-repeat="item in data" ng-class="{ 'success' : item.settings.progress===100 }">
@@ -86,7 +91,7 @@
                         <!--</div>-->
                     <!--</td>-->
                     <td data-title="'Enabled'">
-                        <input type="checkbox" ng-model="item.settings.enabled"
+                        <input id="{{ item.cmID + ':checkBox:imageEnabled' }}" type="checkbox" ng-model="item.settings.enabled"
                                 ng-click="setImageEnabled(item, !item.settings.enabled)"/> {{ item.settings.enabled }}
                     </td>
 

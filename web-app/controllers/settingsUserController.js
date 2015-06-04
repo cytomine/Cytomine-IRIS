@@ -35,6 +35,8 @@ iris.controller("settingsUserCtrl", [
 
                 $scope.settingsUser.users = data;
 
+                $scope.computeNProjectsDisabled();
+
                 // build the data table
                 $scope.tableParams = new ngTableParams({
                     page: 1, // show first page
@@ -86,6 +88,16 @@ iris.controller("settingsUserCtrl", [
             });
         };
 
+        // compute the number of disabled projects
+        $scope.computeNProjectsDisabled = function(){
+            $scope.settingsUser.nDisabled = 0;
+            for (var i = 0; i < $scope.settingsUser.users.length; i++){
+                if (!$scope.settingsUser.users[i].projectSettings.enabled){
+                    $scope.settingsUser.nDisabled = $scope.settingsUser.nDisabled+1;
+                }
+            }
+        };
+
         // re-fetch the users for that project
         $scope.refreshPage = function () {
             $scope.tmp.tableSorting = $scope.tableParams ? $scope.tableParams.sorting() : $scope.tmp.tableSorting;
@@ -98,9 +110,10 @@ iris.controller("settingsUserCtrl", [
         // set the enabled/disabled status for the project
         $scope.setProjectEnabled = function(user, flag){
 
+            var chbx = document.getElementById(user.cmID + ":checkBox:projectEnabled");
+
             // check if the executing user is trying to alter its own project access
             if ($scope.main.user.id === user.cmID){
-                var chbx = document.getElementById(user.cmID + ":checkBox:projectEnabled");
                 chbx.checked = !flag;
                 sharedService.addAlert("You cannot remove yourself from this project!", "warning");
                 return;
@@ -115,10 +128,15 @@ iris.controller("settingsUserCtrl", [
                     sharedService.addAlert("Changed access settings for " + user.cmFirstName + " "
                     + user.cmLastName + " on project " + $scope.projectID + " from " + !flag + " to " + flag + ".", "success");
                     $log.debug("Successful!");
+
+                    $scope.computeNProjectsDisabled();
                 }, function(data, status, header, config){
                     sharedService.addAlert("Cannot alter access settings for " + user.cmFirstName + " "
                     + user.cmLastName + " on project " + $scope.projectID + " from " + !flag + " to " + flag + "!", "danger");
+                    chbx.checked = !flag;
                     $log.error("Failed!");
+
+                    $scope.computeNProjectsDisabled();
                 });
         };
 
@@ -163,6 +181,9 @@ iris.controller("settingsUserCtrl", [
             $scope.error = error;
 
             $scope.setImageEnabled = function(image, flag){
+
+                var chbx = document.getElementById(image.cmID + ":checkBox:imageEnabled");
+
                 $log.debug("Attempting to change image access settings for user " +
                 user.cmUserName + " on project " + $scope.projectID +
                 " and image " + image.cmID + " from " + !flag + " to " + flag);
@@ -174,11 +195,15 @@ iris.controller("settingsUserCtrl", [
                         + user.cmLastName + " on project " + $scope.projectID +
                         ", image " + image.cmID + " from " + !flag + " to " + flag + ".", "success");
                         $log.debug("Successful!");
+
+                        $scope.$broadcast("computeNImagesDisabled");
                     }, function(data, status, header, config){
                         sharedService.addAlert("Cannot alter access settings for " + user.cmFirstName + " "
                         + user.cmLastName + " on project " + $scope.projectID +
                         ", image " + image.cmID + " from " + !flag + " to " + flag + "!", "danger");
+                        chbx.checked = !flag;
                         $log.error("Failed!");
+                        $scope.$broadcast("computeNImagesDisabled");
                     });
             };
 
@@ -209,7 +234,7 @@ iris.controller(
                  cytomineService, projectService, imageService, sessionService,
                  helpService, sharedService, settingsService, annotationService,
                  ngTableParams) {
-            $log.debug("imageCtrl");
+            $log.debug("imageAccessTableCtrl");
 
             // retrieve the project parameter from the URL
             $scope.projectID = $routeParams["projectID"];
@@ -223,6 +248,19 @@ iris.controller(
                 opening : {}
             };
 
+            $scope.$on("computeNImagesDisabled", function(){
+                $scope.computeNImagesDisabled();
+            });
+
+            $scope.computeNImagesDisabled = function(){
+                $scope.image.nDisabled = 0;
+                for (var i = 0; i < $scope.image.total; i++){
+                    if (!$scope.image.images[i].settings.enabled){
+                        $scope.image.nDisabled = $scope.image.nDisabled+1;
+                    }
+                }
+            };
+
             // refresh the page
             $scope.refreshPage = function(){
                 // show the loading button
@@ -232,6 +270,8 @@ iris.controller(
                     // success
                     $scope.image.images = data; // this should be an IRIS image list
                     $scope.image.total = data.length;
+
+                    $scope.computeNImagesDisabled();
 
                     if (data.length < 1){
                         $scope.image.error.empty= {
@@ -330,4 +370,3 @@ iris.controller(
                 }
             };
         }]);
-
