@@ -271,6 +271,13 @@ class UrlMappings {
 		}
 
 		/**
+		 * Synchronize all users' progresses for a specific project at once.
+		 */
+		"/api/admin/project/$cmProjectID/synchronize(.$format)"(controller:"admin"){
+			action = [POST: "synchronizeAllUserProjectProgress"]
+		}
+
+		/**
 		 * User per image synchronization.
 		 * If optional parameter 'images' is empty/null, all images of the project will be synced
 		 */
@@ -339,6 +346,14 @@ class UrlMappings {
 		 */
 		"/api/settings/user/$cmUserID/project/$cmProjectID/access(.$format)"(controller:"projectSettings"){
 			action = [POST: "projectAccess"]
+		}
+
+		/**
+		 * Enable/Disable auto-synchronization for a user.
+		 * 		payload contains the old and new value and the settings id of the IRISUserProjectSettings
+		 */
+		"/api/settings/user/$cmUserID/project/$cmProjectID/autosync(.$format)"(controller:"projectSettings"){
+			action = [POST: "userAutoSync"]
 		}
 
 	}

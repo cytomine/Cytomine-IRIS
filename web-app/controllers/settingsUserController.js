@@ -35,7 +35,7 @@ iris.controller("settingsUserCtrl", [
 
                 $scope.settingsUser.users = data;
 
-                $scope.computeNProjectsDisabled();
+                $scope.computeNUsersSyncDisabled();
 
                 // build the data table
                 $scope.tableParams = new ngTableParams({
@@ -89,7 +89,7 @@ iris.controller("settingsUserCtrl", [
         };
 
         // compute the number of disabled projects
-        $scope.computeNProjectsDisabled = function(){
+        $scope.computeNUsersSyncDisabled = function(){
             $scope.settingsUser.nDisabled = 0;
             for (var i = 0; i < $scope.settingsUser.users.length; i++){
                 if (!$scope.settingsUser.users[i].projectSettings.enabled){
@@ -129,14 +129,14 @@ iris.controller("settingsUserCtrl", [
                     + user.cmLastName + " on project " + $scope.projectID + " from " + !flag + " to " + flag + ".", "success");
                     $log.debug("Successful!");
 
-                    $scope.computeNProjectsDisabled();
+                    $scope.computeNUsersSyncDisabled();
                 }, function(data, status, header, config){
                     sharedService.addAlert("Cannot alter access settings for " + user.cmFirstName + " "
                     + user.cmLastName + " on project " + $scope.projectID + " from " + !flag + " to " + flag + "!", "danger");
                     chbx.checked = !flag;
                     $log.error("Failed!");
 
-                    $scope.computeNProjectsDisabled();
+                    $scope.computeNUsersSyncDisabled();
                 });
         };
 

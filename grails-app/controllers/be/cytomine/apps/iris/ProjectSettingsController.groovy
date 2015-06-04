@@ -266,4 +266,61 @@ class ProjectSettingsController {
             render errorMsg as JSON
         }
     }
+
+    /**
+     * Alter the access to a particular project for a given user
+     * @return
+     */
+    def userAutoSync(){
+        try {
+
+            // TODO check whether the user is allowed to make this request
+
+            Cytomine cytomine = request['cytomine']
+            IRISUser irisUser = request['user']
+            Long cmProjectID = params.long('cmProjectID')
+            Long cmUserID = params.long('cmUserID')
+
+            def payload = (request.JSON)
+            // example {oldValue: false, newValue: true}
+            Boolean oldValue = Boolean.valueOf(payload.get('oldValue'))
+            Boolean newValue = Boolean.valueOf(payload.get('newValue'))
+
+            if (oldValue == null || newValue == null){
+                throw new CytomineException(400, "Old and new value must be set in the payload of the request!")
+            }
+
+            // TODO move to service
+            // update the user
+            IRISUser user = IRISUser.findByCmID(cmUserID)
+            user.setSynchronize(newValue)
+            user.save(flush:true, failOnError: true)
+
+            render (['success': true, 'msg': 'The settings have been successfully updated!', 'user': user] as JSON)
+
+            // now trigger the synchronization of that project for all images
+            if (oldValue == false && newValue == true){
+                syncService.synchronizeUserLabelingProgress(cytomine,
+                        irisUser, cmProjectID, cmUserID, null)
+            }
+        } catch (CytomineException e1) {
+            log.error(e1)
+            // exceptions from the cytomine java client
+            response.setStatus(e1.httpCode)
+            JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+            render errorMsg as JSON
+        } catch (GroovyCastException e2) {
+            log.error(e2)
+            // send back 400 if the project ID is other than long format
+            response.setStatus(400)
+            JSONObject errorMsg = new Utils().resolveException(e2, 400)
+            render errorMsg as JSON
+        } catch (Exception e3) {
+            log.error(e3)
+            // on any other exception render 500
+            response.setStatus(500)
+            JSONObject errorMsg = new Utils().resolveException(e3, 500)
+            render errorMsg as JSON
+        }
+    }
 }

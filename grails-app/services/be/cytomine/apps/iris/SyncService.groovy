@@ -483,11 +483,11 @@ class SyncService {
      * Synchronizes the labeling progress for particular users.
      * The query can be refined for particular images or for the entire project.
      *
-     * @param cytomine
-     * @param irisUser
-     * @param cmProjectID
-     * @param cmUserID
-     * @param imageIDs
+     * @param cytomine a Cytomine instance
+     * @param irisUser the executing IRISUser
+     * @param cmProjectID the Cytomine project ID
+     * @param cmUserID a single Cytomine user ID or null, if all project users should be synced
+     * @param imageIDs a string of Cytomine image instance IDs, comma-separated
      * @return
      * @throws Exception
      * @throws CytomineException
@@ -502,45 +502,62 @@ class SyncService {
         log.info("Starting user labeling progress synchronization...")
 
         try {
-            // get the user from the DB and ignore the auto-sync flag
-            IRISUser user
-            IRISUser.withTransaction {
-                def userCriteria = IRISUser.createCriteria()
-                user = userCriteria.get {
-                    and {
-                        eq('cmID', cmUserID) // one specific user
-                        not {
-                            'in'('cmUserName', ['system', 'admin', 'superadmin'])
+            List<IRISUser> irisUsers
+            // if we want to sync all users at once
+            if (cmUserID == null){
+                // get all users
+                IRISUser.withTransaction {
+                    def userCriteria = IRISUser.createCriteria()
+                    irisUsers = userCriteria.list {
+                        and {
+                            isNull('cmDeleted')
+                            not {
+                                'in'('cmUserName', ['system', 'admin', 'superadmin'])
+                            }
+                        }
+                    }
+                }
+            } else {
+                // just sync one specific user
+                IRISUser.withTransaction {
+                    def userCriteria = IRISUser.createCriteria()
+                    irisUsers = userCriteria.list {
+                        and {
+                            eq('cmID', cmUserID) // one specific user
+                            not {
+                                'in'('cmUserName', ['system', 'admin', 'superadmin'])
+                            }
                         }
                     }
                 }
             }
 
-//          if the query did not result in any 'synchronizable' user, return true
-            if (checkSkip(user)) {
-                String msg = "No eligible user found, skipping sync."
+            String userNameStr = irisUsers.cmUserName.join(",")
+
+//          if the query did not result in any user instances, return true
+            if (checkSkip(irisUsers)) {
+                String msg = "No eligible user(s) found, skipping sync."
                 log.info(msg)
                 executorService.execute({
                     activityService.logSync(msg)
                 })
                 return true;
             } else {
-                String msg = "Synchronizing labeling progress for user [" + user.cmUserName + "]"
+                String msg = "Synchronizing labeling progress for user(s) [" + userNameStr + "]"
                 log.info(msg)
                 executorService.execute({
                     activityService.logSync(msg)
                 })
-                assert user != null
+                assert irisUsers.size() != 0
             }
 
-            // TODO 1. check the the project in the DB
+            // check the the project in the DB
             Long projectID
             IRISUserProjectSettings.withTransaction {
                 def prjCriteria = IRISUserProjectSettings.createCriteria()
                 projectID = prjCriteria.get {
                     and {
                         eq('cmProjectID', cmProjectID) // one specific project
-                        eq('user', user) // for one specific user
                         isNull('deleted')
                     }
                     projections { // get a unique result (the ID as Long)
@@ -551,7 +568,7 @@ class SyncService {
 
 //          if the query did not result in any project, return true
             if (checkSkip(projectID)) {
-                String msg = "No eligible project found for user [" + user.cmUserName + "], skipping sync."
+                String msg = "No eligible project found for user(s) [" + userNameStr + "], skipping sync."
                 log.info(msg)
                 executorService.execute({
                     activityService.logSync(msg)
@@ -566,9 +583,8 @@ class SyncService {
                 assert projectID != null
             }
 
-            // TODO 2. for the particular project, get the image(s)
+            // for the particular project, get the image(s)
             List imageIDs
-
             // if the queryImageIDs are null, sync all images in the project
             if (queryImageIDs == null){
                 // get ALL images
@@ -576,7 +592,6 @@ class SyncService {
                     def imgCriteria = IRISUserImageSettings.createCriteria()
                     imageIDs = imgCriteria.list {
                         and {
-                            eq('user', user)
                             eq('cmProjectID', projectID)
                             isNull('deleted')
                         }
@@ -595,7 +610,6 @@ class SyncService {
                     def imgCriteria = IRISUserImageSettings.createCriteria()
                     imageIDs = imgCriteria.list {
                         and {
-                            eq('user', user) // just the specific user
                             eq('cmProjectID', projectID) // just the specific project
                             'in'('cmImageInstanceID', queryImageIDArray) // just the specific image indices
                             isNull('deleted')
@@ -631,20 +645,36 @@ class SyncService {
             // for each image, get its annotations and compute the progress for every user
             for (int i = 0; i < nImages; i++) {
                 Long imageID = imageIDs[i]
+
                 try {
+                    List<IRISUser> imageUsers
+                    // get the users per image and compute their progress
+                    IRISUserImageSettings.withTransaction {
+                        def imgCriteria = IRISUserImageSettings.createCriteria()
+                        imageUsers = imgCriteria.list {
+                            and {
+                                eq('cmImageInstanceID', imageID)
+                                isNull('deleted')
+                            }
+                            projections {
+                                distinct('user')
+                            }
+                        }
+                    }
+
                     // get all annotations (including ACL check for that user)
                     AnnotationCollection allImageAnnotations
 
                     try {
                         // create the cytomine connection for that user
                         Cytomine cytomine2 = new Cytomine(cytomine.host,
-                                user.cmPublicKey, user.cmPrivateKey, cytomine.workingPath)
+                                imageUsers[0].cmPublicKey, imageUsers[0].cmPrivateKey, cytomine.workingPath)
 
                         allImageAnnotations = annotationService.getImageAnnotationsLight(cytomine2,
-                                user, null, imageID)
+                                imageUsers[0], null, imageID)
 
                     } catch (Exception ex) {
-                        addSyncException(ex, "User '" + user.cmUserName + "' is not allowed to access " +
+                        addSyncException(ex, "User '" + imageUsers[0].cmUserName + "' is not allowed to access " +
                                 "image [" + imageID + "].", syncExceptions)
                     }
 
@@ -654,29 +684,31 @@ class SyncService {
                         continue
                     }
 
-                    try {
-                        def progressInfo = computeUserProgress(allImageAnnotations, user)
-                        int nLabeled = progressInfo['labeledAnnotations']
-                        int nTotal = progressInfo['totalAnnotations']
+                    imageUsers.each { user ->
+                        try {
+                            def progressInfo = computeUserProgress(allImageAnnotations, user)
+                            int nLabeled = progressInfo['labeledAnnotations']
+                            int nTotal = progressInfo['totalAnnotations']
 
-                        IRISUserImageSettings.withTransaction {
-                            // store the record of this user
-                            IRISUserImageSettings settings = IRISUserImageSettings
-                                    .findByUserAndCmImageInstanceID(user, imageID)
+                            IRISUserImageSettings.withTransaction {
+                                // store the record of this user
+                                IRISUserImageSettings settings = IRISUserImageSettings
+                                        .findByUserAndCmImageInstanceID(user, imageID)
 
-                            settings?.lock()
-                            settings?.setLabeledAnnotations(nLabeled)
-                            settings?.setNumberOfAnnotations(nTotal)
-                            settings?.computeProgress()
+                                settings?.lock()
+                                settings?.setLabeledAnnotations(nLabeled)
+                                settings?.setNumberOfAnnotations(nTotal)
+                                settings?.computeProgress()
 
-                            settings?.save(flush: true)
+                                settings?.merge(flush: true)
+                            }
+
+                            log.trace("Done synchronizing image [" + imageID + "] for user '" + user.cmUserName + "'.")
+                        } catch (Exception e) {
+                            String msg = "Cannot synchronize image [" + imageID +
+                                    "] for user '" + user.cmUserName + "'."
+                            addSyncException(e, msg, syncExceptions)
                         }
-
-                        log.trace("Done synchronizing image [" + imageID + "] for user '" + user.cmUserName + "'.")
-                    } catch (Exception e) {
-                        String msg = "Cannot synchronize image [" + imageID +
-                                "] for user '" + user.cmUserName + "'."
-                        addSyncException(e, msg, syncExceptions)
                     }
                     String msg = "Done synchronizing image [" + imageID + "]."
                     log.info(msg)

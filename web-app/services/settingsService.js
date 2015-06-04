@@ -7,7 +7,9 @@ iris.constant("projectUsersSettingsURL", "api/settings/{projectID}/users.json");
 iris.constant("projectUsersImageAccessChangeURL", "api/settings/user/{userID}/project/{projectID}/image/{imageID}/access.json");
 iris.constant("imagesWithSettingsURL", "api/settings/user/{userID}/project/{projectID}/images.json");
 iris.constant("projectUsersAccessChangeURL", "api/settings/user/{userID}/project/{projectID}/access.json");
-iris.constant("projectUsersSyncURL", "api/admin/project/$cmProjectID/user/$cmUserID/synchronize.json");
+iris.constant("projectUsersSyncURL", "api/admin/project/{projectID}/user/{userID}/synchronize.json");
+iris.constant("projectUsersAutoSyncChangeURL", "api/settings/user/{userID}/project/{projectID}/autosync.json");
+iris.constant("projectAllUsersSyncURL", "api/admin/project/{projectID}/synchronize.json");
 
 iris.factory("settingsService", [
     "$http", "$log",
@@ -16,6 +18,8 @@ iris.factory("settingsService", [
     "imagesWithSettingsURL",
     "projectUsersAccessChangeURL",
     "projectUsersSyncURL",
+    "projectUsersAutoSyncChangeURL",
+    "projectAllUsersSyncURL",
     "sessionService",
     "cytomineService",
     function($http, $log,
@@ -24,6 +28,8 @@ iris.factory("settingsService", [
              imagesWithSettingsURL,
              projectUsersAccessChangeURL,
              projectUsersSyncURL,
+             projectUsersAutoSyncChangeURL,
+             projectAllUsersSyncURL,
              sessionService,
              cytomineService) {
 
@@ -146,10 +152,10 @@ iris.factory("settingsService", [
                 })
             },
 
-            // set the project access for a given user
-            triggerProjectSync: function (projectID, userID, imageIDs, newValue, settingsID, callbackSuccess,
+            // trigger the project progress synchronization for a given user
+            triggerProjectSync: function (projectID, userID, imageIDs, callbackSuccess,
                                         callbackError) {
-                $log.debug("Posting project access settings change to IRIS: " + projectID + " - " + userID + " - " + imageIDs);
+                $log.debug("Triggering project synchronization for user: " + projectID + " - " + userID + " - " + imageIDs);
 
                 // modify the parameters
                 var url = cytomineService.addKeys(projectUsersSyncURL).replace("{projectID}", projectID)
@@ -162,7 +168,6 @@ iris.factory("settingsService", [
 //			HINT: content-type "application/json" is default!
                 // execute the http post request to the IRIS server
                 $http.post(url, null).success(function (data) {
-                    // $log.debug("success on $http.get(" + url + ")");
 //				$log.debug(data);
                     if (callbackSuccess) {
                         callbackSuccess(data);
@@ -175,5 +180,56 @@ iris.factory("settingsService", [
                     }
                 })
             },
+
+            // set the auto-sync settings access for a given user
+            setUserAutoSync: function (projectID, userID, oldValue, newValue, settingsID, callbackSuccess,
+                                        callbackError) {
+                $log.debug("Posting auto-sync settings change to IRIS: " + projectID + " - " + userID + " - " + newValue);
+
+                // modify the parameters
+                var url = cytomineService.addKeys(projectUsersAutoSyncChangeURL).replace("{projectID}", projectID)
+                    .replace("{userID}", userID);
+
+                // construct the payload
+                var payload = "{ settingsID: " + settingsID + ", oldValue: " + oldValue + ", newValue: " + newValue + " }";
+
+//			HINT: content-type "application/json" is default!
+                // execute the http post request to the IRIS server
+                $http.post(url, payload).success(function (data) {
+//				$log.debug(data);
+                    if (callbackSuccess) {
+                        callbackSuccess(data);
+                    }
+                }).error(function (data, status, headers, config) {
+                    // on error log the error
+                    $log.error(status);
+                    if (callbackError) {
+                        callbackError(data, status, headers, config);
+                    }
+                })
+            },
+
+            // set the auto-sync settings access for a given user
+            synchronizeAllProjectUsers: function (projectID, callbackSuccess, callbackError) {
+                $log.debug("Triggering all-user synchronization in project: " + projectID);
+
+                // modify the parameters
+                var url = cytomineService.addKeys(projectAllUsersSyncURL).replace("{projectID}", projectID);
+
+//			HINT: content-type "application/json" is default!
+                // execute the http post request to the IRIS server
+                $http.post(url, null).success(function (data) {
+//				$log.debug(data);
+                    if (callbackSuccess) {
+                        callbackSuccess(data);
+                    }
+                }).error(function (data, status, headers, config) {
+                    // on error log the error
+                    $log.error(status);
+                    if (callbackError) {
+                        callbackError(data, status, headers, config);
+                    }
+                })
+            }
         }
     }]);
