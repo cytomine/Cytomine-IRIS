@@ -508,7 +508,7 @@ class SyncService {
                 def userCriteria = IRISUser.createCriteria()
                 user = userCriteria.get {
                     and {
-                        eq('cmUserID', cmUserID) // one specific user
+                        eq('cmID', cmUserID) // one specific user
                         not {
                             'in'('cmUserName', ['system', 'admin', 'superadmin'])
                         }
@@ -588,7 +588,7 @@ class SyncService {
             } else {
 
                 // make query image ID array
-                def queryImageIDArray = queryImageIDs.split(",")
+                def queryImageIDArray = queryImageIDs.split(",").collect{ Long.valueOf(it) }
 
                 // otherwise get just the specified image(s)
                 IRISUserImageSettings.withTransaction {
@@ -637,17 +637,15 @@ class SyncService {
 
                     try {
                         // create the cytomine connection for that user
-                        Cytomine cytomine2 = new Cytomine(grailsApplication.config.grails.cytomine.host as String,
-                                user.cmPublicKey, user.cmPrivateKey, "./")
+                        Cytomine cytomine2 = new Cytomine(cytomine.host,
+                                user.cmPublicKey, user.cmPrivateKey, cytomine.workingPath)
 
                         allImageAnnotations = annotationService.getImageAnnotationsLight(cytomine2,
                                 user, null, imageID)
 
-                        // we have all we want, leave the loop
-                        break
                     } catch (Exception ex) {
                         addSyncException(ex, "User '" + user.cmUserName + "' is not allowed to access " +
-                                "image [" + imageID + "].")
+                                "image [" + imageID + "].", syncExceptions)
                     }
 
                     // skip the image if there are no annotations!
@@ -671,20 +669,20 @@ class SyncService {
                             settings?.setNumberOfAnnotations(nTotal)
                             settings?.computeProgress()
 
-                            settings?.merge(flush: true)
+                            settings?.save(flush: true)
                         }
 
                         log.trace("Done synchronizing image [" + imageID + "] for user '" + user.cmUserName + "'.")
                     } catch (Exception e) {
                         String msg = "Cannot synchronize image [" + imageID +
                                 "] for user '" + user.cmUserName + "'."
-                        addSyncException(e, msg)
+                        addSyncException(e, msg, syncExceptions)
                     }
-                    String msg = "Done synchronizing image [" + imageID + "] for all its users."
+                    String msg = "Done synchronizing image [" + imageID + "]."
                     log.info(msg)
                     activityService.logSync(msg)
                 } catch (Exception e) {
-                    addSyncException(e, "Cannot synchronize image [" + imageID + "]!")
+                    addSyncException(e, "Cannot synchronize image [" + imageID + "]!", syncExceptions)
                 }
             }
 
@@ -692,7 +690,7 @@ class SyncService {
             String msg = "The synchronization failed! This is a serious global error, you should act quickly!"
             log.fatal(msg, ex)
             // GLOBAL ERROR
-            addSyncException(ex, msg)
+            addSyncException(ex, msg, syncExceptions)
         }
 
         if (!syncExceptions.isEmpty()) {
@@ -706,7 +704,7 @@ class SyncService {
                 to recipient
                 subject new SimpleDateFormat('E, yyyy-MM-dd').format(new Date()) + ": Progress synchronization had some errors"
                 body('Errors occurred during scheduled user progress synchronization. See stack traces below. \n\n\n'
-                        + exceptionsToString()
+                        + exceptionsToString(syncExceptions)
                 )
             }
         } else {

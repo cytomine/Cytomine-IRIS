@@ -34,6 +34,7 @@ class ProjectSettingsController {
 
     def settingsService
     def imageService
+    def syncService
 
     def beforeInterceptor = {
         log.debug("Executing action $actionName with params $params")
@@ -127,12 +128,18 @@ class ProjectSettingsController {
 
             // TODO move to service
             // get the user image settings
-            IRISUserImageSettings settings = IRISUserImageSettings.findByCmProjectIDAndCmImageInstanceIDAndId(cmProjectID, cmImageID, settingsID)
+            IRISUserImageSettings settings = IRISUserImageSettings
+                    .findByCmProjectIDAndCmImageInstanceIDAndId(cmProjectID, cmImageID, settingsID)
             settings.setEnabled(newValue)
             settings.save(flush:true, failOnError: true)
 
-            render "OK"
+            render (['success': true, 'msg': 'The settings have been successfully updated!', 'settings': settings] as JSON)
 
+            // now trigger the synchronization of that image
+            if (oldValue == false && newValue == true) {
+                syncService.synchronizeUserLabelingProgress(cytomine,
+                        irisUser, cmProjectID, cmUserID, String.valueOf(cmImageID))
+            }
         } catch (CytomineException e1) {
             log.error(e1)
             // exceptions from the cytomine java client
@@ -226,14 +233,19 @@ class ProjectSettingsController {
                 throw new CytomineException(400, "SettingsID, old and new value must be set in the payload of the request!")
             }
 
-            // TODO
+            // TODO move to service
             // get the user project settings
             IRISUserProjectSettings settings = IRISUserProjectSettings.findByCmProjectIDAndId(cmProjectID, settingsID)
             settings.setEnabled(newValue)
             settings.save(flush:true, failOnError: true)
 
-            render "OK"
+            render (['success': true, 'msg': 'The settings have been successfully updated!', 'settings': settings] as JSON)
 
+            // now trigger the synchronization of that project for all images
+            if (oldValue == false && newValue == true){
+                syncService.synchronizeUserLabelingProgress(cytomine,
+                        irisUser, cmProjectID, cmUserID, null)
+            }
         } catch (CytomineException e1) {
             log.error(e1)
             // exceptions from the cytomine java client

@@ -47,49 +47,18 @@
 
                         <p class="text-muted">{{item.width | number}} x {{item.height | number}} px</p>
                     </td>
-                    <td data-title="'# Labels by User'" sortable="'settings.labeledAnnotations'" class="text-center">
-                         {{ item.settings.labeledAnnotations }}
+                    <!--<td data-title="'# Labels by User'" sortable="'settings.labeledAnnotations'" class="text-center">-->
+                         <!--{{ item.settings.labeledAnnotations }}-->
+                    <!--</td>-->
+                    <td data-title="'Progress'" sortable="'settings.progress'" class="text-center" style="min-width:150px;">
+                        <div ng-switch="{{item.settings.numberOfAnnotations}}">
+                            <div ng-switch-when="0" class="label label-info">No Annotations!</div>
+                            <div ng-switch-default>
+                                <div ng-controller="progressCtrl"
+                                     ng-include="'templates/html/progressPanel.html'"></div>
+                            </div>
+                        </div>
                     </td>
-                    <!--<td data-title="'Progress'" sortable="'settings.progress'" class="text-center"-->
-                        <!--filter="{ 'userProgress' : 'userProgressFilter' }">-->
-                        <!--<div ng-switch="{{item.settings.numberOfAnnotations}}">-->
-                            <!--<div ng-switch-when="0" class="label label-info">No Annotations!</div>-->
-                            <!--<div ng-switch-default>-->
-                                <!--<div ng-controller="progressCtrl"-->
-                                     <!--ng-include="'templates/html/progressPanel.html'"></div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</td>-->
-                    <!--<td data-title="'Actions'" class="text-center">-->
-                        <!--<div class="btn-group" dropdown>-->
-                            <!--<button type="button" style="width:100px;" class="btn btn-primary btn-sm"-->
-                                    <!--ng-click="startLabeling(item)"-->
-                                    <!--ng-class="{ 'disabled' : item.numberOfAnnotations=='0' || (image.opening.cmID) }">-->
-								  <!--<span ng-show="image.opening.cmID === item.cmID">-->
-									   <!--<img src="images/ajax-loader-xs.gif" alt=""/>-->
-								  <!--</span>-->
-								  <!--<span ng-show="image.opening.cmID !== item.cmID">-->
-									 <!--Start Labeling-->
-								  <!--</span>-->
-                                <!--</span>-->
-                            <!--</button>-->
-                            <!--<button type="button" class="btn btn-primary btn-sm dropdown-toggle"-->
-                                    <!--ng-class="{ 'disabled': image.opening.cmID }">-->
-                                <!--<span class="caret"></span>-->
-                                <!--<span class="sr-only">Toggle Dropdown</span>-->
-                            <!--</button>-->
-                            <!--<ul class="dropdown-menu text-left" role="menu">-->
-                                <!--<li ng-class="{ 'disabled' : item.settings.numberOfAnnotations===0 }"><a-->
-                                        <!--ng-click="annotationGallery(item)" href>-->
-                                    <!--View Annotation Gallery-->
-                                <!--</a></li>-->
-                                <!--<li class="divider"></li>-->
-                                <!--<li><a target="_blank" href="{{item.goToURL}}">-->
-                                    <!--Explore in Cytomine-->
-                                <!--</a></li>-->
-                            <!--</ul>-->
-                        <!--</div>-->
-                    <!--</td>-->
                     <td data-title="'Enabled'">
                         <input id="{{ item.cmID + ':checkBox:imageEnabled' }}" type="checkbox" ng-model="item.settings.enabled"
                                 ng-click="setImageEnabled(item, !item.settings.enabled)"/> {{ item.settings.enabled }}
@@ -98,25 +67,7 @@
                 </tr>
                 </tbody>
             </table>
-            <span ng-show="hide"><span class="label label-danger"
-                                       tooltip="You are currently hiding all finished images.">filtered</span>&nbsp;&nbsp;</span><span>Showing image {{ image.pageItemMin+1 }} to {{ image.pageItemMax }} (<strong>{{
-            image.total }}</strong> in total)</span>
-
-            <!-- filter template for progress filtering -->
-            <script type="text/ng-template" id="ng-table/filters/userProgressFilter.html">
-                <div class="btn btn-xs"
-                     ng-class="{ 'active' : !hide, 'btn-info' : !hide, 'btn-default' : hide, 'disabled' : filterLoading}"
-                     ng-click="hideCompleted(false)">Show all
-                </div>
-                <div class="btn btn-xs"
-                     ng-class="{ 'active' : hide, 'btn-info' : hide, 'btn-default' : !hide, 'disabled' : filterLoading}"
-                     ng-click="hideCompleted(true)">Hide completed
-                </div>
-                <input id="allProgresses" type="radio" ng-model="params.filter()[name]" name="filter-control" value=""
-                       style="display: none;"/>
-                <input id="hideCompleted" type="radio" ng-model="params.filter()[name]" name="filter-control"
-                       value="!100" style="display: none;"/>
-            </script>
+            <span>Showing image {{ image.pageItemMin+1 }} to {{ image.pageItemMax }} (<strong>{{ image.total }}</strong> in total)</span>
         </div>
     </div>
 </div>
