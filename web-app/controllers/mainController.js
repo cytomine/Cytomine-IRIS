@@ -45,20 +45,20 @@ iris.controller("mainCtrl", [
 			},function(data, status){
 				$scope.error = {
 						message : "Public or private keys are incorrect!"
-					}
+					};
 				$scope.changeKeys();
 			});
 		}else {
 			$scope.error = {
 				message : "The keys must not be empty!"
-			}
+			};
 			$scope.changeKeys();
 		}
-	}
+	};
 
 	$scope.changeKeys = function() {
 		$scope.$broadcast('clearKeys', []);
-	}
+	};
 
 	$scope.$on('clearKeys', function(event, mass) {
 		$scope.publicKey = "";

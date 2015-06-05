@@ -288,4 +288,68 @@ iris.controller("projectCtrl", [
         };
         // END PROJECT DESCRIPTION MODAL DIALOG
         // ###############################################################
+
+        // open a modal information dialog
+        $scope.showCoordRequestDialog = function (project) {
+            var modalInstance = $modal.open({
+                templateUrl: 'coordinatorRequestForm.html',
+                controller: coordRequCtrl,
+                size: 'md',
+                resolve: {
+                    project: function () {
+                        return project;
+                    },
+                    user: function () {
+                        return $scope.main.user;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (result) {
+                // callbackSuccess branch
+                $log.debug('Coordinator Request Form modal: ' + result);
+            }, function (result) {
+                // callbackError branch
+                $log.debug('Coordinator Request Form modal: ' + result);
+            });
+        };
+
+        // controller for the coordinator request modal dialog
+        var coordRequCtrl = function ($scope, $modalInstance, $sce,
+                                      project, user) {
+
+            $scope.coord = {
+                project: project,
+                user: user,
+                textAreaContent: "Please authorize me as a project coordinator of ["
+                + project.cmName + "].\n\nBest regards, \n" + user.firstname + " "
+                + user.lastname + "\n(ID:" + user.id + ", username: " + user.username + ")",
+                error: {}
+            };
+
+            var finalMessage = "";
+
+            $scope.$watch('coord.textAreaContent', function (textAreaContent) {
+                $log.debug(textAreaContent);
+                finalMessage = textAreaContent;
+            });
+
+            $scope.ok = function () {
+                // TODO send an email
+
+                //$scope.coord.error = {
+                //    show: true
+                //};
+
+                $log.debug(finalMessage);
+
+                $scope.coord.requestsent = true;
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        };
+
+
     }]);

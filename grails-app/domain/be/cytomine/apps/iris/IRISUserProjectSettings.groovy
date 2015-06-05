@@ -62,4 +62,8 @@ class IRISUserProjectSettings {
      * <b>HINT: This property overrides the 'enabled' property!</b>
      */
     Long deleted = null
+    /**
+     * Flag whether the user in this settings object is a project coordinator.
+     */
+//    Boolean irisCoordinator = false
 }

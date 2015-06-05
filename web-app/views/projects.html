@@ -51,18 +51,22 @@
 									</button>
 									<button type="button" class="btn btn-primary btn-sm dropdown-toggle"
 											ng-class="{ 'btn btn-sm btn-primary' : item.settings.enabled === true,
-												'btn btn-sm btn-warning disabled': item.settings.enabled === false }">
+												'btn btn-sm btn-warning': item.settings.enabled === false }">
 										<span class="caret"></span>
 										<span class="sr-only">Toggle Dropdown</span>
 									</button>
 									<ul class="dropdown-menu text-left" role="menu">
-										<li ng-class="{	'btn btn-sm btn-warning disabled': item.settings.enabled === false }"><a
+										<li ng-class="{	'disabled': item.settings.enabled === false }"><a
 												ng-click="showStatistics(item)" href>
 											<span class="glyphicon glyphicon-stats"></span>&nbsp;View statistics dashboard
 										</a></li>
-										<li ng-class="{	'btn btn-sm btn-warning disabled': item.settings.enabled === false }"><a
+										<li ng-class="{	'disabled': item.settings.enabled === false }"><a
 												ng-click="showSettings(item)" href>
 											<span class="glyphicon glyphicon-wrench"></span>&nbsp;Settings
+										</a></li>
+										<li><a
+												ng-click="showCoordRequestDialog(item)" href>
+											<span class="glyphicon glyphicon-user"></span>&nbsp;Coordinator request
 										</a></li>
 									</ul>
 								</div>
@@ -76,18 +80,22 @@
 									</button>
 									<button type="button" class="btn btn-primary btn-sm dropdown-toggle"
 											ng-class="{ 'btn btn-sm btn-primary' : item.settings.enabled === true,
-												'btn btn-sm btn-warning disabled': item.settings.enabled === false }">
+												'btn btn-sm btn-warning': item.settings.enabled === false }">
 										<span class="caret"></span>
 										<span class="sr-only">Toggle Dropdown</span>
 									</button>
 									<ul class="dropdown-menu text-left" role="menu">
-										<li ng-class="{	'btn btn-sm btn-warning disabled': item.settings.enabled === false }"><a
+										<li ng-class="{	'disabled': item.settings.enabled === false }"><a
 												ng-click="showStatistics(item)" href>
 											<span class="glyphicon glyphicon-stats"></span>&nbsp;View statistics dashboard
 										</a></li>
-										<li ng-class="{	'btn btn-sm btn-warning disabled': item.settings.enabled === false }"><a
+										<li ng-class="{	'disabled': item.settings.enabled === false }"><a
 												ng-click="showSettings(item)" href>
 											<span class="glyphicon glyphicon-wrench"></span>&nbsp;Settings
+										</a></li>
+										<li><a
+												ng-click="showCoordRequestDialog(item)" href>
+											<span class="glyphicon glyphicon-user"></span>&nbsp;Coordinator request
 										</a></li>
 									</ul>
 								</div>
@@ -106,5 +114,6 @@
     <!-- INCLUDE: Templates for modal dialogs  -->
 	<div ng-include="'templates/html/projectDescription.html'"></div>
 	<div ng-include="'templates/html/projectDisabled.html'"></div>
+	<div ng-include="'templates/html/coordinatorRequestForm.html'"></div>
 </div>
 

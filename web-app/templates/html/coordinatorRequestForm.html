@@ -1,0 +1,39 @@
+<script type="text/ng-template" id="coordinatorRequestForm.html">
+    <div class="modal-header">
+        <h4 class="modal-title">
+            <span class="glyphicon glyphicon-info-sign"></span> Coordinator Request for {{coord.project.cmName}}</h4>
+    </div>
+
+    <div class="modal-body">
+        <div ng-hide="coord.error.show || coord.requestsent">
+            <p>
+                With this form, you can request the role of a <b>project coordinator</b>
+                for the project <b>{{coord.project.cmName}}</b> from the IRIS administrator.
+            </p>
+
+            <div>
+                Use this text field to submit a custom message to the administrator.
+				<textarea ng-model="coord.textAreaContent" ng-maxlength="512" rows="6" style="width:100%;"></textarea>
+            </div>
+
+            <div>
+                <span class="pull-left">You have <b>{{512-coord.textAreaContent.length}} of 512</b> characters left.</span>
+                <button class="btn btn-primary pull-right" style="margin-bottom:5px;" ng-click="ok()">Send Request</button>
+            </div>
+        </div>
+        <div ng-show="coord.error.show" class="alert alert-danger text-center">
+            <b>Sorry!</b> We could not process your request, please try again later.
+            <br>
+            {{coord.error.message}}
+        </div>
+
+        <div ng-show="coord.requestsent" class="alert alert-success text-center">
+            Your request has been sent to the IRIS administrator.
+            You will be notified via email ({{coord.user.email}}) once the role assignment is completed.
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-warning" ng-click="cancel()">Close</button>
+    </div>
+</script>

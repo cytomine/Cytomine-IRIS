@@ -8,6 +8,7 @@
                     <span class="label label-warning">{{ settingsUser.nDisabled }}</span> user<span ng-hide="settingsUser.nDisabled == 1">s don't</span>
                     <span ng-hide="settingsUser.nDisabled > 1">doesn't</span> have access on this IRIS host</span></span>.
             </div>
+            <!--TODO buttons for 'enable this page' 'enable all', 'disable this page', 'disable all' -->
             <table ng-table="tableParams" show-filter="true" class="table table-striped table-bordered table-hover">
                 <tr ng-repeat="item in data">
                     <td data-title="'User ID'" sortable="'cmID'">{{item.cmID}}</td>
