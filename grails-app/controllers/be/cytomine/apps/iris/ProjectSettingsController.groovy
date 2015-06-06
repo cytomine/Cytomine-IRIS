@@ -35,6 +35,9 @@ class ProjectSettingsController {
     def settingsService
     def imageService
     def syncService
+    def mailService
+    def activityService
+    def grailsApplication
 
     def beforeInterceptor = {
         log.debug("Executing action $actionName with params $params")
@@ -44,25 +47,39 @@ class ProjectSettingsController {
      * Get the list of all users for a particular project.
      * @return
      */
-    def userList(){
+    def userProjectSettingsList() {
         try {
-
-            // TODO check whether the user is allowed to view this list
-
             Cytomine cytomine = request['cytomine']
             IRISUser irisUser = request['user']
             Long cmProjectID = params.long('cmProjectID')
+            String userIDs = params['users']
             int offset = (params['offset'] == null ? 0 : params.int('offset'))
             int max = (params['max'] == null ? 0 : params.int('max'))
-
-//            def userList = settingsService.getUserList(cytomine, irisUser,
-//                    cmProjectID, [:], offset, max)
 
             // check the ACL on cytomine
             Project cmProject = cytomine.getProject(cmProjectID)
 
+            // get the settings for the user(s)
             def settingsList = IRISUserProjectSettings.findAllByCmProjectID(cmProjectID)
-            def userList = IRISUser.findAll { cmID in settingsList.collect{ it.user.cmID } }
+
+            def userList
+            if (userIDs == null) {
+                userList = IRISUser.findAll {
+                    cmID in settingsList.collect {
+                        it.user.cmID
+                    }
+                }
+            } else {
+                def usersArray = String.valueOf(userIDs).split(",").collect { Long.valueOf(it) }
+
+                userList = IRISUser.findAll {
+                    cmID in settingsList.findAll {
+                        it.user.cmID in usersArray
+                    }.collect{
+                        it.user.cmID
+                    }
+                }
+            }
 
             Utils utils = new Utils()
 
@@ -70,9 +87,10 @@ class ProjectSettingsController {
             def allUsersWithProjectSettings = []
             userList.each { user ->
                 def json = utils.toJSONObject(user)
+                // remove the public and private key
                 json['cmPublicKey'] = null
                 json['cmPrivateKey'] = null
-                json.putAt("projectSettings", settingsList.find { settings -> settings.user.cmID == user.cmID})
+                json.putAt("projectSettings", settingsList.find { settings -> settings.user.cmID == user.cmID })
                 allUsersWithProjectSettings.add(json)
             }
 
@@ -99,16 +117,12 @@ class ProjectSettingsController {
         }
     }
 
-
-
     /**
      * Alter the access to a particular image in a project for a given user
      * @return
      */
-    def imageAccess(){
+    def imageAccess() {
         try {
-
-            // TODO check whether the user is allowed to make this request
 
             Cytomine cytomine = request['cytomine']
             IRISUser irisUser = request['user']
@@ -116,13 +130,21 @@ class ProjectSettingsController {
             Long cmImageID = params.long('cmImageID')
             Long cmUserID = params.long('cmUserID')
 
+            // TODO check whether the user is allowed to alter access settings
+            def checkSettings = IRISUserProjectSettings.findByCmProjectIDAndUser(cmProjectID,irisUser)
+
+            if (checkSettings == null || checkSettings.irisCoordinator == false){
+                throw new CytomineException(503, "You don't have the permission to alter image access rules!")
+                return
+            }
+
             def payload = (request.JSON)
             // example {settingsID: 18, oldValue: false, newValue: true}
             Long settingsID = Long.valueOf(payload.get('settingsID'))
             Boolean oldValue = Boolean.valueOf(payload.get('oldValue'))
             Boolean newValue = Boolean.valueOf(payload.get('newValue'))
 
-            if (settingsID == null || oldValue == null || newValue == null){
+            if (settingsID == null || oldValue == null || newValue == null) {
                 throw new CytomineException(400, "SettingsID, old and new value must be set in the payload of the request!")
             }
 
@@ -131,9 +153,9 @@ class ProjectSettingsController {
             IRISUserImageSettings settings = IRISUserImageSettings
                     .findByCmProjectIDAndCmImageInstanceIDAndId(cmProjectID, cmImageID, settingsID)
             settings.setEnabled(newValue)
-            settings.save(flush:true, failOnError: true)
+            settings.save(flush: true, failOnError: true)
 
-            render (['success': true, 'msg': 'The settings have been successfully updated!', 'settings': settings] as JSON)
+            render(['success': true, 'msg': 'The settings have been successfully updated!', 'settings': settings] as JSON)
 
             // now trigger the synchronization of that image
             if (oldValue == false && newValue == true) {
@@ -160,7 +182,6 @@ class ProjectSettingsController {
             render errorMsg as JSON
         }
     }
-
 
     /**
      * Get all images for the calling user in a specific Cytomine project.
@@ -204,23 +225,27 @@ class ProjectSettingsController {
         }
     }
 
-
     /**
      * Alter the access to a particular project for a given user
      * @return
      */
-    def projectAccess(){
+    def projectAccess() {
         try {
-
-            // TODO check whether the user is allowed to make this request
 
             Cytomine cytomine = request['cytomine']
             IRISUser irisUser = request['user']
             Long cmProjectID = params.long('cmProjectID')
             Long cmUserID = params.long('cmUserID')
 
-            if (irisUser.cmID == cmUserID){
+            if (irisUser.cmID == cmUserID) {
                 throw new CytomineException(400, "The calling user cannot remove itself from the project!")
+            }
+
+            def checkSettings = IRISUserProjectSettings.findByCmProjectIDAndUser(cmProjectID,irisUser)
+
+            if (checkSettings == null || checkSettings.irisCoordinator == false){
+                throw new CytomineException(503, "You don't have the permission to alter project access rules!")
+                return
             }
 
             def payload = (request.JSON)
@@ -229,7 +254,7 @@ class ProjectSettingsController {
             Boolean oldValue = Boolean.valueOf(payload.get('oldValue'))
             Boolean newValue = Boolean.valueOf(payload.get('newValue'))
 
-            if (settingsID == null || oldValue == null || newValue == null){
+            if (settingsID == null || oldValue == null || newValue == null) {
                 throw new CytomineException(400, "SettingsID, old and new value must be set in the payload of the request!")
             }
 
@@ -237,12 +262,12 @@ class ProjectSettingsController {
             // get the user project settings
             IRISUserProjectSettings settings = IRISUserProjectSettings.findByCmProjectIDAndId(cmProjectID, settingsID)
             settings.setEnabled(newValue)
-            settings.save(flush:true, failOnError: true)
+            settings.save(flush: true, failOnError: true)
 
-            render (['success': true, 'msg': 'The settings have been successfully updated!', 'settings': settings] as JSON)
+            render(['success': true, 'msg': 'The settings have been successfully updated!', 'settings': settings] as JSON)
 
             // now trigger the synchronization of that project for all images
-            if (oldValue == false && newValue == true){
+            if (oldValue == false && newValue == true) {
                 syncService.synchronizeUserLabelingProgress(cytomine,
                         irisUser, cmProjectID, cmUserID, null)
             }
@@ -271,22 +296,28 @@ class ProjectSettingsController {
      * Alter the access to a particular project for a given user
      * @return
      */
-    def userAutoSync(){
+    def userAutoSync() {
         try {
-
-            // TODO check whether the user is allowed to make this request
 
             Cytomine cytomine = request['cytomine']
             IRISUser irisUser = request['user']
             Long cmProjectID = params.long('cmProjectID')
             Long cmUserID = params.long('cmUserID')
 
+            // check if the user is allowed to do that
+            def checkSettings = IRISUserProjectSettings.findByCmProjectIDAndUser(cmProjectID,irisUser)
+
+            if (checkSettings == null || checkSettings.irisCoordinator == false){
+                throw new CytomineException(503, "You don't have the permission to alter synchronization settings!")
+                return
+            }
+
             def payload = (request.JSON)
             // example {oldValue: false, newValue: true}
             Boolean oldValue = Boolean.valueOf(payload.get('oldValue'))
             Boolean newValue = Boolean.valueOf(payload.get('newValue'))
 
-            if (oldValue == null || newValue == null){
+            if (oldValue == null || newValue == null) {
                 throw new CytomineException(400, "Old and new value must be set in the payload of the request!")
             }
 
@@ -294,12 +325,12 @@ class ProjectSettingsController {
             // update the user
             IRISUser user = IRISUser.findByCmID(cmUserID)
             user.setSynchronize(newValue)
-            user.save(flush:true, failOnError: true)
+            user.save(flush: true, failOnError: true)
 
-            render (['success': true, 'msg': 'The settings have been successfully updated!', 'user': user] as JSON)
+            render(['success': true, 'msg': 'The settings have been successfully updated!', 'user': user] as JSON)
 
             // now trigger the synchronization of that project for all images
-            if (oldValue == false && newValue == true){
+            if (oldValue == false && newValue == true) {
                 syncService.synchronizeUserLabelingProgress(cytomine,
                         irisUser, cmProjectID, cmUserID, null)
             }
@@ -320,6 +351,108 @@ class ProjectSettingsController {
             // on any other exception render 500
             response.setStatus(500)
             JSONObject errorMsg = new Utils().resolveException(e3, 500)
+            render errorMsg as JSON
+        }
+    }
+
+    /**
+     * Request to become a project coordinator from the IRIS administrator.
+     * @return
+     */
+    def requestProjectCoordinator() {
+        try {
+            Cytomine cytomine = request['cytomine']
+            IRISUser irisUser = request['user']
+            Long cmProjectID = params.long('cmProjectID')
+            Long cmUserID = params.long('cmUserID')
+
+            def payload = (request.JSON)
+
+            // example {message: "this is a message to the admin"}
+            String userMessage = String.valueOf(payload.get('message'))
+
+            IRISUser user = IRISUser.findByCmID(cmUserID)
+            if (user == null) {
+                throw new CytomineException(404, "The user with ID [" + cmUserID + "] cannot be found!")
+            }
+
+            Project p = cytomine.getProject(cmProjectID)
+            // check whether the user is already a coordinator
+            IRISUserProjectSettings settings = IRISUserProjectSettings
+                    .findByCmProjectIDAndUser(cmProjectID, user)
+            if (settings?.irisCoordinator) {
+                // send back a notification
+                render(['success': true, 'msg': 'You are already coordinator for project [' + p.get("name") + '].'] as JSON)
+                return
+            }
+
+            // make a token for the admin to directly make the assignment
+            UserToken usrTkn = new UserToken()
+            usrTkn.description = ("Project coordinator authorization for user '" + cmUserID
+                    + "', project '" + cmProjectID + "'")
+            usrTkn.user = user
+            usrTkn.save(flush: true, failOnError: true)
+
+            String recipient = grailsApplication.config.grails.cytomine.apps.iris.server.admin.email
+            String hostname = grailsApplication.config.grails.host
+            String urlprefix = grailsApplication.config.grails.cytomine.apps.iris.host
+            String restURL = (urlprefix + "/api/admin/project/" + cmProjectID + "/user/" + cmUserID + "/authorize.json?irisCoordinator=true" +
+                    "&token=" + usrTkn.token)
+            String adminLoginURL = (urlprefix + "/admin/")
+
+            log.info("Sending email to admin [" + recipient + "]...")
+
+            String subj = ("[Cytomine-IRIS: " + hostname + "] Project Coordinator Request")
+
+            String bdy = ("Dear Cytomine-IRIS administrator, \n\n" +
+                    user.cmFirstName + " " + user.cmLastName + " (" + user.cmEmail + ") requests" +
+                    " to be assigned as PROJECT COORDINATOR for the project [" + p.get("name") + "] " +
+                    "on the IRIS host [" + hostname + "]. \n\n" +
+                    "You can directly grant the user the rights by clicking the following link: \n"
+                    + restURL + "\n\n" +
+                    "Alternatively, log into the admin interface of IRIS and do it manually: \n" +
+                    adminLoginURL +
+                    "\n\n\n#### BEGIN CUSTOM USER MESSAGE ####\n"
+                    + userMessage.toString().replace("\n", "\n") +
+                    "\n#### END CUSTOM USER MESSAGE ####\n" +
+                    "\n\n\n" +
+                    "Disclaimer: You receive this message, because your email address is registered on " +
+                    "Cytomine-IRIS host [" + hostname + "] as administrator address.")
+
+            log.info("Sending coordinator request email to admin [" + recipient + "]...")
+            activityService.log(user, "Requesting project coordinator rights for [" + cmProjectID + "]")
+
+            // notify the admin synchronously
+            mailService.sendMail {
+                async false
+                to recipient
+                subject subj
+                body String.valueOf(bdy)
+            }
+
+            render(['success': true, 'msg': 'The request has been sent to the administrator!'] as JSON)
+
+        } catch (CytomineException e1) {
+            log.error(e1)
+            // exceptions from the cytomine java client
+            response.setStatus(e1.httpCode)
+            JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+            render errorMsg as JSON
+        } catch (GroovyCastException e2) {
+            log.error(e2)
+            // send back 400 if the project ID is other than long format
+            response.setStatus(400)
+            JSONObject errorMsg = new Utils().resolveException(e2, 400)
+            render errorMsg as JSON
+        } catch (Exception e3) {
+            log.error(e3)
+            // on any other exception render 500
+            response.setStatus(500)
+            JSONObject errorMsg = new Utils().resolveException(e3, 500)
+            errorMsg['error']['extramessage'] = "We apologize for this inconvenience and try to solve the problem as soon as possible. " +
+                    "Meanwhile, please contact the IRIS administrator directly via email (" +
+                    grailsApplication.config.grails.cytomine.apps.iris.server.admin.email +
+                    ") to complete your request!";
             render errorMsg as JSON
         }
     }

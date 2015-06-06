@@ -9,13 +9,28 @@ iris.constant("appInfoURL", "api/admin/appInfo.json");
 iris.constant("cytomineHostURL", "api/cytomineHost.json");
 iris.constant("cytomineWebURL", "api/cytomineWeb.json");
 iris.constant("userPublicKeyURL", "api/user/publicKey/{pubKey}.json");
+iris.constant("currentIRISUserURL", "api/user/current.json");
 
 /**
  * This service is responsible for communicating HTTP requests to the IRIS server. 
  */
 iris.factory("cytomineService", [
-	"$http", "$log", "cytomineHostURL", "cytomineWebURL", "userPublicKeyURL", "appNameURL", "appVersionURL", "appInfoURL",
-	function($http, $log, cytomineHostURL, cytomineWebURL, userPublicKeyURL, appNameURL, appVersionURL, appInfoURL) {
+	"$http", "$log",
+	"cytomineHostURL",
+	"cytomineWebURL",
+	"userPublicKeyURL",
+	"appNameURL",
+	"appVersionURL",
+	"appInfoURL",
+	"currentIRISUserURL",
+	function($http, $log,
+			 cytomineHostURL,
+			 cytomineWebURL,
+			 userPublicKeyURL,
+			 appNameURL,
+			 appVersionURL,
+			 appInfoURL,
+			 currentIRISUserURL) {
 
 	var publicKey; 
 	var privateKey; 
@@ -118,6 +133,22 @@ iris.factory("cytomineService", [
 		getUserByPublicKey : function(publicKey, callbackSuccess, callbackError){
 			var url = this.addKeys(userPublicKeyURL.replace("{pubKey}", publicKey));
 			
+			$http.get(url).success(function(data) {
+				//console.log(data)
+				if (callbackSuccess){
+					callbackSuccess(data);
+				}
+			}).error(function(data, status, headers, config){
+				if (callbackError){
+					callbackError(data, status);
+				}
+			});
+		},
+
+		// get the current IRIS user identified by the locally stored public and private key pair
+		getCurrentIRISUser : function(callbackSuccess, callbackError){
+			var url = this.addKeys(currentIRISUserURL);
+
 			$http.get(url).success(function(data) {
 				//console.log(data)
 				if (callbackSuccess){

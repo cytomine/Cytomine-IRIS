@@ -16,9 +16,15 @@
 package be.cytomine.apps.iris.admin
 
 import be.cytomine.apps.iris.IRISUser
+import be.cytomine.apps.iris.IRISUserProjectSettings
 import be.cytomine.apps.iris.SynchronizeUserProgressJob
+import be.cytomine.apps.iris.Utils
 import be.cytomine.client.Cytomine
+import be.cytomine.client.CytomineException
+import be.cytomine.client.models.Project
 import grails.converters.JSON
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException
+import org.json.simple.JSONObject
 import org.springframework.security.access.annotation.Secured
 
 class AdminController {
@@ -138,6 +144,101 @@ class AdminController {
             }
             response.setStatus(500)
             render (['success':false, 'msg': message] as JSON)
+        }
+    }
+
+    /**
+     * Authorize the user as a coordinator for a specific project.
+     * @return
+     */
+    //@Secured(['ROLE_IRIS_PROJECT_ADMIN', 'ROLE_IRIS_PROJECT_COORDINATOR', 'ROLE_IRIS_ADMIN'])
+    def authorizeCoordinator() {
+
+        String tmpEmail = null
+        try {
+            // TODO check whether the user is allowed to make this request
+
+            Cytomine cytomine = request['cytomine']
+            Long cmProjectID = params.long('cmProjectID')
+            Long cmUserID = params.long('cmUserID')
+
+            Boolean targetValueCoord = Boolean.valueOf(params['irisCoordinator'])
+
+            if (targetValueCoord == null){
+                throw new CytomineException(400, "The request requires additional parameters!")
+            }
+
+            // get the user
+            IRISUser user = IRISUser.findByCmID(cmUserID)
+
+            if (user == null){
+                throw new CytomineException(404, "The user cannot be updated!")
+            }
+            // assign the email
+            tmpEmail = user.cmEmail
+
+            Project p = cytomine.getProject(cmProjectID)
+
+            // get the project settings
+            IRISUserProjectSettings settings = IRISUserProjectSettings
+                    .findByCmProjectIDAndUser(cmProjectID,user)
+
+            if (settings == null){
+                throw new CytomineException(404, "The project settings cannot be found.")
+            }
+
+            // update the value
+            settings.irisCoordinator = targetValueCoord
+            // enable the project for that user
+            settings.enabled = true
+            settings.merge(flush: true)
+
+            // send a confirmation mail to the user
+            String recipient = user.cmEmail
+
+            String hostname = grailsApplication.config.grails.host
+            String urlprefix = grailsApplication.config.grails.cytomine.apps.iris.host
+            String restURL = (urlprefix + "/index.html#/projects")
+
+            String subj = ("[Cytomine-IRIS: " + hostname + "] Your Project Coordinator Request")
+            String bdy = ("Dear " + user.cmFirstName + " " + user.cmLastName + ",\n\n" +
+                    "you are now coordinator of the project [" + p.get("name") + "].\n" +
+                    "Start right away configuring the project or viewing statistics using the following link: \n" +
+                    restURL +
+                    "\n\nBest regards,\n" +
+                    "Cytomine-IRIS")
+
+            mailService.sendMail {
+                async false
+                to recipient
+                subject subj
+                body String.valueOf(bdy)
+            }
+
+            render(['success': true, 'msg': 'User \'' + user.cmUserName + '\' ' +
+                    'has been successfully authorized as project coordinator for ' +
+                    'project [' + p.get("name") + ']!'] as JSON)
+
+        } catch (CytomineException e1) {
+            log.error(e1)
+            // exceptions from the cytomine java client
+            response.setStatus(e1.httpCode)
+            JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+            render errorMsg as JSON
+        } catch (GroovyCastException e2) {
+            log.error(e2)
+            // send back 400 if the project ID is other than long format
+            response.setStatus(400)
+            JSONObject errorMsg = new Utils().resolveException(e2, 400)
+            render errorMsg as JSON
+        } catch (Exception e3) {
+            log.error(e3)
+            // on any other exception render 500
+            response.setStatus(500)
+            JSONObject errorMsg = new Utils().resolveException(e3, 500)
+            errorMsg['error']['extramessage'] = "We apologize for this inconvenience and try to solve the problem as soon as possible. " +
+                    "Meanwhile, please contact the user directly via email (" + tmpEmail + ")!";
+            render errorMsg as JSON
         }
     }
 }

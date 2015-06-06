@@ -65,5 +65,5 @@ class IRISUserProjectSettings {
     /**
      * Flag whether the user in this settings object is a project coordinator.
      */
-//    Boolean irisCoordinator = false
+    Boolean irisCoordinator = false
 }

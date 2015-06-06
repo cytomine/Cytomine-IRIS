@@ -50,6 +50,7 @@ class SessionController {
     def projectService
     def grailsApplication
     def syncService
+    def activityService
 
     /**
      * Gets a session object for a user. If the querying user does not have a session,
@@ -227,15 +228,30 @@ class SessionController {
             Cytomine cytomine = request['cytomine']
             IRISUser irisUser = request['user']
 
-            long projectID = params.long('cmProjectID')
+            long cmProjectID = params.long('cmProjectID')
 
             int offset = (params['offset'] == null ? 0 : params.int('offset'))
             int max = (params['max'] == null ? 0 : params.int('max'))
 
-            List<IRISImage> images = imageService.getImages(cytomine, irisUser, projectID, offset, max)
+            // query if there are any settings present
+            List<IRISUserImageSettings> settingsListBefore
+            IRISUserImageSettings.withTransaction {
+                def criteria = IRISUserImageSettings.createCriteria()
+                settingsListBefore = criteria.list {
+                    and {
+                        eq('user', irisUser)
+                        eq('cmProjectID', cmProjectID)
+                    }
+                }
+            }
 
-            // TODO on first call of the user in this project, also render a message that the
-            // computation of the progress information initially may take a while
+            List<IRISImage> images = imageService.getImages(cytomine, irisUser, cmProjectID, offset, max)
+
+            // if the list is empty, the user has not visited this project yet
+            if (settingsListBefore.isEmpty()) {
+                // on first call of the user in this project, also compute progress
+                syncService.synchronizeUserLabelingProgress(cytomine, irisUser, cmProjectID, irisUser.cmID, null)
+            }
 
             render images as JSON
         } catch (CytomineException e1) {
@@ -279,69 +295,5 @@ class SessionController {
             JSONObject errorMsg = new Utils().resolveException(e3, 500)
             render errorMsg as JSON
         }
-    }
-
-    def activityService
-    def executorService
-    def irisService
-
-    def dev() {
-        def nAnnotations = 5000;
-        def nUsers = 10;
-//        for (int i = 0; i<nAnnotations;i++){
-//            for (int u = 0; u < nUsers; u++){
-//                Thread.currentThread().sleep(new Long(new Random().nextInt(10)))
-//            }
-//        }
-        IRISUser u = request['user']
-        //sessionService.devTransactional(u)
-
-//		(1..200).each { index ->
-//			activityService.log(u, String.valueOf(index))
-//		}
-
-        //def list = (1..200)
-
-//		(1..3).each {
-//			irisService.appendToDBQueue {
-//				println "updating something in the db"
-//			}
-////			ScheduledTask st = new ScheduledTask({
-////				println "closure of task"
-////			})
-////
-////			println "Queueing task [" + st.id + "] for scheduled execution"
-////			runAsync {
-////				println "Executing scheduled task [" + st.getId() + "]"
-////				st.closure()
-////			}
-//		}
-
-//			// creates new hibernate sessions for the async threads
-//		try {
-//			// call a transactional service method
-//			sessionService.foo(1)
-//		} catch (Exception e){
-//			render new Utils().resolveException(e, 500) as JSON
-//		}
-//
-//		runAsync {
-//			// call a transactional service method
-//			sessionService.foo(2)
-//		}
-//
-        render "ok"
-    }
-
-    def dev2() {
-        try {
-            // call a transactional service method
-            sessionService.foo(5)
-            render "updated activity 5 " + new Date()
-        } catch (Exception e) {
-            response.setStatus(500)
-            render new Utils().resolveException(e, 500) as JSON
-        }
-
     }
 }

@@ -119,11 +119,13 @@ class SyncService {
             // if no local settings exist, the user has not accessed this project so far
             // write access of the settings is just required at first access
             if (!settings) {
-                settings = new IRISUserProjectSettings(
-                        user: user,
-                        cmProjectID: cmProject.getId(),
-                )
-                settings.save()
+                IRISUserProjectSettings.withTransaction {
+                    settings = new IRISUserProjectSettings(
+                            user: user,
+                            cmProjectID: cmProject.getId(),
+                    )
+                    settings.save(flush:true)
+                }
             }
 
             // 'un-delete' the project and let the user resume at the last image
@@ -277,9 +279,9 @@ class SyncService {
                 settings.save()
 
                 // ##################################################################
-                // DO NOT COMPUTE THE PROGRESS HERE, USE ANOTHER SERVICE METHOD!
+                // COMPUTE THE PROGRESS USING ANOTHER SERVICE METHOD
                 // ##################################################################
-//                settings = computeUserProgress(cytomine,user,irisImage,cmImage.getId())
+                //settings = computeUserProgress(cytomine,user,irisImage,cmImage.getId())
             }
 
             // if the settings have been deleted, 'un-delete' them on next access to have the

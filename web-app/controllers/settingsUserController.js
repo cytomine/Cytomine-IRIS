@@ -29,7 +29,7 @@ iris.controller("settingsUserCtrl", [
             $scope.loading = true;
 
             // gets all project users
-            settingsService.fetchProjectUserList($scope.projectID, function (data) {
+            settingsService.fetchProjectUsersSettings($scope.projectID, null, function (data) {
 
                 delete $scope.settingsUser.error.retrieve;
 

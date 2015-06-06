@@ -80,8 +80,14 @@ iris.controller("mainCtrl", [
 	cytomineService.getUserByPublicKey($scope.publicKey,function(data){
 		// user callback was successful
 		$scope.main.user = data;
+		// also retrieve the IRISUser
+		cytomineService.getCurrentIRISUser(function(irisUser){
+			$scope.main.irisUser = irisUser;
+		}, function(error, status){
+			sharedService.addAlert("Could not retrieve the IRIS user!","danger")
+		});
 	},function(data, status){
-		// do nothing
+		sharedService.addAlert("Could not retrieve the Cytomine user!","danger")
 	});
 	
 	$scope.isIE = function(){

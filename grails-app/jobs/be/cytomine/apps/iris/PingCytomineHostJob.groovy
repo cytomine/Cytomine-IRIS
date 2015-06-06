@@ -134,7 +134,6 @@ class PingCytomineHostJob {
 		// notify the admin
 		mailService.sendMail {
 			async true
-			from "cytomine-iris@pkainz.com"
 			to recipient
 			subject String.valueOf(subj)
 			body String.valueOf(bdy)

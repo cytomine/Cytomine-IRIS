@@ -129,6 +129,30 @@ class CytomineController {
 	}
 
 	/**
+	 * Gets an IRISUser instance.
+	 * @return the IRISUser as JSON object
+	 */
+	def getCurrentIRISUser(){
+		try {
+			Cytomine cytomine = request['cytomine']
+			IRISUser irisUser = request['user']
+			render irisUser as JSON
+		} catch(CytomineException e1){
+			log.error(e1)
+			// exceptions from the cytomine java client
+			response.setStatus(404)
+			JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+			render errorMsg as JSON
+		} catch(Exception e3){
+			log.error(e3)
+			// on any other exception render 500
+			response.setStatus(500)
+			JSONObject errorMsg = new Utils().resolveException(e3, 500)
+			render errorMsg as JSON
+		}
+	}
+
+	/**
 	 * Gets the image server URLs for a given image.
 	 * @return the URLs for a given abstractImage for the OpenLayers instance
 	 */

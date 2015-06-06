@@ -56,11 +56,11 @@
 										<span class="sr-only">Toggle Dropdown</span>
 									</button>
 									<ul class="dropdown-menu text-left" role="menu">
-										<li ng-class="{	'disabled': item.settings.enabled === false }"><a
+										<li ng-class="{	'disabled': (item.settings.enabled === false || item.settings.irisCoordinator === false)}"><a
 												ng-click="showStatistics(item)" href>
 											<span class="glyphicon glyphicon-stats"></span>&nbsp;View statistics dashboard
 										</a></li>
-										<li ng-class="{	'disabled': item.settings.enabled === false }"><a
+										<li ng-class="{	'disabled': (item.settings.enabled === false || item.settings.irisCoordinator === false) }"><a
 												ng-click="showSettings(item)" href>
 											<span class="glyphicon glyphicon-wrench"></span>&nbsp;Settings
 										</a></li>
@@ -89,7 +89,7 @@
 												ng-click="showStatistics(item)" href>
 											<span class="glyphicon glyphicon-stats"></span>&nbsp;View statistics dashboard
 										</a></li>
-										<li ng-class="{	'disabled': item.settings.enabled === false }"><a
+										<li ng-class="{	'disabled': item.settings.enabled === false}"><a
 												ng-click="showSettings(item)" href>
 											<span class="glyphicon glyphicon-wrench"></span>&nbsp;Settings
 										</a></li>

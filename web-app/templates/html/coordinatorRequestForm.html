@@ -1,11 +1,11 @@
 <script type="text/ng-template" id="coordinatorRequestForm.html">
     <div class="modal-header">
         <h4 class="modal-title">
-            <span class="glyphicon glyphicon-info-sign"></span> Coordinator Request for {{coord.project.cmName}}</h4>
+            <span class="glyphicon glyphicon-user"></span> Coordinator Request for {{coord.project.cmName}}</h4>
     </div>
 
     <div class="modal-body">
-        <div ng-hide="coord.error.show || coord.requestsent">
+        <div ng-hide="coord.error.show || coord.requestsending || coord.requestsent || coord.user.projectSettings.irisCoordinator === true || coord.loading">
             <p>
                 With this form, you can request the role of a <b>project coordinator</b>
                 for the project <b>{{coord.project.cmName}}</b> from the IRIS administrator.
@@ -13,23 +13,47 @@
 
             <div>
                 Use this text field to submit a custom message to the administrator.
-				<textarea ng-model="coord.textAreaContent" ng-maxlength="512" rows="6" style="width:100%;"></textarea>
+                <textarea ng-model="coord.textAreaContent" maxlength="512" ng-trim="true" ng-maxlength="512" rows="6" style="width:100%;"></textarea>
             </div>
 
             <div>
                 <span class="pull-left">You have <b>{{512-coord.textAreaContent.length}} of 512</b> characters left.</span>
-                <button class="btn btn-primary pull-right" style="margin-bottom:5px;" ng-click="ok()">Send Request</button>
+                <button class="btn btn-primary pull-right" style="margin-bottom:5px;" ng-click="ok()">Send request</button>
             </div>
         </div>
         <div ng-show="coord.error.show" class="alert alert-danger text-center">
-            <b>Sorry!</b> We could not process your request, please try again later.
+            <b>Sorry!</b> We could not successfully complete your request, please try again later.
             <br>
             {{coord.error.message}}
+            <br>
+            {{coord.error.extramessage}}
         </div>
 
         <div ng-show="coord.requestsent" class="alert alert-success text-center">
-            Your request has been sent to the IRIS administrator.
-            You will be notified via email ({{coord.user.email}}) once the role assignment is completed.
+            Your request has been successfully sent to the IRIS administrator. <br>
+            You will be notified via email ({{coord.user.cmEmail}}) once the assignment is completed.
+        </div>
+
+        <div ng-show="coord.user.projectSettings.irisCoordinator === true" class="alert alert-info text-center">
+            You are already coordinator of this project.
+        </div>
+
+        <div ng-show="coord.requestsending">
+            <p class="text-center">
+            <p class="text-center">
+                Processing your request, please be patient...
+            </p>
+            <img class="img-responsive center-block" src="images/ajax-loader.gif" alt="" />
+            </p>
+        </div>
+
+        <div ng-show="coord.loading">
+            <p class="text-center">
+            <p class="text-center">
+                Loading user content...
+            </p>
+            <img class="img-responsive center-block" src="images/ajax-loader.gif" alt="" />
+            </p>
         </div>
     </div>
 

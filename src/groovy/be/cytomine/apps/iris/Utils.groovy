@@ -330,6 +330,5 @@ class Utils {
                 y.get("ratio") <=> x.get("ratio")
             }
         }
-
     }
 }

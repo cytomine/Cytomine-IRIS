@@ -19,15 +19,23 @@ import org.apache.log4j.DailyRollingFileAppender
 // config files can be ConfigSlurper scripts, Java properties files, or classes
 // in the classpath in ConfigSlurper format
 
-// TODO write externalized config
-//grails.config.locations = ["classpath:${appName}-config.properties",
-//                           "classpath:${appName}-config.groovy",
-//                           "file:${userHome}/.grails/${appName}-config.properties",
-//                           "file:${userHome}/.grails/${appName}-config.groovy"]
+println "loading conf/Config.groovy..."
 
-// if (System.properties["${appName}.config.location"]) {
+// externalized configuration
+grails.config.locations = [
+        // files located in src/java
+//        "classpath:${appName}-config.properties",
+//        "classpath:${appName}-"+grails.util.Environment.current.name+"-config.properties",
+        "classpath:${appName}-config.groovy",
+        "classpath:${appName}-"+grails.util.Environment.current.name+"-config.groovy",
+//        "file:${userHome}/.grails/${appName}-config.properties",
+//        "file:${userHome}/.grails/${appName}-"+grails.util.Environment.current.name+"-config.properties",
+        "file:${userHome}/.grails/${appName}-config.groovy",
+        "file:${userHome}/.grails/${appName}-"+grails.util.Environment.current.name+"-config.groovy"]
+
+//if (System.properties["${appName}.config.location"]) {
 //    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
-// }
+//}
 
 grails.project.groupId = be.cytomine.apps.iris // change this to alter the default package name and Maven publishing destination
 
@@ -109,93 +117,81 @@ grails.hibernate.cache.queries = false
 // ###############################
 // the IRIS instance configuration
 // ###############################
-// Cytomine core settings
+// default Cytomine settings
 grails.cytomine = [
         image : [
                 host : "http://image{serverID}.cytomine.be"
         ],
         host : "http://beta.cytomine.be",
         web : "http://www.cytomine.be",
-        apps : [:],
+        apps : [
+                iris : [
+                        server : [
+                                admin : [
+                                        name : "Admin Name",
+                                        organization: "Admin Organization",
+                                        email : "admin@organization.org"
+                                ]
+                        ],
+                        // configure a demo project for this IRIS instance which will always be enabled to its users
+                        // if none is specified, all projects will be disabled by default
+                        demoProject : [
+                                cmID : 151637920, // specify the Cytomine project ID in the external configuration
+                        ],
+                        sync : [:]
+            ]
+        ]
+    ]
+
+// default settings for the server and backend
+grails.logging.jul.usebridge = true
+grails.dbconsole.enabled = true
+grails.dbconsole.urlRoot = '/admin/dbconsole'
+
+grails.host = "localhost"
+grails.port = "8080"
+grails.protocol = "http"
+grails.serverURL = grails.protocol + "://" + grails.host + ((grails.port=="")?"":":" + grails.port)
+grails.cytomine.apps.iris.host = grails.serverURL + "/iris"
+
+grails.cytomine.apps.iris.sync = [
+        // the client identifier (used as properties key for domain object properties in Cytomine)
+        clientIdentifier : "IRIS_CLIENT_ID",
+        irisHost : grails.host
 ]
 
-// IRIS specific settings
-grails.cytomine.apps.iris = [
-        server : [
-                admin : [
-                        name : "Philipp Kainz",
-                        organization: "Medical University of Graz",
-                        email : "philipp.kainz@medunigraz.at"
-                ]
-        ],
-        // configure a demo project for this IRIS instance which will always be enabled to its users
-        // if none is specified, all projects will be disabled by default
-        demoProject : [
-                cmID : 151637920,
-        ],
-        sync : [:]
-]
+// Job configuration
+// disable the jobs using the "disabled"=true flag
+PingCytomineHostJob.disabled = false
+SynchronizeUserProgressJob.disabled = false
+
 
 environments {
     development {
-        grails.logging.jul.usebridge = true
-        grails.dbconsole.enabled = true
-        grails.dbconsole.urlRoot = '/admin/dbconsole'
 
-        grails.host = "localhost"
-        grails.port = "8080"
-        grails.protocol = "http"
-        grails.serverURL = grails.protocol + "://" + grails.host + ((grails.port=="")?"":":" + grails.port)
-        grails.cytomine.apps.iris.host = grails.serverURL + "/iris"
-
-        grails.cytomine.apps.iris.sync = [
-                // the client identifier (used as properties key for domain object properties in Cytomine)
-                clientIdentifier : "IRIS_GRAZ_DEV",
-                irisHost : grails.host
-        ]
-
-        // job configuration
-        // disable the jobs using the "disabled"=true flag
-        PingCytomineHostJob.disabled = false
-        SynchronizeUserProgressJob.disabled = true
     }
     production {
-        grails.logging.jul.usebridge = false
-        // enable the console, but protect direct access with spring security
-        grails.dbconsole.enabled = true
-        grails.dbconsole.urlRoot = '/admin/dbconsole'
 
-        grails.host = "leonardo.medunigraz.at"
-        grails.port = ""
-        grails.protocol = "https"
-        grails.serverURL = grails.protocol + "://" + grails.host + ((grails.port=="")?"":":" + grails.port)
-        grails.cytomine.apps.iris.host = grails.serverURL + "/iris"
-
-        grails.cytomine.apps.iris.sync = [
-                // the client identifier (used as properties key for domain object properties in Cytomine)
-                clientIdentifier : "IRIS_GRAZ_PROD",
-                irisHost : grails.host
-        ]
-
-        // job configuration
-        // disable the jobs using the "disabled"=true flag
-        PingCytomineHostJob.disabled = false
-        SynchronizeUserProgressJob.disabled = false
     }
 }
 
-// MAIL SETTINGS FOR SYSTEM NOTIFICATION
-grails.mail.default.from="cytomine-iris@leonardo.medunigraz.at"
-grails {
-    mail {
-        // MUG mail relay settings
-        host = "relay.medunigraz.at"
-        port = 25
-        props = [
-                "mail.smtp.from":"cytomine-iris@leonardo.medunigraz.at",
+// Default mail settings for notification services
+grails.mail = [
+        default : [
+                from: ("cytomine-iris@"+grails.host)
+        ],
+        // mail relay settings
+        host : "smtp.domain.com",
+        port : 25,
+        username : "user",
+        password : "secret",
+        props : [
+                "mail.smtp.from":("cytomine-iris@"+grails.host),
+                "mail.smtp.timeout": 15000,
+                "mail.smtp.connectiontimeout": 15000
         ]
-    }
-}
+    ]
+
 
 // send a mail using
 //sendMail {
@@ -206,66 +202,68 @@ grails {
 //}
 
 
-def catalinaBase = System.properties.getProperty('catalina.base')
-if (!catalinaBase) catalinaBase = '.'
-def logDirectory = "${catalinaBase}/logs"
+// LOG-CONFIGURATION IS DONE IN EXTERNAL CONFIG FILE
+//def catalinaBase = System.properties.getProperty('catalina.base')
+//if (!catalinaBase) catalinaBase = '.'
+//def logDirectory = "${catalinaBase}/logs"
+//
+//// log4j configuration
+//log4j = {
+//    appenders {
+//        console name: 'stdout', layout: pattern(conversionPattern: '%d [%t] %-5p %c{2} - %m%n')
+//        appender new DailyRollingFileAppender(
+//                name: 'dailyFileAppender',
+//                datePattern: "'.'yyyy-MM-dd",  // See the API for all patterns.
+//                fileName: "${logDirectory}/${appName}/${appName}.log",
+//                layout: pattern(conversionPattern: '%d [%t] %-5p %c{2} %x - %m%n')
+//        )
+//
+//        rollingFile name: "stacktrace", maxFileSize: 4096,
+//                file: "${logDirectory}/${appName}/${appName}-stacktrace.log"
+//    }
+//
+//    root {
+//        info 'stdout', 'dailyFileAppender'
+//    }
+//
+//    // common logging
+//    error 'org.codehaus.groovy.grails.web.servlet',        // controllers
+//            'org.codehaus.groovy.grails.web.pages',          // GSP
+//            'org.codehaus.groovy.grails.web.sitemesh',       // layouts
+//            'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
+//            'org.codehaus.groovy.grails.web.mapping',        // URL mapping
+//            'org.codehaus.groovy.grails.commons',            // core / classloading
+//            'org.codehaus.groovy.grails.plugins',            // plugins
+//            'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
+//            'org.springframework',
+//            'org.hibernate',
+//            'net.sf.ehcache.hibernate'
+//
+////	trace 'org.hibernate.type.descriptor.sql.BasicBinder'
+//
+//    // cytomine java client
+//    warn 'be.cytomine.client'
+//
+//    environments {
+//        development {
+//            debug 'grails.app.controllers',
+//                    'grails.app.services',
+//                    'be.cytomine.apps.iris'
+////					'org.hibernate.SQL',
+//            'grails.assets'
+//
+//            debug 'grails.app.jobs'
+//        }
+//        production {
+//            // let the application run in debug log mode
+//            debug 'grails.app.controllers',
+//                    'grails.app.services',
+//                    'be.cytomine.apps.iris',
+//                    'grails.app.jobs'
+//        }
+//    }
+//}
 
-// log4j configuration
-log4j = {
-    appenders {
-        console name: 'stdout', layout: pattern(conversionPattern: '%d [%t] %-5p %c{2} - %m%n')
-        appender new DailyRollingFileAppender(
-                name: 'dailyFileAppender',
-                datePattern: "'.'yyyy-MM-dd",  // See the API for all patterns.
-                fileName: "${logDirectory}/${appName}/${appName}.log",
-                layout: pattern(conversionPattern: '%d [%t] %-5p %c{2} %x - %m%n')
-        )
-
-        rollingFile name: "stacktrace", maxFileSize: 4096,
-                file: "${logDirectory}/${appName}/${appName}-stacktrace.log"
-    }
-
-    root {
-        info 'stdout', 'dailyFileAppender'
-    }
-
-    // common logging
-    error 'org.codehaus.groovy.grails.web.servlet',        // controllers
-            'org.codehaus.groovy.grails.web.pages',          // GSP
-            'org.codehaus.groovy.grails.web.sitemesh',       // layouts
-            'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-            'org.codehaus.groovy.grails.web.mapping',        // URL mapping
-            'org.codehaus.groovy.grails.commons',            // core / classloading
-            'org.codehaus.groovy.grails.plugins',            // plugins
-            'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
-            'org.springframework',
-            'org.hibernate',
-            'net.sf.ehcache.hibernate'
-
-//	trace 'org.hibernate.type.descriptor.sql.BasicBinder'
-
-    // cytomine java client
-    warn 'be.cytomine.client'
-
-    environments {
-        development {
-            debug 'grails.app.controllers',
-                    'grails.app.services',
-                    'be.cytomine.apps.iris'
-//					'org.hibernate.SQL',
-            'grails.assets'
-
-            debug 'grails.app.jobs'
-        }
-        production {
-            // let the application run in debug log mode
-            debug 'grails.app.controllers',
-                    'grails.app.services',
-                    'be.cytomine.apps.iris',
-                    'grails.app.jobs'
-        }
-    }
-}
 
 grails.gorm.default.constraints = {
     '*'(nullable: true)
@@ -335,3 +333,15 @@ grails.plugin.springsecurity.interceptUrlMap = [
 //        ]
 
 
+
+// reloadable configuration
+grails.plugins.reloadConfig.files = []
+grails.plugins.reloadConfig.includeConfigLocations = true
+grails.plugins.reloadConfig.interval = 5000
+grails.plugins.reloadConfig.enabled = true
+grails.plugins.reloadConfig.notifyPlugins = []
+grails.plugins.reloadConfig.automerge = true
+grails.plugins.reloadConfig.notifyWithConfig = true
+
+
+println "loaded conf/Config.groovy."

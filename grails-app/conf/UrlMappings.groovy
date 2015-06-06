@@ -1,9 +1,9 @@
 class UrlMappings {
 
 	static mappings = {
-		"/$controller/$action?/$id?(.$format)?"{ 
+		"/$controller/$action?/$id?(.$format)?"{
 			constraints { // apply constraints here
-			
+
 			}
 		 }
 
@@ -65,6 +65,10 @@ class UrlMappings {
 
 		"/api/user/publicKey/$pubKey(.$format)"(controller:"cytomine"){
 			action = [GET: "getUserByPublicKey"]
+		}
+
+		"/api/user/current(.$format)"(controller:"cytomine"){
+			action = [GET: "getCurrentIRISUser"]
 		}
 
 		"/api/abstractimage/$abstractImageID/imageinstance/$imageInstanceID/imageservers.json"(controller:"cytomine"){
@@ -286,6 +290,14 @@ class UrlMappings {
 		}
 
 		/**
+		 * Authorize a user for specific roles/tasks.
+		 * Additional parameter must be set, e.g. irisCoordinator={true|false}
+		 */
+		"/api/admin/project/$cmProjectID/user/$cmUserID/authorize(.$format)"(controller:"admin"){
+			action = [GET: "authorizeCoordinator"]
+		}
+
+		/**
 		 * STATISTICS
 		 *
 		 * A compressed form of agreement visualization.
@@ -319,10 +331,10 @@ class UrlMappings {
 		/**
 		 * SETTINGS
 		 *
-		 * User list for a specific project.
+		 * User settings list for a specific project.
 		 */
 		"/api/settings/$cmProjectID/users(.$format)"(controller:"projectSettings"){
-			action = [GET: "userList"]
+			action = [GET: "userProjectSettingsList"]
 		}
 
 		/**
@@ -356,5 +368,12 @@ class UrlMappings {
 			action = [POST: "userAutoSync"]
 		}
 
+		/**
+		 * Request to become a coordinator for the project.
+		 * 		payload contains the custom message to the administrator
+		 */
+		"/api/settings/user/$cmUserID/project/$cmProjectID/coordinator/request(.$format)"(controller:"projectSettings"){
+			action = [POST: "requestProjectCoordinator"]
+		}
 	}
 }

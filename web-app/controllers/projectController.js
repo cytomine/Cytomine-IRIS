@@ -2,10 +2,10 @@ var iris = angular.module("irisApp");
 
 iris.controller("projectCtrl", [
     "$rootScope", "$routeParams", "$scope", "$http", "$filter", "$location", "$document",
-    "$modal", "$log", "hotkeys", "projectService", "helpService", "sharedService", "sessionService", "ngTableParams", "navService", "$cookieStore",
+    "$modal", "$log", "hotkeys", "settingsService", "projectService", "helpService", "sharedService", "sessionService", "ngTableParams", "navService", "$cookieStore",
     "$timeout",
     function ($rootScope, $routeParams, $scope, $http, $filter, $location, $document,
-              $modal, $log, hotkeys, projectService, helpService, sharedService, sessionService, ngTableParams, navService, $cookieStore,
+              $modal, $log, hotkeys, settingsService, projectService, helpService, sharedService, sessionService, ngTableParams, navService, $cookieStore,
               $timeout) {
         $log.debug("projectCtrl");
 
@@ -41,6 +41,14 @@ iris.controller("projectCtrl", [
 
         // get the current day as long
         $scope.today = sharedService.today;
+
+
+        var reasonDisabledAsHTML = '<div class="alert alert-info">This project is not enabled for this IRIS instance ('
+            + $location.host() + '). ' +
+            '<br/>Please contact the administrator of your study or of this project.</div>';
+
+        var reasonNoCoordAsHTML = '<div class="alert alert-info">You are no project coordinator of this project!' +
+            '<br/>In order to view the statistics and settings, request to become a coordinator for that project.</div>';
 
         // refresh the page (get all projects and the session)
         $scope.loadProjects = function () {
@@ -116,8 +124,8 @@ iris.controller("projectCtrl", [
         // open a project
         $scope.openProject = function (project) {
 
-            if (project['settings'].enabled !== true) {
-                $scope.showNoOpenDialog(project);
+            if (project['settings'].enabled === false) {
+                $scope.showNoOpenDialog(project, reasonDisabledAsHTML);
                 return;
             }
 
@@ -134,8 +142,12 @@ iris.controller("projectCtrl", [
         // show the project statistics page
         $scope.showStatistics = function (project) {
 
-            if (project['settings'].enabled !== true) {
-                $scope.showNoOpenDialog(project);
+            if (project['settings'].enabled === false){
+                $scope.showNoOpenDialog(project, reasonDisabledAsHTML);
+                return;
+            }
+            else if(project['settings'].irisCoordinator === false) {
+                $scope.showNoOpenDialog(project, reasonNoCoordAsHTML, "Permission denied");
                 return;
             }
 
@@ -152,8 +164,12 @@ iris.controller("projectCtrl", [
         // show the project settings
         $scope.showSettings = function (project) {
 
-            if (project['settings'].enabled !== true) {
-                $scope.showNoOpenDialog(project);
+            if (project['settings'].enabled === false){
+                $scope.showNoOpenDialog(project, reasonDisabledAsHTML);
+                return;
+            }
+            else if(project['settings'].irisCoordinator === false) {
+                $scope.showNoOpenDialog(project, reasonNoCoordAsHTML, "Permission denied");
                 return;
             }
 
@@ -227,6 +243,9 @@ iris.controller("projectCtrl", [
                     },
                     error: function () {
                         return dlgData.error;
+                    },
+                    title: function(){
+                        return "Project Description (" + project.cmName + ")";
                     }
                 }
             });
@@ -241,22 +260,23 @@ iris.controller("projectCtrl", [
         };
 
         // open a modal information dialog
-        $scope.showNoOpenDialog = function (project) {
+        $scope.showNoOpenDialog = function (project, reasonAsHTML, title) {
             var modalInstance = $modal.open({
                 templateUrl: 'projectDisabled.html',
                 controller: modalCtrl,
                 size: 'md',
                 resolve: {
                     data: function () {
-                        return '<div class="alert alert-info">This project is not enabled for this IRIS instance ('
-                            + $location.host() + '). ' +
-                            '<br/>Please contact the administrator of your study or of this project.</div>';
+                        return reasonAsHTML;
                     },
                     project: function () {
                         return project;
                     },
                     error: function () {
                         return undefined;
+                    },
+                    title: function(){
+                        return title===undefined?("Project " + project.cmName + " disabled"):title;
                     }
                 }
             });
@@ -272,11 +292,12 @@ iris.controller("projectCtrl", [
 
         // controller for the project descriptor modal dialog
         var modalCtrl = function ($scope, $modalInstance, $sce, data,
-                                  project, error) {
+                                  project, error, title) {
 
             $scope.description = data;
             $scope.project = project;
             $scope.error = error;
+            $scope.title = title;
 
             $scope.ok = function () {
                 $modalInstance.close('OK');
@@ -299,7 +320,7 @@ iris.controller("projectCtrl", [
                     project: function () {
                         return project;
                     },
-                    user: function () {
+                    user: function(){
                         return $scope.main.user;
                     }
                 }
@@ -317,33 +338,54 @@ iris.controller("projectCtrl", [
         // controller for the coordinator request modal dialog
         var coordRequCtrl = function ($scope, $modalInstance, $sce,
                                       project, user) {
-
             $scope.coord = {
                 project: project,
-                user: user,
-                textAreaContent: "Please authorize me as a project coordinator of ["
-                + project.cmName + "].\n\nBest regards, \n" + user.firstname + " "
-                + user.lastname + "\n(ID:" + user.id + ", username: " + user.username + ")",
+                loading: true,
                 error: {}
             };
 
             var finalMessage = "";
 
             $scope.$watch('coord.textAreaContent', function (textAreaContent) {
-                $log.debug(textAreaContent);
                 finalMessage = textAreaContent;
             });
 
+            // get the status of the current user
+            settingsService.fetchProjectUsersSettings(project.cmID, user.id, function (user) {
+                $scope.coord.user = user[0];
+
+                $scope.coord.textAreaContent = "Please authorize me as a project coordinator of ["
+                + project.cmName + "].\n\nBest regards, \n" + $scope.coord.user.cmFirstName + " "
+                + $scope.coord.user.cmLastName + "\n(ID:" + $scope.coord.user.cmID + ", username: "
+                + $scope.coord.user.cmUserName + ")";
+
+                $scope.coord.loading = false;
+            }, function (error, status) {
+                $scope.coord.error = {
+                    show: true,
+                    message: error.message
+                };
+                $scope.coord.loading = false;
+            });
+
             $scope.ok = function () {
-                // TODO send an email
 
-                //$scope.coord.error = {
-                //    show: true
-                //};
+                $log.debug("Request message: ", finalMessage);
 
-                $log.debug(finalMessage);
+                $scope.coord.requestsending = true;
 
-                $scope.coord.requestsent = true;
+                settingsService.requestProjectCoordinator(project.cmID, $scope.coord.user.cmID, finalMessage,
+                    function(data){
+                        $scope.coord.requestsent = true;
+                        $scope.coord.requestsending = false;
+                    }, function(error, status){
+                        $scope.coord.error = {
+                            show: true,
+                            message: error.error.message,
+                            extramessage: error.error.extramessage
+                        };
+                        $scope.coord.requestsending = false;
+                    });
             };
 
             $scope.cancel = function () {

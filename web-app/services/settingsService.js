@@ -10,6 +10,7 @@ iris.constant("projectUsersAccessChangeURL", "api/settings/user/{userID}/project
 iris.constant("projectUsersSyncURL", "api/admin/project/{projectID}/user/{userID}/synchronize.json");
 iris.constant("projectUsersAutoSyncChangeURL", "api/settings/user/{userID}/project/{projectID}/autosync.json");
 iris.constant("projectAllUsersSyncURL", "api/admin/project/{projectID}/synchronize.json");
+iris.constant("requestProjectCoordinatorURL", "api/settings/user/{userID}/project/{projectID}/coordinator/request.json");
 
 iris.factory("settingsService", [
     "$http", "$log",
@@ -20,8 +21,10 @@ iris.factory("settingsService", [
     "projectUsersSyncURL",
     "projectUsersAutoSyncChangeURL",
     "projectAllUsersSyncURL",
+    "requestProjectCoordinatorURL",
     "sessionService",
     "cytomineService",
+    "sharedService",
     function($http, $log,
              projectUsersSettingsURL,
              projectUsersImageAccessChangeURL,
@@ -30,17 +33,25 @@ iris.factory("settingsService", [
              projectUsersSyncURL,
              projectUsersAutoSyncChangeURL,
              projectAllUsersSyncURL,
+             requestProjectCoordinatorURL,
              sessionService,
-             cytomineService) {
+             cytomineService,
+             sharedService) {
 
         return {
-            // get the annotations for a given project, images, terms and users
-            fetchProjectUserList: function (projectID, callbackSuccess,
+            // get all user's settings for a given project
+            fetchProjectUsersSettings: function (projectID, userIDs, callbackSuccess,
                                             callbackError, offset, max) {
-                $log.debug("Getting project user list: " + projectID);
+                $log.debug("Getting user settings for project: " + projectID);
 
                 // modify the parameters
                 var url = cytomineService.addKeys(projectUsersSettingsURL).replace("{projectID}", projectID);
+
+                // add optional userIDs
+                if (userIDs){
+                    url += ("&users=" + userIDs)
+                }
+
 
                 // add pagination parameters
                 if (offset) {
@@ -50,6 +61,7 @@ iris.factory("settingsService", [
                 if (max) {
                     url += "&max=" + max;
                 }
+
 
                 // execute the http get request to the IRIS server
                 $http.get(url).success(function (data) {
@@ -219,6 +231,34 @@ iris.factory("settingsService", [
 //			HINT: content-type "application/json" is default!
                 // execute the http post request to the IRIS server
                 $http.post(url, null).success(function (data) {
+//				$log.debug(data);
+                    if (callbackSuccess) {
+                        callbackSuccess(data);
+                    }
+                }).error(function (data, status, headers, config) {
+                    // on error log the error
+                    $log.error(status);
+                    if (callbackError) {
+                        callbackError(data, status, headers, config);
+                    }
+                })
+            },
+
+            // send a request to be a project coordinator to the administrator
+            requestProjectCoordinator: function (projectID, userID, message, callbackSuccess,
+                                       callbackError) {
+                $log.debug("Requesting project coordinator rights from IRIS admin: " + projectID + " - " + userID);
+
+                // modify the parameters
+                var url = cytomineService.addKeys(requestProjectCoordinatorURL).replace("{projectID}", projectID)
+                    .replace("{userID}", userID);
+
+                // construct the payload
+                var payload = "{ message: \"" + sharedService.escapeNewLineChars(message) + "\" }";
+
+//			HINT: content-type "application/json" is default!
+                // execute the http post request to the IRIS server
+                $http.post(url, payload).success(function (data) {
 //				$log.debug(data);
                     if (callbackSuccess) {
                         callbackSuccess(data);

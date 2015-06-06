@@ -30,12 +30,12 @@ beans = {
 	irisObjectMarshallers(IRISObjectMarshallers) {
 		irisMarshallers = [
 //				new IRISUserSessionMarshaller(),
-				new IRISProjectMarshaller(),
-				new IRISAnnotationMarshaller(),
+			new IRISProjectMarshaller(),
+			new IRISAnnotationMarshaller(),
 //				new ActivityMarshaller(),
-				new IRISImageMarshaller()
+			new IRISImageMarshaller()
 //				new IRISUserMarshaller()
-			]
+		]
 	}
 
 	executorService( PersistenceContextExecutorWrapper ) { bean ->

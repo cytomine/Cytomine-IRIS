@@ -28,8 +28,8 @@ iris.controller("settingsSyncCtrl", [
         $scope.loadUsers = function () {
             $scope.loading = true;
 
-            // gets all project users
-            settingsService.fetchProjectUserList($scope.projectID, function (data) {
+            // gets all project user settings
+            settingsService.fetchProjectUsersSettings($scope.projectID, null, function (data) {
 
                 delete $scope.settingsSync.error.retrieve;
 
