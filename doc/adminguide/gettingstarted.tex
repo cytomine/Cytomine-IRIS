@@ -38,15 +38,27 @@ This is because once a user uses IRIS to assign a label to an annotation, all pr
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{System Requirements}
 \label{section:systemrequirements}
-
+\begin{itemize}
+\item Apache Tomcat Servlet Container
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Downloading/Installation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{System Deployment}
 \label{chapter:deployment}
+
 \section{Building from Source}
 \label{section:buildingfromsource}
+In order to build a self-contained web application archive (\texttt{*.war}), Grails must be installed on the machine you are building IRIS on. 
+Download and install Grails version \grailsVersion\ according to the instructions available on \url{https://grails.org/download.html}.
+
+Once Grails is installed, clone the Github repository and build the deployable \texttt{*.war} file from the command line: 
+\begin{lstlisting}
+$ git clone https://github.com/cytomine/Cytomine-IRIS
+$ grails war
+\end{lstlisting}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Webapp installation
@@ -54,6 +66,11 @@ This is because once a user uses IRIS to assign a label to an annotation, all pr
 \section{Installation}
 \label{section:installation}
 
+
+\subsection{Server Configuration Files}
+\label{subsec:serverconfig}
+\tobedone
+Describe externalized configuration and where to put the config files. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SUPPORT
