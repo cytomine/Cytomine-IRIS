@@ -10,6 +10,28 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Introduction}
 \label{chapter:introduction}
+\section{Functionality and Purpose - What is it?}
+Cytomine IRIS, the \textbf{I}nterobserver \textbf{R}el\textbf{I}ability Study module, is an additional module to the Cytomine core web application. 
+IRIS is based on Grails (backend) and AngularJS (frontend) and makes use of the Cytomine REST API via the open-source Cytomine Java client. 
+
+Cytomine has initially been developed as a web platform for collaborative and large-scale analysis of biomedical images. 
+In its basic functionality, the core application also enables to conduct studies in the so called ``blind mode'', where users do not see the labels of others, and some other image and project properties are anonymized. 
+
+The purpose of IRIS is to provide a convenient interface for labeling hundrets of annotations in a blinded fashion and assess the agreement of observers. 
+Furthermore, it extends the standard data model of Cytomine and provides overall progress statistics to each user during the labeling such that a high percentage or - in the best case - all annotations in a project get at a label assigned. 
+This is of particular interest for tasks like creating training datasets for supervised machine learning algorithms with a maximum level of interobserver agreement. 
+Given the large variability of biological tissue, a strict classification of e.g. cells may be a hard task, depends on the observer's experience and thus many experts have to agree on a particular label. 
+IRIS provides analysis and visualization tools for the observer agreement at the level of each annotation. 
+
+\section{Limitations - What is it not?}
+\warnbox{Single Label Restriction}{
+As of version \appVersion , IRIS is restricted to assign one single label per user only.
+This essentially means that you should not use IRIS for projects, where users are allowed to assign labels using the Cytomine core web interface as well.
+This is because once a user uses IRIS to assign a label to an annotation, all previously assigned labels are removed!
+}
+
+%\section{Outlook}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % System Requirements

@@ -14,7 +14,6 @@ In addition to the Cytomine user management, the IRIS module requires custom ass
 This allows for custom widget visibility and other functionality in the IRIS interface as well as access to backend and database. 
 
 \def\irisadmin{\texttt{IRISAdmin}}
-\def\pjadmin{\texttt{ProjectAdmin}}
 \def\pjcoord{\texttt{ProjectCoordinator}}
 \section{User Roles}
 \subsection{IRISAdmin}
@@ -31,23 +30,18 @@ The default \irisadmin\ has the following credentials after a clean install of I
 \end{itemize}
 
 
-\subsection{IRISProjectAdmin}
-A \pjadmin\ is able to manipulate other IRIS users' role assignments. 
-This role also incorporates all functions and rights granted to \pjcoord .
+\subsection{Project Coordinator}
+A \pjcoord\ is basically the managing user of an IRIS project. 
+In addition to having access to the entire front-end and participating in the study, the project coordinator 
 
-The rights granted to a \pjadmin\ are as follows:
+The rights granted to a \pjcoord\ are as follows:
 \begin{itemize}
-\item User role manipulation for the particular project, this role has been assigned to
-\begin{itemize}
-\item declaring other users as \pjadmin
+\item manipulation of project access settings for \emph{other} users
+\item manipulation of image access settings for \emph{all} users
 \item declaring other users as \pjcoord
+\item access to the project statistics of blinded projects\todo{what about non-blinded projects?}
+\item access to the project synchronization interface
 \end{itemize}
-\item All rights granted to \pjcoord
-\end{itemize}
-
-
-
-\subsection{IRISProjectCoordinator}
 A \pjcoord\ can view all statistics of the projects he is assigned to. 
 Users are just able to view their particular projects, they have been assigned to in the Cytomine core application.
 Thus, they can only be a \pjcoord\ in these projects. 
@@ -58,12 +52,6 @@ The rights granted to a \pjcoord\ are as follows:
 \item Locking/Unlocking the project and/or particular images in the project to particular users
 \item Interobserver statistics: view and export
 \end{itemize}
-
-
-
-\section{Assigning Project Roles}
-
-
 
 
 
@@ -78,16 +66,29 @@ The rights granted to a \pjcoord\ are as follows:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Project Management}
-The proper project configuration is essential to conduct an interobserver-study. 
-The main configuration is done at the Cytomine host, where the project has initially been created and got its users assigned. 
+
+\section{General Settings}
+\subsection{Cytomine Host}
+Any project is created on the Cytomine host, where the project owner configures it properly and assigns the project users. 
+Each user is required to have a valid Cytomine account. 
+
+\subsection{Connecting a Project to IRIS}
+Once a project has been created and is about to be 
+
+
+ 
+
+\section{Interobserver Studies}
+A proper project configuration is essential to conduct an interobserver study. 
+
 There are a few rules to follow in order to make it work properly on IRIS, which we will elaborate on in the following sections. 
 
-\section{Configuration of Blinded Projects}
+\subsection{Configuration of Blinded Projects}
 This section covers the project configuration that needs to be done on the Cytomine host. 
 
-\subsection{Cytomine Host}
+\subsubsection{Cytomine Host}
 
-\subsection{IRIS Host}
+\subsubsection{IRIS Host}
 
 
 \section{Configuration of Non-Blinded Projects}
