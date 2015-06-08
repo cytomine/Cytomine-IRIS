@@ -21,7 +21,9 @@ import be.cytomine.apps.iris.SynchronizeUserProgressJob
 import be.cytomine.apps.iris.Utils
 import be.cytomine.client.Cytomine
 import be.cytomine.client.CytomineException
+import be.cytomine.client.collections.UserCollection
 import be.cytomine.client.models.Project
+import be.cytomine.client.models.User
 import grails.converters.JSON
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.json.simple.JSONObject
@@ -159,6 +161,7 @@ class AdminController {
             // TODO check whether the user is allowed to make this request
 
             Cytomine cytomine = request['cytomine']
+            IRISUser irisUser = request['user']
             Long cmProjectID = params.long('cmProjectID')
             Long cmUserID = params.long('cmUserID')
 
@@ -168,12 +171,18 @@ class AdminController {
                 throw new CytomineException(400, "The request requires additional parameters!")
             }
 
-            // get the user
+            // get the user from the IRIS db
             IRISUser user = IRISUser.findByCmID(cmUserID)
 
             if (user == null){
                 throw new CytomineException(404, "The user cannot be updated!")
             }
+
+            // a user cannot revoke its own coordinator rights!
+            if (irisUser.cmID == cmUserID && targetValueCoord == false) {
+                throw new CytomineException(503, "The user cannot revoke its own project coordinator rights!")
+            }
+
             // assign the email
             tmpEmail = user.cmEmail
 
@@ -193,31 +202,49 @@ class AdminController {
             settings.enabled = true
             settings.merge(flush: true)
 
-            // send a confirmation mail to the user
-            String recipient = user.cmEmail
+            if (targetValueCoord == true){
+                // if the user is now a coordinator, send a mail
+                // send a confirmation mail to the user
+                String recipient = user.cmEmail
 
-            String hostname = grailsApplication.config.grails.host
-            String urlprefix = grailsApplication.config.grails.cytomine.apps.iris.host
-            String restURL = (urlprefix + "/index.html#/projects")
+                String hostname = grailsApplication.config.grails.host
+                String urlprefix = grailsApplication.config.grails.cytomine.apps.iris.host
+                String restURL = (urlprefix + "/index.html#/projects")
 
-            String subj = ("[Cytomine-IRIS: " + hostname + "] Your Project Coordinator Request")
-            String bdy = ("Dear " + user.cmFirstName + " " + user.cmLastName + ",\n\n" +
-                    "you are now coordinator of the project [" + p.get("name") + "].\n" +
-                    "Start right away configuring the project or viewing statistics using the following link: \n" +
-                    restURL +
-                    "\n\nBest regards,\n" +
-                    "Cytomine-IRIS")
+                String subj = ("[Cytomine-IRIS: " + hostname + "] Your Project Coordinator Request")
+                String bdy = ("Dear " + user.cmFirstName + " " + user.cmLastName + ",\n\n" +
+                        "you are now coordinator of the project [" + p.get("name") + "].\n" +
+                        "Start right away configuring the project for other participants," +
+                        " or viewing statistics using the following link: \n" +
+                        restURL +
+                        "\n\nBest regards,\n" +
+                        "Cytomine-IRIS")
 
-            mailService.sendMail {
-                async false
-                to recipient
-                subject subj
-                body String.valueOf(bdy)
+                mailService.sendMail {
+                    async false
+                    to recipient
+                    subject subj
+                    body String.valueOf(bdy)
+                }
+
+                render(['success': true, 'msg': 'User \'' + user.cmUserName + '\' ' +
+                        'has been successfully authorized as project coordinator for ' +
+                        'project [' + p.get("name") + ']!'] as JSON)
+
+                // TODO sync all users for this project without their API keys and add new IRISProject
+                // Settings for that project, if they are not already present
+//                UserCollection projectUsers = cytomine.getProjectUsers(cmProjectID)
+//                for (User u in projectUsers.getList()){
+//                    log.info("Synchronizing user " + u.get("username") + " without API keys.")
+//                    syncService.synchronizeUserNoAPIKeys(u)
+//                }
+
+            } else {
+                // the rights have been revoked
+                render(['success': true, 'msg': 'User \'' + user.cmUserName + '\' ' +
+                        'has been successfully removed as project coordinator for ' +
+                        'project [' + p.get("name") + ']!'] as JSON)
             }
-
-            render(['success': true, 'msg': 'User \'' + user.cmUserName + '\' ' +
-                    'has been successfully authorized as project coordinator for ' +
-                    'project [' + p.get("name") + ']!'] as JSON)
 
         } catch (CytomineException e1) {
             log.error(e1)

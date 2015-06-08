@@ -55,9 +55,10 @@ class DomainMapper {
      *
      * @param cmUser a Cytomine user (be.cytomine.client.models.User)
      * @param irisUser an IRIS user, or null (then a new user is generated)
+     * @param options a map with options such as ['noAPIKeys':true]
      * @return an IRIS user instance
      */
-    IRISUser mapUser(be.cytomine.client.models.User cmUser, IRISUser irisUser) {
+    IRISUser mapUser(be.cytomine.client.models.User cmUser, IRISUser irisUser, Map options=['noAPIKeys':false]) {
         if (irisUser == null) {
             irisUser = new IRISUser()
         }
@@ -67,8 +68,14 @@ class DomainMapper {
         irisUser.setCmUserName(cmUser.getStr("username"))
         irisUser.setCmLastName(cmUser.getStr("lastname"))
         irisUser.setCmFirstName(cmUser.getStr("firstname"))
-        irisUser.setCmPublicKey(cmUser.getStr("publicKey"))
-        irisUser.setCmPrivateKey(cmUser.getStr("privateKey"))
+        if (options != null
+                && options['noAPIKeys'] != null
+                && options['noAPIKeys'] == true){
+            // skip the api key mapping
+        }else {
+            irisUser.setCmPublicKey(cmUser.getStr("publicKey"))
+            irisUser.setCmPrivateKey(cmUser.getStr("privateKey"))
+        }
         irisUser.setCmEmail(cmUser.getStr("email"))
         irisUser.setCmPasswordExpired(cmUser.getBool("passwordExpired"))
 

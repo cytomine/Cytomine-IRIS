@@ -1,4 +1,3 @@
-
 /* Copyright the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,13 +51,15 @@ class SyncService {
 
     /**
      * Synchronizes a user with the Cytomine instance.
+     * Essentially, this creates the user in the IRIS database.
      *
      * @param cmUser the Cytomine user to be synced
      * @return the IRIS user (either a new instance or an existing one which got updated if anything changed)
      *
+     * @throws CytomineException
      * @throws Exception
      */
-    IRISUser synchronizeUser(User cmUser) throws Exception {
+    IRISUser synchronizeUser(User cmUser) throws CytomineException, Exception {
         // try to locate the object in the IRIS db
         IRISUser irisUser = IRISUser.findByCmID(cmUser.getId())
         boolean userExists = (irisUser != null)
@@ -80,7 +81,7 @@ class SyncService {
             if (irisUser.synchronize && irisUser.cmUpdated > tmp.cmUpdated) {
                 log.debug("Mapped user requires synchronization.")
                 activityService.logUserUpdate(cmUser)
-                irisUser.save(flush: true)
+                irisUser.merge(flush: true)
             } else {
                 log.debug("Mapped user requires NO synchronization.")
             }
@@ -89,9 +90,47 @@ class SyncService {
     }
 
     /**
+     * Synchronizes a user with the Cytomine instance without the user's API keys.
+     * Essentially, any user can call this method to add any other user to the IRIS database using the
+     * publicly available personal information.
+     *
+     * @param cmUser the Cytomine user to be synced
+     * @return the IRIS user (either a new instance or an existing one which got updated)
+     *
+     * @throws CytomineException if the user cannot be found
+     * @throws Exception
+     */
+    IRISUser synchronizeUserNoAPIKeys(User cmUser) throws CytomineException, Exception {
+        // try to locate the object in the IRIS db
+        IRISUser irisUser = IRISUser.findByCmID(cmUser.getId())
+        boolean userExists = (irisUser != null)
+
+        // create a temporary object
+        IRISUser tmp = new IRISUser()
+        if (userExists) {
+            PropertyUtils.copyProperties(tmp, irisUser)
+        }
+        // generate a new user, if the user does not yet exist, otherwise update the
+        // user information from Cytomine without the user's API keys
+        irisUser = new DomainMapper(grailsApplication).mapUser(cmUser, irisUser, ['noAPIKeys':true])
+        if (!userExists) {
+            log.debug("Inserting new user.")
+            irisUser.setSynchronize(true)
+            activityService.logUserCreate(cmUser)
+            irisUser.save(flush: true)
+        } else {
+            log.debug("Mapped user has been synchronized.")
+            activityService.logUserUpdate(cmUser)
+            irisUser.merge(flush: true)
+        }
+        return irisUser
+    }
+
+    /**
      * Synchronizes a project's settings for a given user with the Cytomine instance.
      *
      * @param cytomine a Cytomine instance
+     * @param user the IRIS user, this project is synced for
      * @param cmProjectID the Cytomine project ID to be synced
      * @return the IRIS project
      * @throws CytomineException
@@ -124,7 +163,7 @@ class SyncService {
                             user: user,
                             cmProjectID: cmProject.getId(),
                     )
-                    settings.save(flush:true)
+                    settings.save(flush: true)
                 }
             }
 
@@ -360,7 +399,7 @@ class SyncService {
      * @return a IRISUserImageSettings object which contains progress information for the user
      */
     IRISUserImageSettings computeUserProgress(Cytomine cytomine, Long projectID, Long cmImageID, IRISUser user)
-        throws CytomineException, Exception {
+            throws CytomineException, Exception {
         // clone the cytomine object and retrieve annotations without pagination
         Cytomine cm = new Cytomine(cytomine.host, cytomine.publicKey, cytomine.privateKey, cytomine.basePath)
 
@@ -376,7 +415,7 @@ class SyncService {
 
         IRISUserImageSettings settings
         IRISUserImageSettings.withTransaction {
-             settings = IRISUserImageSettings
+            settings = IRISUserImageSettings
                     .findByUserAndCmImageInstanceID(user, cmImageID)
 
             settings?.setLabeledAnnotations(progressInfo['labeledAnnotations'] as Long)
@@ -425,7 +464,7 @@ class SyncService {
         }
 
         // return the settings
-        return ['labeledAnnotations':labeledAnnotations as Long, 'totalAnnotations': totalAnnotations as Long]
+        return ['labeledAnnotations': labeledAnnotations as Long, 'totalAnnotations': totalAnnotations as Long]
     }
 
     /**
@@ -495,8 +534,8 @@ class SyncService {
      * @throws CytomineException
      */
     def synchronizeUserLabelingProgress(Cytomine cytomine, IRISUser irisUser,
-                                Long cmProjectID, Long cmUserID, String queryImageIDs)
-        throws Exception, CytomineException {
+                                        Long cmProjectID, Long cmUserID, String queryImageIDs)
+            throws Exception, CytomineException {
 
         // an array to record sync exceptions in
         def syncExceptions = []
@@ -506,7 +545,7 @@ class SyncService {
         try {
             List<IRISUser> irisUsers
             // if we want to sync all users at once
-            if (cmUserID == null){
+            if (cmUserID == null) {
                 // get all users
                 IRISUser.withTransaction {
                     def userCriteria = IRISUser.createCriteria()
@@ -588,7 +627,7 @@ class SyncService {
             // for the particular project, get the image(s)
             List imageIDs
             // if the queryImageIDs are null, sync all images in the project
-            if (queryImageIDs == null){
+            if (queryImageIDs == null) {
                 // get ALL images
                 IRISUserImageSettings.withTransaction {
                     def imgCriteria = IRISUserImageSettings.createCriteria()
@@ -605,7 +644,7 @@ class SyncService {
             } else {
 
                 // make query image ID array
-                def queryImageIDArray = queryImageIDs.split(",").collect{ Long.valueOf(it) }
+                def queryImageIDArray = queryImageIDs.split(",").collect { Long.valueOf(it) }
 
                 // otherwise get just the specified image(s)
                 IRISUserImageSettings.withTransaction {
@@ -788,7 +827,7 @@ class SyncService {
      * @params syncExceptions
      * @return
      */
-    String exceptionsToString(def syncExceptions){
+    String exceptionsToString(def syncExceptions) {
         String exStr = "\nEXCEPTIONS ARE ORDERED REVERSE CHRONOLOGICALLY (MOST RECENT FIRST)"
         syncExceptions.reverse()
         syncExceptions.each { item ->

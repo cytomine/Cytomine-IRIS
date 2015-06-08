@@ -11,7 +11,8 @@ iris.controller("settingsUserCtrl", [
 
         $scope.settingsUser = {
             stillNew: ((365 / 6) * 24 * 60 * 60 * 1000), // last 2 months
-            error: {}
+            error: {},
+            coordinators : []
         };
 
         $scope.projectID = $routeParams['projectID'];
@@ -35,7 +36,8 @@ iris.controller("settingsUserCtrl", [
 
                 $scope.settingsUser.users = data;
 
-                $scope.computeNUsersSyncDisabled();
+                $scope.computeNUsersDisabled();
+                $scope.computeCoordinators();
 
                 // build the data table
                 $scope.tableParams = new ngTableParams({
@@ -88,14 +90,34 @@ iris.controller("settingsUserCtrl", [
             });
         };
 
-        // compute the number of disabled projects
-        $scope.computeNUsersSyncDisabled = function(){
+        // compute the number of disabled project users
+        $scope.computeNUsersDisabled = function(){
             $scope.settingsUser.nDisabled = 0;
             for (var i = 0; i < $scope.settingsUser.users.length; i++){
                 if (!$scope.settingsUser.users[i].projectSettings.enabled){
                     $scope.settingsUser.nDisabled = $scope.settingsUser.nDisabled+1;
                 }
             }
+        };
+
+        // compute the number of project coordinators
+        $scope.computeCoordinators = function(){
+            $scope.settingsUser.coordinators = [];
+            for (var i = 0; i < $scope.settingsUser.users.length; i++){
+                if ($scope.settingsUser.users[i].projectSettings.irisCoordinator){
+                    $scope.settingsUser.coordinators.push($scope.settingsUser.users[i]);
+                    $log.debug("Project coordinator found: " + $scope.settingsUser.users[i].cmUserName);
+                }
+            }
+
+            // sort the users
+            $scope.settingsUser.coordinators.sort(function(a,b){
+                if (a.cmLastName == b.cmLastName){
+                    return a.cmFirstName > b.cmFirstName;
+                } else {
+                    return a.cmLastName > b.cmLastName;
+                }
+            });
         };
 
         // re-fetch the users for that project
@@ -119,24 +141,95 @@ iris.controller("settingsUserCtrl", [
                 return;
             }
 
-            $log.debug("Attempting to change image access settings for user " +
+            $log.debug("Attempting to change project access settings for user " +
             user.cmUserName + " on project " + $scope.projectID + " from " + !flag + " to " + flag);
 
             // make post request to the server via the settings service
             settingsService.setProjectAccess($scope.projectID, user.cmID, !flag, flag, user.projectSettings.id,
                 function(data){
-                    sharedService.addAlert("Changed access settings for " + user.cmFirstName + " "
-                    + user.cmLastName + " on project " + $scope.projectID + " from " + !flag + " to " + flag + ".", "success");
+                    if (flag === true){
+                        sharedService.addAlert("Enabled project for " + user.cmFirstName + " "
+                            + user.cmLastName + ".");
+                    } else {
+                        sharedService.addAlert("Disabled project for " + user.cmFirstName + " "
+                            + user.cmLastName + ".");
+                    }
                     $log.debug("Successful!");
 
-                    $scope.computeNUsersSyncDisabled();
+                    $scope.computeNUsersDisabled();
                 }, function(data, status, header, config){
-                    sharedService.addAlert("Cannot alter access settings for " + user.cmFirstName + " "
-                    + user.cmLastName + " on project " + $scope.projectID + " from " + !flag + " to " + flag + "!", "danger");
+                    if (flag === true){
+                        sharedService.addAlert("Cannot enable project for " + user.cmFirstName + " "
+                            + user.cmLastName + "!", "danger");
+                    } else {
+                        sharedService.addAlert("Cannot disable project for " + user.cmFirstName + " "
+                            + user.cmLastName + "!", "danger");
+                    }
+
+                    // reset the controls
+                    user.projectSettings.enabled = !flag;
                     chbx.checked = !flag;
                     $log.error("Failed!");
 
-                    $scope.computeNUsersSyncDisabled();
+                    $scope.computeNUsersDisabled();
+                });
+        };
+
+        // constructs a list of the coordinators that will be rendered as popover
+        $scope.getCoordinatorPopover = function() {
+            var str = "";
+            for (var c = 0; c < $scope.settingsUser.coordinators.length; c++){
+                str += ("<li><b>" + $scope.settingsUser.coordinators[c].cmLastName + "</b> " +
+                                $scope.settingsUser.coordinators[c].cmFirstName + "</li>");
+            }
+            return str + "";
+        };
+
+        // set the user as project coordinator enabled
+        $scope.setProjectCoordinator = function(user, flag){
+
+            var chbx = document.getElementById(user.cmID + ":checkBox:projectCoordinator");
+
+            // check if the executing user is trying to alter its own project access
+            if ($scope.main.user.id === user.cmID){
+                chbx.checked = !flag;
+                sharedService.addAlert("You cannot revoke the rights " +
+                    "as coordinator for yourself!", "warning");
+                return;
+            }
+
+            $log.debug("Attempting to change project coordinator rights for user " +
+            user.cmUserName + " on project " + $scope.projectID + " from " + !flag + " to " + flag);
+
+            // make post request to the server via the settings service
+            settingsService.setProjectCoordinator($scope.projectID, user.cmID, !flag, flag,
+                function(data){
+                    if (flag === true){
+                        sharedService.addAlert(user.cmFirstName + " "
+                        + user.cmLastName + " is now project coordinator.", "success");
+                    } else {
+                        sharedService.addAlert(user.cmFirstName + " "
+                        + user.cmLastName + " is no coordinator anymore.", "success");
+                    }
+
+                    $log.debug("Successful!");
+
+                    $scope.computeCoordinators();
+                }, function(data, status, header, config){
+                    if (flag===true){
+                        sharedService.addAlert("Cannot grant " + user.cmFirstName + " "
+                        + user.cmLastName + " rights as project coordinator!", "danger");
+                    } else {
+                        sharedService.addAlert("Cannot revoke coordinator rights from " + user.cmFirstName + " "
+                        + user.cmLastName + "!", "danger");
+                    }
+
+                    // reset the controls
+                    user.projectSettings.irisCoordinator = !flag;
+                    chbx.checked = !flag;
+                    $log.error("Failed!");
+
+                    $scope.computeCoordinators();
                 });
         };
 

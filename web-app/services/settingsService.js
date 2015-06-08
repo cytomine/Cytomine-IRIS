@@ -11,6 +11,7 @@ iris.constant("projectUsersSyncURL", "api/admin/project/{projectID}/user/{userID
 iris.constant("projectUsersAutoSyncChangeURL", "api/settings/user/{userID}/project/{projectID}/autosync.json");
 iris.constant("projectAllUsersSyncURL", "api/admin/project/{projectID}/synchronize.json");
 iris.constant("requestProjectCoordinatorURL", "api/settings/user/{userID}/project/{projectID}/coordinator/request.json");
+iris.constant("setProjectCoordinatorURL", "api/admin/project/{projectID}/user/{userID}/authorize.json");
 
 iris.factory("settingsService", [
     "$http", "$log",
@@ -22,6 +23,7 @@ iris.factory("settingsService", [
     "projectUsersAutoSyncChangeURL",
     "projectAllUsersSyncURL",
     "requestProjectCoordinatorURL",
+    "setProjectCoordinatorURL",
     "sessionService",
     "cytomineService",
     "sharedService",
@@ -34,6 +36,7 @@ iris.factory("settingsService", [
              projectUsersAutoSyncChangeURL,
              projectAllUsersSyncURL,
              requestProjectCoordinatorURL,
+             setProjectCoordinatorURL,
              sessionService,
              cytomineService,
              sharedService) {
@@ -51,7 +54,6 @@ iris.factory("settingsService", [
                 if (userIDs){
                     url += ("&users=" + userIDs)
                 }
-
 
                 // add pagination parameters
                 if (offset) {
@@ -95,7 +97,6 @@ iris.factory("settingsService", [
 //			HINT: content-type "application/json" is default!
                 // execute the http post request to the IRIS server
                 $http.post(url, payload).success(function (data) {
-                    // $log.debug("success on $http.get(" + url + ")");
 //				$log.debug(data);
                     if (callbackSuccess) {
                         callbackSuccess(data);
@@ -253,12 +254,41 @@ iris.factory("settingsService", [
                 var url = cytomineService.addKeys(requestProjectCoordinatorURL).replace("{projectID}", projectID)
                     .replace("{userID}", userID);
 
+                var msg = sharedService.escapeNewLineChars(message);
+
                 // construct the payload
-                var payload = "{ message: \"" + sharedService.escapeNewLineChars(message) + "\" }";
+                var payload = "{ message: \"" + msg + "\" }";
 
 //			HINT: content-type "application/json" is default!
                 // execute the http post request to the IRIS server
                 $http.post(url, payload).success(function (data) {
+//				$log.debug(data);
+                    if (callbackSuccess) {
+                        callbackSuccess(data);
+                    }
+                }).error(function (data, status, headers, config) {
+                    // on error log the error
+                    $log.error(status);
+                    if (callbackError) {
+                        callbackError(data, status, headers, config);
+                    }
+                })
+            },
+
+            // set a user as project coordinator
+            setProjectCoordinator: function (projectID, userID, oldValue, newValue, callbackSuccess,
+                                        callbackError) {
+                $log.debug("Posting project coordinator settings change to IRIS: " + projectID + " - " + userID + " - " + newValue);
+
+                // modify the parameters
+                var url = cytomineService.addKeys(setProjectCoordinatorURL).replace("{projectID}", projectID)
+                    .replace("{userID}", userID);
+
+                url += ("&irisCoordinator="+newValue);
+
+                // execute the http post request to the IRIS server
+                $http.get(url).success(function (data) {
+                    // $log.debug("success on $http.get(" + url + ")");
 //				$log.debug(data);
                     if (callbackSuccess) {
                         callbackSuccess(data);

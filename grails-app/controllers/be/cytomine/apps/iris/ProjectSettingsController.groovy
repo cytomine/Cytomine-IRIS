@@ -386,7 +386,18 @@ class ProjectSettingsController {
                 return
             }
 
-            // make a token for the admin to directly make the assignment
+            // get all coordinator names for that project and send it to the admin in addition
+            List allSettings = IRISUserProjectSettings.findAllByCmProjectIDAndIrisCoordinator(cmProjectID,new Boolean(true))
+
+            // get all coordinators
+            // make an array of all coordinator names
+            def allCoordsNames = allSettings.collect { setting ->
+                setting.user.cmLastName + " " + setting.user.cmFirstName
+            }
+            // join them to a list
+            def allCoordsStr = allCoordsNames.join("\n")
+
+            // make a token for the admin to directly assign the rights to the user
             UserToken usrTkn = new UserToken()
             usrTkn.description = ("Project coordinator authorization for user '" + cmUserID
                     + "', project '" + cmProjectID + "'")
@@ -415,6 +426,10 @@ class ProjectSettingsController {
                     "\n\n\n#### BEGIN CUSTOM USER MESSAGE ####\n"
                     + userMessage.toString().replace("\n", "\n") +
                     "\n#### END CUSTOM USER MESSAGE ####\n" +
+                    "\n\n\n" +
+                    "Other coordinators for this project (" +
+                    allCoordsNames.size() + " users): " +
+                    allCoordsStr +
                     "\n\n\n" +
                     "Disclaimer: You receive this message, because your email address is registered on " +
                     "Cytomine-IRIS host [" + hostname + "] as administrator address.")

@@ -35,7 +35,7 @@ iris.controller("settingsSyncCtrl", [
 
                 $scope.settingsSync.users = data;
 
-                $scope.computeNUsersSyncDisabled();
+                $scope.computeNUsersDisabled();
 
                 // build the data table
                 $scope.tableParams = new ngTableParams({
@@ -89,7 +89,7 @@ iris.controller("settingsSyncCtrl", [
         };
 
         // compute the number of disabled projects
-        $scope.computeNUsersSyncDisabled = function(){
+        $scope.computeNUsersDisabled = function(){
             $scope.settingsSync.nDisabled = 0;
             for (var i = 0; i < $scope.settingsSync.users.length; i++){
                 if (!$scope.settingsSync.users[i].synchronize){
@@ -139,7 +139,7 @@ iris.controller("settingsSyncCtrl", [
                     + user.cmLastName + " on project " + $scope.projectID + " from " + !flag + " to " + flag + ".", "success");
                     $log.debug("Successful!");
 
-                    $scope.computeNUsersSyncDisabled();
+                    $scope.computeNUsersDisabled();
                 }, function(data, status, header, config){
                     sharedService.addAlert("Cannot alter auto-sync settings for " + user.cmFirstName + " "
                     + user.cmLastName + " on project " + $scope.projectID + " from " + !flag + " to " + flag + "!", "danger");
@@ -148,7 +148,7 @@ iris.controller("settingsSyncCtrl", [
                     // let the model not change its value
                     user.synchronize = !flag;
 
-                    $scope.computeNUsersSyncDisabled();
+                    $scope.computeNUsersDisabled();
                 });
         };
 
