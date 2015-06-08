@@ -22,7 +22,17 @@
                 Otherwise trigger the synchronization manually per user.
             </p>
         </div>
-        <div class="row text-center">
+        <div class="row">
+            <div ng-show="loading">
+                <p class="text-center">
+
+                <p class="text-center">
+                    Loading project users...
+                </p>
+                <img class="img-responsive center-block" src="images/ajax-loader.gif"/>
+                </p>
+            </div>
+
             <div ng-hide="loading">
                 <ng-include src="'templates/html/refreshPanel.html'"></ng-include>
 

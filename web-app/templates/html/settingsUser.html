@@ -1,4 +1,14 @@
 <div ng-controller="settingsUserCtrl">
+    <div ng-show="loading">
+        <p class="text-center">
+
+        <p class="text-center">
+            Loading project users...
+        </p>
+        <img class="img-responsive center-block" src="images/ajax-loader.gif"/>
+        </p>
+    </div>
+
     <div ng-hide="loading">
         <ng-include src="'templates/html/refreshPanel.html'"></ng-include>
 
