@@ -32,9 +32,7 @@ The default \irisadmin\ has the following credentials after a clean install of I
 
 \subsection{Project Coordinator}
 A \pjcoord\ is basically the managing user of an IRIS project. 
-In addition to having access to the entire front-end and participating in the study, the project coordinator 
-
-The rights granted to a \pjcoord\ are as follows:
+In addition to having access to the entire front-end and participating in the study, the rights granted to the project coordinator list as follows:
 \begin{itemize}
 \item manipulation of project access settings for \emph{other} users
 \item manipulation of image access settings for \emph{all} users
@@ -42,18 +40,11 @@ The rights granted to a \pjcoord\ are as follows:
 \item access to the project statistics of blinded projects\todo{what about non-blinded projects?}
 \item access to the project synchronization interface
 \end{itemize}
+
 A \pjcoord\ can view all statistics of the projects he is assigned to. 
 Users are just able to view their particular projects, they have been assigned to in the Cytomine core application.
 Thus, they can only be a \pjcoord\ in these projects. 
 In a particular project, multiple persons can have the role \pjcoord . 
-
-The rights granted to a \pjcoord\ are as follows:
-\begin{itemize}
-\item Locking/Unlocking the project and/or particular images in the project to particular users
-\item Interobserver statistics: view and export
-\end{itemize}
-
-
 
 %\begin{table}
 %\caption{\label{tab:name}}
@@ -73,7 +64,7 @@ Any project is created on the Cytomine host, where the project owner configures 
 Each user is required to have a valid Cytomine account. 
 
 \subsection{Connecting a Project to IRIS}
-Once a project has been created and is about to be 
+Once a project has been created on Cytomine and is about to be used in an IRIS instance, the project coordinator has to sync the project on the IRIS host. 
 
 
  
@@ -109,7 +100,7 @@ Synchronization can be triggered for each project separately using the correspon
 
 \paragraph{Auto-Synchronization.}
 The IRIS host automatically synchronizes the labeling progress for each user in each image that is enabled for that very same user. 
-Per default, synchronization is done once per day at \_\todo{exact time!}AM, such that daily business is not interrupted. 
+Per default, an entire auto-synchronization of all available users in their projects is done at startup of the instance, and once per day at 03:00 AM, such that daily business is not interrupted. 
 
 \warnbox{Inconsistencies}{The auto-synchronization may lead to inconsistencies when the user is new to an IRIS host. The \pjcoord\ has to trigger the synchronization manually then to reflect the current labeling status for this user.}
 

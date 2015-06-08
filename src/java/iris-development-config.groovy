@@ -20,13 +20,13 @@ PingCytomineHostJob.disabled = false
 SynchronizeUserProgressJob.disabled = false
 
 // MAIL SERVER CONFIGURATION
-grails.mail.default.from=("cytomine-iris@"+grails.host)
-grails.mail.username = "os1133424"
-grails.mail.password = "pwk\$2910@mug"
-grails.mail.host = "smtp.medunigraz.at"
-grails.mail.port = 25
+grails.mail.default.from="cytomine-iris@pkainz.com"
+grails.mail.username = "cytomine-iris@pkainz.com"
+grails.mail.password = "devIRIS2"
+grails.mail.host = "smtp.world4you.com"
+grails.mail.port = 587
 grails.mail.props = [
-        "mail.smtp.from":("cytomine-iris@"+grails.host),
+        "mail.smtp.from":"cytomine-iris@pkainz.com",
         "mail.smtp.timeout": 15000,
         "mail.smtp.connectiontimeout": 15000
 		]
