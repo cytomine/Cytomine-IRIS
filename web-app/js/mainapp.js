@@ -92,6 +92,9 @@ iris.config(["$routeProvider", function($routeProvider) {
 	$routeProvider.when("/500", {
 		templateUrl : "views/500.html"
 	});
+	$routeProvider.when("/403", {
+		templateUrl : "views/403.html"
+	});
 	$routeProvider.when("/404", {
 		templateUrl : "views/404.html"
 	});

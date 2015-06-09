@@ -175,10 +175,16 @@ iris.factory("navService", [
 			$location.url("/500");
 		},
 
+		showForbidden : function() {
+			$location.url("/403");
+		},
+
 		analyzeErrorStatus : function(status) {
 			if (status == 400){
 				this.showClientError();
-			}else if (status == 404){
+			} else if (status == 403){
+				this.showForbidden();
+			} else if (status == 404){
 				this.showNotFound();
 			} else {
 				this.showServerError();
