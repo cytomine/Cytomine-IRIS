@@ -1,18 +1,18 @@
 <div class="container-100" data-ng-controller="prjSettingsCtrl">
-    <div class="alert alert-danger text-center" ng-show="settings.error">
+    <div ng-show="settings.error" class="alert alert-danger text-center" >
         Cannot get project settings.
     </div>
 
-    <!--<div ng-show="loading">-->
-        <!--<p class="text-center">-->
-            <!--Loading statistics...-->
-        <!--</p>-->
-        <!--<img class="img-responsive center-block" src="images/ajax-loader.gif" alt="" />-->
-        <!--</p>-->
-    <!--</div>-->
+    <div ng-show="settings.checkingAccess">
+        <p class="text-center">
+            Checking permissions for project settings...
+        </p>
+        <img class="img-responsive center-block" src="images/ajax-loader.gif" alt="" />
+        </p>
+    </div>
 
     <div class="row" style="margin-top: -20px">
-        <div ng-hide="settings.error">
+        <div ng-hide="settings.checkingAccess || settings.error">
             <h4 class="text-muted pull-right"><span class="glyphicon glyphicon-wrench"></span>&nbsp;Project Settings&nbsp;&nbsp;</h4>
             <tabset>
                 <tab heading="Access Management">
@@ -25,15 +25,6 @@
                         <ng-include src="'templates/html/settingsSync.html'"></ng-include>
                     </div>
                 </tab>
-                <!--<tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">-->
-                    <!--{{tab.content}}-->
-                <!--</tab>-->
-                <!--<tab select="alertMe()">-->
-                    <!--<tab-heading>-->
-                        <!--<i class="glyphicon glyphicon-bell"></i> Alert!-->
-                    <!--</tab-heading>-->
-                    <!--I've got an HTML heading, and a select callback. Pretty cool!-->
-                <!--</tab>-->
             </tabset>
         </div>
     </div>

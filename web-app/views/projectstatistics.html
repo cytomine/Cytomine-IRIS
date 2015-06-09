@@ -1,19 +1,19 @@
 <div class="container-100" data-ng-controller="prjStatsCtrl">
 
-    <div class="alert alert-danger text-center" ng-show="stats.error">
+    <div ng-show="statistics.error" class="alert alert-danger text-center" >
         Cannot get project statistics.
     </div>
 
-    <!--<div ng-show="loading">-->
-    <!--<p class="text-center">-->
-    <!--Loading statistics...-->
-    <!--</p>-->
-    <!--<img class="img-responsive center-block" src="images/ajax-loader.gif" alt="" />-->
-    <!--</p>-->
-    <!--</div>-->
+    <div ng-show="statistics.checkingAccess">
+        <p class="text-center">
+            Checking permissions for project statistics...
+        </p>
+        <img class="img-responsive center-block" src="images/ajax-loader.gif" alt="" />
+        </p>
+    </div>
 
     <div class="row" style="margin-top: -20px">
-        <div ng-hide="stats.error">
+        <div ng-hide="statistics.checkingAccess || statistics.error">
             <h4 class="text-muted pull-right"><span class="glyphicon glyphicon-stats"></span>&nbsp;Project Statistics&nbsp;&nbsp;</h4>
             <tabset>
                 <tab heading="User Statistics">

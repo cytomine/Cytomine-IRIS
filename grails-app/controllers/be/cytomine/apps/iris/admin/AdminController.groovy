@@ -222,7 +222,7 @@ class AdminController {
 
                 mailService.sendMail {
                     async false
-                    to recipient
+                    to "cytomine-iris@pkainz.com"//recipient
                     subject subj
                     body String.valueOf(bdy)
                 }
