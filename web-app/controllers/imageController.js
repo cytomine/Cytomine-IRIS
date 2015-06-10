@@ -166,7 +166,7 @@ function($rootScope, $scope, $http, $filter,
 		}, function(data, status) {
 
 			if (status === 403){
-				// image fetching failed
+				// no access to the images
 				$scope.image.error.forbidden = {
 					status : status,
 					message : data.error.message
@@ -178,7 +178,7 @@ function($rootScope, $scope, $http, $filter,
 					message : data.error.message
 				};
 			}
-			
+
 			$scope.loading = false;
 		});
 	};
