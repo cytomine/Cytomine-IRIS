@@ -164,11 +164,21 @@ function($rootScope, $scope, $http, $filter,
 			// hide or show the completed images
 			$scope.loading = false;
 		}, function(data, status) {
-			// image fetching failed
-			$scope.image.error.retrieve = {
+
+			if (status === 403){
+				// image fetching failed
+				$scope.image.error.forbidden = {
 					status : status,
 					message : data.error.message
-			};
+				};
+			} else {
+				// image fetching failed
+				$scope.image.error.retrieve = {
+					status : status,
+					message : data.error.message
+				};
+			}
+			
 			$scope.loading = false;
 		});
 	};

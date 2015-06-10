@@ -1,8 +1,10 @@
 <div class="container" ng-controller="imageCtrl">
 
     <div ng-show="image.error">
-        <div class="alert alert-danger text-center" ng-show="image.error.retrieve">
-            {{image.error.retrieve.message}}
+        <div class="alert alert-danger text-center" ng-show="image.error.retrieve || image.error.forbidden">
+            {{image.error.retrieve.message || image.error.forbidden.message}}
+            <br/>
+            Please try again or select another project from the <a href ng-click="navToProjects()">project list</a>.
         </div>
         <div class="alert alert-info text-center" ng-show="image.error.empty">
             {{image.error.empty.message}}
