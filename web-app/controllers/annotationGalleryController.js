@@ -58,7 +58,7 @@ iris.controller("annotationGalleryCtrl", [
 						$scope.annotation.error = {
 							forbidden: {
 								status : 403,
-								message : "This project is not available on this IRIS host."
+								message : "This project is not available to you on this IRIS host."
 							}
 						};
 						$scope.annotation.checkingAccess = false;
