@@ -102,10 +102,10 @@ class ProjectService {
                 )
 
                 //set the demo project on this instance initially enabled for each user
-//                def demoProjectID = grailsApplication.config.grails.cytomine.apps.iris.demoProject.cmID
-//                if (cmProject.getId() == demoProjectID) {
-//                    settings.enabled = true
-//                }
+                def demoProjectID = grailsApplication.config.grails.cytomine.apps.iris.demoProject.cmID
+                if (cmProject.getId() == demoProjectID) {
+                    settings.enabled = true
+                }
 
                 settings.save()
             }
