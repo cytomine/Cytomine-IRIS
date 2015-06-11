@@ -111,16 +111,19 @@ iris.controller("settingsSyncCtrl", [
             $log.debug("All users will be synchronized for project " + $scope.projectID);
 
             $scope.disableSync = true;
+            $scope.syncAll = true;
 
             // call service method
             settingsService.synchronizeAllProjectUsers($scope.projectID, function(data){
                 sharedService.addAlert("Synchronization of all project users was successful!", "success");
                 $log.debug("Success!");
                 $scope.disableSync = false;
+                $scope.syncAll = false;
             }, function(data, status){
                 $log.error(data);
                 sharedService.addAlert("Could not synchronize all project users! Status: " + status, "danger");
                 $scope.disableSync = false;
+                $scope.syncAll = false;
             });
         };
 
@@ -158,6 +161,9 @@ iris.controller("settingsSyncCtrl", [
             // change the model binding
             $scope.disableSync = true;
 
+            // show the waiting bar for the syncing user only
+            user.disableSync = true;
+
             $log.debug("Attempting to manually synchronize user " +
                 user.cmUserName + " on project " + $scope.projectID);
 
@@ -168,12 +174,14 @@ iris.controller("settingsSyncCtrl", [
                     $log.debug("Successful!");
 
                     $scope.disableSync = false;
+                    user.disableSync = false;
                 }, function(data, status, header, config){
                     sharedService.addAlert("Cannot synchronize labeling progress for " + user.cmFirstName + " "
                     + user.cmLastName + "!", "danger");
                     $log.error("Failed!");
 
                     $scope.disableSync = false;
+                    user.disableSync = false;
                 });
         };
     }]);

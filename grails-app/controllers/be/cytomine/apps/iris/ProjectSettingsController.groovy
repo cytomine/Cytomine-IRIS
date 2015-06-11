@@ -16,6 +16,7 @@
 package be.cytomine.apps.iris
 
 import be.cytomine.apps.iris.model.IRISImage
+import be.cytomine.apps.iris.model.IRISProject
 import be.cytomine.client.Cytomine
 import be.cytomine.client.CytomineException
 import be.cytomine.client.models.Project
@@ -32,7 +33,7 @@ import org.springframework.security.access.annotation.Secured
 //@Secured(['ROLE_PROJECT_ADMIN'])
 class ProjectSettingsController {
 
-    def settingsService
+    def projectService
     def imageService
     def syncService
     def mailService
@@ -56,8 +57,9 @@ class ProjectSettingsController {
             int offset = (params['offset'] == null ? 0 : params.int('offset'))
             int max = (params['max'] == null ? 0 : params.int('max'))
 
-            // check the ACL on cytomine
-            Project cmProject = cytomine.getProject(cmProjectID)
+            // get the IRIS project
+            IRISProject project = projectService.getProject(cytomine, irisUser,
+                    cmProjectID, ['updateSession':false])
 
             // get the settings for the user(s)
             def settingsList = IRISUserProjectSettings.findAllByCmProjectID(cmProjectID)
@@ -199,8 +201,10 @@ class ProjectSettingsController {
             int offset = (params['offset'] == null ? 0 : params.int('offset'))
             int max = (params['max'] == null ? 0 : params.int('max'))
 
+            // get the list of images without updating the user's session
             List<IRISImage> images = imageService
-                    .getAllImagesWithSettings(cytomine, irisUser, projectID, userID, offset, max)
+                    .getAllImagesWithSettings(cytomine, irisUser,
+                    projectID, userID, offset, max)
 
             render images as JSON
 
@@ -231,7 +235,6 @@ class ProjectSettingsController {
      */
     def projectAccess() {
         try {
-
             Cytomine cytomine = request['cytomine']
             IRISUser irisUser = request['user']
             Long cmProjectID = params.long('cmProjectID')
@@ -241,7 +244,8 @@ class ProjectSettingsController {
                 throw new CytomineException(400, "The calling user cannot remove itself from the project!")
             }
 
-            def checkSettings = IRISUserProjectSettings.findByCmProjectIDAndUser(cmProjectID,irisUser)
+            def checkSettings = IRISUserProjectSettings
+                    .findByCmProjectIDAndUser(cmProjectID,irisUser)
 
             if (checkSettings == null || checkSettings.irisCoordinator == false){
                 throw new CytomineException(503, "You don't have the permission to alter project access rules!")

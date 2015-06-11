@@ -1,3 +1,4 @@
+
 /* Copyright the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -132,18 +133,23 @@ class SyncService {
      * @param cytomine a Cytomine instance
      * @param user the IRIS user, this project is synced for
      * @param cmProjectID the Cytomine project ID to be synced
+     * @param cmProject the be.cytomine.client.Project, per default null, but if given
+     *                  no REST API call to Cytomine will be done
      * @return the IRIS project
      * @throws CytomineException
      * @throws Exception
      */
-    IRISProject synchronizeProject(Cytomine cytomine, IRISUser user, Long cmProjectID)
+    IRISProject synchronizeProject(Cytomine cytomine, IRISUser user, Long cmProjectID, Project cmProject=null)
             throws CytomineException, Exception {
         DomainMapper domainMapper = new DomainMapper(grailsApplication)
 
         try {
             // perform lookup and see if the project is still available to this user
-            Project cmProject = cytomine.getProject(cmProjectID)
+            if (cmProject == null){
+                cmProject = cytomine.getProject(cmProjectID)
+            }
 
+            // if the project cannot be found for that user
             if (cmProject.get('success') == false){
                 throw new CytomineException(403, cmProject.get("errors"))
             }

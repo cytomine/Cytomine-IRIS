@@ -178,7 +178,8 @@ class ImageService {
         // fetch the user from the DB for which the settings have to be written
         IRISUser userInQuery = IRISUser.findByCmID(cmUserID)
 
-        IRISProject irisProject = projectService.getProject(cytomine, userInQuery, cmProjectID)
+        IRISProject irisProject = projectService.getProject(cytomine, userInQuery,
+                cmProjectID, ['updateSession':false, 'checkAccess':false])
 
         // get all images from the server
         ImageInstanceCollection cmImageCollection = cytomine.getImageInstances(cmProjectID)

@@ -297,6 +297,10 @@ class UrlMappings {
 			action = [GET: "authorizeCoordinator"]
 		}
 
+		"/api/dev"(controller:"admin"){
+			action = [GET: "dev"]
+		}
+
 		/**
 		 * STATISTICS
 		 *

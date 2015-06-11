@@ -139,13 +139,20 @@ class ProjectService {
      * @param cytomine a Cytomine instance
      * @param user the IRIS user
      * @param cmProjectID the Cytomine project ID to get
+     * @param options a map of optional parameters:
+     *              ['updateSession':true|false]    indicates whether to update the IRISUser session
+     *              for the 'resume labeling' functionality. Usually for admin-tasks this should be set false.
+     *              ['checkAccess':true|false]    whether or not the user specific access settings are included
+     *              in the query
      * @return the IRIS project with injected cytomine domain
      *
      * @throws CytomineException if the project is is not available for the
      * querying user
      * @throws Exception
      */
-    IRISProject getProject(Cytomine cytomine, IRISUser user, Long cmProjectID) throws CytomineException, Exception {
+    IRISProject getProject(Cytomine cytomine, IRISUser user,
+                           Long cmProjectID, Map options=['updateSession':true, 'checkAccess':true])
+            throws CytomineException, Exception {
 
         // TODO get the user from springsecurity service context
 //        springSecurityService.getCurrentUser()
@@ -153,19 +160,23 @@ class ProjectService {
         IRISProject irisProject = syncService.synchronizeProject(cytomine, user, cmProjectID)
 
         // check if the project is available for this IRIS instance
-        if (!irisProject.settings.enabled) {
-            log.info("Project [" + cmProjectID +
-                    "] is not available to '" + user.cmID + "' on this IRIS instance.")
+        if (options['checkAccess'] == true){
+            if (!irisProject.settings.enabled) {
+                log.info("Project [" + cmProjectID +
+                        "] is not available to '" + user.cmID + "' on this IRIS instance.")
 
-            throw new CytomineException(403, "This project is not available on this IRIS host.")
+                throw new CytomineException(403, "This project is not available on this IRIS host.")
+            }
         }
 
-        // get the user's session
-        IRISUserSession sess = user.getSession()
-        sess.setCurrentCmProjectID(cmProjectID)
+        // get the user's session and update it if true
+        if (options['updateSession'] == true){
+            IRISUserSession sess = user.getSession()
+            sess.setCurrentCmProjectID(cmProjectID)
 
-        // store the user session
-        sess.merge(flush: true)
+            // store the user session
+            sess.merge(flush: true)
+        }
 
         return irisProject
     }

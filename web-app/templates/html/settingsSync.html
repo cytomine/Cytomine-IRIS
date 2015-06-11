@@ -12,7 +12,11 @@
         <div class="row text-center">
             <button type="button" class="btn btn-lg btn-danger"
                     ng-click="synchronizeAllProjectUsers()"
-                    ng-disabled="disableSync">Synchronize all Project Users</button>
+                    ng-disabled="disableSync"
+                    style="min-width: 250px;">
+                <span ng-hide="disableSync && syncAll">Synchronize all project users</span>
+                <span ng-show="syncAll"><img src="images/ajax-loader-xs.gif" alt=""/></span>
+            </button>
         </div>
     </div>
 
@@ -65,9 +69,10 @@
                                 tooltip-placement="left">
                                 <button id="{{ item.cmID + ':syncButton' }}" type="button" ng-click="syncUser(item)"
                                         class="btn btn-xs btn-primary"
-                                        ng-disabled="disableSync">
-                                    <span class="glyphicon glyphicon-refresh"></span>
-                                    Sync Now
+                                        ng-disabled="disableSync"
+                                        style="min-width: 85px;">
+                                    <span ng-hide="disableSync && (item.disableSync || syncAll)"><span class="glyphicon glyphicon-refresh"></span> Sync now</span>
+                                    <span ng-show="item.disableSync || syncAll"><img src="images/ajax-loader-xs.gif" alt=""/></span>
                                 </button>
                             </td>
                         </tr>

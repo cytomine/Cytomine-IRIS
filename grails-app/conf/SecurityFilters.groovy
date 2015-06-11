@@ -97,6 +97,11 @@ class SecurityFilters {
 
 			}
 		}
+
+
+		dev(uri:'/dev/**') {
+
+		}
 	}
 
 }

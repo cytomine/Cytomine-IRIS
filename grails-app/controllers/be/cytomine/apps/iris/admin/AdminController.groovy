@@ -25,6 +25,7 @@ import be.cytomine.client.collections.UserCollection
 import be.cytomine.client.models.Project
 import be.cytomine.client.models.User
 import grails.converters.JSON
+import grails.util.Environment
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.json.simple.JSONObject
 import org.springframework.security.access.annotation.Secured
@@ -186,7 +187,7 @@ class AdminController {
             // assign the email
             tmpEmail = user.cmEmail
 
-            Project p = cytomine.getProject(cmProjectID)
+            Project cmProject = cytomine.getProject(cmProjectID)
 
             // get the project settings
             IRISUserProjectSettings settings = IRISUserProjectSettings
@@ -213,37 +214,50 @@ class AdminController {
 
                 String subj = ("[Cytomine-IRIS: " + hostname + "] Your Project Coordinator Request")
                 String bdy = ("Dear " + user.cmFirstName + " " + user.cmLastName + ",\n\n" +
-                        "you are now coordinator of the project [" + p.get("name") + "].\n" +
+                        "you are now coordinator of the project [" + cmProject.get("name") + "].\n" +
                         "Start right away configuring the project for other participants," +
                         " or viewing statistics using the following link: \n" +
                         restURL +
                         "\n\nBest regards,\n" +
                         "Cytomine-IRIS")
 
-                mailService.sendMail {
-                    async false
-                    to "cytomine-iris@pkainz.com"//recipient
-                    subject subj
-                    body String.valueOf(bdy)
+                // sync all project users without their API keys and add new IRISProjectSettings
+                // for that project, if they are not already present
+                UserCollection projectUsers = cytomine.getProjectUsers(cmProjectID)
+                for (User u in projectUsers.getList()){
+                    log.info("Synchronizing user " + u.get("username") + " without API keys.")
+                    // create/update the users in the IRIS database
+                    IRISUser usr = syncService.synchronizeUserNoAPIKeys(u) // no calls to Cytomine REST API
+                    // create/update the IRISUserProjectSettings for that user
+                    syncService.synchronizeProject(cytomine, usr, cmProjectID, cmProject) // no calls to Cytomine REST API
+                }
+
+                // send an email to the user that he/she is now coordinator
+                if (Environment.current == Environment.PRODUCTION){
+                    mailService.sendMail {
+                        async false
+                        to recipient
+                        subject subj
+                        body String.valueOf(bdy)
+                    }
+                } else {
+                    mailService.sendMail {
+                        async false
+                        to "cytomine-iris@pkainz.com"//recipient
+                        subject ("DEVELOPMENT MESSAGE: " + subj) // subj
+                        body String.valueOf(bdy)
+                    }
                 }
 
                 render(['success': true, 'msg': 'User \'' + user.cmUserName + '\' ' +
                         'has been successfully authorized as project coordinator for ' +
-                        'project [' + p.get("name") + ']!'] as JSON)
-
-                // TODO sync all users for this project without their API keys and add new IRISProject
-                // Settings for that project, if they are not already present
-//                UserCollection projectUsers = cytomine.getProjectUsers(cmProjectID)
-//                for (User u in projectUsers.getList()){
-//                    log.info("Synchronizing user " + u.get("username") + " without API keys.")
-//                    syncService.synchronizeUserNoAPIKeys(u)
-//                }
+                        'project [' + cmProject.get("name") + ']!'] as JSON)
 
             } else {
                 // the rights have been revoked
                 render(['success': true, 'msg': 'User \'' + user.cmUserName + '\' ' +
                         'has been successfully removed as project coordinator for ' +
-                        'project [' + p.get("name") + ']!'] as JSON)
+                        'project [' + cmProject.get("name") + ']!'] as JSON)
             }
 
         } catch (CytomineException e1) {
@@ -267,5 +281,10 @@ class AdminController {
                     "Meanwhile, please contact the user directly via email (" + tmpEmail + ")!";
             render errorMsg as JSON
         }
+    }
+
+
+    def dev(){
+
     }
 }
