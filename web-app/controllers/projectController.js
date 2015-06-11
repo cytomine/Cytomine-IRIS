@@ -460,8 +460,14 @@ iris.controller("projectCtrl", [
 
                 settingsService.requestProjectAccess(project.cmID, $scope.usr.user.cmID, finalMessage,
                     function(data){
-                        $scope.usr.requestsent = true;
+
                         $scope.usr.requestsending = false;
+                        if (data['success'] == false){
+                            $scope.usr.noCoordinator = true;
+                            $scope.usr.noCoordMsg = data['msg'];
+                        } else {
+                            $scope.usr.requestsent = true;
+                        }
                     }, function(error, status){
                         $scope.usr.error = {
                             show: true,

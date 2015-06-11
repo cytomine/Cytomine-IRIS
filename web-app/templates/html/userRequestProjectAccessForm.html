@@ -5,7 +5,7 @@
     </div>
 
     <div class="modal-body">
-        <div ng-hide="usr.error.show || usr.requestsending || usr.requestsent || usr.user.projectSettings.enabled === true || usr.loading">
+        <div ng-hide="usr.error.show || usr.requestsending || usr.requestsent || usr.noCoordinator || usr.user.projectSettings.enabled === true || usr.loading">
             <p>
                 With this form, you can request <b>access</b>
                 to the project <b>{{usr.project.cmName}}</b> from the project coordinators.
@@ -36,6 +36,10 @@
 
         <div ng-show="usr.user.projectSettings.enabled === true" class="alert alert-info text-center">
             You already have access to this project.
+        </div>
+
+        <div ng-show="usr.noCoordinator" class="alert alert-warning text-center">
+            {{usr.noCoordMsg}}
         </div>
 
         <div ng-show="usr.requestsending">
