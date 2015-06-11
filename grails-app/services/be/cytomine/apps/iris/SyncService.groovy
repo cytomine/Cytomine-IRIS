@@ -144,6 +144,10 @@ class SyncService {
             // perform lookup and see if the project is still available to this user
             Project cmProject = cytomine.getProject(cmProjectID)
 
+            if (cmProject.get('success') == false){
+                throw new CytomineException(403, cmProject.get("errors"))
+            }
+
             // map the project with the Cytomine instance
             IRISProject irisProject = domainMapper.mapProject(cmProject, null)
 

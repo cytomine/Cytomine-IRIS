@@ -11,6 +11,12 @@
 			{{labeling.error.empty.message}} <br /> Please select another one
 			from the <a href ng-click="navToImages()">image list</a>.
 		</div>
+		<div class="alert alert-danger text-center"
+			 ng-show="labeling.error.forbidden">
+			{{labeling.error.forbidden.message}} <br /> Please select another
+			<a href ng-click="navToProjects()">project</a> or
+			<a href ng-click="navToImages()">image</a>.
+		</div>
 	</div>
 
 	<div class="transparent-overlay" ng-show="labeling.loading">

@@ -211,6 +211,10 @@ class SessionService {
         IRISProject irisProject = projectService.getProject(cytomine, irisUser, cmProjectID)
         IRISImage irisImage = syncService.synchronizeImage(cytomine, irisUser, irisProject, cmImageID)
 
+        if (!irisImage.settings.enabled){
+            throw new CytomineException(403, "This image is not available on this IRIS host.")
+        }
+
         irisProject.settings.setCurrentCmImageInstanceID(cmImageID)
         irisProject.settings.save()
 

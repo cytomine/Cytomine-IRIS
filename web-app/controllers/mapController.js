@@ -16,6 +16,9 @@ iris.controller(
             // TODO read from local storage due to a current bug in OL3!!
             var currImg = sessionService.getCurrentImage();
 
+            // check whether the map controller should continue
+            if (currImg == null) return;
+
             var imgWidth = currImg.width;
             var imgHeight = currImg.height;
             var imgDepth = currImg.depth;

@@ -143,7 +143,12 @@ iris.factory("sessionService", [
 
             // retrieve the currently active image
             getCurrentImage: function () {
-                return this.getCurrentProject().currentImage;
+                var prj = this.getCurrentProject();
+                if (prj == null || prj == undefined) {
+                    return null;
+                } else {
+                    return this.getCurrentProject().currentImage;
+                }
             },
 
             // set the currently active image

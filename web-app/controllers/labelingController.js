@@ -107,6 +107,8 @@ iris.controller("labelingCtrl", [
                         initCallback(true);
                     }
                 }, function (data, status) {
+
+                    // TODO make common error redirect on the client!
                     var msg = "";
                     if (status === 404) {
                         msg = "This image does not have any annotations!";
@@ -124,7 +126,17 @@ iris.controller("labelingCtrl", [
                                 status: status
                             }
                         }
+                    } else if (status === 403) {
+                        // global redirect
+                        //navService.analyzeErrorStatus(403);
+                        $scope.labeling.error = {
+                            forbidden: {
+                                message: data.error.message,
+                                status: status
+                            }
+                        }
                     } else {
+                        // default error
                         $scope.labeling.error = {
                             retrieve: {
                                 message: data.error.message,
@@ -315,7 +327,7 @@ iris.controller("labelingCtrl", [
                     sharedService.addAlert("Cannot assign term '" + term.name + "'. Status " + status + ".", "danger");
                     $scope.saving.status = "error";
 
-                    // TODO do nothing with the progress
+                    // do nothing with the progress
 
                     // REFLECT UPDATED LABELING PROGRESS
                     //$scope.updateLabelingProgress();
