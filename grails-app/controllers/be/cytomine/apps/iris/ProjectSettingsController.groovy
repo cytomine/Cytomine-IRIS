@@ -21,6 +21,7 @@ import be.cytomine.client.Cytomine
 import be.cytomine.client.CytomineException
 import be.cytomine.client.models.Project
 import grails.converters.JSON
+import grails.util.Environment
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.json.simple.JSONObject
 import org.springframework.security.access.annotation.Secured
@@ -241,32 +242,36 @@ class ProjectSettingsController {
             Long cmUserID = params.long('cmUserID')
 
             if (irisUser.cmID == cmUserID) {
-                throw new CytomineException(400, "The calling user cannot remove itself from the project!")
+                throw new CytomineException(400, "The calling user cannot alter its own project access settings!")
             }
 
+            // the calling user must be a coordinator
             def checkSettings = IRISUserProjectSettings
                     .findByCmProjectIDAndUser(cmProjectID,irisUser)
 
             if (checkSettings == null || checkSettings.irisCoordinator == false){
                 throw new CytomineException(503, "You don't have the permission to alter project access rules!")
-                return
             }
 
             def payload = (request.JSON)
-            // example {settingsID: 21, oldValue: false, newValue: true}
+            // example {settingsID: 21 (may also be null), oldValue: false, newValue: true}
             Long settingsID = Long.valueOf(payload.get('settingsID'))
             Boolean oldValue = Boolean.valueOf(payload.get('oldValue'))
             Boolean newValue = Boolean.valueOf(payload.get('newValue'))
 
-            if (settingsID == null || oldValue == null || newValue == null) {
-                throw new CytomineException(400, "SettingsID, old and new value must be set in the payload of the request!")
+            if (oldValue == null || newValue == null) {
+                throw new CytomineException(400, "Old and new value must be set in the payload of the request!")
             }
 
             // TODO move to service
-            // get the user project settings
-            IRISUserProjectSettings settings = IRISUserProjectSettings.findByCmProjectIDAndId(cmProjectID, settingsID)
-            settings.setEnabled(newValue)
-            settings.save(flush: true, failOnError: true)
+            // get the user
+            IRISUser user = IRISUser.findByCmID(cmUserID)
+
+            // get the user's project settings
+            IRISUserProjectSettings settings = IRISUserProjectSettings.
+                    findByCmProjectIDAndUser(cmProjectID, user)
+            settings.enabled = newValue
+            settings.merge(flush: true, failOnError: true)
 
             render(['success': true, 'msg': 'The settings have been successfully updated!', 'settings': settings] as JSON)
 
@@ -411,7 +416,8 @@ class ProjectSettingsController {
             String recipient = grailsApplication.config.grails.cytomine.apps.iris.server.admin.email
             String hostname = grailsApplication.config.grails.host
             String urlprefix = grailsApplication.config.grails.cytomine.apps.iris.host
-            String restURL = (urlprefix + "/api/admin/project/" + cmProjectID + "/user/" + cmUserID + "/authorize.json?irisCoordinator=true" +
+            String restURL = (urlprefix + "/api/admin/project/" + cmProjectID
+                    + "/user/" + cmUserID + "/authorize/coordinator.json?irisCoordinator=true" +
                     "&token=" + usrTkn.token)
             String adminLoginURL = (urlprefix + "/admin/")
 
@@ -441,15 +447,149 @@ class ProjectSettingsController {
             log.info("Sending coordinator request email to admin [" + recipient + "]...")
             activityService.log(user, "Requesting project coordinator rights for [" + cmProjectID + "]")
 
-            // notify the admin synchronously
-            mailService.sendMail {
-                async false
-                to recipient
-                subject subj
-                body String.valueOf(bdy)
+            // send an email to the user that he/she now has access
+            if (Environment.current == Environment.PRODUCTION){
+                mailService.sendMail {
+                    async false
+                    to recipient
+                    subject subj
+                    body String.valueOf(bdy)
+                }
+            } else {
+                mailService.sendMail {
+                    async false
+                    to "cytomine-iris@pkainz.com"//recipient
+                    subject ("DEVELOPMENT MESSAGE: " + subj) // subj
+                    body String.valueOf(bdy)
+                }
             }
 
             render(['success': true, 'msg': 'The request has been sent to the administrator!'] as JSON)
+
+        } catch (CytomineException e1) {
+            log.error(e1)
+            // exceptions from the cytomine java client
+            response.setStatus(e1.httpCode)
+            JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+            render errorMsg as JSON
+        } catch (GroovyCastException e2) {
+            log.error(e2)
+            // send back 400 if the project ID is other than long format
+            response.setStatus(400)
+            JSONObject errorMsg = new Utils().resolveException(e2, 400)
+            render errorMsg as JSON
+        } catch (Exception e3) {
+            log.error(e3)
+            // on any other exception render 500
+            response.setStatus(500)
+            JSONObject errorMsg = new Utils().resolveException(e3, 500)
+            errorMsg['error']['extramessage'] = "We apologize for this inconvenience and try to solve the problem as soon as possible. " +
+                    "Meanwhile, please contact the IRIS administrator directly via email (" +
+                    grailsApplication.config.grails.cytomine.apps.iris.server.admin.email +
+                    ") to complete your request!";
+            render errorMsg as JSON
+        }
+    }
+
+
+    /**
+     * Request access to a particular project from the coordinators.
+     * @return
+     */
+    def requestProjectAccess() {
+        try {
+            Cytomine cytomine = request['cytomine']
+            IRISUser irisUser = request['user']
+            Long cmProjectID = params.long('cmProjectID')
+            Long cmUserID = params.long('cmUserID')
+
+            def payload = (request.JSON)
+
+            // example {message: "this is a message to the coordinator"}
+            String userMessage = String.valueOf(payload.get('message'))
+
+            IRISUser user = IRISUser.findByCmID(cmUserID)
+            if (user == null) {
+                throw new CytomineException(404, "The user with ID [" + cmUserID + "] cannot be found!")
+            }
+
+            Project p = cytomine.getProject(cmProjectID)
+            // check whether the user is already enabled
+            IRISUserProjectSettings settings = IRISUserProjectSettings
+                    .findByCmProjectIDAndUser(cmProjectID, user)
+            if (settings?.enabled) {
+                // send back a notification
+                render(['success': true, 'msg': 'You already have access to project [' + p.get("name") + '].'] as JSON)
+                return
+            }
+
+            // get all coordinator names for that project
+            List allSettings = IRISUserProjectSettings.
+                    findAllByCmProjectIDAndIrisCoordinator(cmProjectID, new Boolean(true))
+
+            if (allSettings == null || allSettings.isEmpty()){
+                // send back a notification
+                render(['success': false, 'msg': 'There is no coordinator for project [' + p.get("name") + '] yet! ' +
+                        'Please check with the people responsible for that project or request to become a ' +
+                        'coordinator yourself.'] as JSON)
+                return
+            }
+
+            activityService.log(user, "Requesting project access for [" + cmProjectID + "]")
+
+            // send an email to all coordinators
+            allSettings.each { sett ->
+                // make a token for the project coordinators to directly enable the project for the user
+                UserToken usrTkn = new UserToken()
+                usrTkn.description = ("Project coordinator authorization for user '" + cmUserID
+                        + "', project '" + cmProjectID + "'")
+                usrTkn.user = user
+                usrTkn.save(flush: true, failOnError: true)
+
+                String recipient = sett.user.cmEmail
+                String hostname = grailsApplication.config.grails.host
+                String urlprefix = grailsApplication.config.grails.cytomine.apps.iris.host
+
+                String restURL = (urlprefix + "/api/admin/project/" + cmProjectID +
+                        "/user/" + cmUserID + "/authorize/access.json?projectAccess=true" +
+                        "&token=" + usrTkn.token)
+
+                String subj = ("[Cytomine-IRIS: " + hostname + "] Project Access Request")
+
+                String bdy = ("Dear project coordinator, \n\n" +
+                        user.cmFirstName + " " + user.cmLastName + " (" + user.cmEmail + ") requests" +
+                        " access to the project [" + p.get("name") + "] " +
+                        "on the IRIS host [" + hostname + "]. \n\n" +
+                        "You can directly grant the user the rights by clicking the following link: \n"
+                        + restURL + "\n\n" +
+                        "\n\n\n#### BEGIN CUSTOM USER MESSAGE ####\n"
+                        + userMessage.toString().replace("\n", "\n") +
+                        "\n#### END CUSTOM USER MESSAGE ####\n" +
+                        "\n\n\n" +
+                        "Disclaimer: You receive this message, because your email address is registered on " +
+                        "Cytomine-IRIS host [" + hostname + "] as project coordinator.")
+
+                log.info("Sending project access request email to coordinator [" + recipient + "]...")
+
+                // send an email to the user that he/she now has access
+                if (Environment.current == Environment.PRODUCTION){
+                    mailService.sendMail {
+                        async true
+                        to recipient
+                        subject subj
+                        body String.valueOf(bdy)
+                    }
+                } else {
+                    mailService.sendMail {
+                        async true
+                        to "cytomine-iris@pkainz.com"//recipient
+                        subject ("DEVELOPMENT MESSAGE: " + subj) // subj
+                        body String.valueOf(bdy)
+                    }
+                }
+            }
+
+            render(['success': true, 'msg': 'The request has been sent to the coordinators!'] as JSON)
 
         } catch (CytomineException e1) {
             log.error(e1)

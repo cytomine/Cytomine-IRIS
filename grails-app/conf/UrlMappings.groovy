@@ -291,10 +291,18 @@ class UrlMappings {
 
 		/**
 		 * Authorize a user for specific roles/tasks.
-		 * Additional parameter must be set, e.g. irisCoordinator={true|false}
+		 * Additional parameters must be set,i.e. irisCoordinator={true|false}
 		 */
-		"/api/admin/project/$cmProjectID/user/$cmUserID/authorize(.$format)"(controller:"admin"){
+		"/api/admin/project/$cmProjectID/user/$cmUserID/authorize/coordinator(.$format)"(controller:"admin"){
 			action = [GET: "authorizeCoordinator"]
+		}
+
+		/**
+		 * Authorize a user for specific roles/tasks.
+		 * Additional parameter must be set, e.g. projectAccess={true|false}
+		 */
+		"/api/admin/project/$cmProjectID/user/$cmUserID/authorize/access(.$format)"(controller:"admin"){
+			action = [GET: "authorizeProjectAccess"]
 		}
 
 		"/api/dev"(controller:"admin"){
@@ -376,8 +384,16 @@ class UrlMappings {
 		 * Request to become a coordinator for the project.
 		 * 		payload contains the custom message to the administrator
 		 */
-		"/api/settings/user/$cmUserID/project/$cmProjectID/coordinator/request(.$format)"(controller:"projectSettings"){
+		"/api/settings/user/$cmUserID/project/$cmProjectID/request/coordinator(.$format)"(controller:"projectSettings"){
 			action = [POST: "requestProjectCoordinator"]
+		}
+
+		/**
+		 * Request access to a particular project.
+		 * 		payload contains the custom message to the project coordinator(s)
+		 */
+		"/api/settings/user/$cmUserID/project/$cmProjectID/request/access(.$format)"(controller:"projectSettings"){
+			action = [POST: "requestProjectAccess"]
 		}
 	}
 }

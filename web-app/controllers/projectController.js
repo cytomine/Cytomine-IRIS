@@ -393,5 +393,87 @@ iris.controller("projectCtrl", [
             };
         };
 
+        // open a modal information dialog
+        $scope.showUserRequestDialog = function (project) {
+            var modalInstance = $modal.open({
+                templateUrl: 'userRequestProjectAccessForm.html',
+                controller: usrRequProjectCtrl,
+                size: 'md',
+                resolve: {
+                    project: function () {
+                        return project;
+                    },
+                    user: function(){
+                        return $scope.main.user;
+                    }
+                }
+            });
 
+            modalInstance.result.then(function (result) {
+                // callbackSuccess branch
+                $log.debug('User Request Form modal: ' + result);
+            }, function (result) {
+                // callbackError branch
+                $log.debug('User Request Form modal: ' + result);
+            });
+        };
+
+        // controller for the user request modal dialog
+        var usrRequProjectCtrl = function ($scope, $modalInstance, $sce,
+                                      project, user) {
+            $scope.usr = {
+                project: project,
+                loading: true,
+                error: {}
+            };
+
+            var finalMessage = "";
+
+            $scope.$watch('usr.textAreaContent', function (textAreaContent) {
+                finalMessage = textAreaContent;
+            });
+
+            // get the status of the current user
+            settingsService.fetchProjectUsersSettings(project.cmID, user.id, function (user) {
+                $scope.usr.user = user[0];
+
+                $scope.usr.textAreaContent = "Dear project coordinator, \n" +
+                "please enable access to project ["
+                + project.cmName + "] for me.\n\nBest regards, \n" + $scope.usr.user.cmFirstName + " "
+                + $scope.usr.user.cmLastName + "\n(ID:" + $scope.usr.user.cmID + ", username: "
+                + $scope.usr.user.cmUserName + ")";
+
+                $scope.usr.loading = false;
+            }, function (error, status) {
+                $scope.usr.error = {
+                    show: true,
+                    message: error.message
+                };
+                $scope.usr.loading = false;
+            });
+
+            $scope.ok = function () {
+
+                $log.debug("Request message: ", finalMessage);
+
+                $scope.usr.requestsending = true;
+
+                settingsService.requestProjectAccess(project.cmID, $scope.usr.user.cmID, finalMessage,
+                    function(data){
+                        $scope.usr.requestsent = true;
+                        $scope.usr.requestsending = false;
+                    }, function(error, status){
+                        $scope.usr.error = {
+                            show: true,
+                            message: error.error.message,
+                            extramessage: error.error.extramessage
+                        };
+                        $scope.usr.requestsending = false;
+                    });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        };
     }]);

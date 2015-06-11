@@ -58,15 +58,20 @@
 									<ul class="dropdown-menu text-left" role="menu">
 										<li ng-class="{	'disabled': (item.settings.enabled === false || item.settings.irisCoordinator === false)}"><a
 												ng-click="showStatistics(item)" href>
-											<span class="glyphicon glyphicon-stats"></span>&nbsp;View statistics dashboard
+											<span class="glyphicon glyphicon-stats"></span>&nbsp;Statistics Dashboard
 										</a></li>
 										<li ng-class="{	'disabled': (item.settings.enabled === false || item.settings.irisCoordinator === false) }"><a
 												ng-click="showSettings(item)" href>
 											<span class="glyphicon glyphicon-wrench"></span>&nbsp;Settings
 										</a></li>
-										<li><a
-												ng-click="showCoordRequestDialog(item)" href>
-											<span class="glyphicon glyphicon-user"></span>&nbsp;Coordinator request
+										<li><a ng-click="showCoordRequestDialog(item)" href>
+											<span class="glyphicon glyphicon-user"></span>&nbsp;Coordinator Request
+										</a></li>
+										<!-- TODO continue implementation of 'I don't have access' function -->
+										<li ng-show="item.settings.enabled === false" class="divider" ></li>
+										<li ng-show="item.settings.enabled === false"><a ng-class="{ 'disabled': item.settings.enabled === true }"
+											   ng-click="showUserRequestDialog(item)" href>
+											<span class="glyphicon glyphicon-lock"></span>&nbsp;Request Access
 										</a></li>
 									</ul>
 								</div>
@@ -87,15 +92,20 @@
 									<ul class="dropdown-menu text-left" role="menu">
 										<li ng-class="{	'disabled': item.settings.enabled === false }"><a
 												ng-click="showStatistics(item)" href>
-											<span class="glyphicon glyphicon-stats"></span>&nbsp;View statistics dashboard
+											<span class="glyphicon glyphicon-stats"></span>&nbsp;Statistics Dashboard
 										</a></li>
-										<li ng-class="{	'disabled': item.settings.enabled === false}"><a
+										<li ng-class="{	'disabled': item.settings.enabled === false }"><a
 												ng-click="showSettings(item)" href>
 											<span class="glyphicon glyphicon-wrench"></span>&nbsp;Settings
 										</a></li>
-										<li><a
-												ng-click="showCoordRequestDialog(item)" href>
-											<span class="glyphicon glyphicon-user"></span>&nbsp;Coordinator request
+										<li><a ng-click="showCoordRequestDialog(item)" href>
+											<span class="glyphicon glyphicon-user"></span>&nbsp;Coordinator Request
+										</a></li>
+										<!-- TODO continue implementation of 'I don't have access' function -->
+										<li ng-show="item.settings.enabled === false" class="divider" ></li>
+										<li ng-show="item.settings.enabled === false"><a ng-class="{ 'disabled': item.settings.enabled === true }"
+										ng-click="showUserRequestDialog(item)" href>
+										<span class="glyphicon glyphicon-lock"></span>&nbsp;Request Access
 										</a></li>
 									</ul>
 								</div>
@@ -115,5 +125,6 @@
 	<div ng-include="'templates/html/projectDescription.html'"></div>
 	<div ng-include="'templates/html/projectDisabled.html'"></div>
 	<div ng-include="'templates/html/coordinatorRequestForm.html'"></div>
+	<div ng-include="'templates/html/userRequestProjectAccessForm.html'"></div>
 </div>
 

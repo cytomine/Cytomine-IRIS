@@ -66,7 +66,6 @@ class SecurityFilters {
 								,  currentUser.cmPublicKey, currentUser.cmPrivateKey, "./")
 						request['cytomine'].setMax(0) //no max
 					}
-
 				} else {
 					// otherwise check for the public and private key
 					if (publicKey != null && privateKey != null) {

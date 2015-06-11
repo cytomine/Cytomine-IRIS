@@ -1,0 +1,63 @@
+<script type="text/ng-template" id="userRequestProjectAccessForm.html">
+    <div class="modal-header">
+        <h4 class="modal-title">
+            <span class="glyphicon glyphicon-user"></span> Access Request for {{usr.project.cmName}}</h4>
+    </div>
+
+    <div class="modal-body">
+        <div ng-hide="usr.error.show || usr.requestsending || usr.requestsent || usr.user.projectSettings.enabled === true || usr.loading">
+            <p>
+                With this form, you can request <b>access</b>
+                to the project <b>{{usr.project.cmName}}</b> from the project coordinators.
+            </p>
+            <div>
+                Use this text field to submit a custom message to the project coordinators.<br>
+                <i>Please note that all project coordinators will receive this email.</i>
+                <textarea ng-model="usr.textAreaContent" maxlength="512" ng-trim="true" ng-maxlength="512" rows="6" style="width:100%;"></textarea>
+            </div>
+
+            <div>
+                <span class="pull-left">You have <b>{{512-usr.textAreaContent.length}} of 512</b> characters left.</span>
+                <button class="btn btn-primary pull-right" style="margin-bottom:5px;" ng-click="ok()">Send request</button>
+            </div>
+        </div>
+        <div ng-show="usr.error.show" class="alert alert-danger text-center">
+            <b>Sorry!</b> We could not successfully complete your request, please try again later.
+            <br>
+            {{usr.error.message}}
+            <br>
+            {{usr.error.extramessage}}
+        </div>
+
+        <div ng-show="usr.requestsent" class="alert alert-success text-center">
+            Your request has been successfully sent to the project coordinator(s). <br>
+            You will be notified via email ({{usr.user.cmEmail}}) once access has been granted.
+        </div>
+
+        <div ng-show="usr.user.projectSettings.enabled === true" class="alert alert-info text-center">
+            You already have access to this project.
+        </div>
+
+        <div ng-show="usr.requestsending">
+            <p class="text-center">
+            <p class="text-center">
+                Processing your request, please be patient...
+            </p>
+            <img class="img-responsive center-block" src="images/ajax-loader.gif" alt="" />
+            </p>
+        </div>
+
+        <div ng-show="usr.loading">
+            <p class="text-center">
+            <p class="text-center">
+                Loading content...
+            </p>
+            <img class="img-responsive center-block" src="images/ajax-loader.gif" alt="" />
+            </p>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-warning" ng-click="cancel()">Close</button>
+    </div>
+</script>

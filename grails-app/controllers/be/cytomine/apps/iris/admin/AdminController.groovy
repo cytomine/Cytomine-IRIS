@@ -166,11 +166,11 @@ class AdminController {
             Long cmProjectID = params.long('cmProjectID')
             Long cmUserID = params.long('cmUserID')
 
-            Boolean targetValueCoord = Boolean.valueOf(params['irisCoordinator'])
-
-            if (targetValueCoord == null){
+            if (params['irisCoordinator'] == null){
                 throw new CytomineException(400, "The request requires additional parameters!")
             }
+
+            Boolean targetValueCoord = Boolean.valueOf(params['irisCoordinator'])
 
             // get the user from the IRIS db
             IRISUser user = IRISUser.findByCmID(cmUserID)
@@ -199,8 +199,12 @@ class AdminController {
 
             // update the value
             settings.irisCoordinator = targetValueCoord
-            // enable the project for that user
-            settings.enabled = true
+            // enable the project for that user, if he/she became coordinator
+            if (targetValueCoord == true){
+                settings.enabled = true
+            } else {
+                // do not disable the project once the rights as coordinator are revoked
+            }
             settings.merge(flush: true)
 
             if (targetValueCoord == true){
@@ -283,6 +287,121 @@ class AdminController {
         }
     }
 
+    /**
+     * Enable a project for a user.
+     * @return
+     */
+    def authorizeProjectAccess() {
+
+        String tmpEmail = null
+        try {
+            // TODO check whether the user is allowed to make this request
+
+            Cytomine cytomine = request['cytomine']
+            IRISUser irisUser = request['user']
+            Long cmProjectID = params.long('cmProjectID')
+            Long cmUserID = params.long('cmUserID')
+
+            if (params['projectAccess'] == null){
+                throw new CytomineException(400, "The request requires additional parameters!")
+            }
+
+            Boolean targetValueEnabled = Boolean.valueOf(params['projectAccess'])
+
+            // get the user from the IRIS db
+            IRISUser user = IRISUser.findByCmID(cmUserID)
+
+            if (user == null){
+                throw new CytomineException(404, "The user cannot be updated!")
+            }
+
+            // assign the email
+            tmpEmail = user.cmEmail
+
+            Project cmProject = cytomine.getProject(cmProjectID)
+
+            // get the project settings
+            IRISUserProjectSettings settings = IRISUserProjectSettings
+                    .findByCmProjectIDAndUser(cmProjectID,user)
+
+            if (settings == null){
+                throw new CytomineException(404, "The project settings cannot be found.")
+            }
+
+            Boolean before = settings.enabled
+
+            // enable the project for that user
+            settings.enabled = targetValueEnabled
+            settings.merge(flush: true)
+
+            // only send a mail once
+            if (before == false && targetValueEnabled == true){
+                // if the user now has access
+                // send a confirmation mail to the user
+                String recipient = user.cmEmail
+
+                String hostname = grailsApplication.config.grails.host
+                String urlprefix = grailsApplication.config.grails.cytomine.apps.iris.host
+                String restURL = (urlprefix + "/index.html#/project/" + cmProjectID + "/images")
+
+                String subj = ("[Cytomine-IRIS: " + hostname + "] Your Project Access Request")
+                String bdy = ("Dear " + user.cmFirstName + " " + user.cmLastName + ",\n\n" +
+                        "you have been granted the rights to project [" + cmProject.get("name") + "].\n" +
+                        "Start right away viewing the images of the project using the following link: \n" +
+                        restURL +
+                        "\n\nBest regards,\n" +
+                        "the project coordinator")
+
+                // send an email to the user that he/she now has access
+                if (Environment.current == Environment.PRODUCTION){
+                    mailService.sendMail {
+                        async false
+                        to recipient
+                        subject subj
+                        body String.valueOf(bdy)
+                    }
+                } else {
+                    mailService.sendMail {
+                        async false
+                        to "cytomine-iris@pkainz.com"//recipient
+                        subject ("DEVELOPMENT MESSAGE: " + subj) // subj
+                        body String.valueOf(bdy)
+                    }
+                }
+
+                render(['success': true, 'msg': 'User \'' + user.cmUserName + '\' ' +
+                        'has been successfully authorized access for ' +
+                        'project [' + cmProject.get("name") + ']!'] as JSON)
+
+            } else {
+                // the rights have been revoked
+                render(['success': true, 'msg': 'User \'' + user.cmUserName + '\' ' +
+                        'has been successfully revoked access for ' +
+                        'project [' + cmProject.get("name") + ']!'] as JSON)
+            }
+
+        } catch (CytomineException e1) {
+            log.error(e1)
+            // exceptions from the cytomine java client
+            response.setStatus(e1.httpCode)
+            JSONObject errorMsg = new Utils().resolveCytomineException(e1)
+            render errorMsg as JSON
+        } catch (GroovyCastException e2) {
+            log.error(e2)
+            // send back 400 if the project ID is other than long format
+            response.setStatus(400)
+            JSONObject errorMsg = new Utils().resolveException(e2, 400)
+            render errorMsg as JSON
+        } catch (Exception e3) {
+            log.error(e3)
+            // on any other exception render 500
+            response.setStatus(500)
+            JSONObject errorMsg = new Utils().resolveException(e3, 500)
+            errorMsg['error']['extramessage'] = "We apologize for this inconvenience and try to solve the problem as soon as possible. " +
+                    "Meanwhile, please contact the user directly via email (" + tmpEmail + ")!";
+            render errorMsg as JSON
+        }
+    }
 
     def dev(){
 
