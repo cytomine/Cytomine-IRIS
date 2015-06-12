@@ -193,6 +193,7 @@ iris.controller("settingsUserCtrl", [
             // check if the executing user is trying to alter its own project access
             if ($scope.main.user.id === user.cmID){
                 chbx.checked = !flag;
+                user.projectSettings.irisCoordinator = !flag;
                 sharedService.addAlert("You cannot revoke the rights " +
                     "as coordinator for yourself!", "warning");
                 return;
@@ -206,7 +207,21 @@ iris.controller("settingsUserCtrl", [
                 function(data){
                     if (flag === true){
                         sharedService.addAlert(user.cmFirstName + " "
-                        + user.cmLastName + " is now project coordinator.", "success");
+                        + user.cmLastName + " is now project coordinator. " +
+                        "The project is also enabled now.", "success");
+
+                        // enable the project according to the return object
+                        var settings = data.settings;
+
+                        // if a user is now coordinator, the project is also enabled for him
+                        if (settings.enabled === true){
+                            var enChbx = document.getElementById(user.cmID + ":checkBox:projectEnabled");
+                            enChbx.checked = settings.enabled;
+                            user.projectSettings.enabled = settings.enabled;
+                            // update the number of enabled users
+                            $scope.computeNUsersDisabled();
+                        }
+
                     } else {
                         sharedService.addAlert(user.cmFirstName + " "
                         + user.cmLastName + " is no coordinator anymore.", "success");

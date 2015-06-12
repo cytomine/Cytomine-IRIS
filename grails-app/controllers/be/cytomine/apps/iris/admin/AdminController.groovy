@@ -255,13 +255,15 @@ class AdminController {
 
                 render(['success': true, 'msg': 'User \'' + user.cmUserName + '\' ' +
                         'has been successfully authorized as project coordinator for ' +
-                        'project [' + cmProject.get("name") + ']!'] as JSON)
+                        'project [' + cmProject.get("name") + ']!',
+                        'settings': settings] as JSON)
 
             } else {
                 // the rights have been revoked
                 render(['success': true, 'msg': 'User \'' + user.cmUserName + '\' ' +
                         'has been successfully removed as project coordinator for ' +
-                        'project [' + cmProject.get("name") + ']!'] as JSON)
+                        'project [' + cmProject.get("name") + ']!',
+                        'settings': settings] as JSON)
             }
 
         } catch (CytomineException e1) {
