@@ -1,38 +1,90 @@
 <div>
 	<h4>Project Overview Table</h4>
 	<p>
-	The project overview table shows the following properties for each project available to you:
+		The project overview table shows the following properties for each project available to you:<br>
 	<ul>
-		<li><b>Name:</b> the name of the Cytomine project</li>
+		<li>
+			<b>Name:</b> the name of the Cytomine project. A label indicating
+			<span class="label label-warning">Locked</span> indicates
+			that you do not have access to this project. Hover the label to receive more information.
+		</li>
 		<li><b>Created:</b> the creation date</li>
 		<li><b># Images:</b> the total number of images in this project</li>
 		<li><b># Annotations:</b> the total number of annotations in this project</li>
-		<li><b>Mode:</b> <span class="label label-danger">Blind Mode</span> includes undisclosed image names and hidden annotation information, which is revealed in <span class="label label-info">Regular</span> projects</li>
-		<li><b>Action:</b> actions available for the project</li>
-		<li><b>Info:</b> displays general information about the project, such as contact information for support issues</li> 
+		<li><b>Mode:</b> <span class="label label-danger">Blind Mode</span> includes undisclosed image names and hidden annotation information,
+			which is revealed in <span class="label label-info">Regular</span> projects</li>
+		<li><b>Actions:</b> actions available for the project</li>
+		<li><b>Info:</b> displays general information about the project, such as contact information for support issues</li>
 	</ul>
 	<div class="text-center"><img class="img-rounded dropshadowimg" alt="" src="images/help/project-help-table.png"/></div>
-	Per default, the projects are sorted by creation date, such that the most recent project is displayed on top of the table. 
-	Click on the column titles to change the sort order in the table. You can also search for a specific project name using the text field in the <b>Name</b> column. 
-	If the project has recently been added, its entry exibits a <span class="label label-success">New!</span> label next to the creation date.
+	Per default, the projects are sorted by creation date, such that the most recent project is displayed on top of the table.
+	Click on the column titles to change the sort order in the table. You can also search for a specific project name using the text field in the <b>Name</b> column.
+	If the project has recently been added, its entry exhibits a <span class="label label-success">New!</span> label next to the creation date.
 	</p>
-	
+
 	<hr>
-	<h4>Opening a Project</h4>
+	<h4>Available Actions</h4>
+	<div class="text-center"><img class="img-rounded dropshadowimg" alt="" src="images/help/project-help-dropdown.png"/></div>
 	<p>
-	Open a project by clicking on the <button type="button" class="btn btn-primary">Open</button> button in the row of the project's name.
-	If the button is disabled <button type="button" class="btn btn-primary" disabled="disabled">Open</button>, the project is not (yet) available to you or does not have any images to be examined.
+		Select one of the available actions for your task. Any user that has no access to a project can request it from the
+		project coordinators using the <b>Request Access</b> link. Once the user has access, this button is not visible to them.
+		Some other buttons may be deactivated according to your current rights (i.e. being a coordinator for that project or not).
+		The available actions are detailed in the following sections.
 	</p>
-	
+
+	<h5 style="margin-top:15px;">Opening a Project</h5>
+	<p>
+		Open a project by clicking on the <button type="button" class="btn btn-primary">Open</button> button in the row of the project's name.
+		If the button is disabled <button type="button" class="btn btn-primary" disabled="disabled">Open</button>, the project is not (yet) available to you or does not have any images to be examined.
+	</p>
+
+	<h5 style="margin-top:15px;"><span class="glyphicon glyphicon-lock"></span> Request Access</h5>
+	<p>
+		If the project is <span class="label label-warning">Locked</span>, you can request access by clicking on the dropdown
+		button and selecting <button type="button" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-lock"></span> Request Access</button>.
+		<br>
+		A dialog will guide you through the request process. The request will be sent to the project <i>coordinators</i>, who will
+		eventually grant access to the project. You can submit a short message to the coordinators as well.
+		Once the coordinator granted you access, you will be notified via email.
+		<br>
+		If there is no coordinator set yet for that project, you can request to become one yourself.
+		<br>
+		<b>Please note:</b> If you already have access to the project, this button will not be visible to you.
+	</p>
+
+	<h5 style="margin-top:15px;"><span class="glyphicon glyphicon-user"></span> Coordinator Request</h5>
+	<p>
+		If you want to become a coordinator of the project, e.g. to alter settings and view project statistics, select
+		<button type="button" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-user"></span> Coordinator Request</button>
+		from the dropdown.
+		<br>
+		A dialog will guide you through the request process. The request will be sent to the <i>administrator</i> of the IRIS host, who will
+		eventually authorize you as coordinator of the project. You can submit a short message to the administrator as well.
+		Once you are authorized, you will be notified via email.
+		<br>
+	</p>
+
+	<h5 style="margin-top:15px;"><span class="glyphicon glyphicon-wrench"></span> Settings (Coordinators only)</h5>
+	<p>
+		Opens the project settings and lets you edit project and image access rights for all users. Furthermore, the labeling
+		progress for each user can be updated manually from the Cytomine host.
+	</p>
+
+	<h5 style="margin-top:15px;"><span class="glyphicon glyphicon-stats"></span> Statistics Dashboard (Coordinators only)</h5>
+	<p>
+		Opens the project statistics dashboard and reveals user statistics and agreement visualizations on the annotations.
+	</p>
+
 	<hr>
 	<h4>Update the Project List</h4>
 	<p>
-	Update the project list to reflect the latest changes by pressing <span type="button" class="btn btn-primary"><span class="glyphicon glyphicon-refresh"></span> Refresh</span> at the top of the page.
+		Update the project list to reflect the latest changes by pressing
+		<button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-refresh"></span> Refresh</button> at the top of the page.
 	</p>
-	
+
 	<hr>
 	<h4>Keyboard Shortcut List</h4>
 	<p>
-	Open the list of keyboard shortcuts available for this page by pressing <span class="cfp-hotkeys-key">?</span> on your keyboard. 
+		Open the list of keyboard shortcuts available for this page by pressing <span class="cfp-hotkeys-key">?</span> on your keyboard.
 	</p>
 </div>
