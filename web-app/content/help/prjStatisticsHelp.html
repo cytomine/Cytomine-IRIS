@@ -75,7 +75,7 @@
 
     <hr>
     <div>
-    <h4>Annotation Agreements</h4>
+        <h4>Annotation Agreements</h4>
         The agreements among particular users can be viewed by selecting this tab.
         Similar to the user statistics, you can construct a query by using the filter panels shown on the left hand side.
         Also, this panel can be hidden by clicking on the <span class="glyphicon glyphicon-chevron-left"></span> if more
@@ -87,10 +87,55 @@
         Once the filter is constructed and you hit
         <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-refresh"></span> Refresh</button>,
         a list of all eligible annotations will be shown.
-        In this list, the first column shows a preview of the annotation.
+        <p>
+            In the top right corner of the list, you will see the total number of annotations in the query as well as the annotations
+            shown on the current page.
+            Navigate through the pages using the pagination controls at the bottom left of the table, or change the total number
+            of items displayed on one page by clicking a number at the bottom right of the table.
+        </p>
+        <p>
+            In this list, the first column shows a preview of the annotation, which can be enlarged by clicking on the thumbnail.
+        </p>
+        <p>
+            The second column contains one bar chart for each individual term that was assigned by any of the users.
+            The bars are sorted primarily by their agreement and secondarily by their term name.
+            Below the bar chart, the name of the term is displayed and the percentage of users in this query that assigned the term.
+            In brackets, the total number of users assigning this term is displayed.
+            In addition to that, an orange <span class="glyphicon glyphicon-warning-sign" style="color:orangered;"></span> icon may indicate
+            that a particular term has been assigned by one user only and that the agreement on this term may be invalid.
+            Let the mouse rest on the icon and additional information will be displayed.
+        </p>
+        <p>
+            The subsequent columns contain the users' assignments, alphabetically ordered ascending that lead to the statistics
+            visualized as horizontal bar chart in the second column.
+        </p>
+
 
         <br>
         <h5>Filtering Agreement Levels</h5>
+        Usually the agreement is not filtered (0%) and thus, all annotations are shown in the list.
+        Agreement can be filtered using the slider control at the top of the annotation list.
+        <div class="row">
+            <div class="col-sm-6 text-center">
+                <img class="img-rounded dropshadowimg" alt="" src="images/help/stats-agreement-slider-0.png"/>
+                <br>
+                <b>Slider in leftmost position, no agreement filtering.</b>
+            </div>
+            <div class="col-sm-6 text-center">
+                <img class="img-rounded dropshadowimg" alt="" src="images/help/stats-agreement-slider-2.png"/>
+                <br>
+                <b>Slider in position 2, agreement filtering for 2 or more users agreeing on a term.</b>
+            </div>
+        </div>
+        <div>
+            As the slider is moved to the right, the list usually becomes shorter but the confidence on the selected terms
+            increases.
+            For instance, if you move the slider to the rightmost position, you will only get agreements, where all users in your
+            query agreed.
 
+            <div class="row text-center">
+                <img class="img-rounded dropshadowimg" alt="" src="images/help/stats-agreement-overview-lvl-2+_1_web.png"/>
+            </div>
+        </div>
     </div>
 </div>
