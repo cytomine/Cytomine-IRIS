@@ -284,7 +284,7 @@ grails.plugin.springsecurity.securityConfigType = "InterceptUrlMap"
 // /url (lowercase!)
 grails.plugin.springsecurity.interceptUrlMap = [
         '/api/**'           : ['permitAll'], // api call authentication are handled by REST security filter
-        '/dev/**'           : ['permitAll'],
+        '/public/**'        : ['permitAll'], // let all public requests pass
         '/'                 : ['permitAll'],
         '/index'            : ['permitAll'],
 //		'/index.gsp':         ['permitAll'], // cannot be found, no mapping defined

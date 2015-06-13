@@ -38,11 +38,11 @@ class UrlMappings {
 			action = [GET: "appVersion"]
 		}
 
-		"/api/cytomineHost(.$format)"(controller:"main"){
+		"/public/cytomineHost(.$format)"(controller:"main"){
 			action = [GET: "hostAddress"]
 		}
 
-		"/api/cytomineWeb(.$format)"(controller:"main"){
+		"/public/cytomineWeb(.$format)"(controller:"main"){
 			action = [GET: "webAddress"]
 		}
 

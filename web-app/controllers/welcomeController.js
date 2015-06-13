@@ -28,7 +28,7 @@ iris.controller("welcomeCtrl",
 
             // retrieve the Cytomine host address
             $scope.getCytomineHost = function () {
-                cytomineService.getCytomineHost(function (cytomineHost) {
+                cytomineService.getCytomineHost(true, function (cytomineHost) {
                     $scope.welcome.cytomineHost = cytomineHost;
                 }, function (data, status) {
                     $scope.welcome.error = {

@@ -95,7 +95,7 @@ iris.controller("mainCtrl", [
             return $.browser.msie;
         };
 
-        cytomineService.getCytomineHost(function(host){
+        cytomineService.getCytomineHost(false, function(host){
             $scope.main.cmHost = host;
         }, function(error, status){
             sharedService.addAlert("Could not retrieve the Cytomine host!", "danger")

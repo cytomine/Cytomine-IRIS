@@ -6,8 +6,8 @@ var iris = angular.module("irisApp");
 iris.constant("appNameURL", "api/appName.json");
 iris.constant("appVersionURL", "api/appVersion.json");
 iris.constant("appInfoURL", "api/admin/appInfo.json");
-iris.constant("cytomineHostURL", "api/cytomineHost.json");
-iris.constant("cytomineWebURL", "api/cytomineWeb.json");
+iris.constant("cytomineHostURL", "public/cytomineHost.json");
+iris.constant("cytomineWebURL", "public/cytomineWeb.json");
 iris.constant("userPublicKeyURL", "api/user/publicKey/{pubKey}.json");
 iris.constant("currentIRISUserURL", "api/user/current.json");
 
@@ -104,8 +104,12 @@ iris.factory("cytomineService", [
 		},
 
 		// get the cytomine host address
-		getCytomineHost : function(callbackSuccess, callbackError) {
-			$http.get(this.addKeys(cytomineHostURL)).success(function(data) {
+		getCytomineHost : function(ping, callbackSuccess, callbackError) {
+			var url = this.addKeys(cytomineHostURL);
+			if (ping === false){
+				url += ("?ping="+ping);
+			}
+			$http.get(url).success(function(data) {
 				if (callbackSuccess){
 					callbackSuccess(data);
 				}

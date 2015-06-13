@@ -98,8 +98,8 @@ class SecurityFilters {
 		}
 
 
-		dev(uri:'/dev/**') {
-
+		pub(uri:'/public/**') {
+			// let all public requests pass
 		}
 	}
 

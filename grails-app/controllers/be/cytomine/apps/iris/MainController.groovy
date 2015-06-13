@@ -72,8 +72,11 @@ class MainController {
 	def hostAddress(){
 		try {
 			Cytomine cytomine = request["cytomine"]
-			if (!cytomine.testConnexion()){
-				throw new UnknownHostException("The cytomine host is currently not available!")
+
+			if (params['ping'] != null && Boolean.valueOf(params['ping']) == true){
+				if (!cytomine.testConnexion()){
+					throw new UnknownHostException("The cytomine host is currently not available!")
+				}
 			}
 			render grailsApplication.config.grails.cytomine.host
 		} catch(UnknownHostException e1){
