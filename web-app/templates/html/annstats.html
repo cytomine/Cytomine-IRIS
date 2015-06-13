@@ -109,7 +109,11 @@
                     <tr ng-repeat="item in data">
                         <!--<td>{{item.cmID}}</td>-->
                         <td class="text-center">
-                            <img class="annotation-preview-small" src="{{ addKeys(item.smallCropURL) }}"/>
+                            <a class="fancybox" data-fancybox-group="gallery"
+                               href="{{ addKeys(item.smallCropURL) }}"
+                               title="{{ 'Annotation ID: ' + item.cmID }}">
+                                <img class="annotation-preview-small" src="{{ addKeys(item.smallCropURL) }}"/>
+                        </a>
                         </td>
                         <td style="min-width: 200px;">
                             <bars-chart chart-data="item.assignmentRanking" terms="terms"></bars-chart>

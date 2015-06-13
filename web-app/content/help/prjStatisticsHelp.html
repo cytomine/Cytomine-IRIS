@@ -1,14 +1,14 @@
 <div>
-        <h4>Project Statistics Dashboard</h4>
-        The project statistics dashboard is divided into tabs, which allow different views on the annotations.
-        <ul>
-            <li><b>User Statistics</b>: lets you combine various filters and view the histogram of assigned labels for
-                one or more users.
-            </li>
-            <li><b>Annotation Agreements</b>: lets you combine various filters and view inter-observer agreement on the annotations.
-            </li>
-        </ul>
-        In both cases, a filter panel as shown below allows you to construct your query.
+    <h4>Project Statistics Dashboard</h4>
+    The project statistics dashboard is divided into tabs, which allow different views on the annotations.
+    <ul>
+        <li><b>User Statistics</b>: lets you combine various filters and view the histogram of assigned labels for
+            one or more users.
+        </li>
+        <li><b>Annotation Agreements</b>: lets you combine various filters and view inter-observer agreement on the annotations.
+        </li>
+    </ul>
+    In both cases, a filter panel as shown below allows you to construct your query.
     <div class="row">
         <div class="col-sm-4 text-center">
             <b>User Filter</b>
@@ -26,6 +26,15 @@
             <img class="img-rounded dropshadowimg" alt="" src="images/help/stats-filterpanel-3.png"/>
         </div>
     </div>
+    <div>
+        <h5>Well, I don't see the filter!?</h5>
+        <p>
+            The filter panel can be hidden by selecting the <span class="glyphicon glyphicon-chevron-left"></span> icon
+            or clicking the gray bar on the left side of the window.
+            Similarly, the panel can be shown by selecting the <span class="glyphicon glyphicon-chevron-right"></span> icon
+            or clicking the gray bar on the left side of the window.
+        </p>
+    </div>
 
 
     <hr>
@@ -40,34 +49,48 @@
     <div class="text-center" style="margin-top:20px;">
         <img class="img-rounded dropshadowimg" alt="" src="images/help/stats-user-histogram.png"/>
     </div>
-    <div class="col-sm-6">
-        For each user there will be one histogram and two progress bars.
-        The histogram contains the filtered labels and hovering the bars in the chart indicates the frequency of that term
-        for the user.
-        <ol type="a">
-            <li>The name of the user</li>
-            <li>Total number of annotations labeled by the user</li>
-            <li>Total number of annotations with one or more labels</li>
-            <li>Total number of annotations (also includes annotations without labels)</li>
-        </ol>
-        The first progressbar indicates the progress relative to the observer who labeled most annotations of all users,
-        which is the total number of annotations by the user divided by all annotations with labels.
-        So example, if the first progressbar is at 100%, this means that this particular user has assigned most of all terms.
-        <br>
-        The second progressbar indicates the overall progress: total number of labeled annotations by the user divided by all annotations.
-    </div>
-    <div class="col-sm-6">
-        <img class="img-rounded dropshadowimg" alt="" src="images/help/stats-user-description.png"/>
+    <div class="row">
+        <div class="col-sm-8">
+            For each user there will be one histogram and two progress bars.
+            The histogram contains the filtered labels and hovering the bars in the chart indicates the frequency of that term
+            for the user.
+            <ol type="a">
+                <li>The name of the user</li>
+                <li>Total number of annotations labeled by the user</li>
+                <li>Total number of annotations with one or more labels</li>
+                <li>Total number of annotations (also includes annotations without labels)</li>
+            </ol>
+            The first progress bar indicates the progress relative to the observer who labeled most annotations of all users,
+            which is the total number of annotations by the user divided by all annotations with labels.
+            So example, if the first progressbar is at 100%, this means that this particular user has assigned most of all terms.
+            <br>
+            The second progress bar indicates the overall progress: total number of labeled annotations by the user divided by all annotations.
+        </div>
+        <div class="col-sm-4">
+            <img class="img-rounded dropshadowimg" alt="" src="images/help/stats-user-description.png"/>
+        </div>
     </div>
 
 
 
     <hr>
-    <div class="row">
+    <div>
     <h4>Annotation Agreements</h4>
+        The agreements among particular users can be viewed by selecting this tab.
+        Similar to the user statistics, you can construct a query by using the filter panels shown on the left hand side.
+        Also, this panel can be hidden by clicking on the <span class="glyphicon glyphicon-chevron-left"></span> if more
+        space for displaying the annotations is required.
+        <br>
+        <div class="row text-center">
+            <img class="img-rounded dropshadowimg" alt="" src="images/help/stats-agreement-overview-lvl-0_1_web.png"/>
+        </div>
+        Once the filter is constructed and you hit
+        <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-refresh"></span> Refresh</button>,
+        a list of all eligible annotations will be shown.
+        In this list, the first column shows a preview of the annotation.
+
+        <br>
+        <h5>Filtering Agreement Levels</h5>
 
     </div>
-
-
-
 </div>
