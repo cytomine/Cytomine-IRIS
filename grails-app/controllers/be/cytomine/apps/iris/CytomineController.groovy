@@ -310,10 +310,11 @@ class CytomineController {
 			String cmHost = grailsApplication.config.grails.cytomine.image.host;
 
 			// choose a random server (1-10, and "")
-			int serverID = new Random().nextInt(10)
-			cmHost = cmHost.replace("{serverID}", String.valueOf(serverID==0?"":serverID))
-			String dataString = zoomify_string.replace(zoomify_params[7]+"/"+zoomify_params[8], "")
-
+			if (cmHost.contains("{serverID}")) {
+				int serverID = new Random().nextInt(10)
+				cmHost = cmHost.replace("{serverID}", String.valueOf(serverID == 0 ? "" : serverID))
+			}
+			String dataString = zoomify_string.replace(zoomify_params[7] + "/" + zoomify_params[8], "")
 			String imageURL = cmHost + "/image/tile?zoomify=" + dataString + path + "&mimeType=" + mimeType
 
 			log.debug(imageURL)
