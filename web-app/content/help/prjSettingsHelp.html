@@ -1,11 +1,123 @@
 <div>
-	<h4>Project Settings</h4>
-	<p>
-		Add/Remove users from the access list to particular images or enable/disable the
-		entire project for specific users.
+    <div>
+        <h4>Access Management</h4>
 
-		<hr>
-		Manage the IRIS user roles.
+        <p>
+            Generally, you can enable or disable particular projects and images for particular users, but this requires
+            you to
+            be a project coordinator.
+            As a project coordinator you are able to view and alter access rights to the project and each image per user
+            and
+            authorize other users as project coordinator as well.
+        </p>
+        All project users are listed in a table in the page, and a short summary is displayed right above the table.
+        If there is just a single project coordinator in this project, the number is replaced with the name of that
+        user,
+        otherwise, hovering the number will display all coordinators of the project (also if they are on different pages
+        of the
+        user table).
+        <ul>
+            <li><b>User ID:</b> the Cytomine user ID</li>
+            <li><b>Last Name:</b> the user's last name</li>
+            <li><b>First Name:</b> the user's first name</li>
+            <li><b>Username:</b> the user's user name</li>
+            <li><b>Enabled:</b> a flag indicating whether or not the user has access to this project on this IRIS host
+            </li>
+            <li><b>Coordinator:</b> a flag indicating whether or not the user is a coordinator of this project on this
+                IRIS host
+            </li>
+            <li><b>Actions:</b>
+                <button type="button" class="btn btn-xs btn-primary">
+                    <span class="glyphicon glyphicon-edit"></span>&nbsp;
+                    Edit Image Access
+                </button>
+                : this will open a modal dialog, displaying all images in the project, where you can enable and
+                disable each image for the user.
+            </li>
+        </ul>
 
-	</p>
+        <div class="row text-center">
+            <img class="img-rounded dropshadowimg" alt="" src="images/help/settings-user-coord_anon.png"/>
+        </div>
+
+        <div class="text-center"><span class="label label-info">Hint:</span> always try to refresh the table before
+            making changes!
+        </div>
+
+        <div style="margin-top:15px;">
+            <h5>Project Coordinator</h5>
+            In order to establish a person as a coordinator, select the user's check box in the column
+            <b>Coordinator</b>.
+            If you authorize someone as coordinator, the project will automatically be enabled for that user.
+            Moreover, the user will receive an email indicating that coordinator rights are now available for that
+            project.
+            <br>
+            Similarly, deselect the check box, if you want to revoke the user's rights as coordinator.
+            <p>
+                <span class="label label-warning">Please note:</span> You cannot remove yourself as a project
+                coordinator.
+            </p>
+        </div>
+
+        <div style="margin-top:15px;">
+            <h5>Project Access</h5>
+            Project access is granted by selecting the user's check box in the column <b>Enabled</b>.
+            Disable the project for a user by deselecting the check box.
+            <p>
+                <span class="label label-warning">Please note:</span> You cannot disable the project for yourself.
+            </p>
+        </div>
+
+        <div style="margin-top:15px;">
+            <h5>Image Access</h5>
+            Open the images for a user by selecting
+            <button type="button" class="btn btn-xs btn-primary">
+                <span class="glyphicon glyphicon-edit"></span>&nbsp;
+                Edit Image Access
+            </button>
+            from the table. This will open a modal dialog, where you can enable and disable the images using the check
+            box from the rightmost column.
+            The summary at the top of the table will be updated accordingly.
+            <div class="row text-center">
+                <img class="img-rounded dropshadowimg" alt="" src="images/help/settings-image-access.png"/>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <div>
+        <h4>Labeling Progress Update/Synchronization</h4>
+
+        From the tabs, select <b>Synchronization</b> to view the corresponding settings.
+        <p>
+            Computing the labeling progress for each user in an image is a rather expensive operation and is just
+            executed <i>automatically</i>
+            at very specific moments during a workflow in the application.
+            Nevertheless, as a coordinator, you can trigger synchronization manually either for all users (using the big
+            red button ;-)) or for individual users by pressing
+            <button type="button" class="btn btn-xs btn-primary">
+                <span class="glyphicon glyphicon-refresh"></span> Sync now</span>
+            </button>
+            .
+        </p>
+        <p>
+            While synchronization is in progress, the buttons will be deactivated and become reactivated when the
+            procedure is finished.
+        </p>
+
+        <div class="row text-center">
+            <img class="img-rounded dropshadowimg" alt="" src="images/help/settings-sync-user-manually.png"/>
+        </div>
+
+    </div>
+
+    <hr>
+    <div>
+        <h4>Keyboard Shortcut List</h4>
+
+        <p>
+            Open the list of keyboard shortcuts available for this page by pressing <span
+                class="cfp-hotkeys-key">?</span> on your keyboard.
+        </p>
+    </div>
 </div>
