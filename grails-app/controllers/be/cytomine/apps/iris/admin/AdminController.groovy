@@ -44,6 +44,7 @@ class AdminController {
     def syncService
     def executorService
     def annotationService
+    def adminService
 
 
     def index() {}
@@ -403,6 +404,21 @@ class AdminController {
                     "Meanwhile, please contact the user directly via email (" + tmpEmail + ")!";
             render errorMsg as JSON
         }
+    }
+
+    def testMailConfig(){
+        def success = false
+        def message
+        try {
+            success = adminService.testMailSettings()
+            message = ("Mail configuration OK! " +
+                    "Please check your mail box at " + grailsApplication.config.grails.cytomine.apps.iris.server.admin.email
+                    +".")
+        } catch (Exception ex){
+            message = ("Mail configuration failed! " +
+                    "Cannot send mail. Error:\n" + ex.toString())
+        }
+        [success: success, message: message]
     }
 
     def dev(){

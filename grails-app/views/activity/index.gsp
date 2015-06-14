@@ -11,7 +11,7 @@
 		<a href="#list-activity" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
 		<div class="nav" role="navigation">
 			<ul>
-				<li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
+				<li><a class="home" href="${createLink(uri: '/admin')}"><g:message code="default.home.label"/></a></li>
 				<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
 			</ul>
 		</div>
@@ -27,15 +27,20 @@
 						<g:sortableColumn property="description" title="${message(code: 'activity.description.label', default: 'Description')}" />
 					
 						<g:sortableColumn property="action" title="${message(code: 'activity.action.label', default: 'Action')}" />
-					
+
+						<g:sortableColumn property="dateCreated" title="${message(code: 'activity.dateCreated.label', default: 'Date Created')}" />
+
+						<g:sortableColumn property="user" title="${message(code: 'activity.userID.label', default: 'User')}" />
+
 						<g:sortableColumn property="cmAnnotationID" title="${message(code: 'activity.cmAnnotationID.label', default: 'Cm Annotation ID')}" />
 					
 						<g:sortableColumn property="cmImageID" title="${message(code: 'activity.cmImageID.label', default: 'Cm Image ID')}" />
 					
 						<g:sortableColumn property="cmProjectID" title="${message(code: 'activity.cmProjectID.label', default: 'Cm Project ID')}" />
-					
-						<th><g:message code="activity.createdBy.label" default="Created By" /></th>
-					
+
+						%{--<g:sortableColumn property="createdBy" title="${message(code: 'activity.createdBy.label', default: 'Created By')}" />--}%
+
+
 					</tr>
 				</thead>
 				<tbody>
@@ -45,15 +50,19 @@
 						<td><g:link action="show" id="${activityInstance.id}">${fieldValue(bean: activityInstance, field: "description")}</g:link></td>
 					
 						<td>${fieldValue(bean: activityInstance, field: "action")}</td>
-					
+
+						<td>${fieldValue(bean: activityInstance, field: "dateCreated")}</td>
+
+						<td>${fieldValue(bean: activityInstance, field: "user")}</td>
+
 						<td>${fieldValue(bean: activityInstance, field: "cmAnnotationID")}</td>
 					
 						<td>${fieldValue(bean: activityInstance, field: "cmImageID")}</td>
 					
 						<td>${fieldValue(bean: activityInstance, field: "cmProjectID")}</td>
-					
-						<td>${fieldValue(bean: activityInstance, field: "createdBy")}</td>
-					
+					%{----}%
+						%{--<td>${fieldValue(bean: activityInstance, field: "createdBy")}</td>--}%
+
 					</tr>
 				</g:each>
 				</tbody>

@@ -305,6 +305,13 @@ class UrlMappings {
 			action = [GET: "authorizeProjectAccess"]
 		}
 
+		/**
+		 * Checks the mail configuration.
+		 */
+//		"/api/admin/testMailConfig(.$format)"(controller:"admin"){
+//			action = [GET: "testMailConfig"]
+//		}
+
 		"/api/dev"(controller:"admin"){
 			action = [GET: "dev"]
 		}

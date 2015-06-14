@@ -11,7 +11,7 @@
 		<a href="#show-activity" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
 		<div class="nav" role="navigation">
 			<ul>
-				<li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
+				<li><a class="home" href="${createLink(uri: '/admin')}"><g:message code="default.home.label"/></a></li>
 				<li><g:link class="list" action="index"><g:message code="default.list.label" args="[entityName]" /></g:link></li>
 				<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
 			</ul>
@@ -21,8 +21,8 @@
 			<g:if test="${flash.message}">
 			<div class="message" role="status">${flash.message}</div>
 			</g:if>
-			<ol class="property-list activity">
-			
+			<ol class="property-list activity"
+
 				<g:if test="${activityInstance?.description}">
 				<li class="fieldcontain">
 					<span id="description-label" class="property-label"><g:message code="activity.description.label" default="Description" /></span>
@@ -71,9 +71,9 @@
 				<g:if test="${activityInstance?.createdBy}">
 				<li class="fieldcontain">
 					<span id="createdBy-label" class="property-label"><g:message code="activity.createdBy.label" default="Created By" /></span>
-					
+
 						<span class="property-value" aria-labelledby="createdBy-label"><g:link controller="IRISUser" action="show" id="${activityInstance?.createdBy?.id}">${activityInstance?.createdBy?.encodeAsHTML()}</g:link></span>
-					
+
 				</li>
 				</g:if>
 			
