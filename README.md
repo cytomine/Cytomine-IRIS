@@ -35,7 +35,8 @@ $ mkdir ~/.grails
 $ cp iris-* ~/.grails 
 $ cd ~/.grails
 ```
-Now alter the configurations according to your deployment environment, server name, port, Cytomine core server connection etc. 
+Now alter the configurations according to your deployment environment, server name, port, Cytomine core server connection etc. Find detailed instructions [here](https://github.com/cytomine/Cytomine-IRIS/wiki/IRIS-Host-Configuration).
+
 ### Compile IRIS
 ```
 $ cd ~/Cytomine-IRIS
