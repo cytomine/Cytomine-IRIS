@@ -6,7 +6,7 @@ Watch the short getting-started tutorial on [YouTube](https://www.youtube.com/wa
 
 # Installation
 For a more detailed guide on how to set up a production IRIS instance, please see the [Installation Guide](https://github.com/cytomine/Cytomine-IRIS/wiki/Installation-Guide) on our wiki pages.
-### Prerequesites
+### Prerequisites
 ```
 - Java 7 or higher
 - Apache Tomcat 7.0.x or higher (Servlet compatibility 3.0)
