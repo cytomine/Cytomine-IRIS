@@ -1,5 +1,5 @@
 # Cytomine-IRIS
-[Cytomine IRIS](https://github.com/cytomine/Cytomine-IRIS/wiki#functionality-and-purpose), the Interobserver Reliability Study module, is a web-based rich internet application for blinded assessment of histopathological slide annotations. 
+[Cytomine IRIS](https://github.com/cytomine/Cytomine-IRIS/wiki#functionality-and-purpose), the **I**nter-observer **R**el**i**ability **S**tudy module, is a web-based rich internet application for blinded assessment of histopathological slide annotations. 
 
 # Getting Started
 Once IRIS is installed, visit the [Getting Started with IRIS User Guide](https://github.com/cytomine/Cytomine-IRIS/wiki/Getting-Started-with-IRIS) on the wiki pages to get a short introduction. You are also welcome to watch the short getting-started tutorial on [YouTube](https://www.youtube.com/watch?v=S0PhEJmqlmA). 
