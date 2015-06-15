@@ -4,6 +4,9 @@
 Watch the short getting-started tutorial on [YouTube](https://www.youtube.com/watch?v=S0PhEJmqlmA). 
 [![Getting Started Tutorial](http://img.youtube.com/vi/S0PhEJmqlmA/0.jpg)](https://www.youtube.com/watch?v=S0PhEJmqlmA)
 
+# Documentation
+Please visit our [[wiki pages|https://github.com/cytomine/Cytomine-IRIS/wiki/]] for detailed documentation on how to install, administer and use Cytomine-IRIS.
+
 # Installation
 For a more detailed guide on how to set up a production IRIS instance, please see the [Installation Guide](https://github.com/cytomine/Cytomine-IRIS/wiki/Installation-Guide) on our wiki pages.
 ### Prerequisites
