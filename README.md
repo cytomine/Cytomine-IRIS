@@ -22,7 +22,7 @@ $ cd Cytomine-IRIS
 
 ### Configuration
 ```
-$ cd src/Java
+$ cd src/java
 $ ls -l
 ```
 There should be 3 config files, one for common config, and one for each environment *production* and *development*, which mainly contains the server configuration and mail server settings. 
