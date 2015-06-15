@@ -25,6 +25,9 @@ println "loading common configuration..."
 // ######################
 grails.cytomine = [
         // the image server, where IRIS gets thumbnails and tiles
+        // add a placeholder {serverID} to enable sharding for
+        // parallel image tile fetching from random server ids (0-10)
+        // if there is no {serverID} present, all requests are sent to one server
         image: [
                 host: "http://image{serverID}.cytomine.be"
         ],
@@ -46,7 +49,7 @@ grails.cytomine = [
                         // configure a demo project for this IRIS instance which will always be enabled to its users
                         // if none is specified, all projects will be disabled by default
                         demoProject: [
-                                cmID: 0,
+                                cmID: 151637920
                         ],
                         // an empty synchronization object, we require in environment specific config files
                         sync       : [:]

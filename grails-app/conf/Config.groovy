@@ -114,54 +114,82 @@ grails.exceptionresolver.params.exclude = ['password']
 grails.hibernate.cache.queries = false
 
 
-// ###############################
-// the IRIS instance configuration
-// ###############################
-// default Cytomine settings
+// ######################
+// Cytomine-Core settings
+// ######################
 grails.cytomine = [
+        // the image server, where IRIS gets thumbnails and tiles
+        // add a placeholder {serverID} to enable sharding for
+        // parallel image tile fetching from random server ids (0-10)
+        // if there is no {serverID} present, all requests are sent to one server
         image : [
                 host : "http://image{serverID}.cytomine.be"
         ],
+        // the Cytomine-Core host (where the projects are managed)
         host : "http://beta.cytomine.be",
+        // just the web-address of the Cytomine project (can be left unchanged)
         web : "http://www.cytomine.be",
+        // IRIS specific configuration, don't modify the structure
         apps : [
                 iris : [
                         server : [
                                 admin : [
-                                        name : "Admin Name",
-                                        organization: "Admin Organization",
-                                        email : "admin@organization.org"
+                                        // CHANGE THIS INFORMATION TO YOUR ADMIN'S INFORMATION
+                                        name        : "Ian Admin",
+                                        organization: "University of Somewhere, Department of Whatever",
+                                        email       : "ian.admin@somewhere.edu"
                                 ]
                         ],
                         // configure a demo project for this IRIS instance which will always be enabled to its users
                         // if none is specified, all projects will be disabled by default
                         demoProject : [
-                                cmID : 151637920, // specify the Cytomine project ID in the external configuration
+                                cmID : 151637920 // specify the Cytomine project ID in the external configuration
                         ],
                         sync : [:]
             ]
         ]
     ]
 
-// default settings for the server and backend
+// ###################
+// backend/db settings
+// ###################
 grails.logging.jul.usebridge = true
+// disable the console if you don't want to have access to the database,
+// otherwise the db console is available (user sa, password: <none>) at the
+// url defined by 'grails.dbconsole.urlRoot'
 grails.dbconsole.enabled = true
+// do not change this URL unless you know what you are doing ;-)
 grails.dbconsole.urlRoot = '/admin/dbconsole'
 
+// ##################
+// IRIS host settings
+// ##################
+// the host name, port and protocol of the machine you are running IRIS on
 grails.host = "localhost"
+// if standard ports are used, leave grails.port empty
 grails.port = "8080"
+// either http or https
 grails.protocol = "http"
-grails.serverURL = grails.protocol + "://" + grails.host + ((grails.port=="")?"":":" + grails.port)
+// automatically assembling the server URL
+grails.serverURL = grails.protocol + "://" + grails.host + ((grails.port == "") ? "" : ":" + grails.port)
+// always use the application context e.g. "/iris" with this URL
 grails.cytomine.apps.iris.host = grails.serverURL + "/iris"
 
+// ###########################
+// Cytomine-IRIS sync settings
+// ###########################
+// this is an identifier that gets used in the remote configuration for
+// project synchronization (project properties on Cytomine-Core)
 grails.cytomine.apps.iris.sync = [
         // the client identifier (used as properties key for domain object properties in Cytomine)
         clientIdentifier : "IRIS_CLIENT_ID",
         irisHost : grails.host
 ]
 
-// Job configuration
-// disable the jobs using the "disabled"=true flag
+// ###############################################
+// Background Job Configuration (Quartz Scheduler)
+// ###############################################
+// JobClassName.disabled = {true|false}
 PingCytomineHostJob.disabled = false
 SynchronizeUserProgressJob.disabled = false
 
@@ -175,7 +203,11 @@ environments {
     }
 }
 
-// Default mail settings for notification services
+// ##############################
+// SMTP Mail Server Configuration
+// ##############################
+// see also https://grails.org/plugin/mail for configuration of
+// GMAIL, YAHOO, etc. SMTP servers
 grails.mail = [
         default : [
                 from: ("cytomine-iris@"+grails.host)
@@ -271,6 +303,9 @@ grails.gorm.default.constraints = {
 
 grails.gorm.failOnError = true
 
+// #############################
+// Spring Security configuration
+// #############################
 // Added by the Spring Security Core plugin:
 grails.plugin.springsecurity.userLookup.userDomainClassName = 'be.cytomine.apps.iris.auth.User'
 grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'be.cytomine.apps.iris.auth.UserRole'
@@ -334,8 +369,9 @@ grails.plugin.springsecurity.interceptUrlMap = [
 //        ]
 
 
-
-// reloadable configuration
+// #############################
+// external configuration reload
+// #############################
 grails.plugins.reloadConfig.files = []
 grails.plugins.reloadConfig.includeConfigLocations = true
 grails.plugins.reloadConfig.interval = 5000
