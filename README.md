@@ -5,6 +5,7 @@ Watch the short getting-started tutorial on [YouTube](https://www.youtube.com/wa
 [![Getting Started Tutorial](http://img.youtube.com/vi/S0PhEJmqlmA/0.jpg)](https://www.youtube.com/watch?v=S0PhEJmqlmA)
 
 # Installation
+For a more detailed guide, please see the [[Installation Guide]] on our wiki pages.
 ### Prerequesites
 ```
 - Java 7 or higher
