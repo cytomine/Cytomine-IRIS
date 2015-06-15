@@ -61,3 +61,5 @@ As of version 2.5, IRIS is restricted to assign one single label per user only.
 This essentially means that you should not use IRIS for projects, where users are allowed to assign labels using the Cytomine core web interface as well.
 This is because once a user uses IRIS to assign a label to an annotation, all previously assigned labels are removed!
 
+# Bug Reports
+Please file any Cytomine-IRIS related bugs or issues here in this [Github issue tracker](https://github.com/cytomine/Cytomine-IRIS/issues). We will do our best to fix them as soon as possible.
