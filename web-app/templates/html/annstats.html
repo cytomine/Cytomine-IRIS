@@ -168,10 +168,19 @@
                 </table>
 
             </div>
-            <div class="well">
-                <span class="glyphicon glyphicon-export"></span>&nbsp;<strong>Image Dataset Export</strong>
-                <button type="button" class="btn btn-xs btn-info" ng-click="showExportImageDatasetModal()">Export All</button>
-                <!--<button type="button" class="btn btn-xs btn-info" ng-click="showExportImageDatasetModal()">Export Page</button>-->
+            <div class="col-xs-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <span class="glyphicon glyphicon-export"></span>&nbsp;Export Image Dataset</h4>
+                    </div>
+
+                    <div class="panel-body">
+                        <button type="button" class="btn btn-xs btn-info" ng-click="showExportImageDatasetModal()">Export All</button>
+                        <button type="button" class="btn btn-xs btn-info" ng-click="showExportImageDatasetModal()">Export Filtered</button>
+                    <!--<button type="button" class="btn btn-xs btn-info" ng-click="showExportImageDatasetModal()">Export Page</button>-->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
