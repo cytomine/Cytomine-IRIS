@@ -232,6 +232,14 @@ function($rootScope, $scope, $http, $filter,
 								}
 							}
 
+							if (theFinalData.length === $scope.annstats.annotations.length){
+								$scope.annstats.filtered = false;
+							} else {
+								$scope.annstats.filtered = true;
+								$scope.annstats.totalFiltered = theFinalData.length;
+							}
+
+
 							$log.debug("Filtered " + theFinalData.length + " annotations for display.");
 
 							// just show elements above a certain agreement
