@@ -2,13 +2,13 @@ var iris = angular.module("irisApp");
 
 iris.controller(
 		"annStatsCtrl", [
-"$rootScope", "$scope", "$http", "$filter", 
+"$rootScope", "$scope", "$http", "$filter", "$modal",
 "$document", "$timeout", "$location", "$route",
 "$routeParams", "$log", "hotkeys",
 "cytomineService", "projectService", "imageService", "sessionService", 
 "helpService", "sharedService", "navService", "annotationService", "statisticsService",
 "ngTableParams",
-function($rootScope, $scope, $http, $filter, 
+function($rootScope, $scope, $http, $filter, $modal,
 		$document, $timeout, $location, $route,
 		$routeParams, $log, hotkeys,
 		cytomineService, projectService, imageService, sessionService, 
@@ -325,6 +325,57 @@ function($rootScope, $scope, $http, $filter,
 			delete $scope.warn.noUsers;
 		}
 	};
+
+
+	//////////////////////////////////////////
+	// START IMAGE EXPORT MODAL DIALOG
+	//////////////////////////////////////////
+	$scope.showExportImageDatasetModal = function(){
+		$log.debug("showing image dataset export dialog");
+
+		var modalInstance = $modal.open({
+			templateUrl: 'exportImageDatasetModal.html',
+			controller: modalCtrl,
+			size : 'lg',
+			resolve: { // put all variables here that should be available in the modal
+				project: function () {
+					return $scope.projectID;//dlgData.data;
+				},
+				error: function () {
+					return undefined;//dlgData.error;
+				}
+			}
+		});
+
+		modalInstance.result.then(function (result) {
+			// callbackSuccess branch
+			$log.debug('Export Image Dataset Modal: ' + result);
+		}, function (result) {
+			// callbackError branch
+			$log.debug('Export Image Dataset Modal: ' + result);
+		});
+	};
+
+	// controller for the image export modal
+	var modalCtrl = function ($scope, $modalInstance, $sce, project,
+							  error) {
+
+		$scope.projectID = project;
+		$scope.error = error;
+
+
+		$scope.ok = function () {
+			// TODO perform ajax calls and on success dismiss the dialog in the callback
+			$modalInstance.close('OK');
+		};
+
+		$scope.cancel = function () {
+			$modalInstance.dismiss('cancel');
+		};
+	};
+	// END IMAGE DATASET EXPORT MODAL DIALOG
+	// ###############################################################
+
 
 //	//////////////////////////////////////////
 //	declare additional methods

@@ -166,7 +166,16 @@
                     </tr>
                     </tbody>
                 </table>
+
+            </div>
+            <div class="well">
+                <span class="glyphicon glyphicon-export"></span>&nbsp;<strong>Image Dataset Export</strong>
+                <button type="button" class="btn btn-xs btn-info" ng-click="showExportImageDatasetModal()">Export All</button>
+                <!--<button type="button" class="btn btn-xs btn-info" ng-click="showExportImageDatasetModal()">Export Page</button>-->
             </div>
         </div>
     </div>
+
+    <!-- INCLUDE: Templates for modal dialogs  -->
+    <div ng-include="'templates/html/exportImageDatasetModal.html'"></div>
 </div>

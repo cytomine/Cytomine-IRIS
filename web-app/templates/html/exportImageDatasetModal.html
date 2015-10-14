@@ -1,0 +1,23 @@
+<script type="text/ng-template" id="exportImageDatasetModal.html">
+    <div class="modal-header">
+        <h4 class="modal-title">
+            <span class="glyphicon glyphicon-export"></span>&nbsp;Export Image Dataset</h4>
+    </div>
+
+    <div class="modal-body">
+        <div ng-hide="error.show">
+
+            Here go the settings.
+
+        </div>
+        <div ng-show="error.show" class="alert alert-danger" >
+            Error: {{ error.message }} ({{ error.status }}).
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">Export</button>
+        <button class="btn btn-warning" ng-click="cancel()">Close</button>
+    </div>
+</script>
