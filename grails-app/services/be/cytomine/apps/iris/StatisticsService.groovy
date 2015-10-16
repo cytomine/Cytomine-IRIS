@@ -172,7 +172,7 @@ class StatisticsService {
         // get all annotations according to a filter
         // images and terms are filtered directly
         AnnotationCollection annotations = annotationService.getAllAnnotations(
-                cytomine, irisUser, cmProjectID, imageIDs, termIDs, offset, max)
+                cytomine, irisUser, cmProjectID, imageIDs, termIDs, offset, max, options)
         int totalAnnotations = annotations.size()
 
         cytomine.setOffset(0)

@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.apache.log4j.DailyRollingFileAppender
-
 // locations to search for config files that get merged into the main config;
 // config files can be ConfigSlurper scripts, Java properties files, or classes
 // in the classpath in ConfigSlurper format
@@ -54,7 +52,8 @@ grails.mime.types = [ // the first one is the default format
                       rss          : 'application/rss+xml',
                       text         : 'text/plain',
                       hal          : ['application/hal+json', 'application/hal+xml'],
-                      xml          : ['text/xml', 'application/xml']
+                      xml          : ['text/xml', 'application/xml'],
+                      zip          : 'application/octet-stream'
 ]
 
 // URL Mapping Cache Max Size, defaults to 5000
@@ -380,5 +379,12 @@ grails.plugins.reloadConfig.notifyPlugins = []
 grails.plugins.reloadConfig.automerge = true
 grails.plugins.reloadConfig.notifyWithConfig = true
 
+// configuration for the fileserver
+// user running the grails/tomcat server must have rw rights in these directories!
+grails.plugins.fileserver.paths=[
+        // mapping from <app>/api/download/$root to a path on the hard drive
+        "storage": "/tmp",
+        "tmp": "/tmp"
+]
 
 println "loaded conf/Config.groovy."

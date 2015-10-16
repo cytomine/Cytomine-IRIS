@@ -402,5 +402,21 @@ class UrlMappings {
 		"/api/settings/user/$cmUserID/project/$cmProjectID/request/access(.$format)"(controller:"projectSettings"){
 			action = [POST: "requestProjectAccess"]
 		}
+
+
+
+		/**
+		 * DOWNLOAD/EXPORT
+		 *
+		 * Export endpoint for image dataset.
+		 * api/download/{projectID}/annotations/images
+		 */
+		"/api/download/$cmProjectID/annotations/images(.$format)"(controller:"download"){
+			action = [POST: "requestImageDataset"]
+		}
+
+		// grails-file-server plugin
+		"/api/download/$root/$path**"(controller: "file")
+
 	}
 }

@@ -138,4 +138,12 @@ log4j = {
     }
 }
 
+// configuration for the fileserver
+// user running the grails/tomcat server must have rw rights in these directories!
+grails.plugins.fileserver.paths=[
+        // mapping from <app>/api/download/$root to a path on the hard drive
+        "storage": "/tmp",
+        "tmp": "/tmp"
+]
+
 println 'loaded common configuration.'

@@ -167,13 +167,14 @@ class AnnotationService {
      * @param termIDs the requested term IDs as comma separated String
      * @param offset pagination parameter
      * @param max pagination parameter
+     * @param options a map of additional options
      * @return the filtered annotations
      * @throws CytomineException if the project does not have any images, or the user is not permitted
      * @throws Exception
      */
     AnnotationCollection getAllAnnotations(Cytomine cytomine, IRISUser irisUser,
                                            Long cmProjectID, String imageIDs,
-                                           String termIDs, int offset, int max)
+                                           String termIDs, int offset, int max, Map options=[:])
             throws CytomineException, Exception {
 
         // get all images
@@ -189,6 +190,14 @@ class AnnotationService {
         filters.put("project", String.valueOf(cmProjectID))
         filters.put("showMeta", "true") // shows links as well (required for mapping to IRIS annotation)
         filters.put("showTerm", "true") // retrieves a minimal set of annotations containing the user labels
+        filters.put("showGIS", "true") // shows some information of the annotation
+
+        // additional options for the filter
+        if (!options.isEmpty()) {
+            if (options.containsKey('showWKT') && options['showWKT'] == "true") {
+                filters.put("showWKT", "true")
+            }
+        }
 
         // match query image IDs with filtered images on IRIS
         List availableImageIDs = images.collect { it.cmID }

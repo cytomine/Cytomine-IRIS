@@ -41,17 +41,20 @@ grails.project.dependency.resolution = {
         grailsCentral()
         mavenCentral()
         // uncomment these (or add new ones) to enable remote dependency resolution from public Maven repositories
-        //mavenRepo "http://repository.codehaus.org"
-        //mavenRepo "http://download.java.net/maven/2/"
-        //mavenRepo "http://repository.jboss.com/maven2/"
+        // mavenRepo 'http://central.maven.org/maven2/'
+        // mavenRepo "http://repository.codehaus.org"
+        // mavenRepo "http://download.java.net/maven/2/"
+        // mavenRepo "http://repository.jboss.com/maven2/"
         mavenRepo 'https://oss.sonatype.org/content/repositories/snapshots'
         mavenRepo 'http://repo.spring.io/milestone/'
+        //mavenRepo "http://www.hibernatespatial.org/repository"
     }
 
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
         // runtime 'mysql:mysql-connector-java:5.1.27'
         // runtime 'org.postgresql:postgresql:9.3-1100-jdbc41'
+        compile 'com.vividsolutions:jts:1.13'
     }
 
 //   GRAILS 2.3.5 plugins {
@@ -92,6 +95,9 @@ grails.project.dependency.resolution = {
 
         compile ":quartz:1.0.2"
         compile ":executor:0.3"
+
+        // file server
+        compile ":file-server:0.2"
 
         // security
         compile ":spring-security-core:2.0-RC4"

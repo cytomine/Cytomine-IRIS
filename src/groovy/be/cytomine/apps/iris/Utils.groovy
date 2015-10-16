@@ -1,4 +1,3 @@
-
 /* Copyright the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +27,9 @@ import be.cytomine.client.models.Ontology
 
 import org.apache.log4j.Logger
 import org.json.simple.parser.JSONParser
+
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 
 /**
@@ -303,12 +305,12 @@ class Utils {
      * @param users the list of Cytomine users
      * @return sorted list
      */
-    List sortUsersAsc(def users){
+    List sortUsersAsc(def users) {
         // sort the users by lastname, firstname asc
-        users.sort{ x,y ->
-            if(x.get("lastname") == y.get("lastname")){
+        users.sort { x, y ->
+            if (x.get("lastname") == y.get("lastname")) {
                 x.get("firstname") <=> y.get("firstname")
-            }else{
+            } else {
                 x.get("lastname") <=> y.get("lastname")
             }
         }
@@ -321,14 +323,85 @@ class Utils {
      * @param agreements list of agreement statistics
      * @return sorted list
      */
-    List sortAgreementsDesc(def agreements){
+    List sortAgreementsDesc(def agreements) {
 
-        agreements.sort { x,y ->
-            if(y.get("ratio") == x.get("ratio")){
+        agreements.sort { x, y ->
+            if (y.get("ratio") == x.get("ratio")) {
                 x.get("termName") <=> y.get("termName")
-            }else{
+            } else {
                 y.get("ratio") <=> x.get("ratio")
             }
+        }
+    }
+
+    /**
+     * Creates a flattened ZIP file recursively from the given srcDir.
+     * @param srcDir
+     * @param zipFile
+     * @return
+     * @throws Exception
+     */
+    def createFlatZIPFromDirectory(String srcDir, String zipFile) throws Exception {
+
+        try {
+            FileOutputStream fos = new FileOutputStream(zipFile);
+            ZipOutputStream zos = new ZipOutputStream(fos);
+            File srcFile = new File(srcDir);
+            addDirToArchive(zos, srcFile);
+
+            // close the ZipOutputStream
+            zos.close();
+
+        }
+        catch (IOException ioe) {
+            log.error("Error creating ZIP file.", ioe);
+        }
+
+        return zipFile;
+    }
+
+    /**
+     * Adds a directory to a ZIP archive.
+     * @param zos
+     * @param srcFile
+     * @throws Exception
+     */
+    def addDirToArchive(ZipOutputStream zos, File srcFile) throws Exception {
+
+        File[] files = srcFile.listFiles();
+        log.debug("Adding directory: " + srcFile.getName());
+
+        for (int i = 0; i < files.length; i++) {
+
+            // if the file is directory, use recursion
+            if (files[i].isDirectory()) {
+                addDirToArchive(zos, files[i]);
+                continue;
+            }
+
+            try {
+
+                log.debug("Adding file: " + files[i].getName());
+
+                // create byte buffer
+                byte[] buffer = new byte[1024];
+
+                FileInputStream fis = new FileInputStream(files[i]);
+                zos.putNextEntry(new ZipEntry(files[i].getName()));
+
+                int length;
+                while ((length = fis.read(buffer)) > 0) {
+                    zos.write(buffer, 0, length);
+                }
+                zos.closeEntry();
+
+                // close the InputStream
+                fis.close();
+
+            } catch (IOException ioe) {
+                log.error("Error adding file to ZIP archive.", ioe);
+            }
+
         }
     }
 }
