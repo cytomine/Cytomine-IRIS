@@ -3,13 +3,13 @@ var iris = angular.module("irisApp");
 iris.controller(
 		"annStatsCtrl", [
 "$rootScope", "$scope", "$http", "$filter", "$modal", "$window",
-"$document", "$timeout", "$location", "$route", "$q", "$timeout",
+"$document", "$timeout", "$location", "$route", "$q",
 "$routeParams", "$log", "hotkeys",
 "cytomineService", "projectService", "imageService", "sessionService",
 "helpService", "sharedService", "navService", "annotationService", "statisticsService",
 "ngTableParams", "downloadService",
 function($rootScope, $scope, $http, $filter, $modal, $window,
-		$document, $timeout, $location, $route, $q, $timeout,
+		$document, $timeout, $location, $route, $q,
 		$routeParams, $log, hotkeys,
 		cytomineService, projectService, imageService, sessionService,
 		helpService, sharedService, navService, annotationService, statisticsService,
