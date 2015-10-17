@@ -140,6 +140,85 @@
     </div>
 
     <hr>
+    <div>
+        <h4>Export Image Dataset</h4>
+        Images from the database can be exported to your local hard drive according to a variety of settings.
+        Basis for the export is the annotation agreement list, which may optionally be filtered.
+        At the bottom of the page, you will find options for the image dataset export: <span class="glyphicon glyphicon-export"></span>&nbsp;<strong>Export Options</strong>.
+        <br>
+        <div class="row text-center">
+            <img class="img-rounded dropshadowimg" alt="" src="images/help/stats-agreement-export-0.png"/>
+        </div>
+        Selecting <button type="button" class="btn btn-xs btn-info">Export Image Dataset...</button> brings up the export dialog with the export options.
+        Hints regarding the options are given in grey italic font.
+
+        <div class="row text-center">
+            <img class="img-rounded dropshadowimg" alt="" src="images/help/stats-agreement-export-1.png"/>
+        </div>
+
+        <h5>Dataset Scope</h5>
+        <ul>
+            <li><b>all</b> annotations: exports all annotations across all pages in this query, ignores the agreement filter</li>
+            <li><b>filtered</b> annotations: exports only filtered annotations across all pages</li>
+            <li><b>current</b> page: exports only annotations on the current page, considers the agreement filter</li>
+            <li><b>pages</b>: exports annotations from the specified pages (starting at 1), considers the agreement filter, you may use ranges using a dash like 1-10 or only specific pages using 1;3;8-10.
+                The number of items per page is determined by the table settings (i.e. 10, 25, 50, 100).</li>
+        </ul>
+
+        <h5>Image Export Settings</h5>
+        <ul>
+            <li><b>minimum bounding box</b>: each annotation has a minimum bounding box according to its shape.
+                This option exports a rectangular portion of the image, which just contains the user- or algorithm-defined annotation.
+                <div class="row text-center">
+                    <img class="img-rounded dropshadowimg" alt="" src="images/help/stats-agreement-export-image-0_minBB.png"/>
+                </div>
+            </li>
+            <li><b>fixed window</b>: for each annotation, the centroid information is used as center point and a window with fixed non-negative dimensions defined by width and height.
+                <div class="row text-center">
+                    <img class="img-rounded dropshadowimg" alt="" src="images/help/stats-agreement-export-image-0_fixed.png"/>
+                </div>
+            </li>
+            <li><b>dynamic window</b>: similar to the minimum bounding box approach, this option grows the minimum bounding box extent by a specific border size.
+                <div class="row text-center">
+                    <img class="img-rounded dropshadowimg" alt="" src="images/help/stats-agreement-export-image-0_dynamic.png"/>
+                </div>
+            </li>
+        </ul>
+
+        <h5>Image Resolutions</h5>
+        <div class="row">
+            <div class="col-sm-6">
+                Since most of the images are stored as pyramids, different resolutions can be exported for each annotation.
+                <ul>
+                    <li><b>image resolutions</b>: starting at 0 being the maximum resolution (e.g. 40x),
+                        you may use resolution ranges using a dash like 1-10 or only specific pages using 1;3;8-10.
+                        If a resolution does not exist for an image, this export will be skipped.
+                </ul>
+            </div>
+            <div class="col-sm-6 text-center">
+                <a href="https://en.wikipedia.org/wiki/Pyramid_(image_processing)#/media/File:Image_pyramid.svg" target="_blank">
+                    <img class="img-rounded dropshadowimg" alt="image taken from https://en.wikipedia.org/wiki/Pyramid_(image_processing)#/media/File:Image_pyramid.svg" src="images/help/image-pyramid.png"/>
+                </a>
+            </div>
+        </div>
+
+
+        <h5>Export Format</h5>
+        Once the export parameters are determined, click on the button <button class="btn btn-primary" ng-style="{ 'text-align': 'center' }">Export</button>.
+        This will trigger a dataset creation request at the server and the dataset is collected.
+        Depending your request and project, this may take a while.
+        Once the dataset is complete, your browser should automatically prompt you to store the ZIP file.
+        The <b>generated link is a permanent link to your dataset</b>, you may store it separately to have access to this file in the future using the 'copy link' function in your browser.
+        <div class="row text-center">
+            <img class="img-rounded dropshadowimg" alt="" src="images/help/stats-agreement-export-3.png"/>
+        </div>
+
+        For more details regarding the ZIP file structure, you are kindly referred to the
+        <a href="https://github.com/cytomine/Cytomine-IRIS/wiki/Statistics-Dashboard#export-format" target="_blank">Cytomine IRIS wiki pages</a>.
+
+    </div>
+
+    <hr>
     <h4>Keyboard Shortcut List</h4>
     <p>
         Open the list of keyboard shortcuts available for this page by pressing <span class="cfp-hotkeys-key">?</span> on your keyboard.
