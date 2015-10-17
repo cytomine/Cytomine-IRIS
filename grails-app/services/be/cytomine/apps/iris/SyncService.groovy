@@ -411,7 +411,7 @@ class SyncService {
     IRISUserImageSettings computeUserProgress(Cytomine cytomine, Long projectID, Long cmImageID, IRISUser user)
             throws CytomineException, Exception {
         // clone the cytomine object and retrieve annotations without pagination
-        Cytomine cm = new Cytomine(cytomine.host, cytomine.publicKey, cytomine.privateKey, cytomine.basePath)
+        Cytomine cm = new Cytomine(cytomine.getHost(), cytomine.getPublicKey(), cytomine.getPrivateKey())
 
         // define the filter for the query
         Map<String, String> filters = new HashMap<String, String>()
@@ -718,8 +718,8 @@ class SyncService {
 
                     try {
                         // create the cytomine connection for that user
-                        Cytomine cytomine2 = new Cytomine(cytomine.host,
-                                imageUsers[0].cmPublicKey, imageUsers[0].cmPrivateKey, cytomine.workingPath)
+                        Cytomine cytomine2 = new Cytomine(cytomine.getHost(),
+                                imageUsers[0].cmPublicKey, imageUsers[0].cmPrivateKey)
 
                         allImageAnnotations = annotationService.getImageAnnotationsLight(cytomine2,
                                 imageUsers[0], null, imageID)

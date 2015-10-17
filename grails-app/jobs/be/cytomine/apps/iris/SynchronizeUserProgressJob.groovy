@@ -257,7 +257,7 @@ class SynchronizeUserProgressJob {
                         try {
                             // create the cytomine connection for that user
                             Cytomine cytomine = new Cytomine(grailsApplication.config.grails.cytomine.host as String,
-                                    someUserWithAccessToThisImage.cmPublicKey, someUserWithAccessToThisImage.cmPrivateKey, "./")
+                                    someUserWithAccessToThisImage.cmPublicKey, someUserWithAccessToThisImage.cmPrivateKey)
 
                             allImageAnnotations = annotationService.getImageAnnotationsLight(cytomine,
                                     someUserWithAccessToThisImage, null, imageID)

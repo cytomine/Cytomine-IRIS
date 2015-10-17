@@ -55,7 +55,7 @@ class Utils {
     JSONObject getUserProgress(Cytomine cytomine, long projectID, long imageID, long userID) {
         JSONObject jsonResult = new JSONObject()
         // clone the object and retrieve every object without pagination
-        Cytomine cm = new Cytomine(cytomine.host, cytomine.publicKey, cytomine.privateKey, cytomine.basePath)
+        Cytomine cm = new Cytomine(cytomine.getHost(), cytomine.getPublicKey(), cytomine.getPrivateKey())
 
         int totalAnnotations = 0
         int labeledAnnotations = 0

@@ -421,6 +421,7 @@ function($rootScope, $scope, $http, $filter, $modal, $window,
 				var ranges = $scope.imageExportSettings.pages;
 				if (ranges === undefined || ranges === null || ranges === ""){
 					$scope.pageRangeError = true;
+					$scope.pageRangeErrorText = "The range must not be empty";
 					return;
 				} else {
 					delete $scope.pageRangeError;
@@ -450,6 +451,7 @@ function($rootScope, $scope, $http, $filter, $modal, $window,
 						first_and_second = first_and_second.sort();
 						if (first_and_second.length !== 2){
 							$scope.pageRangeError = true;
+							$scope.pageRangeErrorText = "Enter a valid range in the form of e.g. '1-2;3' or '1;3;7'.";
 							return;
 						} else {
 							delete $scope.pageRangeError;
@@ -503,11 +505,13 @@ function($rootScope, $scope, $http, $filter, $modal, $window,
 
 					if (width <= 0 || height <=0){
 						$scope.fixedWidthHeightError = true;
+						$scope.fixedWidthHeightErrorText = "Width and height must be >0!";
 						return;
 					}
 					delete $scope.fixedWidthHeightError;
 				} catch (e) {
 					$scope.fixedWidthHeightError = true;
+					$scope.fixedWidthHeightErrorText = "Width and height must be a number >0!";
 					return;
 				}
 			}
@@ -519,11 +523,13 @@ function($rootScope, $scope, $http, $filter, $modal, $window,
 					$scope.imageExportSettings.dynamicWindowBorder = border;
 					if (border < 0){
 						$scope.dynamicBorderError = true;
+						$scope.dynamicBorderErrorText = "The border must be >=0!";
 						return;
 					}
 					delete $scope.dynamicBorderError;
 				} catch (e) {
 					$scope.dynamicBorderError = true;
+					$scope.dynamicBorderErrorText = "The border must be >=0!";
 					return;
 				}
 			}
@@ -534,6 +540,7 @@ function($rootScope, $scope, $http, $filter, $modal, $window,
 			var levelRanges = $scope.imageExportSettings.levels;
 			if (levelRanges === undefined || levelRanges === null || levelRanges === ""){
 				$scope.levelRangeError = true;
+				$scope.levelRangeErrorText = "The range must not be empty!";
 				return;
 			} else {
 				delete $scope.levelRangeError;
@@ -562,10 +569,11 @@ function($rootScope, $scope, $http, $filter, $modal, $window,
 					first_and_second = first_and_second.map(Function.prototype.call, String.prototype.trim);
 					first_and_second = first_and_second.sort();
 					if (first_and_second.length !== 2){
-						$scope.pageRangeError = true;
+						$scope.levelRangeError = true;
+						$scope.levelRangeErrorText = "Enter a valid range in the form of e.g. '0-1' or '0;3'.";
 						return;
 					} else {
-						delete $scope.pageRangeError;
+						delete $scope.levelRangeError;
 					}
 					// both border ranges inclusive
 					for (var j = Number(first_and_second[0]); j <= Number(first_and_second[1]); j++){

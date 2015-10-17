@@ -9,22 +9,22 @@
             <div>
                 <h5>Dataset Scope</h5>
                 <form name="datasetScopeForm">
-                    <input type="radio" ng-model="imageExportSettings.scope" value="all" />&nbsp;<b>all</b> annotations<br/>
-                    <input type="radio" ng-model="imageExportSettings.scope" value="filtered" ng-disabled="!filterActive"/>&nbsp;<b>filtered</b> annotations<br/>
-                    <input type="radio" ng-model="imageExportSettings.scope" value="currentPage" />&nbsp;<b>current</b> page<br/>
-                    <input type="radio" ng-model="imageExportSettings.scope" value="pages" />&nbsp;pages&nbsp;<input type="text" ng-model="imageExportSettings.pages"/>&nbsp;<span class="glyphicon glyphicon-warning-sign" ng-show="pageRangeError"></span>
+                    <input type="radio" ng-model="imageExportSettings.scope" value="all" />&nbsp;<b>all</b> annotations<i style="margin-left: 40px;" class="text-muted">exports all annotations across all pages in this query, ignores the agreement filter</i><br/>
+                    <input type="radio" ng-model="imageExportSettings.scope" value="filtered" ng-disabled="!filterActive"/>&nbsp;<b>filtered</b> annotations<i style="margin-left: 40px;" class="text-muted">exports only filtered annotations across all pages</i><br/>
+                    <input type="radio" ng-model="imageExportSettings.scope" value="currentPage" />&nbsp;<b>current</b> page<i style="margin-left: 40px;" class="text-muted">exports only annotations on the current page, considers the agreement filter</i><br/>
+                    <input type="radio" ng-model="imageExportSettings.scope" value="pages" />&nbsp;pages&nbsp;<input type="text" ng-model="imageExportSettings.pages"/><i style="margin-left: 40px;" class="text-muted">exports annotations from the specified pages (starting at 1), considers the agreement filter</i>&nbsp;<span style="color: red;" ng-show="pageRangeError"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;{{pageRangeErrorText}}</span>
                 </form>
             </div>
             <hr>
             <h5>Image Export Settings</h5>
             <div>
                 <form name="imageExportForm">
-                    <input type="checkbox" ng-model="imageExportSettings.minBB" />&nbsp;minimum bounding box around annotation<br/>
-                    <input type="checkbox" ng-model="imageExportSettings.fixedWindow" />&nbsp;fixed window of width&nbsp;<input type="text" style="width: 40px; text-align: right;" ng-model="imageExportSettings.fixedWindowDimensions.width"/>&nbsp;px and height&nbsp;<input type="text" style="width: 40px; text-align: right;" ng-model="imageExportSettings.fixedWindowDimensions.height"/>&nbsp;px around the annotation's centroid&nbsp;<span class="glyphicon glyphicon-warning-sign" ng-show="fixedWidthHeightError"></span><br/>
-                    <input type="checkbox" ng-model="imageExportSettings.dynamicWindow" />&nbsp;dynamic window of&nbsp;<input type="text" style="width: 40px; text-align: right;" ng-model="imageExportSettings.dynamicWindowBorder"/>&nbsp;px around minimum bounding box extent&nbsp;<span class="glyphicon glyphicon-warning-sign" ng-show="dynamicBorderError"></span><br/>
+                    <input type="checkbox" ng-model="imageExportSettings.minBB" />&nbsp;minimum bounding box around annotation<i style="margin-left: 40px;" class="text-muted">press 'h' for showing more information</i><br/>
+                    <input type="checkbox" ng-model="imageExportSettings.fixedWindow" />&nbsp;fixed window of width&nbsp;<input type="text" style="width: 40px; text-align: right;" ng-model="imageExportSettings.fixedWindowDimensions.width"/>&nbsp;px and height&nbsp;<input type="text" style="width: 40px; text-align: right;" ng-model="imageExportSettings.fixedWindowDimensions.height"/>&nbsp;px around the annotation's centroid<i style="margin-left: 40px;" class="text-muted">press 'h' for showing more information</i>&nbsp;<span style="color: red;" ng-show="fixedWidthHeightError"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;{{fixedWidthHeightErrorText}}</span><br/>
+                    <input type="checkbox" ng-model="imageExportSettings.dynamicWindow" />&nbsp;dynamic window of&nbsp;<input type="text" style="width: 40px; text-align: right;" ng-model="imageExportSettings.dynamicWindowBorder"/>&nbsp;px around minimum bounding box extent<i style="margin-left: 40px;" class="text-muted">press 'h' for showing more information</i>&nbsp;<span style="color: red;" ng-show="dynamicBorderError"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;{{dynamicBorderErrorText}}</span><br/>
                     <br/>
                     <!-- check this radio button by default -->
-                    <input type="radio" value="" checked="checked" />&nbsp;Image resolution (pyramid level: 0 = maximum resolution):&nbsp;<input type="text" ng-model="imageExportSettings.levels" style="width:40px; text-align: right;"/>&nbsp;<span class="glyphicon glyphicon-warning-sign" ng-show="levelRangeError"></span>
+                    <input type="radio" value="" checked="checked" />&nbsp;Image resolution(s):&nbsp;<input type="text" ng-model="imageExportSettings.levels" style="width:40px; text-align: right;"/><i class="text-muted" style="margin-left: 40px;">pyramid level 0 = maximum resolution, 1 = half resolution, etc.</i>&nbsp;<span style="color: red;" ng-show="levelRangeError"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;{{levelRangeErrorText}}</span>
                 </form>
             </div>
         </div>
@@ -33,6 +33,7 @@
             <div ng-show="downloadPrepStatus === 'success'" class="alert alert-success">{{downloadFileText}} <a href="{{downloadFullURL}}">Direct Dataset Download</a></div>
             <div ng-show="downloadPrepStatus === 'failed'" class="alert alert-danger">{{downloadFileText}}</div>
             <div ng-show="warnAnnoEmpty" class="alert alert-warning"><strong>Warning:</strong> Your query does not contain any annotations!</div>
+            <div ng-show="downloadPrepInProgress" class="alert alert-info">Your dataset is being created, please be patient, this can take a while!</div>
         </div>
     </div>
     <div ng-show="error.show" class="alert alert-danger" >

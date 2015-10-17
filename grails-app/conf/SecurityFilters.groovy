@@ -63,7 +63,7 @@ class SecurityFilters {
 						request['user'] = currentUser
 
 						request['cytomine'] = new Cytomine(grailsApplication.config.grails.cytomine.host as String
-								,  currentUser.cmPublicKey, currentUser.cmPrivateKey, "./")
+								,  currentUser.cmPublicKey, currentUser.cmPrivateKey)
 						request['cytomine'].setMax(0) //no max
 					}
 				} else {
@@ -72,7 +72,7 @@ class SecurityFilters {
 						// store a new cytomine instance (from the client-JAR)
 						// to the request object (will be available in the controllers etc.)
 						request['cytomine'] = new Cytomine(grailsApplication.config.grails.cytomine.host as String
-								, publicKey, privateKey, "./")
+								, publicKey, privateKey, "")
 						request['cytomine'].setMax(0) //no max
 
 						// find the user in the DB

@@ -82,8 +82,7 @@
                              ng-model="annstats.slider.value"></div>
 
                         <div>{{annstats.slider.value}} users ({{(100*annstats.slider.value/annstats.slider.max).toFixed(0)}}%)</div>
-                    <span class="pull-right" style="float: inherit;">Showing annotation {{ annstats.pageItemMin+1 }} to {{ annstats.pageItemMax }} (<span ng-show="annstats.filtered">filtered <strong>{{ annstats.totalFiltered }} ({{(100*annstats.totalFiltered/annstats.total).toFixed(0)}}%)</strong> of</span>
-                        <strong>{{ annstats.total }}</strong> in total)
+                    <span class="pull-right" style="float: inherit;">Showing annotation {{ annstats.pageItemMin+1 }} to {{ annstats.pageItemMax }} (<span ng-show="annstats.filtered">filtered <strong>{{ annstats.totalFiltered }} ({{(100*annstats.totalFiltered/annstats.total).toFixed(0)}}%)</strong> of</span><strong>{{ annstats.total }}</strong> in total)
                     </span>
                     </div>
                 </div>
@@ -166,22 +165,22 @@
                     </tr>
                     </tbody>
                 </table>
-                <div class="row" style="margin-top: 10px;">
-                    <div class="col-sm-12">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <span class="glyphicon glyphicon-export"></span>&nbsp;Export Options</h4>
-                            </div>
 
-                            <div class="panel-body">
-                                <button type="button" class="btn btn-xs btn-info" ng-click="showExportImageDatasetModal()">Export Image Dataset...</button>
-                                <!--<button type="button" class="btn btn-xs btn-info" ng-click="showExportImageDatasetModal()">Export Page</button>-->
-                            </div>
-                        </div>
+            </div><div class="row" style="margin-top: 10px;">
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <span class="glyphicon glyphicon-export"></span>&nbsp;Export Options</h4>
+                    </div>
+
+                    <div class="panel-body">
+                        <button type="button" class="btn btn-xs btn-info" ng-click="showExportImageDatasetModal()">Export Image Dataset...</button>
+                        <!--<button type="button" class="btn btn-xs btn-info" ng-click="showExportImageDatasetModal()">Export Page</button>-->
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     </div>
 

@@ -170,6 +170,9 @@ class ExportService {
                     lvl = Integer.valueOf(String.valueOf(lvl))
                     // skip negative levels
                     if (lvl < 0) {
+                        warningsFile.withWriterAppend('UTF-8') { writer ->
+                            writer.println "Skipping image resolution level " + lvl
+                        }
                         continue
                     }
 
@@ -338,6 +341,11 @@ class ExportService {
             writer.println("Image Dataset Export")
             writer.println("====================")
 
+            writer.println("Image Database: " + grailsApplication.config.grails.cytomine.host)
+            writer.println("IRIS Host: " + grailsApplication.config.grails.cytomine.apps.iris.host)
+            writer.println("IRIS Version: " + grailsApplication.metadata['app.version'])
+            writer.println("")
+            writer.println("Exporting User:" + irisUser.cmFirstName + " " + irisUser.cmLastName)
             writer.println("Date/Time of Export: " + sdf.format(date))
             writer.println("Number of Annotations: " + annotations.size())
             writer.println("Number of Users: " + statistics.users.size())
@@ -357,6 +365,7 @@ class ExportService {
                 includes: "**/*")
 
         // return the path to the file on the server
+        // don't use leading slash, since the client needs to assemble the full URL
         return 'api/download/' + fileServerKey + "/" + subDirName + "/" + zipFileName
     }
 }
