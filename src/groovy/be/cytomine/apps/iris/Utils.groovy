@@ -404,4 +404,71 @@ class Utils {
 
         }
     }
+
+
+    def annotationsToCSV(def annotations, def hdrs, def terms, def users, def intermediate, def imageDimensions, Cytomine cytomine){
+
+        int total = annotations.size();
+        def lines = []
+        lines.add(hdrs)
+
+        // loop through all annotations
+        for (int i=0; i < total; i++){
+
+            def annotation = annotations[i]
+
+            // annotation info
+            def line = []
+            line.add(i+1)
+            line.add(annotation.getId())
+            //line.add('') // leave image empty
+            projectid = annotation.get("project")
+            imageid = annotation.get("image")
+            //line.add(annotation.get("cropURL")) // Cytomine url
+            //line.add(irisPATH+"/index.html#/project/"+projectid+"/image/"+imageid+"/label/"+annotation.getId()) // plain url
+            line.add("=HYPERLINK(\""+irisPATH+"/index.html#/project/"+projectid+"/image/"+imageid+"/label/"+annotation.getId()+"\")") // XLS hyperlink
+
+            line.add((annotation in intermediate)?'X':'') // if it is an intermediate label, print an X
+
+            // grab all terms from all users for the current annotation
+            List userByTermList = annotation.getList("userByTerm")
+
+            for (u in users) {
+                String termname = ''
+                for (assignment in userByTermList){
+                    //println currentUser.get("id") + ", " + assignment.get("user")
+                    if (u.get("id") in assignment.get("user")){
+                        termname = terms.list.find{it.id == assignment.get("term")}.get("name")
+                    }
+                }
+                // add the user's choice
+                line.add(termname)
+            }
+
+            // WINDOW URL
+            double window_offset = (1.0d*window_size/2)
+            double cX = annotation.get("x")
+            double cY = annotation.get("y")
+
+            int minX_window = Math.round(cX - window_offset)
+            // tricky: get the correct Y coordinates of the center
+            int minY_window = Math.round((imageDimensions[annotation.get("image")][1]-cY) - window_offset)
+
+            int width = window_size
+            int height = window_size
+
+            // link to download the window around the annotation center
+            String window_url = cytomine.host + "/api/imageinstance/" + annotation.get("image") + "/window-"+minX_window+"-"+minY_window+"-"+width+"-"+height+".png"
+
+            // add the window retrieve url (tile)
+            line.add(window_url)
+
+            //println line
+
+            // add the line to the list
+            lines.add(line)
+        }
+
+        return lines
+    }
 }

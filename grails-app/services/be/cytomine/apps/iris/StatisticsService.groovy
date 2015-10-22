@@ -290,7 +290,7 @@ class StatisticsService {
                 // clone the user list
                 def origUserIDList = userIDList.collect()
 
-                // TODO count unique users after removing the ones not in the filter!!
+                // count unique users after removing the ones not in the filter!!
                 for (int k = nUsers-1; k>=0 ; k--) {
                     def userID = origUserIDList[k]
 

@@ -32,6 +32,13 @@ class DownloadController {
     }
 
     /**
+     *
+     */
+    def requestAgreementAsCSV(){
+
+    }
+
+    /**
      * Request the download link for an image dataset.
      * The query submitted by the request object defines the scope of the export.
      * @return

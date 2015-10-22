@@ -39,7 +39,18 @@ class ExportService {
 
     }
 
-    def exportAgreementListToCSV() {
+    def exportAgreementListToCSV(Cytomine cytomine,
+                                 IRISUser irisUser,
+                                 long cmProjectID,
+                                 def annotationIDs,
+                                 def userIDs,
+                                 def termIDs,
+                                 def imageIDs,
+                                 def settings) throws CytomineException, Exception {
+
+        activityService.log(irisUser, "Requesting export of the agreement list to CSV.")
+
+
 
     }
 
@@ -142,6 +153,10 @@ class ExportService {
             it.cmID in annotationIDs
         }
 
+        // record some statistics of the dataset
+        def ds_classes = [:] // number of classes in the dataset
+        def ds_unique_images = [:] // number of unique images in the dataset
+
         // run through the list of all filtered annotations and download the images accordingly
         // also, store the information on the specific annotation in a text file with the name
         int i = 1;
@@ -151,6 +166,16 @@ class ExportService {
                 // change the key for "assignmentRanking" to "labelDistribution"
                 annotation["labelDistribution"] = annotation["assignmentRanking"]
                 annotation.remove("assignmentRanking")
+
+                // record statistics
+                if (!ds_unique_images.containsKey(annotation['cmImageID']))
+                    ds_unique_images[annotation['cmImageID']] = 1
+                else
+                    ds_unique_images[annotation['cmImageID']] = ds_unique_images[annotation['cmImageID']] + 1
+
+                for (def entry in annotation['labelDistribution']){
+                    ds_classes[entry['termID']] = 1
+                }
 
                 // make a distinct directory for each annotation
                 def annDirectory = new File(path_export_root_str + annotation['cmID'])
@@ -341,16 +366,26 @@ class ExportService {
             writer.println("Image Dataset Export")
             writer.println("====================")
 
-            writer.println("Image Database: " + grailsApplication.config.grails.cytomine.host)
-            writer.println("IRIS Host: " + grailsApplication.config.grails.cytomine.apps.iris.host)
-            writer.println("IRIS Version: " + grailsApplication.metadata['app.version'])
+            writer.println("Image database: " + grailsApplication.config.grails.cytomine.host)
+            writer.println("IRIS host: " + grailsApplication.config.grails.cytomine.apps.iris.host)
+            writer.println("IRIS version: " + grailsApplication.metadata['app.version'])
             writer.println("")
-            writer.println("Exporting User:" + irisUser.cmFirstName + " " + irisUser.cmLastName)
-            writer.println("Date/Time of Export: " + sdf.format(date))
-            writer.println("Number of Annotations: " + annotations.size())
-            writer.println("Number of Users: " + statistics.users.size())
-            writer.println("Number of Ontology Terms: " + statistics.terms.size())
+            writer.println("Exporting user: " + irisUser.cmFirstName + " " + irisUser.cmLastName)
+            writer.println("Date/Time of export: " + sdf.format(date))
+            writer.println("Number of annotations: " + annotations.size())
+            writer.println("Number of unique images (statistics below): " + ds_unique_images.size())
+            writer.println("Number of unique terms (IDs below): " + ds_classes.size())
+            writer.println("Number of users: " + statistics.users.size())
+            writer.println("Number of (all) ontology terms: " + statistics.terms.size())
             writer.println("")
+
+            writer.write("Number of annotations per unique image: " + (ds_unique_images as JSON).toString(true))
+            writer.println("")
+
+            writer.write("IDs of unique terms: " + (ds_classes.collect { k,v -> k} as JSON).toString(true))
+            writer.println("")
+            writer.println("")
+
 
             // write the parameters
             writer.println("Export Parameters")
