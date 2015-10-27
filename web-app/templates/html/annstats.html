@@ -81,7 +81,7 @@
                              max="{{annstats.slider.max}}"
                              ng-model="annstats.slider.value"></div>
 
-                        <div>{{annstats.slider.value}} users ({{(100*annstats.slider.value/annstats.slider.max).toFixed(0)}}%)</div>
+                        <div>{{annstats.slider.value}} users ({{annstats.slider.max === 0 ? 0 : (100*annstats.slider.value/annstats.slider.max).toFixed(0)}}%)</div>
                     <span class="pull-right" style="float: inherit;">Showing annotation {{ annstats.pageItemMin+1 }} to {{ annstats.pageItemMax }} (<span ng-show="annstats.filtered"><span class="label label-danger">filtered</span> <strong>{{ annstats.totalFiltered }} ({{(100*annstats.totalFiltered/annstats.total).toFixed(0)}}%)</strong>&nbsp;of&nbsp;</span><strong>{{ annstats.total }}</strong> in total)
                     </span>
                     </div>
@@ -113,10 +113,20 @@
                                href="{{ addKeys(item.smallCropURL) }}"
                                title="{{ 'Annotation ID: ' + item.cmID }}">
                                 <img class="annotation-preview-small" src="{{ addKeys(item.smallCropURL) }}"/>
-                        </a>
+                            </a>
                         </td>
                         <td style="min-width: 200px;">
-                            <bars-chart chart-data="item.assignmentRanking" terms="terms"></bars-chart>
+                            <span class="text-center" ng-show="item.assignmentRanking.length == 0">
+                                <div class="h5" style="color: red;">
+                                    <span class="glyphicon glyphicon-ban-circle"></span>
+                                </div>
+                                <div>
+                                    No term, or none of the selected terms assigned.
+                                </div>
+                            </span>
+                            <span ng-show="item.assignmentRanking.length > 0">
+                                <bars-chart chart-data="item.assignmentRanking" terms="terms"></bars-chart>
+                            </span>
                         </td>
                         <!--<td>
                             <div class="btn-group" dropdown>

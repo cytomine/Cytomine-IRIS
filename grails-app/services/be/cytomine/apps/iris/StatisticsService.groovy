@@ -170,7 +170,7 @@ class StatisticsService {
         Utils utils = new Utils()
 
         // get all annotations according to a filter
-        // images and terms are filtered directly
+        // images and terms are filtered directly, rest is filtered later
         AnnotationCollection annotations = annotationService.getAllAnnotations(
                 cytomine, irisUser, cmProjectID, imageIDs, termIDs, offset, max, options)
         int totalAnnotations = annotations.size()
@@ -185,12 +185,16 @@ class StatisticsService {
         UserCollection projectUsers = cytomine.getProjectUsers(cmProjectID)
 
         // filter all users from the parameter list
-        List allUserIDs = projectUsers.list.collect { Long.valueOf(it.id) }
+        List allUserIDs = projectUsers.list.collect {
+            Long.valueOf(it.id)
+        }
         List queryUserIDs
         if (userIDs == null || userIDs.isEmpty())
             queryUserIDs = allUserIDs
         else
-            queryUserIDs = userIDs.split(",").collect { Long.valueOf(it) }
+            queryUserIDs = userIDs.split(",").collect {
+                Long.valueOf(it)
+            }
 
         // filter all requested users
         def commons = allUserIDs.intersect(queryUserIDs)
@@ -210,7 +214,10 @@ class StatisticsService {
         // get the ontology terms and flatten them
         Ontology ontology = cytomine.getOntology(cmProject.getLong("ontology"))
         List<JSONObject> flatOntology = utils.flattenOntology(ontology)
-        def ontologyMap = flatOntology.collectEntries { [(it.id): [ 'name': it.name, 'color': it.color ]] }
+        def ontologyMap = flatOntology.collectEntries {
+            [(it.id): [  'name': it.name,
+                         'color': it.color ]]
+        }
 
         // list of annotation statistics
         def annStats = []
@@ -221,24 +228,42 @@ class StatisticsService {
         }
 
         // collect query term IDs in an array
-        def queryTermIDs = termIDs.split(",").collect { Long.valueOf(it) }
+        def queryTermIDs = termIDs.split(",").collect {
+            Long.valueOf(it)
+        }
 
         // the total number of users that assigned a term anywhere in this query
         def uniqueUsersOverall = [:]
 
+        def nEmpty = 0
         // run through all annotations
         for (int i = 0; i < totalAnnotations; i++) {
             Annotation annotation = annotations.get(i)
             // grab all terms from all users for the current annotation
             List userByTermList = annotation.getList("userByTerm")
 
-            // skip this annotation if there is no label assigned at all
-            if (userByTermList.isEmpty())
-                continue
-
             // map to an IRISAnnotation and convert to JSON
             IRISAnnotation irisAnn = dm.mapAnnotation(annotation, null)
             def irisAnnJSON = utils.toJSONObject(irisAnn)
+
+            // skip this annotation if there is no label assigned at all, and the filter does NOT contain '-99'
+            if (userByTermList.isEmpty()) {
+                if (!queryTermIDs.contains(IRISConstants.ANNOTATION_NO_TERM_ASSIGNED)) {
+                    continue
+                } else {
+                    nEmpty++
+                    // compute the annotation statistics
+                    log.debug("'no-term' filter is active, we'll process annotation [" + annotation.getId() +
+                            "] ...")
+                }
+            }
+            else {
+                def tmp = queryTermIDs.collectEntries{[(it): true]}
+                // otherwise skip the label, if ONLY 'no term' is queried and there is any assignment
+                if (tmp.size() == 1 && tmp.containsKey(IRISConstants.ANNOTATION_NO_TERM_ASSIGNED)) {
+                    continue
+                }
+            }
 
             // store a map, where each user is identified by its ID
             irisAnnJSON['userStats'] = utils.deepcopy(emptyUserMap)
@@ -269,9 +294,12 @@ class StatisticsService {
             // re-calculate the total assignments
             nAssignments = userByTermList.size()
 
-            // skip the annotation, if there aren't any assignments left
-            if (nAssignments == 0)
-                continue
+            // skip the annotation, if there aren't any assignments left and '-99' is not on the term filter
+            if (nAssignments == 0) {
+                if (!queryTermIDs.contains(IRISConstants.ANNOTATION_NO_TERM_ASSIGNED)) {
+                    continue
+                }
+            }
 
             // clone the list again
             origUserByTermList = userByTermList.collect()
@@ -318,13 +346,19 @@ class StatisticsService {
             }
 
             ///////////////////////////
-            // at this point the annotations are filtered to compute the statistics
+            // at this point the annotations are filtered according to
+            // - terms and
+            // - users
+            // in the query and ready to compute the statistics
             ///////////////////////////
 
             // all users that assigned any term
             int maxUsers = uniqueUsersPerTerm.size()
-            if (maxUsers == 0)
-                continue
+            if (maxUsers == 0) {
+                if (!queryTermIDs.contains(IRISConstants.ANNOTATION_NO_TERM_ASSIGNED)) {
+                    continue
+                }
+            }
 
             // resolve and collect assignments for each user
             for (assignment in userByTermList) {
@@ -343,8 +377,8 @@ class StatisticsService {
                 double agreementRatio = Math.min(userIDList.size()*1.0 / maxUsers, 1.0)
                 irisAnnJSON['assignmentRanking'].add([ 'termID' : termID, 'ratio' : agreementRatio,
                                                        'totalAssignments' : nAssignments , 'nUsers' : userIDList.size(),
-                                                        'maxUsers' : maxUsers,
-                                                        'termName' : ontologyMap[termID].name ])
+                                                       'maxUsers' : maxUsers,
+                                                       'termName' : ontologyMap[termID].name ])
             }
 
             // sort 'irisAnnJSON['assignmentRanking']' field desc by ratio and then by term name
@@ -359,6 +393,9 @@ class StatisticsService {
         result['terms'] = ontologyMap
         result['users'] = utils.sortUsersAsc(users)
         result['nUniqueUsersOverall'] = uniqueUsersOverall.size() // the maximum number of users that assigned a term
+
+        // TODO result should only contain 'nEmpty' annotations!!!!!!!
+        log.debug('Empty annotations: ' + nEmpty)
 
         return result
     }
@@ -403,15 +440,19 @@ class StatisticsService {
         List<JSONObject> flatOntology = utils.flattenOntology(ontology)
 
         // filter the requested terms
-        List allTermIDs = flatOntology.asList().collect { Long.valueOf(it['id']) }
+        List allTermIDs = flatOntology.asList().collect {
+            Long.valueOf(it['id'])
+        }
         // filter all terms, if unspecified
         List queryTermIDs = []
         if (termIDs == null || termIDs.isEmpty())
             queryTermIDs = allTermIDs
         else
-            queryTermIDs = termIDs.split(",").collect { Long.valueOf(it) }
+            queryTermIDs = termIDs.split(",").collect {
+                Long.valueOf(it)
+            }
 
-        // prepare the labeled annotations map (will be copied to each user
+        // prepare the labeled annotations map (will be copied to each user)
         for (int i = 0; i < flatOntology.size(); i++) {
             if (allTermIDs[i] in queryTermIDs){
                 // initialize the labeled annotations
@@ -419,16 +460,37 @@ class StatisticsService {
             }
         }
 
+        // append the 'no term' entry, if it is on the query terms
+        def tmp = queryTermIDs.collectEntries{[(it): true]}
+        if (tmp.containsKey(IRISConstants.ANNOTATION_NO_TERM_ASSIGNED)) {
+            // add an entry to the ontology for 'no term'
+            JSONObject ontologyEntry = flatOntology[0].clone()
+            ontologyEntry['id'] = '-99'
+            ontologyEntry['key'] = '-99'
+            ontologyEntry['parent'] = 'null'
+            ontologyEntry['parentName'] = 'root'
+            ontologyEntry['title'] = 'No term assigned'
+            ontologyEntry['name'] = 'No term assigned'
+            ontologyEntry['data'] = 'No term assigned'
+            ontologyEntry['color'] = '#e8b900'
+            flatOntology.add(ontologyEntry)
+            empty_labeledAnnotations[IRISConstants.ANNOTATION_NO_TERM_ASSIGNED] = 0
+        }
+
         // get all project users
         UserCollection projectUsers = cytomine.getProjectUsers(cmProjectID)
 
         // filter all users from the parameter list
-        List allUserIDs = projectUsers.list.collect { Long.valueOf(it.id) }
+        List allUserIDs = projectUsers.list.collect {
+            Long.valueOf(it.id)
+        }
         List queryUserIDs
         if (userIDs == null || userIDs.isEmpty())
             queryUserIDs = allUserIDs
         else
-            queryUserIDs = userIDs.split(",").collect { Long.valueOf(it) }
+            queryUserIDs = userIDs.split(",").collect {
+                Long.valueOf(it)
+            }
 
         // filter all requested users
         def commons = allUserIDs.intersect(queryUserIDs)
@@ -461,18 +523,32 @@ class StatisticsService {
             // grab all terms from all users for the current annotation
             List userByTermList = annotation.getList("userByTerm")
 
-            // skip empty elements
-            if (userByTermList.isEmpty())
-                continue
+            // treat empty elements, if filter is set
+            if (userByTermList.isEmpty()) {
+                if (!tmp.containsKey(IRISConstants.ANNOTATION_NO_TERM_ASSIGNED)){
+                    continue
+                }
+                else {
+                    // continue processing the annotations
+                    log.debug("'no-term' filter is active, we'll process annotation [" + annotation.getId() +
+                            "] ...")
+                }
+            } else {
+                // just count the annotations, where at least one label is assigned
+                labeledAnnotations++
+            }
 
-            labeledAnnotations++
+            for (u in users) {
 
-            for (assignment in userByTermList) {
-                // only add the annotation, if it matches one of the query terms
-                if (assignment.get("term") in queryTermIDs) {
-                    for (u in users) {
+                // flag determining whether user assigned any term at all
+                boolean assignedAnyTerm = false
+
+                // check, if the user assigned any (of the query) terms
+                for (assignment in userByTermList) {
+                    if (u.get("id") in assignment.get("user")) {
                         //println currentUser.get("id") + ", " + assignment.get("user")
-                        if (u.get("id") in assignment.get("user")) {
+                        // only count the annotation, if it matches one of the query terms
+                        if (assignment.get("term") in queryTermIDs) {
                             // overall counter
                             userStatistics[u.get("id")]["summary"]["total"] =
                                     userStatistics[u.get("id")]["summary"]["total"] + 1
@@ -480,7 +556,16 @@ class StatisticsService {
                             userStatistics[u.get("id")]["stats"][assignment.get("term")] =
                                     userStatistics[u.get("id")]["stats"][assignment.get("term")] + 1
                         }
+                        // set the flag, if the user assigned any other term
+                        assignedAnyTerm = true
                     }
+                }
+
+                // count the unlabeled data, if specified in the filter
+                if (tmp.containsKey(IRISConstants.ANNOTATION_NO_TERM_ASSIGNED) &&
+                        !assignedAnyTerm){ // user did not assign any query term (condition from the loop)
+                    userStatistics[u.get("id")]["stats"][IRISConstants.ANNOTATION_NO_TERM_ASSIGNED] =
+                            userStatistics[u.get("id")]["stats"][IRISConstants.ANNOTATION_NO_TERM_ASSIGNED] + 1
                 }
             }
         }
@@ -490,7 +575,7 @@ class StatisticsService {
             // make a list of json objects for d3 visualization
             def valueList = userStatistics[u.get("id")]['stats'].collect {
                 k, v ->
-                   return ([ 'label' : k , 'value' : v ])
+                        return ([ 'label' : k , 'value' : v ])
             }
             userStatistics[u.get("id")]['stats'] = valueList
             u['userStats'] = userStatistics[u.get("id")]['stats']
@@ -562,7 +647,7 @@ class StatisticsService {
 //        UserCollection projectUsers = cytomine.getProjectUsers(cmProjectID)
 //        List users = projectUsers.list
 
-    // sort the users by lastname, firstname asc
+// sort the users by lastname, firstname asc
 //    users = utils.sortUsersAsc(users)
 //
 //        // each user gets its own statistics

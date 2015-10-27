@@ -325,6 +325,10 @@ class Utils {
      */
     List sortAgreementsDesc(def agreements) {
 
+        if (agreements == null){
+            return null
+        }
+
         agreements.sort { x, y ->
             if (y.get("ratio") == x.get("ratio")) {
                 x.get("termName") <=> y.get("termName")

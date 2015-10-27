@@ -273,6 +273,8 @@ class AnnotationService {
         // get all annotations according to the filter
         AnnotationCollection annotations = cytomine.getAnnotations(filters)
 
+        log.debug("Query resulted in " + annotations.size() + " annotations.")
+
         return annotations
     }
 

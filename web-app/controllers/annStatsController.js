@@ -221,17 +221,30 @@ function($rootScope, $scope, $http, $filter, $modal, $window,
 
 							var theFinalData = [];
 
+							var nEmpty = 0;
 							// search for minimum agreement in the data
 							for (var i = 0; i < newData.length; i++){
-								var elmnt = newData[i]; //
+								var elmnt = newData[i]; // get the annotation data
 
-								// if the highest agreement is in the filter range
-								if (elmnt.assignmentRanking[0].nUsers >= $scope.annstats.slider.value){
-									// collect the agreement entry
-									theFinalData.push(elmnt);
-									//$log.debug(elmnt);
+								// if the assignment has no ranking, i.e. the 'no terms' filter is active
+								if (elmnt.assignmentRanking.length === 0){
+									// collect the entry only if there is NO agreement filter set as well
+									if ($scope.annstats.slider.value === 0) {
+										theFinalData.push(elmnt);
+										//$log.debug(elmnt);
+									}
+									nEmpty = nEmpty+1;
+								} else {
+									// if the highest agreement is in the filter range
+									if (elmnt.assignmentRanking[0].nUsers >= $scope.annstats.slider.value) {
+										// collect the agreement entry
+										theFinalData.push(elmnt);
+										//$log.debug(elmnt);
+									}
 								}
 							}
+
+							$log.debug(nEmpty + " annotations without terms.");
 
                             // if the final data is of the same size of the original, set filtered false
 							if (theFinalData.length === $scope.annstats.annotations.length){
