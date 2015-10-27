@@ -51,7 +51,7 @@ iris.controller(
 					},
 					showValues: false,
 					valueFormat: function(value){
-						return d3.format(',.0f')(value);
+						return d3.format('d')(value);
 					},
 					transitionDuration: 500,
 					xAxis: {
@@ -62,7 +62,10 @@ iris.controller(
 						}
 					},
 					yAxis: {
-						axisLabel: 'Frequency'
+						axisLabel: 'Frequency',
+						tickFormat: function(value) {
+							return d3.format('d')(value);
+						}
 					},
 					color : function(series, index) {
 						return $scope.terms[series.label].color;
@@ -73,7 +76,7 @@ iris.controller(
 						return '<div style="padding:3px; background: ' +
 							$scope.termsByName[x].color + ';">'
 							+ '<strong>' + String(x) + '</strong></div>' +
-							'<p>' + Number(y) + '</p>';
+							'<p>' + String(y) + '</p>';
 					}
 				}
 			};
