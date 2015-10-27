@@ -259,9 +259,12 @@ class StatisticsService {
             }
             else {
                 def tmp = queryTermIDs.collectEntries{[(it): true]}
-                // otherwise skip the label, if ONLY 'no term' is queried and there is any assignment
+                // skip the annotation, if ONLY 'no term' is queried and there is any assignment by one of the query users
                 if (tmp.size() == 1 && tmp.containsKey(IRISConstants.ANNOTATION_NO_TERM_ASSIGNED)) {
-                    continue
+                    // none of the query users are allowed to have any term, other users may
+                    if (utils.atLeastOneUserAssignedAnyTerm(queryUserIDs, annotation)){
+                        continue
+                    }
                 }
             }
 
@@ -394,7 +397,6 @@ class StatisticsService {
         result['users'] = utils.sortUsersAsc(users)
         result['nUniqueUsersOverall'] = uniqueUsersOverall.size() // the maximum number of users that assigned a term
 
-        // TODO result should only contain 'nEmpty' annotations!!!!!!!
         log.debug('Empty annotations: ' + nEmpty)
 
         return result
