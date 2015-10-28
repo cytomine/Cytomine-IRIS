@@ -74,7 +74,7 @@ class MainController {
 			Cytomine cytomine = request["cytomine"]
 
 			if (params['ping'] != null && Boolean.valueOf(params['ping']) == true){
-				if (!cytomine.testConnexion()){
+				if (!cytomine.testHostConnection()){
 					throw new UnknownHostException("The cytomine host is currently not available!")
 				}
 			}
