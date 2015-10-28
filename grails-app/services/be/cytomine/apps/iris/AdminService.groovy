@@ -76,7 +76,7 @@ class AdminService {
     JSONObject getCytomineHostAddress(Cytomine cytomine) {
         JSONObject hostInfo = new JSONObject()
         hostInfo.put("host", grailsApplication.config.grails.cytomine.host)
-        if (!cytomine.testConnexion()) {
+        if (!cytomine.testHostConnection()) {
             hostInfo.put("available", false)
         } else {
             hostInfo.put("available", true)
