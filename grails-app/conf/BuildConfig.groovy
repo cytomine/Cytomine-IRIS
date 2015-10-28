@@ -55,6 +55,8 @@ grails.project.dependency.resolution = {
         // runtime 'mysql:mysql-connector-java:5.1.27'
         // runtime 'org.postgresql:postgresql:9.3-1100-jdbc41'
         compile 'com.vividsolutions:jts:1.13'
+        compile 'org.apache.ant:ant:1.9.6'
+        compile 'org.apache.ant:ant-launcher:1.9.6'
     }
 
 //   GRAILS 2.3.5 plugins {

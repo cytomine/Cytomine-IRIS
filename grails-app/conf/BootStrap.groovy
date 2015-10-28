@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import be.cytomine.apps.iris.IRISUserProjectSettings
 import be.cytomine.apps.iris.auth.Role
 import be.cytomine.apps.iris.auth.User
 import be.cytomine.apps.iris.auth.UserRole
@@ -90,6 +91,23 @@ class BootStrap {
 
 		if (!system.authorities.contains(systemRole)) {
 			UserRole.create system, systemRole, true
+		}
+
+		/**
+		 * Migration settings for database updates.
+		 */
+
+		/*
+		For each user, check the be.cytomine.apps.iris.IRISUserProjectSettings for coordinator
+		rules.
+		Required for updating from earlier versions than 2.7.
+		 */
+		IRISUserProjectSettings.withTransaction {
+			// automatically set all users to be NO coordinators!
+			def nullCoordinators = IRISUserProjectSettings.findAllByIrisCoordinator(null)
+			nullCoordinators.each {
+				it.setIrisCoordinator(false)
+			}
 		}
 
 		activityService.log("Done running bootstrap.groovy.")

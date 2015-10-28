@@ -417,6 +417,7 @@ class AdminController {
         } catch (Exception ex){
             message = ("Mail configuration failed! " +
                     "Cannot send mail. Error:\n" + ex.toString())
+            log.error(message, ex)
         }
         [success: success, message: message]
     }
