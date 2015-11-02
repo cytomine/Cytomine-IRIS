@@ -99,7 +99,7 @@ grails.project.dependency.resolution = {
         compile ":executor:0.3"
 
         // file server
-        compile ":file-server:0.2"
+        compile ":file-server:0.2.1"
 
         // security
         compile ":spring-security-core:2.0-RC4"
