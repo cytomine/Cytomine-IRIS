@@ -286,16 +286,16 @@ class CytomineController {
 
 			//  "/data/beta.cytomine.be/93518990/93518990/1389785459805/HE_32911_12_converted.tif/TileGroup0/z-x-y.jpg"
 			String[] zoomify_params = zoomify_string.split("/")
-
-			if (zoomify_params.length < 9){
-				throw new IllegalArgumentException("Zoomify URL is malformed in the request URL.")
-			}
 			
 			long start = System.currentTimeMillis()
+
+			// compute the indices of tilegroup and tiles from the right end of the array
+			int tilesIndex = zoomify_params.length - 1;
+			int tileGroupIndex = tilesIndex - 1;
 			
-			int tileGroup = Integer.valueOf(zoomify_params[7].substring("TileGroup".length()))
-			String extension = zoomify_params[8].substring(zoomify_params[8].indexOf(".")+1)
-			String[] positions = zoomify_params[8].substring(0, zoomify_params[8].indexOf(".")).split("-")
+			int tileGroup = Integer.valueOf(zoomify_params[tileGroupIndex].substring("TileGroup".length()))
+			String extension = zoomify_params[tilesIndex].substring(zoomify_params[tilesIndex].indexOf(".")+1)
+			String[] positions = zoomify_params[tilesIndex].substring(0, zoomify_params[tilesIndex].indexOf(".")).split("-")
 
 			int tileZ = Integer.valueOf(positions[0])
 			int tileX = Integer.valueOf(positions[1])
@@ -314,7 +314,7 @@ class CytomineController {
 				int serverID = new Random().nextInt(10)
 				cmHost = cmHost.replace("{serverID}", String.valueOf(serverID == 0 ? "" : serverID))
 			}
-			String dataString = zoomify_string.replace(zoomify_params[7] + "/" + zoomify_params[8], "")
+			String dataString = zoomify_string.replace(zoomify_params[tileGroupIndex] + "/" + zoomify_params[tilesIndex], "")
 			String imageURL = cmHost + "/image/tile?zoomify=" + dataString + path + "&mimeType=" + mimeType
 
 			log.debug(imageURL)
