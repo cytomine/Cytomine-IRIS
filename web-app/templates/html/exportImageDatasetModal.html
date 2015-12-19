@@ -24,7 +24,12 @@
                     <input type="checkbox" ng-model="imageExportSettings.dynamicWindow" />&nbsp;dynamic window of&nbsp;<input type="text" style="width: 40px; text-align: right;" ng-model="imageExportSettings.dynamicWindowBorder"/>&nbsp;px around minimum bounding box extent<i style="margin-left: 40px;" class="text-muted">press 'h' for showing more information</i>&nbsp;<span style="color: red;" ng-show="dynamicBorderError"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;{{dynamicBorderErrorText}}</span><br/>
                     <br/>
                     <!-- check this radio button by default -->
-                    <input type="radio" value="" checked="checked" />&nbsp;Image resolution(s):&nbsp;<input type="text" ng-model="imageExportSettings.levels" style="width:40px; text-align: right;"/><i class="text-muted" style="margin-left: 40px;">pyramid level 0 = maximum resolution, 1 = half resolution, etc.</i>&nbsp;<span style="color: red;" ng-show="levelRangeError"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;{{levelRangeErrorText}}</span>
+                    <input type="radio" value="" checked="checked" />&nbsp;Image resolution(s):&nbsp;<input type="text" ng-model="imageExportSettings.levels" style="width:40px; text-align: right;"/><i class="text-muted" style="margin-left: 40px;">pyramid level 0 = maximum resolution, 1 = half resolution, etc.</i>&nbsp;<span style="color: red;" ng-show="levelRangeError"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;{{levelRangeErrorText}}</span><br/>
+                    <br/>
+                    <!-- The image format to be expored-->
+                    <input type="radio" ng-model="imageExportSettings.format" value="jpg" />&nbsp;JPG image format&nbsp;<br/>
+                    <input type="radio" ng-model="imageExportSettings.format" value="png" />&nbsp;PNG image format (no alpha channel)&nbsp;<br/>
+                    <input type="radio" ng-model="imageExportSettings.format" value="png_alpha" />&nbsp;PNG image format (including alpha channel, if present)&nbsp;<br/>
                 </form>
             </div>
         </div>

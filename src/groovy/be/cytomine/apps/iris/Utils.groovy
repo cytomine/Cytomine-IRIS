@@ -28,6 +28,8 @@ import be.cytomine.client.models.Ontology
 import org.apache.log4j.Logger
 import org.json.simple.parser.JSONParser
 
+import java.awt.image.BufferedImage
+import java.awt.image.Raster
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -503,4 +505,37 @@ class Utils {
         return false
     }
 
+    /**
+     * Removes the alpha channel, if any present and returns the image with the
+     * number of original color bands.
+     * <p>
+     * If the image does not have an alpha channel, it is returned unchanged.
+     *
+     * @param image a BufferedImage
+     * @return a BufferedImage with alpha channel removed
+     * @throws IllegalArgumentException
+     *             if the image is <code>null</code>
+     */
+    def removeAlphaChannel(BufferedImage bi){
+        if (bi.getColorModel().hasAlpha()){
+            log.debug("Removing alpha channel")
+
+            int numColorComponents = bi.getColorModel().getNumColorComponents()
+            def bands = new int[numColorComponents]
+            for (int i = 0; i < numColorComponents; i++)
+                bands[i] = i;
+
+            // create compatible raster
+            Raster newRaster = bi.getData().createChild(0, 0, bi.getWidth(), bi.getHeight(), 0, 0, bands)
+
+            // create new image
+            BufferedImage bi2 = new BufferedImage(bi.getWidth(), bi.getHeight(), BufferedImage.TYPE_INT_RGB)
+
+            // set the raster to the new image
+            bi2.setData(newRaster)
+            return bi2
+        } else {
+            return bi
+        }
+    }
 }

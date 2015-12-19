@@ -22,7 +22,8 @@ import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import grails.transaction.Transactional
-
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
 import java.text.SimpleDateFormat
 
 /**
@@ -111,6 +112,14 @@ class ExportService {
         def path_export_root_str = path_export_root.toString() + File.separator
         if (!path_export_root.exists()) {
             path_export_root.mkdirs()
+        }
+
+        // the image format to be exported (standard is JPG without alpha channel
+        String image_format = settings['format']==null?"jpg":settings['format']
+        boolean removeAlpha = true
+        if (image_format.endsWith("_alpha")) {
+            image_format = image_format.substring(0, image_format.length() - "_alpha".length())
+            removeAlpha = false
         }
 
         // create a file name (current date)
@@ -217,20 +226,29 @@ class ExportService {
                                 minBBDir.mkdirs()
                             }
 
-                            String targetFileName = minBBDir.toString() + File.separator + annotation['cmID'] + ".png"
+                            String targetFileName = minBBDir.toString() + File.separator + annotation['cmID'] + "." + image_format
 
                             // construct the download URL
                             String downloadURL_minBB = cytomine.host + "/api/userannotation/" + annotation['cmID'] + "/crop.png?zoom=" + lvl
-                            //println "Annotation minBB URL: " + annotation_url
+                            // println "Annotation minBB URL: " + downloadURL_minBB
                             def successful = false
+                            int attempts = 0
                             while (!successful) {
                                 try {
-                                    cytomine.downloadPicture(downloadURL_minBB, targetFileName, "png")
+                                    //cytomine.downloadPicture(downloadURL_minBB, targetFileName, image_format)
+                                    BufferedImage bi = cytomine.downloadPictureAsBufferedImage(downloadURL_minBB, 'png')
+                                    if (removeAlpha){
+                                        bi = utils.removeAlphaChannel(bi)
+                                    }
+                                    ImageIO.write(bi, image_format, new File(targetFileName))
                                     successful = true
                                 } catch (Exception ex) {
                                     def errorMsg = "Cannot download minimum bounding box image for annotation [" +
                                             annotation['cmID'] + "] at resolution " + lvl + ". Trying again..."
                                     log.error(errorMsg, ex)
+                                    attempts++
+                                    if (attempts > 50)
+                                        throw new CytomineException(404, errorMsg)
                                 }
                             }
                         }
@@ -256,20 +274,29 @@ class ExportService {
                             // tricky: get the correct Y coordinates of the center
                             int minY_window = Math.round((imageDimensions[annotation["cmImageID"]][1] - cY) - window_offset_y)
 
-                            String targetFileName = fWDir.toString() + File.separator + annotation['cmID'] + ".png"
+                            String targetFileName = fWDir.toString() + File.separator + annotation['cmID'] + "." + image_format
 
                             // download the window around the annotation center
                             String window_url = cytomine.host + "/api/imageinstance/" + annotation["cmImageID"] + "/window-" + minX_window + "-" + minY_window + "-" + width + "-" + height + ".png?zoom=" + lvl
                             // println "Window url: " + window_url;
                             def successful = false
+                            int attempts = 0
                             while (!successful) {
                                 try {
-                                    cytomine.downloadPicture(window_url, targetFileName, "png");
+                                    //cytomine.downloadPicture(window_url, targetFileName, image_format);
+                                    BufferedImage bi = cytomine.downloadPictureAsBufferedImage(window_url, 'png')
+                                    if (removeAlpha){
+                                        bi = utils.removeAlphaChannel(bi)
+                                    }
+                                    ImageIO.write(bi, image_format, new File(targetFileName))
                                     successful = true
                                 } catch (Exception ex) {
                                     def errorMsg = "Cannot download fixed window image for annotation [" +
                                             annotation['cmID'] + "] at resolution " + lvl + ". Trying again..."
                                     log.error(errorMsg)
+                                    attempts++
+                                    if (attempts > 50)
+                                        throw new CytomineException(404, errorMsg)
                                 }
                             }
                         }
@@ -309,21 +336,30 @@ class ExportService {
                             int width = Math.abs(Math.round(crop_maxX - crop_minX))
                             int height = Math.abs(Math.round(crop_maxY - crop_minY))
 
-                            String targetFileName = dWDir.toString() + File.separator + annotation['cmID'] + ".png"
+                            String targetFileName = dWDir.toString() + File.separator + annotation['cmID'] + "." +image_format
 
                             // construct the URL
                             String window_url = cytomine.host + "/api/imageinstance/" + annotation["cmImageID"] + "/window-" + minX_window + "-" + minY_window + "-" + width + "-" + height + ".png?zoom=" + lvl
                             //println "tile url: " + tile_url;
 
                             def successful = false
+                            int attempts = 0
                             while (!successful) {
                                 try {
-                                    cytomine.downloadPicture(window_url, targetFileName, "png");
+                                    //cytomine.downloadPicture(window_url, targetFileName, image_format);
+                                    BufferedImage bi = cytomine.downloadPictureAsBufferedImage(window_url, 'png')
+                                    if (removeAlpha){
+                                        bi = utils.removeAlphaChannel(bi)
+                                    }
+                                    ImageIO.write(bi, image_format, new File(targetFileName))
                                     successful = true
                                 } catch (Exception ex) {
                                     def errorMsg = "Cannot download dynamic window image for annotation [" +
                                             annotation['cmID'] + "] at resolution " + lvl + ". Trying again..."
                                     log.error(errorMsg)
+                                    attempts++
+                                    if (attempts > 50)
+                                        throw new CytomineException(404, errorMsg)
                                 }
                             }
 

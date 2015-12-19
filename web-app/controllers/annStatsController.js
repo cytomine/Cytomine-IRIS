@@ -401,7 +401,8 @@ function($rootScope, $scope, $http, $filter, $modal, $window,
 			fixedWindowDimensions: { width: 100, height: 100 }, // fixed window dimensions
 			dynamicWindow: false, // export a dynamic window around the annotation's minimum bounding box
 			dynamicWindowBorder: 128, // the border around the annotation's minimum bounding box, is read when dynamicWindow == true
-			levels: "0" // level 0 is the original maximum resolution of the image (bottom pyramid level)
+			levels: "0", // level 0 is the original maximum resolution of the image (bottom pyramid level)
+			format: "jpg" // format 'jpg' or 'png'
 		};
 
 		$scope.exportData = function(){

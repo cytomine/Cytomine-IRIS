@@ -47,6 +47,7 @@ grails.project.dependency.resolution = {
         // mavenRepo "http://repository.jboss.com/maven2/"
         mavenRepo 'https://oss.sonatype.org/content/repositories/snapshots'
         mavenRepo 'http://repo.spring.io/milestone/'
+        mavenRepo 'https://repository.apache.org/content/repositories/snapshots/'
         //mavenRepo "http://www.hibernatespatial.org/repository"
     }
 
@@ -57,6 +58,8 @@ grails.project.dependency.resolution = {
         compile 'com.vividsolutions:jts:1.13'
         compile 'org.apache.ant:ant:1.9.6'
         compile 'org.apache.ant:ant-launcher:1.9.6'
+        // imaging
+        //compile 'org.apache.commons:commons-imaging:1.0-SNAPSHOT'
     }
 
 //   GRAILS 2.3.5 plugins {
