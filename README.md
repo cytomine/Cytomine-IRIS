@@ -1,3 +1,6 @@
+Copyright 2010-2016 University of Liège, Belgium, http://www.cytomine.be/
+
+
 When using our software, you agree to cite our website url and related publications in all your work (publications, studies, oral presentations,...). In particular, you agree to cite our (Marée et al., Bioinformatics 2016) paper, and to use our logo when appropriate. See our license files for additional details.
 
 - URL: http://www.cytomine.be/
